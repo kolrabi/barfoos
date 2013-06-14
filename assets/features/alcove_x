@@ -1,0 +1,55 @@
+size 3 5 5
+
+conn 1 1 2 -1
+conn 1 1 2 1
+
+def #
+cell brick
+
+def . 
+cell air
+
+def \
+cell step
+bottom 1 0 0 1
+
+def /
+cell step
+bottom 0 1 1 0
+
+def &
+cell brick
+nolock
+onlydefault
+
+def T
+cell torch
+
+slice 0 0
+&#&
+&#&
+&#&
+&#&
+&#&
+
+slice 1 2
+&#&
+&.&
+&.&
+&.&
+&#&
+
+slice 3 3
+&#&
+&/&
+&T&
+&\&
+&#&
+
+slice 4 4
+&#&
+&#&
+&#&
+&#&
+&#&
+

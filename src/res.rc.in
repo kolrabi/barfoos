@@ -1,0 +1,26 @@
+0 ICON "icon.ico"
+
+1 VERSIONINFO
+FILEVERSION     @VER_MAJ@,@VER_MIN@,@VER_SUB@,@VER_BLD@
+PRODUCTVERSION  @VER_MAJ@,@VER_MIN@,@VER_SUB@,@VER_BLD@
+BEGIN
+  BLOCK "StringFileInfo"
+  BEGIN
+    BLOCK "080904E4"
+    BEGIN
+      VALUE "CompanyName", "@PACKAGE_BUGREPORT@"
+      VALUE "FileDescription", "My excellent game"
+      VALUE "FileVersion", "@VERSION@"
+      VALUE "InternalName", "@PACKAGE@"
+      VALUE "LegalCopyright", "© 2013"
+      VALUE "OriginalFilename", "@PACKAGE@.exe"
+      VALUE "ProductName", "@PACKAGE@"
+      VALUE "ProductVersion", "@VERSION@"
+    END
+  END
+
+  BLOCK "VarFileInfo"
+  BEGIN
+    VALUE "Translation", 0x809, 1252
+  END
+END

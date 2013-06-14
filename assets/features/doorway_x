@@ -1,0 +1,60 @@
+size 3 5 5
+level 0 -1 20
+
+conn 1 1 2 -1
+next $hallway
+next stairs_x_up
+next stairs_x_down
+
+conn 1 1 2 1
+next $hallway
+next stairs_x_up
+next stairs_x_down
+
+def #
+cell brick
+
+def . 
+cell air
+
+def \
+cell step
+bottom 1 0 0 1
+
+def /
+cell step
+bottom 0 1 1 0
+
+def &
+cell brick
+nolock
+onlydefault
+
+slice 0 0
+&#&
+&#&
+&#&
+&#&
+&#&
+
+slice 1 2
+&#&
+&.&
+&.&
+&.&
+&#&
+
+slice 3 3
+&#&
+&/&
+&.&
+&\&
+&#&
+
+slice 4 4
+&#&
+&#&
+&#&
+&#&
+&#&
+

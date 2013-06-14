@@ -1,0 +1,8 @@
+tex lava
+dynamic
+transparent
+liquid
+uvturb
+wave
+light 512 192 8
+

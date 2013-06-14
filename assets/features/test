@@ -1,0 +1,38 @@
+size 5 5 5
+
+conn 0 1 2 -1
+next doorway_x
+
+conn 4 1 2 1
+next doorway_x
+
+def . 
+cell air
+
+def #
+cell rock
+
+def +
+cell dirt
+top 1 0 0 1
+
+slice 0 0
+#####
+#####
+#####
+#####
+#####
+
+slice 1 1
+.....
+.....
+..+..
+.....
+.....
+
+slice 2 4
+.....
+.....
+.....
+.....
+.....
