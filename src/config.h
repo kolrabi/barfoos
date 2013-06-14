@@ -2,22 +2,22 @@
 /* src/config.h.in.  Generated from configure.ac by autoheader.  */
 
 /* Define to 1 if you have the `gdi32' library (-lgdi32). */
-/* #undef HAVE_LIBGDI32 */
+#define HAVE_LIBGDI32 1
 
 /* Define to 1 if you have the `GL' library (-lGL). */
-#define HAVE_LIBGL 1
+/* #undef HAVE_LIBGL */
 
 /* Define to 1 if you have the `glfw' library (-lglfw). */
 #define HAVE_LIBGLFW 1
 
 /* Define to 1 if you have the `GLU' library (-lGLU). */
-#define HAVE_LIBGLU 1
+/* #undef HAVE_LIBGLU */
 
 /* Define to 1 if you have the `glu32' library (-lglu32). */
-/* #undef HAVE_LIBGLU32 */
+#define HAVE_LIBGLU32 1
 
 /* Define to 1 if you have the `opengl32' library (-lopengl32). */
-/* #undef HAVE_LIBOPENGL32 */
+#define HAVE_LIBOPENGL32 1
 
 /* Define to 1 if you have the `png' library (-lpng). */
 #define HAVE_LIBPNG 1
@@ -26,7 +26,7 @@
 #define HAVE_LIBPTHREAD 1
 
 /* Define to 1 if you have the `winmm' library (-lwinmm). */
-/* #undef HAVE_LIBWINMM */
+#define HAVE_LIBWINMM 1
 
 /* Define to 1 if you have the `z' library (-lz). */
 #define HAVE_LIBZ 1
@@ -59,7 +59,7 @@
 #define VERSION "0.1"
 
 /* define if compiling for windows */
-/* #undef WIN32 */
+#define WIN32 1
 
 /* define if compiling for X11 */
-#define X11 1
+/* #undef X11 */

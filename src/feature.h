@@ -8,6 +8,7 @@ class Feature;
 class Template;
 class World;
 class Cell;
+class Random;
 
 struct FeatureConnection {
   // where can be put a connection to another feature
@@ -46,20 +47,9 @@ public:
   
   const std::vector<FeatureConnection> &GetConnections() const { return conns; }
 
-  const FeatureConnection *GetRandomConnection(Random &r) const {
-    if (conns.size()==0) return nullptr;
-    return &conns[r.Integer(conns.size())];
-  }
- 
-  const FeatureConnection *GetRandomConnection(int dir, Random &r) const {
-    std::vector<const FeatureConnection *> cs;
-    for (const FeatureConnection &c : conns) {
-      if (c.dir == dir) cs.push_back(&c);
-    }
-    if (cs.size()==0) return nullptr;
-    return cs[r.Integer(cs.size())];
-  }
-
+  const FeatureConnection *GetRandomConnection(Random &r) const;
+  const FeatureConnection *GetRandomConnection(int dir, Random &r) const;
+  
   const std::string &GetName() const { return name; }
   const std::string &GetGroup() const { return group; }
 

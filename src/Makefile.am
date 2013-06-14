@@ -1,28 +1,51 @@
 # vim:noet
 
-SUBDIRS=
-
 ## Build ----------------------------------------------------------
 
-CF=$(GL_CFLAGS) -I$(top_srcdir)/src
+CF=$(GL_CFLAGS) -Werror -Wall -Wextra -I$(top_srcdir)/src
 
 if WINDOOF
-RESFILE=res.rc
+RESFILE=res.rc icon.ico
+LDWINFLAGS=-mwindows 
+#-Wl,-Map=barfoos.map
 else
 RESFILE=
+LDWINFLAGS=
 endif
 
 .rc.o:
 	windres $< -o $@
 
 bin_PROGRAMS=barfoos
-barfoos_CXXFLAGS=$(CF) -Werror -Wall -Wextra --std=c++0x
-barfoos_CFLAGS=$(CF) -Werror -Wall -Wextra --std=c99 
-barfoos_SOURCES=main.cc io.cc texture.cc player.cc cell.cc world.cc mob.cc worldedit.cc simplex.cc text.cc GLee.c \
-  feature.cc template.cc entity.cc gfx.cc game.cc item.cc weapon.cc $(RESFILE)
+
+barfoos_CXXFLAGS=$(CF) --std=c++0x
+barfoos_CFLAGS=$(CF) --std=c99 
 barfoos_LDADD=
+barfoos_LDFLAGS=$(LDWINFLAGS)
+barfoos_SOURCES=\
+  gfx.cc main.cc io.cc texture.cc \
+  GLee.c GLee.h \
+  game.cc game.h \
+  simplex.cc simplex.h \
+  text.cc text.h \
+  \
+  entity.cc entity.h \
+  mob.cc mob.h \
+  player.cc player.h \
+  \
+  cell.cc cell.h \
+  feature.cc feature.h \
+  world.cc world.h \
+  worldedit.cc worldedit.h \
+  \
+  item.cc item.h \
+  weapon.cc weapon.h \
+  \
+  common.h ivector3.h space.h vector3.h \
+  random.h util.h \
+  serializer.cc serializer.h \
+  $(RESFILE)
 
 ## Packaging ------------------------------------------------------
 
-EXTRA_DIST=
-
+EXTRA_DIST=libgcc_s_dw2-1.dll libstdc++-6.dll icon.ico res.rc.in

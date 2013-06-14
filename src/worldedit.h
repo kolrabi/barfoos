@@ -3,8 +3,6 @@
 
 #include "common.h"
 #include "cell.h"
-#include "world.h"
-#include "template.h"
 
 class World;
 
@@ -16,7 +14,7 @@ public:
   ~WorldEdit();
  
   WorldEdit &SetBrush(const Cell &brush) { this->brush = brush; return *this; }
-  WorldEdit &ApplyBrush(const IVector3 &pos) { this->world->SetCell(pos, this->brush); return *this; }
+  WorldEdit &ApplyBrush(const IVector3 &pos);
 
   WorldEdit &LineX(const IVector3 &pos, size_t length);
   WorldEdit &LineY(const IVector3 &pos, size_t length);

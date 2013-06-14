@@ -4,6 +4,9 @@
 
 #include <GL/glfw.h>
 #include <cstring>
+
+#include "random.h"
+#include "serializer.h"
   
 static std::map<std::string, CellInfo> cellInfos;
 
@@ -108,8 +111,9 @@ Cell::Cell(const std::string &type) : info(&cellInfos[type])
   visibility = 0;
   visibilityOverride = 0;
 
-  yofs[0] = yofs[1] = yofs[2] = yofs[3] = 1.0f;
-  yofsb[0] = yofsb[1] = yofsb[2] = yofsb[3] = 0.0f;
+  SetYOffsets(1,1,1,1);
+  SetYOffsetsBottom(0,0,0,0);
+
   u[0] = u[1] = u[2] = u[3] = 0;
   v[0] = v[1] = v[2] = v[3] = 0;
 }
@@ -140,44 +144,45 @@ Cell::Update(
     if (info->flags & CellFlags::Liquid) h = 0.8*detail/16.0;
     if (h>1) h = 1;
     if (GetInfo().flags & CellFlags::Viscous) {
-      yofs[0] = Wave(this->pos.x,   this->pos.z,   t, 0.1, h);
-      yofs[1] = Wave(this->pos.x,   this->pos.z+1, t, 0.1, h);
-      yofs[2] = Wave(this->pos.x+1, this->pos.z+1, t, 0.1, h);
-      yofs[3] = Wave(this->pos.x+1, this->pos.z,   t, 0.1, h);
+      SetYOffsets(
+        Wave(this->pos.x,   this->pos.z,   t, 0.1, h),
+        Wave(this->pos.x,   this->pos.z+1, t, 0.1, h),
+        Wave(this->pos.x+1, this->pos.z+1, t, 0.1, h),
+        Wave(this->pos.x+1, this->pos.z,   t, 0.1, h)
+      );
     } else {
-      yofs[0] = Wave((this->pos.x)*2,   this->pos.z,   t*5, 0.1, h);
-      yofs[1] = Wave((this->pos.x)*2,   this->pos.z+1, t*5, 0.1, h);
-      yofs[2] = Wave((this->pos.x+1)*2, this->pos.z+1, t*5, 0.1, h);
-      yofs[3] = Wave((this->pos.x+1)*2, this->pos.z,   t*5, 0.1, h);
+      SetYOffsets(
+        Wave((this->pos.x)*2,   this->pos.z,   t*5, 0.1, h),
+        Wave((this->pos.x)*2,   this->pos.z+1, t*5, 0.1, h),
+        Wave((this->pos.x+1)*2, this->pos.z+1, t*5, 0.1, h),
+        Wave((this->pos.x+1)*2, this->pos.z,   t*5, 0.1, h)
+      );
     }
     if (info->flags & CellFlags::Liquid && neighbours[(int)Side::Up]->info == info && neighbours[(int)Side::Down]->info == info) {
-      yofs[0] = neighbours[(int)Side::Up]->yofsb[0]+1;
-      yofs[1] = neighbours[(int)Side::Up]->yofsb[1]+1;
-      yofs[2] = neighbours[(int)Side::Up]->yofsb[2]+1;
-      yofs[3] = neighbours[(int)Side::Up]->yofsb[3]+1;
-      yofsb[0] = neighbours[(int)Side::Down]->yofs[0]-2;
-      yofsb[1] = neighbours[(int)Side::Down]->yofs[1]-2;
-      yofsb[2] = neighbours[(int)Side::Down]->yofs[2]-2;
-      yofsb[3] = neighbours[(int)Side::Down]->yofs[3]-2;
+      SetYOffsets(
+        neighbours[(int)Side::Up]->YOfsb(0)+1,
+        neighbours[(int)Side::Up]->YOfsb(1)+1,
+        neighbours[(int)Side::Up]->YOfsb(2)+1,
+        neighbours[(int)Side::Up]->YOfsb(3)+1
+      );
+      SetYOffsetsBottom(
+        neighbours[(int)Side::Down]->YOfs(0)-2,
+        neighbours[(int)Side::Down]->YOfs(1)-2,
+        neighbours[(int)Side::Down]->YOfs(2)-2,
+        neighbours[(int)Side::Down]->YOfs(3)-2
+      );
     } else if (info->flags & CellFlags::Liquid && neighbours[(int)Side::Up]->info == info && neighbours[(int)Side::Down]->info != info) {
       if (neighbours[(int)Side::Down]->IsSolid()) {
-        yofsb[0] = 0;
-        yofsb[1] = 0;
-        yofsb[2] = 0;
-        yofsb[3] = 0;
-        yofs[0] = 1;
-        yofs[1] = 1;
-        yofs[2] = 1;
-        yofs[3] = 1;
+        SetYOffsetsBottom(0,0,0,0);
+        SetYOffsets(1,1,1,1);
       } else {
-        yofsb[0] = 1.0-yofs[0];
-        yofsb[1] = 1.0-yofs[1];
-        yofsb[2] = 1.0-yofs[2];
-        yofsb[3] = 1.0-yofs[3];
-        yofs[0] = neighbours[(int)Side::Up]->yofsb[0]+1;
-        yofs[1] = neighbours[(int)Side::Up]->yofsb[1]+1;
-        yofs[2] = neighbours[(int)Side::Up]->yofsb[2]+1;
-        yofs[3] = neighbours[(int)Side::Up]->yofsb[3]+1;
+        SetYOffsetsBottom(1.0-YOfs(0), 1.0-YOfs(1), 1.0-YOfs(2), 1.0-YOfs(3));
+        SetYOffsets(
+          neighbours[(int)Side::Up]->YOfsb(0)+1,
+          neighbours[(int)Side::Up]->YOfsb(1)+1,
+          neighbours[(int)Side::Up]->YOfsb(2)+1,
+          neighbours[(int)Side::Up]->YOfsb(3)+1
+        );
       }
     }
   }
@@ -277,12 +282,12 @@ Cell::GetHeight(
    
     if (x < z) {
       // lower left triangle
-      slopeX = yofs[3] - yofs[0];
-      slopeZ = yofs[1] - yofs[0];
+      slopeX = YOfs(3) - YOfs(0);
+      slopeZ = YOfs(1) - YOfs(0);
     } else {
       // upper right triangle
-      slopeX = yofs[2] - yofs[1];
-      slopeZ = yofs[2] - yofs[3];
+      slopeX = YOfs(2) - YOfs(1);
+      slopeZ = YOfs(2) - YOfs(3);
     }
   } else { 
     // Z ^
@@ -293,16 +298,16 @@ Cell::GetHeight(
   
     if (x < z) {
       // upper left triangle
-      slopeX = yofs[2] - yofs[1];
-      slopeZ = yofs[1] - yofs[0];
+      slopeX = YOfs(2) - YOfs(1);
+      slopeZ = YOfs(1) - YOfs(0);
     } else {
       // lower right triangle
-      slopeX = yofs[3] - yofs[0];
-      slopeZ = yofs[2] - yofs[3];
+      slopeX = YOfs(3) - YOfs(0);
+      slopeZ = YOfs(2) - YOfs(3);
     }
   }
   
-  return yofs[0] + slopeX * x + slopeZ * z;
+  return YOfs(0) + slopeX * x + slopeZ * z;
 }
 
 float 
@@ -325,12 +330,12 @@ Cell::GetHeightBottom(
    
     if (x < z) {
       // lower left triangle
-      slopeX = yofsb[3] - yofsb[0];
-      slopeZ = yofsb[1] - yofsb[0];
+      slopeX = YOfsb(3) - YOfsb(0);
+      slopeZ = YOfsb(1) - YOfsb(0);
     } else {
       // upper right triangle
-      slopeX = yofsb[2] - yofsb[1];
-      slopeZ = yofsb[2] - yofsb[3];
+      slopeX = YOfsb(2) - YOfsb(1);
+      slopeZ = YOfsb(2) - YOfsb(3);
     }
   } else { 
     // Z ^
@@ -341,16 +346,16 @@ Cell::GetHeightBottom(
   
     if (x < z) {
       // upper left triangle
-      slopeX = yofsb[2] - yofsb[1];
-      slopeZ = yofsb[1] - yofsb[0];
+      slopeX = YOfsb(2) - YOfsb(1);
+      slopeZ = YOfsb(1) - YOfsb(0);
     } else {
       // lower right triangle
-      slopeX = yofsb[3] - yofsb[0];
-      slopeZ = yofsb[2] - yofsb[3];
+      slopeX = YOfsb(3) - YOfsb(0);
+      slopeZ = YOfsb(2) - YOfsb(3);
     }
   }
   
-  return yofsb[0] + slopeX * x + slopeZ * z;
+  return YOfsb(0) + slopeX * x + slopeZ * z;
 }
 
 void
@@ -381,7 +386,7 @@ Cell::UpdateNeighbours(
     for (size_t i=0; i<6; i++) {
       c = c.Max(neighbours[i]->lightLevel);
     }
-    c = c - 32;
+    c = c - 64;
     c = c.Max(info->light);
   }
 
@@ -442,20 +447,20 @@ Cell::SetOrder(bool topReversed, bool bottomReversed) {
 
 Cell &
 Cell::SetYOffsets(float a, float b, float c, float d) {
-  yofs[0] = a;
-  yofs[1] = b;
-  yofs[2] = c;
-  yofs[3] = d;
+  topHeights[0] = a*32;
+  topHeights[1] = b*32;
+  topHeights[2] = c*32;
+  topHeights[3] = d*32;
   SetDirty();
   return *this;
 }
 
 Cell &
 Cell::SetYOffsetsBottom(float a, float b, float c, float d) {
-  yofsb[0] = a;
-  yofsb[1] = b;
-  yofsb[2] = c;
-  yofsb[3] = d;
+  bottomHeights[0] = a*32;
+  bottomHeights[1] = b*32;
+  bottomHeights[2] = c*32;
+  bottomHeights[3] = d*32;
   SetDirty();
   return *this;
 }
@@ -559,10 +564,10 @@ Cell::UpdateVertices() {
   dirty = info->flags & CellFlags::Dynamic;
 
   float h[4];
-  h[0] = yofs[0];
-  h[1] = yofs[1];
-  h[2] = yofs[2];
-  h[3] = yofs[3];
+  h[0] = YOfs(0);
+  h[1] = YOfs(1);
+  h[2] = YOfs(2);
+  h[3] = YOfs(3);
   
   float w[4] = {1,1,1,1};
   
@@ -605,35 +610,35 @@ Cell::UpdateVertices() {
     //   +------> X
     
     // 0
-    if (lb) { h[0] += lb->yofs[2]; w[0]++; };
-    if (b)  { h[0] += b ->yofs[1]; w[0]++; };
-    if (l)  { h[0] += l ->yofs[3]; w[0]++; };
+    if (lb) { h[0] += lb->YOfs(2); w[0]++; };
+    if (b)  { h[0] += b ->YOfs(1); w[0]++; };
+    if (l)  { h[0] += l ->YOfs(3); w[0]++; };
     
     // 1
-    if (lf) { h[1] += lf->yofs[3]; w[1]++; };
-    if (f)  { h[1] += f ->yofs[0]; w[1]++; };
-    if (l)  { h[1] += l ->yofs[2]; w[1]++; };
+    if (lf) { h[1] += lf->YOfs(3); w[1]++; };
+    if (f)  { h[1] += f ->YOfs(0); w[1]++; };
+    if (l)  { h[1] += l ->YOfs(2); w[1]++; };
 
     // 2
-    if (rf) { h[2] += rf->yofs[0]; w[2]++; };
-    if (f)  { h[2] += f ->yofs[3]; w[2]++; };
-    if (r)  { h[2] += r ->yofs[1]; w[2]++; };
+    if (rf) { h[2] += rf->YOfs(0); w[2]++; };
+    if (f)  { h[2] += f ->YOfs(3); w[2]++; };
+    if (r)  { h[2] += r ->YOfs(1); w[2]++; };
     
     // 3
-    if (rb) { h[3] += rb->yofs[1]; w[3]++; };
-    if (b)  { h[3] += b ->yofs[2]; w[3]++; };
-    if (r)  { h[3] += r ->yofs[0]; w[3]++; };
+    if (rb) { h[3] += rb->YOfs(1); w[3]++; };
+    if (b)  { h[3] += b ->YOfs(2); w[3]++; };
+    if (r)  { h[3] += r ->YOfs(0); w[3]++; };
         
     h[0] /= w[0]; h[1] /= w[1]; h[2] /= w[2]; h[3] /= w[3];
   }  
   
-  corners[0] = Vector3(0, yofsb[0], 0); 
-  corners[1] = Vector3(1, yofsb[3], 0); 
+  corners[0] = Vector3(0, YOfsb(0), 0); 
+  corners[1] = Vector3(1, YOfsb(3), 0); 
   corners[2] = Vector3(0, h[0],  0); 
   corners[3] = Vector3(1, h[3],  0); 
 
-  corners[4] = Vector3(0, yofsb[1], 1); 
-  corners[5] = Vector3(1, yofsb[2], 1); 
+  corners[4] = Vector3(0, YOfsb(1), 1); 
+  corners[5] = Vector3(1, YOfsb(2), 1); 
   corners[6] = Vector3(0, h[1],  1);
   corners[7] = Vector3(1, h[2],  1);
 
@@ -665,4 +670,16 @@ bool Cell::HasSolidSides() const {
          this->neighbours[(int)Side::Right]->IsSolid() &&
          this->neighbours[(int)Side::Forward]->IsSolid() &&
          this->neighbours[(int)Side::Backward]->IsSolid();
+}
+
+Serializer &operator << (Serializer &ser, const Cell &cell) {
+  ser << cell.type;
+  ser << cell.lightLevel.r;
+  ser << cell.lightLevel.g;
+  ser << cell.lightLevel.b;
+  ser << cell.nextTickT;
+  ser << cell.visibility << cell.visibilityOverride;
+  ser << cell.topHeights[0] << cell.topHeights[1] << cell.topHeights[2] << cell.topHeights[3];
+  ser << cell.bottomHeights[0] << cell.bottomHeights[1] << cell.bottomHeights[2] << cell.bottomHeights[3];
+  return ser;
 }

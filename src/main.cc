@@ -10,6 +10,7 @@
 #include <cctype>
 
 Game *game = nullptr;
+size_t level = 0;
 
 bool mouseGrab = false;
 int screenWidth = 320;
@@ -44,7 +45,7 @@ void mouseClick(int button, int down) {
 void keyEvent(int key, int action) {
   if (key == GLFW_KEY_F12 && action == GLFW_PRESS) {
     delete game;
-    game = new Game("seed");
+    game = new Game("seed", ++level);
   }
 }
 

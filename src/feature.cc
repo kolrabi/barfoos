@@ -2,6 +2,7 @@
 #include "feature.h"
 #include "world.h"
 #include "cell.h"
+#include "random.h"
 
 #include <cstring>
 
@@ -183,7 +184,7 @@ FeatureInstance FileFeature::BuildFeature(const std::shared_ptr<World> &world, c
   }
   return FeatureInstance(this, pos, dir, dist+1);
 }
- 
+
 void FeatureConnection::Resolve() {
   if (!this->resolved) {
     this->resolved = true;
@@ -191,12 +192,10 @@ void FeatureConnection::Resolve() {
     auto iter = nextFeatures.begin();
     while(iter != nextFeatures.end()) {   
       if ((*iter)[0] == '$') {
-        std::cerr << *iter << ":" << std::endl;
         std::string group = iter->substr(1);
         iter = nextFeatures.erase(iter);
         for (auto f : allFeatures) {
           if (f.second->GetGroup() == group) {
-            std::cerr << "  " << f.first << std::endl;
             iter = nextFeatures.insert(iter, f.first);
           }
         }
@@ -241,6 +240,27 @@ const Feature *FeatureConnection::GetRandomFeature(const std::shared_ptr<World> 
   }
   
   return getFeature(nextFeatures[r.Integer(nextFeatures.size())]);
+}
+
+const FeatureConnection *
+Feature::GetRandomConnection(
+  Random &r
+) const {
+  if (conns.size()==0) return nullptr;
+  return &conns[r.Integer(conns.size())];
+}
+
+const FeatureConnection *
+Feature::GetRandomConnection(
+  int dir, 
+  Random &r
+) const {
+  std::vector<const FeatureConnection *> cs;
+  for (const FeatureConnection &c : conns) {
+    if (c.dir == dir) cs.push_back(&c);
+  }
+  if (cs.size()==0) return nullptr;
+  return cs[r.Integer(cs.size())];
 }
 
 void

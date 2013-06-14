@@ -6,7 +6,10 @@
 #include "mob.h"
 #include "simplex.h"
 
-World::World(const IVector3 &size, int level, Random rnd) :random(rnd)
+#include "random.h"
+#include "serializer.h"
+
+World::World(const IVector3 &size, int level, Random &rnd) :random(rnd)
 {  
   this->ambientLight = IColor(32, 32, 64);
   this->checkOverwrite = false;
@@ -21,6 +24,7 @@ World::World(const IVector3 &size, int level, Random rnd) :random(rnd)
   
   IVector3 r(random.Integer(), random.Integer(), random.Integer());
   std::cerr << r << std::endl;
+  std::cerr << this->cellCount << " cells, " << (sizeof(Cell)*this->cellCount) << std::endl;
   
   for (size_t i=0; i<this->cellCount; i++) {
     IVector3 pos = GetCellPos(i);
@@ -52,6 +56,13 @@ World::World(const IVector3 &size, int level, Random rnd) :random(rnd)
   this->defaultMask = std::vector<bool>(this->cellCount, true);
   
   this->lastT = 0;
+  
+  Serializer ser("wrld", 4);
+  for (size_t i=0; i<this->cellCount; i++) {
+    ser << cells[i];
+    if ((i % 100) == 0)std::cerr << i << std::endl;
+  }
+  ser.WriteToFile("world.dat"); 
 }
 
 World::~World() {
@@ -128,12 +139,9 @@ World::Draw() {
 
     for (size_t i=0; i<this->cellCount; i++) {
       Cell &cell = this->cells[i];
-      cell.UpdateVertices();
-    }
-    
-    for (size_t i=0; i<this->cellCount; i++) {
-      const Cell &cell = this->cells[i];
       const CellInfo &info = cell.GetInfo();
+      
+      if (cell.IsDirty()) cell.UpdateVertices();
 
       // don't add dynamic cells to static vertex buffer
       if (info.flags & CellFlags::Dynamic) {

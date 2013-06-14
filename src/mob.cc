@@ -25,6 +25,13 @@ Mob::Mob() {
   validMoveTarget = false;
   
   texture = loadTexture("entities/slime");
+  frame = 0;
+  frames = 2;
+  animation = 0;
+  anims.clear();
+  anims.push_back(Animation(0,2,5));
+  
+  
   aboveTexture = 0;
   belowTexture = 0;
   maxHealth = health = 5;

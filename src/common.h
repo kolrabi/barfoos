@@ -105,7 +105,7 @@ static inline std::ostream & operator<< (std::ostream &out, const AABB &aabb) {
 }
 
 struct IColor {
-  int r,g,b;
+  int16_t r,g,b;
   
   IColor() : r(0), g(0), b(0) {}
   IColor(int r, int g, int b) : r(r), g(g), b(b) {}

@@ -1,20 +1,20 @@
+#include <GL/glfw.h>
+
 #include "game.h"
 #include "world.h"
 #include "player.h"
 #include "worldedit.h"
 #include "feature.h"
-
-#include <GL/glfw.h>
+#include "random.h"
 
 extern int screenWidth;
 extern int screenHeight;
 
-Game::Game(const std::string &seed) : seed(seed) {
+Game::Game(const std::string &seed, size_t level) : seed(seed), random(seed) {
   LoadCells();
   LoadFeatures();
-  LoadTemplates();
  
-  this->BuildWorld(0);
+  this->BuildWorld(level);
   
   auto m = std::make_shared<Mob>(Mob());
   m->SetPosition(IVector3(32, 16, 32));
@@ -96,9 +96,8 @@ Game::Update(float t) {
 }
 
 void 
-Game::BuildWorld(int level) { 
-  Random random(seed); // TODO: + std::to_string(level));
- 
+Game::BuildWorld(size_t level) { 
+  random.Seed(seed, level); 
   std::vector<FeatureInstance> instances;
   std::map<const Feature *, int> featureCounts;
 

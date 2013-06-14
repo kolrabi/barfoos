@@ -6,11 +6,12 @@
 #include "util.h"
 
 class Mob;
+class Random;
 
 class World final {
 public:
 
-  World(const IVector3 &size, int level, Random random);
+  World(const IVector3 &size, int level, Random &random);
   ~World();
   
   const IVector3 &GetSize() const { return size; }
@@ -59,7 +60,7 @@ private:
     return pos.x < size.x  && pos.y < size.y && pos.z < size.z; 
   }
 
-  Random random;
+  Random &random;
   IVector3 size;
   bool dirty, firstDirty;
 

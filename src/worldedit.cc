@@ -5,6 +5,11 @@ WorldEdit::WorldEdit(World *world) : world(world) {}
 WorldEdit::WorldEdit(const std::shared_ptr<World> &world) : WorldEdit(world.get()) {}
 WorldEdit::~WorldEdit() {}
 
+WorldEdit &WorldEdit::ApplyBrush(const IVector3 &pos) { 
+  this->world->SetCell(pos, this->brush); 
+  return *this; 
+}
+
 WorldEdit &WorldEdit::LineX(const IVector3 &pos, size_t length) {
   for (size_t x = 0; x<length && x+pos.x<world->GetSize().x; x++)
     ApplyBrush(IVector3(pos.x+x, pos.y, pos.z));

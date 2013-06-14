@@ -5,6 +5,8 @@
 #include "util.h"
 
 class World;
+class Random;
+class Serializer;
 
 enum CellFlags {
   Solid       = (1<<0),
@@ -86,6 +88,7 @@ public:
   bool HasSolidSides() const;
   
   void SetDirty() { dirty = true; }
+  bool IsDirty() const { return dirty; }
 
   void UpdateVertices();
   
@@ -94,14 +97,15 @@ protected:
   // generic information
   World *world;
   IVector3 pos;
-  std::string type;
+  float smoothDetail;
   const CellInfo *info;
+  float tickInterval; // TODO: move to cellinfo
+  bool dirty;
+  
+  std::string type;
   IColor lightLevel;
   uint32_t detail;
-  float smoothDetail;
-  float tickInterval;
   float nextTickT;
-  bool dirty;
 
   // map generation
   bool isLocked;    // disallow modification via World::SetCell...
@@ -111,7 +115,8 @@ protected:
   // rendering  
   bool reversedTop;
   bool reversedBottom;
-  float yofs[4], yofsb[4];
+  
+  int8_t topHeights[4], bottomHeights[4];
   float u[4], v[4];
   uint8_t visibility;
   uint8_t visibilityOverride;
@@ -120,6 +125,11 @@ protected:
   Vector3 corners[8];
   std::vector<Vertex> verts;
   
+  Cell *neighbours[6];
+  
+  float YOfs(size_t n)  const { return topHeights[n]/32.0; }
+  float YOfsb(size_t n) const { return bottomHeights[n]/32.0; }
+  
   IColor SideCornerColor(Side side, size_t corner) const;
   void SideColors(Side side, IColor *colors) const;
   void SideVerts(Side side, std::vector<Vertex> &verts, bool reverse = false) const;
@@ -127,8 +137,10 @@ protected:
   void Tick(Random &random);
   bool Flow(Side side);
   
-  Cell *neighbours[6];
+  friend Serializer &operator << (Serializer &ser, const Cell &cell);
 };
+
+Serializer &operator << (Serializer &ser, const Cell &);
 
 inline void Cell::SetWorld(World *world) { 
   this->world = world; 
@@ -163,11 +175,11 @@ inline unsigned int Cell::GetTexture() const {
 }
 
 inline bool Cell::IsTopFlat() const {
-  return yofs[0] == 1.0 && yofs[1] == 1.0 && yofs[2] == 1.0 && yofs[3] == 1.0;
+  return YOfs(0) == 1.0 && YOfs(1) == 1.0 && YOfs(2) == 1.0 && YOfs(3) == 1.0;
 }
 
 inline bool Cell::IsBottomFlat() const {
-  return yofsb[0] == 0.0 && yofsb[1] == 0.0 && yofsb[2] == 0.0 && yofsb[3] == 0.0;
+  return YOfsb(0) == 0.0 && YOfsb(1) == 0.0 && YOfsb(2) == 0.0 && YOfsb(3) == 0.0;
 }
 
 inline bool Cell::IsTransparent() const {

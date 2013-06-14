@@ -3,6 +3,7 @@
 
 #include "common.h"
 #include "feature.h"
+#include "random.h"
 
 class World;
 class Player;
@@ -11,7 +12,7 @@ class Mob;
 class Game final {
 public:
 
-  Game(const std::string &seed);
+  Game(const std::string &seed, size_t level = 0);
   ~Game();
 
   void Render() const;
@@ -30,8 +31,9 @@ private:
   float deltaT;
   
   std::string seed;
+  Random random;
   
-  void BuildWorld(int level);
+  void BuildWorld(size_t level);
 };
 
 
