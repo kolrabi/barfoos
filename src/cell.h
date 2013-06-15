@@ -40,7 +40,7 @@ public:
 
   virtual void Update(float t, Random &random);
   virtual void Draw(std::vector<Vertex> &vertices) const;
-  virtual void UpdateNeighbours();
+  virtual bool UpdateNeighbours();
   
   const std::string &GetType() const;
   const CellInfo &GetInfo() const;
@@ -87,10 +87,11 @@ public:
   
   bool HasSolidSides() const;
   
-  void SetDirty() { dirty = true; }
+  void SetDirty() { dirty = 1; }
   bool IsDirty() const { return dirty; }
 
   void UpdateVertices();
+  void Tick(Random &random);
   
 protected:
 
@@ -99,13 +100,11 @@ protected:
   IVector3 pos;
   float smoothDetail;
   const CellInfo *info;
-  float tickInterval; // TODO: move to cellinfo
-  bool dirty;
+  size_t dirty;
   
   std::string type;
-  IColor lightLevel;
+  IColor lightLevel, torchLight;
   uint32_t detail;
-  float nextTickT;
 
   // map generation
   bool isLocked;    // disallow modification via World::SetCell...
@@ -134,7 +133,6 @@ protected:
   void SideColors(Side side, IColor *colors) const;
   void SideVerts(Side side, std::vector<Vertex> &verts, bool reverse = false) const;
 
-  void Tick(Random &random);
   bool Flow(Side side);
   
   friend Serializer &operator << (Serializer &ser, const Cell &cell);

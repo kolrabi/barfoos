@@ -56,6 +56,8 @@ World::World(const IVector3 &size, int level, Random &rnd) :random(rnd)
   this->defaultMask = std::vector<bool>(this->cellCount, true);
   
   this->lastT = 0;
+  this->tickInterval = 0.05;
+  this->nextTickT = 0;
   
   Serializer ser("wrld", 4);
   for (size_t i=0; i<this->cellCount; i++) {
@@ -141,7 +143,7 @@ World::Draw() {
       Cell &cell = this->cells[i];
       const CellInfo &info = cell.GetInfo();
       
-      if (cell.IsDirty()) cell.UpdateVertices();
+      cell.UpdateVertices();
 
       // don't add dynamic cells to static vertex buffer
       if (info.flags & CellFlags::Dynamic) {
@@ -223,6 +225,10 @@ void
 World::Update(
   float t
 ) {
+  if (lastT == 0) {
+    lastT = t;
+    nextTickT = t;
+  }
   deltaT = t - lastT;
 
   // handle collision between mobs
@@ -246,6 +252,13 @@ World::Update(
   // update all dynamic cells
   for (size_t i : this->dynamicCells) {
     this->cells[i].Update(t, random);
+  }
+
+  while (tickInterval != 0.0 && t > nextTickT) {
+    nextTickT += tickInterval;
+    for (size_t i : this->dynamicCells) {
+      this->cells[i].Tick(random);
+    }
   }
 
   lastT = t;

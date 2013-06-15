@@ -3,6 +3,6 @@ dynamic
 transparent
 liquid
 uvturb
-wave
+#wave
 light 512 192 8
 

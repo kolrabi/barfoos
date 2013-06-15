@@ -174,8 +174,9 @@ Game::BuildWorld(size_t level) {
     const FeatureInstance &instance = instances[featNum];
     IVector3 size = instance.feature->GetSize();
    
+    for (size_t k=0; k<10; k++) {
     IVector3 cavePos(instance.pos + IVector3(random.Integer(size.x), random.Integer(size.y), random.Integer(size.z)));
-    size_t caveLength = random.Integer(3000);
+    size_t caveLength = random.Integer(300);
     bool lastSolid = false;
     
     for (size_t j=0; j<caveLength; j++) {
@@ -186,6 +187,7 @@ Game::BuildWorld(size_t level) {
       }
       lastSolid = solid;
       cavePos = cavePos[nextSide];
+    }
     }
   }
   

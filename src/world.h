@@ -72,6 +72,8 @@ private:
   std::vector<size_t> dynamicCells;
   float lastT;
   float deltaT;
+  float nextTickT;
+  float tickInterval;
 
   IColor ambientLight;
   

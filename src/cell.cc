@@ -86,7 +86,7 @@ Cell::Cell(const std::string &type) : info(&cellInfos[type])
   this->ignoreLock = false;
   this->ignoreWrite = false;
   this->type = type;
-  this->dirty = true;
+  SetDirty();
   
   for (size_t i=0; i<6; i++)
     this->neighbours[i] = nullptr;
@@ -98,12 +98,8 @@ Cell::Cell(const std::string &type) : info(&cellInfos[type])
   }
 
   if (info->flags & CellFlags::Liquid) {
-    this->tickInterval = (info->flags & CellFlags::Viscous)?0.75:0.5;
-    this->nextTickT = 0;
-    this->smoothDetail = this->detail = 16;
+    this->smoothDetail = this->detail = 15;
   } else {
-    this->tickInterval = 0;
-    this->nextTickT = 0;
     this->smoothDetail = this->detail = 0;
   }
 
@@ -136,12 +132,14 @@ Cell::Update(
   Random &random
 ) {
   if (!world) return;
+
+  (void)random;
     
-  smoothDetail = smoothDetail + (detail - smoothDetail) * world->GetDeltaT() * 0.01;
+  smoothDetail = smoothDetail + (detail - smoothDetail) * world->GetDeltaT()*10;
   
   if (GetInfo().flags & CellFlags::Waving) {
     float h = 0.8;
-    if (info->flags & CellFlags::Liquid) h = 0.8*detail/16.0;
+    if (info->flags & CellFlags::Liquid) h = 0.8*smoothDetail/16.0;
     if (h>1) h = 1;
     if (GetInfo().flags & CellFlags::Viscous) {
       SetYOffsets(
@@ -158,32 +156,22 @@ Cell::Update(
         Wave((this->pos.x+1)*2, this->pos.z,   t*5, 0.1, h)
       );
     }
-    if (info->flags & CellFlags::Liquid && neighbours[(int)Side::Up]->info == info && neighbours[(int)Side::Down]->info == info) {
-      SetYOffsets(
-        neighbours[(int)Side::Up]->YOfsb(0)+1,
-        neighbours[(int)Side::Up]->YOfsb(1)+1,
-        neighbours[(int)Side::Up]->YOfsb(2)+1,
-        neighbours[(int)Side::Up]->YOfsb(3)+1
-      );
-      SetYOffsetsBottom(
-        neighbours[(int)Side::Down]->YOfs(0)-2,
-        neighbours[(int)Side::Down]->YOfs(1)-2,
-        neighbours[(int)Side::Down]->YOfs(2)-2,
-        neighbours[(int)Side::Down]->YOfs(3)-2
-      );
-    } else if (info->flags & CellFlags::Liquid && neighbours[(int)Side::Up]->info == info && neighbours[(int)Side::Down]->info != info) {
-      if (neighbours[(int)Side::Down]->IsSolid()) {
-        SetYOffsetsBottom(0,0,0,0);
-        SetYOffsets(1,1,1,1);
-      } else {
-        SetYOffsetsBottom(1.0-YOfs(0), 1.0-YOfs(1), 1.0-YOfs(2), 1.0-YOfs(3));
-        SetYOffsets(
-          neighbours[(int)Side::Up]->YOfsb(0)+1,
-          neighbours[(int)Side::Up]->YOfsb(1)+1,
-          neighbours[(int)Side::Up]->YOfsb(2)+1,
-          neighbours[(int)Side::Up]->YOfsb(3)+1
-        );
-      }
+  }
+
+  if (info->flags & CellFlags::Liquid) {
+    float h = smoothDetail/16.0;
+    if (neighbours[(int)Side::Up]->info == info && neighbours[(int)Side::Down]->info == info) {
+      // liquid and top and bottom cells are the same as this one
+      SetYOffsets(1,1,1,1); 
+      SetYOffsetsBottom(0,0,0,0);
+    } else if (neighbours[(int)Side::Up]->info == info && neighbours[(int)Side::Down]->info != info) {
+      // liquid and liquid above and nothing solid below
+      SetYOffsetsBottom(1-h,1-h,1-h,1-h);
+      SetYOffsets(1,1,1,1);
+    } else {
+      // no liquid above
+      SetYOffsetsBottom(0,0,0,0);
+      SetYOffsets(h,h,h,h);
     }
   }
   
@@ -203,12 +191,6 @@ Cell::Update(
 
     u[3] = U(this->pos.x+1,this->pos.z);
     v[3] = V(this->pos.x+1,this->pos.z);
-  }
-  
-  if (nextTickT == 0.0) nextTickT = t;
-  while (tickInterval != 0.0 && t > nextTickT) {
-    nextTickT += tickInterval;
-    Tick(random);
   }
   
   UpdateNeighbours();
@@ -248,7 +230,7 @@ Cell::Flow(Side side) {
   if (cell->info != this->info) {
     this->world->SetCell(GetPosition()[side], Cell(type));
     cell->detail = 1;
-    cell->nextTickT = nextTickT;
+    cell->smoothDetail = 0;
   } else {
     cell->detail++;
   }
@@ -358,10 +340,10 @@ Cell::GetHeightBottom(
   return YOfsb(0) + slopeX * x + slopeZ * z;
 }
 
-void
+bool
 Cell::UpdateNeighbours(
 ) {
-  if (neighbours[0] == nullptr) return;
+  if (neighbours[0] == nullptr) return false;
   
   size_t oldvis = this->visibility;
 
@@ -386,17 +368,31 @@ Cell::UpdateNeighbours(
     for (size_t i=0; i<6; i++) {
       c = c.Max(neighbours[i]->lightLevel);
     }
-    c = c - 64;
+    c = (c * 0.80f) - 32;
     c = c.Max(info->light);
+    c = c.Max(this->torchLight);
   }
 
+  bool updated = false;
   if (SetLightLevel(c) || this->visibility != oldvis) {
+    updated = true;
     for (size_t i=0; i<6; i++) {
-      neighbours[i]->UpdateNeighbours();
+      while (neighbours[i]->UpdateNeighbours());
     }
   }
   SetDirty();
-  return; 
+  if (updated) {
+    // set corner cells dirty as well
+    this->world->GetCell(this->GetPosition() + IVector3( 1,  1,  1)).SetDirty();
+    this->world->GetCell(this->GetPosition() + IVector3(-1,  1,  1)).SetDirty();
+    this->world->GetCell(this->GetPosition() + IVector3( 1, -1,  1)).SetDirty();
+    this->world->GetCell(this->GetPosition() + IVector3(-1, -1,  1)).SetDirty();
+    this->world->GetCell(this->GetPosition() + IVector3( 1,  1, -1)).SetDirty();
+    this->world->GetCell(this->GetPosition() + IVector3(-1,  1, -1)).SetDirty();
+    this->world->GetCell(this->GetPosition() + IVector3( 1, -1, -1)).SetDirty();
+    this->world->GetCell(this->GetPosition() + IVector3(-1, -1, -1)).SetDirty();
+  }
+  return false; //updated; 
 }
   
 IColor 
@@ -561,7 +557,8 @@ Cell::SideVerts(Side side, std::vector<Vertex> &verts, bool reverse) const {
 void
 Cell::UpdateVertices() {
   if (!dirty) return;
-  dirty = info->flags & CellFlags::Dynamic;
+  dirty--;
+  if (info->flags & CellFlags::Dynamic) SetDirty();
 
   float h[4];
   h[0] = YOfs(0);
@@ -571,7 +568,8 @@ Cell::UpdateVertices() {
   
   float w[4] = {1,1,1,1};
   
-  if (info->flags & CellFlags::Liquid && (neighbours[(int)Side::Down]->IsSolid() || neighbours[(int)Side::Down]->detail == 16)) {
+  if (info->flags & CellFlags::Liquid && (neighbours[(int)Side::Up]->info != this->info)) {
+    // snap vertices of neighbouring liquid cells together to make a nice connected surface
     Cell *l = neighbours[(int)Side::Left];
     Cell *r = neighbours[(int)Side::Right];
     Cell *f = neighbours[(int)Side::Forward];
@@ -677,7 +675,6 @@ Serializer &operator << (Serializer &ser, const Cell &cell) {
   ser << cell.lightLevel.r;
   ser << cell.lightLevel.g;
   ser << cell.lightLevel.b;
-  ser << cell.nextTickT;
   ser << cell.visibility << cell.visibilityOverride;
   ser << cell.topHeights[0] << cell.topHeights[1] << cell.topHeights[2] << cell.topHeights[3];
   ser << cell.bottomHeights[0] << cell.bottomHeights[1] << cell.bottomHeights[2] << cell.bottomHeights[3];
