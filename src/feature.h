@@ -21,7 +21,7 @@ struct FeatureConnection {
   FeatureConnection(const IVector3 &pos, int dir) 
   : pos(pos), dir(dir), resolved(false) {}
 
-  const Feature *GetRandomFeature(const std::shared_ptr<World> &world, const IVector3 &pos, Random &r) const;
+  const Feature *GetRandomFeature(const World *world, const IVector3 &pos, Random &r) const;
 
   void Resolve();
   bool resolved;
@@ -37,13 +37,14 @@ struct FeatureInstance {
   IVector3 pos;
   int dir;
   int dist;
+  size_t prevID;
 };
 
 class Feature {
 public:
   virtual const IVector3 GetSize() const = 0; 
-  virtual float GetProbability(const std::shared_ptr<World> &world, const IVector3 &pos) const = 0;
-  virtual FeatureInstance BuildFeature(const std::shared_ptr<World> &world, const IVector3 &pos, int dir, int dist) const = 0;
+  virtual float GetProbability(const World *world, const IVector3 &pos) const = 0;
+  virtual FeatureInstance BuildFeature(World *world, const IVector3 &pos, int dir, int dist, size_t id) const = 0;
   
   const std::vector<FeatureConnection> &GetConnections() const { return conns; }
 
@@ -68,8 +69,8 @@ public:
   ~FileFeature();
 
   virtual const IVector3 GetSize() const; 
-  virtual float GetProbability(const std::shared_ptr<World> &world, const IVector3 &pos) const;
-  virtual FeatureInstance BuildFeature(const std::shared_ptr<World> &world, const IVector3 &pos, int dir, int dist) const;
+  virtual float GetProbability(const World *world, const IVector3 &pos) const;
+  virtual FeatureInstance BuildFeature(World *world, const IVector3 &pos, int dir, int dist, size_t id) const;
 
 private:
 

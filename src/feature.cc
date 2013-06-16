@@ -155,7 +155,7 @@ const IVector3 FileFeature::GetSize() const {
   return size;
 }
 
-float FileFeature::GetProbability(const std::shared_ptr<World> &world, const IVector3 &pos) const {
+float FileFeature::GetProbability(const World *world, const IVector3 &pos) const {
   if (this->minY) std::cerr << pos.y << std::endl;
   if (pos.y < this->minY) {
     return 0;
@@ -171,14 +171,14 @@ float FileFeature::GetProbability(const std::shared_ptr<World> &world, const IVe
   return maxProbability * std::sin(3.14159*levelFrac);
 }
 
-FeatureInstance FileFeature::BuildFeature(const std::shared_ptr<World> &world, const IVector3 &pos, int dir, int dist) const {
+FeatureInstance FileFeature::BuildFeature(World *world, const IVector3 &pos, int dir, int dist, size_t id) const {
   for (size_t z=0; z<size.z; z++) {
     for (size_t y=0; y<size.y; y++) {
       for (size_t x=0; x<size.x; x++) { 
         if (defaultMask[x+size.x*(y+size.y*z)] && world->IsChecking()) continue;
         if (defaultMask[x+size.x*(y+size.y*z)] && !world->IsDefault(pos+IVector3(x,y,z))) continue;
         
-        world->SetCell(pos+IVector3(x,y,z), cells[x+size.x*(y+size.y*z)]);
+        world->SetCell(pos+IVector3(x,y,z), cells[x+size.x*(y+size.y*z)]).SetFeatureID(id);
       }
     }
   }
@@ -206,7 +206,7 @@ void FeatureConnection::Resolve() {
   }
 } 
 
-const Feature *FeatureConnection::GetRandomFeature(const std::shared_ptr<World> &world, const IVector3 &pos, Random &r) const {
+const Feature *FeatureConnection::GetRandomFeature(const World *world, const IVector3 &pos, Random &r) const {
   if (nextFeatures.size() == 0) return nullptr;
   
   struct W {

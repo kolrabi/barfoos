@@ -32,7 +32,7 @@ Entity::Update(float t) {
   if (lastT == 0) lastT = t;
   deltaT = t - lastT;
   
-  this->light = this->world->GetCell(IVector3(aabb.center.x, aabb.center.y, aabb.center.z)).GetLightLevel().Saturate();
+  this->light = this->world->GetLight(IVector3(aabb.center.x, aabb.center.y, aabb.center.z)).Saturate();
 }
 
 void

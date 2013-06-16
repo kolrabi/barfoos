@@ -24,6 +24,10 @@ struct IVector3 {
     return IVector3(x*f, y*f, z*f);
   }
 
+  IVector3 operator/(float f) const {
+    return IVector3(x/f, y/f, z/f);
+  }
+
   bool operator==(const IVector3 &o) const {
     return x==o.x && y==o.y && z==o.z;
   }

@@ -8,6 +8,7 @@
 
 #include "random.h"
 #include "serializer.h"
+#include "worldedit.h"
 
 World::World(const IVector3 &size, int level, Random &rnd) :random(rnd)
 {  
@@ -56,15 +57,86 @@ World::World(const IVector3 &size, int level, Random &rnd) :random(rnd)
   this->defaultMask = std::vector<bool>(this->cellCount, true);
   
   this->lastT = 0;
-  this->tickInterval = 0.05;
+  this->tickInterval = 1;
   this->nextTickT = 0;
+
+  // build features -------------------------------------------
+
+  std::map<const Feature *, int> featureCounts;
   
-  Serializer ser("wrld", 4);
-  for (size_t i=0; i<this->cellCount; i++) {
-    ser << cells[i];
-    if ((i % 100) == 0)std::cerr << i << std::endl;
+  instances.push_back(getFeature("start")->BuildFeature(this, IVector3(32-4, 32-8,32-4), 0, 0, instances.size()));
+  instances.back().prevID = ~0UL;
+  
+  int loop = 0;
+  do {
+    if (loop++ > 10000) break;
+
+    // select a feature from which to go
+    bool useLast = random.Chance(0.90);
+    size_t featNum = useLast ? instances.size()-1 : (random.Integer(instances.size()));
+    const FeatureInstance &instance = instances[featNum];
+    
+    // select a random connection from the current feature
+    const Feature *feature = instance.feature;
+    const FeatureConnection *conn = feature->GetRandomConnection(random);
+    if (!conn) continue;
+
+    // select next feature
+    const Feature *nextFeature = conn->GetRandomFeature(this, instance.pos, random);
+    if (!nextFeature) continue;
+    
+    // make sure both features can connect
+    const FeatureConnection *revConn = nextFeature->GetRandomConnection(-conn->dir, random);
+    if (!revConn) continue;
+
+    // snap both connection points together
+    IVector3 pos = instance.pos + conn->pos - revConn->pos;
+    
+    // build the next feature if possible
+    this->BeginCheckOverwrite();
+    nextFeature->BuildFeature(this, pos, conn->dir, instance.dist, instances.size());
+    if (this->FinishCheckOverwrite()) {
+      instances.push_back(nextFeature->BuildFeature(this, pos, conn->dir, instance.dist, instances.size()));
+      instances.back().prevID = featNum;
+
+      auto m = std::make_shared<Mob>(Mob());
+      m->SetPosition(instances.back().pos + (instances.back().feature->GetSize())/2);
+      m->SetSpawnPos(instances.back().pos + (instances.back().feature->GetSize())/2);
+      this->AddMob(m);
+    }
+  } while(instances.size() < 500); 
+
+  std::cerr << "built world with " << instances.size() << " features. level " << (level) << std::endl;
+ 
+  WorldEdit e(this);
+  
+  // create caves
+  size_t caveCount = random.Integer(30)+5;
+  
+  e.SetBrush(Cell("air"));
+
+  for (size_t i = 0; i<caveCount; i++) {
+    size_t featNum = random.Integer(instances.size());
+    const FeatureInstance &instance = instances[featNum];
+    IVector3 size = instance.feature->GetSize();
+   
+    for (size_t k=0; k<10; k++) {
+    IVector3 cavePos(instance.pos + IVector3(random.Integer(size.x), random.Integer(size.y), random.Integer(size.z)));
+    size_t caveLength = random.Integer(300);
+    bool lastSolid = false;
+    
+    for (size_t j=0; j<caveLength; j++) {
+      Side nextSide = (Side)(random.Integer(6));
+      bool solid = this->GetCell(cavePos).GetInfo().flags & CellFlags::Solid;
+      if (solid && !lastSolid) {
+        e.ApplyBrush(cavePos);
+      }
+      lastSolid = solid;
+      cavePos = cavePos[nextSide];
+    }
+    }
   }
-  ser.WriteToFile("world.dat"); 
+  this->Dump();
 }
 
 World::~World() {
@@ -86,9 +158,12 @@ World::SetCell(const IVector3 &pos, const Cell &cell, bool ignoreLock) {
   if (this->cells[i].GetIgnoreWrite()) return this->defaultCell;
 
   defaultMask[i] = false;
+ 
+  size_t featId = this->cells[i].GetFeatureID();
   this->cells[i] = cell;
   this->cells[i].SetWorld(this);
   this->cells[i].SetPosition(pos);
+  this->cells[i].SetFeatureID(featId);
   this->cells[i].UpdateNeighbours();
 
   //this->lightDirty = true;
@@ -142,8 +217,6 @@ World::Draw() {
     for (size_t i=0; i<this->cellCount; i++) {
       Cell &cell = this->cells[i];
       const CellInfo &info = cell.GetInfo();
-      
-      cell.UpdateVertices();
 
       // don't add dynamic cells to static vertex buffer
       if (info.flags & CellFlags::Dynamic) {
@@ -153,6 +226,8 @@ World::Draw() {
      
       // don't bother with invisible cells 
       if (info.flags & CellFlags::DoNotRender || !cell.GetVisibility()) continue;
+
+      cell.UpdateVertices();
 
       // group vertex buffers by texture
       unsigned int tex = cell.GetTexture();
@@ -219,6 +294,42 @@ World::Draw() {
   for (auto mob : this->mobs) {
     mob->Draw();
   }
+}
+
+void
+World::DrawMap(
+) {
+  std::vector<Vertex> verts;
+
+  for (size_t i=0; i<this->instances.size(); i++) {
+    if (i >= this->seenFeatures.size() || !this->seenFeatures[i]) continue;
+
+    const FeatureInstance &inst = this->instances[i];
+
+    Vector3 pos(inst.pos);
+    Vector3 size(inst.feature->GetSize());
+    pos.x += 0.5;
+    pos.z += 0.5;
+    pos.y += size.y*0.5;
+    size.x -= 1.0;
+    size.z -= 1.0;
+
+    verts.push_back(Vertex(pos,                          IColor(255,255,255), 0, 0));
+    verts.push_back(Vertex(pos+Vector3(     0,0,size.z), IColor(255,255,255), 0, 1));
+    verts.push_back(Vertex(pos+Vector3(size.x,0,size.z), IColor(255,255,255), 1, 1));
+    verts.push_back(Vertex(pos+Vector3(size.x,0,     0), IColor(255,255,255), 1, 0));
+  }
+  glEnableClientState(GL_VERTEX_ARRAY);
+  glEnableClientState(GL_COLOR_ARRAY);
+  glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+  
+  glBindTexture      (GL_TEXTURE_2D,  0);
+  glInterleavedArrays(GL_T2F_C3F_V3F, sizeof(Vertex), &verts[0]);
+  glDrawArrays       (GL_QUADS,       0, verts.size());
+
+  glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+  glDisableClientState(GL_COLOR_ARRAY);
+  glDisableClientState(GL_VERTEX_ARRAY);
 }
 
 void 
@@ -528,7 +639,7 @@ World::CheckMob(const IVector3 &pos) {
 
 IColor 
 World::GetLight(const IVector3 &pos) const {
-  return GetCell(pos).GetLightLevel() + ambientLight;
+  return (GetCell(pos).GetLightLevel().Gamma(2.2)) + ambientLight;
 }
 
 void
@@ -616,5 +727,20 @@ bool
 World::IsDefault(const IVector3 &pos) {
   if (!IsValidCellPosition(pos)) return true;
   return defaultMask[GetCellIndex(pos)];
+}
+
+void
+World::AddFeatureSeen(size_t f) {
+  if (f == ~0UL) return;
+  if (seenFeatures.size() <= f) seenFeatures.resize(f+1, false);
+  seenFeatures[f] = true;
+ 
+  if (instances[f].prevID != ~0UL) seenFeatures[instances[f].prevID] = true;
+  for (size_t i=0; i<instances.size(); i++) {
+    if (instances[i].prevID == f) {
+      if (seenFeatures.size() <= i) seenFeatures.resize(i+1, false);
+      seenFeatures[i] = true;
+    }
+  }
 }
 

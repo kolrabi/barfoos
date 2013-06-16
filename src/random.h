@@ -15,7 +15,7 @@ public:
   void Seed(const std::string &s, size_t n = 0) {
     std::seed_seq seq(s.begin(), s.end());
     gen = std::mt19937(seq);
-    gen.discard(n+1);
+    gen.discard((n+1)%1023);
   }
   
   uint32_t Integer(){

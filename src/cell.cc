@@ -86,7 +86,8 @@ Cell::Cell(const std::string &type) : info(&cellInfos[type])
   this->ignoreLock = false;
   this->ignoreWrite = false;
   this->type = type;
-  SetDirty();
+  this->featureID = ~0;
+  this->SetDirty();
   
   for (size_t i=0; i<6; i++)
     this->neighbours[i] = nullptr;
@@ -227,15 +228,16 @@ Cell::Flow(Side side) {
     if ((cell->detail >= detail && side != Side::Down) || cell->detail >= 16) return false;
   }
   
+  detail -= 1;
   if (cell->info != this->info) {
     this->world->SetCell(GetPosition()[side], Cell(type));
     cell->detail = 1;
     cell->smoothDetail = 0;
+    cell->UpdateVertices();
   } else {
     cell->detail++;
   }
   
-  detail -= 1;
   if (!detail) {
     this->world->SetCell(GetPosition(), Cell("air"));
   }
@@ -368,7 +370,7 @@ Cell::UpdateNeighbours(
     for (size_t i=0; i<6; i++) {
       c = c.Max(neighbours[i]->lightLevel);
     }
-    c = (c * 0.80f) - 32;
+    c = (c * 0.75f);
     c = c.Max(info->light);
     c = c.Max(this->torchLight);
   }
@@ -668,6 +670,13 @@ bool Cell::HasSolidSides() const {
          this->neighbours[(int)Side::Right]->IsSolid() &&
          this->neighbours[(int)Side::Forward]->IsSolid() &&
          this->neighbours[(int)Side::Backward]->IsSolid();
+}
+
+bool Cell::IsFeatureBorder() const {
+  for (size_t i=0; i<6; i++) {
+    if (this->neighbours[i]->featureID == ~0UL) return true;
+  }
+  return false; 
 }
 
 Serializer &operator << (Serializer &ser, const Cell &cell) {

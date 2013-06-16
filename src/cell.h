@@ -84,6 +84,10 @@ public:
   
   uint32_t GetDetail() const;
   void SetDetail(uint32_t detail);
+
+  size_t GetFeatureID() const;
+  void SetFeatureID(size_t f);
+  bool IsFeatureBorder() const;
   
   bool HasSolidSides() const;
   
@@ -110,6 +114,7 @@ protected:
   bool isLocked;    // disallow modification via World::SetCell...
   bool ignoreLock;  // ..unless this is true
   bool ignoreWrite; // World::SetCell will only pretend to succeed
+  size_t featureID;
 
   // rendering  
   bool reversedTop;
@@ -233,6 +238,14 @@ inline uint32_t Cell::GetDetail() const {
 
 inline void Cell::SetDetail(uint32_t detail) { 
   this->detail = detail;
+}
+
+inline size_t Cell::GetFeatureID() const { 
+  return this->featureID; 
+}
+
+inline void Cell::SetFeatureID(size_t f) { 
+  this->featureID = f;
 }
 
 void LoadCells();

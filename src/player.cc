@@ -58,16 +58,18 @@ void
 Player::MapView() {
   if (!headCell) return;
 
+  this->world->AddFeatureSeen(headCell->GetFeatureID());
+
   Vector3 fwd   = (GetAngles()).EulerToVector();
   Vector3 pos(smoothPosition);
 
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
-  glOrtho(-20, 20, -20, 20, 0.15, 8);
+  glOrtho(-32, 32, -32, 32, 0.15, 64);
 
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity();
-  gluLookAt(pos.x, pos.y+4, pos.z, pos.x, pos.y-1, pos.z, fwd.x,fwd.y,fwd.z);
+  gluLookAt(pos.x, pos.y+16, pos.z, pos.x, 0, pos.z, fwd.x,fwd.y,fwd.z);
 }
 
 void 

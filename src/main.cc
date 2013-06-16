@@ -100,13 +100,15 @@ int main() {
   }
 
   // Light fog for the right mood
-  float black[4] = { 0.1,0.1,0.2,1 };
+  float black[4] = { 0,0,0,1 };
   glEnable(GL_FOG);
   glFogfv(GL_FOG_COLOR, black);
+  glFogf(GL_FOG_START, 0);
+  glFogf(GL_FOG_END, 64);
   glHint(GL_FOG_HINT, GL_NICEST);
 
   // Create new game
-  game = new Game("seed");
+  game = new Game("seed", time(0));
   
   float lastT = glfwGetTime();
   while (glfwGetWindowParam(GLFW_OPENED)) {

@@ -4,6 +4,7 @@
 #include "common.h"
 #include "cell.h"
 #include "util.h"
+#include "feature.h"
 
 class Mob;
 class Random;
@@ -17,6 +18,7 @@ public:
   const IVector3 &GetSize() const { return size; }
 
   void Draw();
+  void DrawMap();
   void Update(float t);
   
   void AddMob(const std::shared_ptr<Mob> &mob);
@@ -48,6 +50,8 @@ public:
   bool IsDefault(const IVector3 &pos);
 
   float GetDeltaT() const { return deltaT; }
+
+  void AddFeatureSeen(size_t f);
 
 private:
 
@@ -82,10 +86,13 @@ private:
   std::map<unsigned int, std::vector<Vertex>> vertices;
   std::vector<unsigned int> vbos;  
  
+  std::vector<bool> seenFeatures;
+
   bool checkOverwrite;
   bool checkOverwriteOK;
 
   int level;
+  std::vector<FeatureInstance> instances;
 };
 
 inline Cell &

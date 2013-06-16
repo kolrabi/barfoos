@@ -169,6 +169,12 @@ struct IColor {
   bool operator!=(const IColor &o) const { 
     return !(r==o.r && g==o.g && b==o.b);
   }
+
+  IColor Gamma(float gamma, int max=255) const {
+    return IColor( std::pow(r/(float)max, gamma)*max,
+                   std::pow(g/(float)max, gamma)*max,
+                   std::pow(b/(float)max, gamma)*max );
+  }
 };
 
 static inline std::ostream & operator<< (std::ostream &out, const IColor &c) {
