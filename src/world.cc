@@ -99,10 +99,11 @@ World::World(const IVector3 &size, int level, Random &rnd) :random(rnd)
       instances.push_back(nextFeature->BuildFeature(this, pos, conn->dir, instance.dist, instances.size()));
       instances.back().prevID = featNum;
 
+      /*
       auto m = std::make_shared<Mob>(Mob());
       m->SetPosition(instances.back().pos + (instances.back().feature->GetSize())/2);
       m->SetSpawnPos(instances.back().pos + (instances.back().feature->GetSize())/2);
-      this->AddMob(m);
+      this->AddMob(m);*/
     }
   } while(instances.size() < 500); 
 
@@ -385,18 +386,19 @@ World::Update(
  */
 bool 
 World::CastRayX(const Vector3 &org, float dir) {
-  size_t x = org.x; // start cell x
+  bool movingRight = dir > 0;
+  size_t x = org.x - (movingRight?0.01f:-0.01f); // start cell x
   size_t y = org.y; // start cell y
   size_t z = org.z; // start cell z
-  bool movingRight = dir > 0;
 
   // end cell x
-  size_t x2 = (org.x+dir + (movingRight?0.001f:-0.001f));
+  size_t x2 = (org.x+dir + 2*(movingRight?0.01f:-0.01f));
   if (x2 == x) return false; // not crossing cell borders
   
   const Cell &cell = this->GetCell(IVector3(x2,y,z));
   bool solid = cell.GetInfo().flags & CellFlags::Solid;
   bool heightCheck = org.y < (y + cell.GetHeight( movingRight?0:0.999f, org.z));
+  if (solid && heightCheck) std::cerr << "X" << IVector3(x2,y,z);
   return solid && heightCheck;
 }
 
@@ -410,17 +412,18 @@ World::CastRayX(const Vector3 &org, float dir) {
  */
 bool 
 World::CastRayZ(const Vector3 &org, float dir) {
+  bool movingForward = dir > 0;
   size_t x = org.x; // start cell x
   size_t y = org.y; // start cell y
-  size_t z = org.z; // start cell z
-  bool movingForward = dir > 0;
+  size_t z = org.z - (movingForward>0?0.01f:-0.01f); // start cell z
 
-  size_t z2 = (org.z + dir + (movingForward>0?0.001f:-0.001f));
+  size_t z2 = (org.z + dir + 2*(movingForward>0?0.01f:-0.01f));
   if (z2 == z) return false; // not crossing cell borders
 
   const Cell &cell = this->GetCell(IVector3(x, y, z2));
   bool solid = cell.GetInfo().flags & CellFlags::Solid;
   bool heightCheck = org.y < (y+cell.GetHeight( org.x, movingForward?0:0.999f));
+  if (solid && heightCheck) std::cerr << "Z" << IVector3(x,y,z2);
   return solid && heightCheck;
 }
 
@@ -491,8 +494,6 @@ Vector3 World::MoveAABB(
   // are we moving at all?
   if (dist.GetSquareMag() == 0.0f) return center;
 
-  bool movingRight   = dist.x > 0;
-  bool movingForward = dist.z > 0;
   bool movingUp      = dist.y > 0;
 
   // create vertices that serve as origins for ray check. must be at most
@@ -520,29 +521,29 @@ Vector3 World::MoveAABB(
     bool keepGoing = false;
     Vector3 d = (target-center).Horiz();
 
-    if (d.GetSquareMag() > 1.0) {
-      d = d.Normalize();
+    if (d.GetMag() > 1.0) {
+      d = d.Normalize()*1.0;
       keepGoing = true;
     }
 
     for (const Vector3 &v : verts) {
-      if (!(axis & Axis::X) && CastRayX(center + v, d.x)) {
+      if (d.x && std::signbit(v.x) == std::signbit(d.x) && CastRayX(center + v, d.x)) {
         // collided along x axis, move aabb to collider cell side
-        if (movingRight) {
-          center.x = ((int)center.x + 1) - aabb.extents.x - 0.001f;
-        } else {
-          center.x = ((int)center.x) + aabb.extents.x + 0.001f;
+        if (d.x > 0) {
+          center.x = ((int)center.x + 1) - aabb.extents.x - 0.01f;
+        } else if (d.x < 0) {
+          center.x = ((int)center.x) + aabb.extents.x + 0.01f;
         }
 
         axis |= Axis::X; target.x = center.x; d.x = 0;
       }
 
-      if (!(axis & Axis::Z) && CastRayZ(center + v, d.z)) {
+      if (d.z && std::signbit(v.z) == std::signbit(d.z) && CastRayZ(center + v, d.z)) {
         // collided along z axis, move aabb to collider cell side
-        if (movingForward) {
-          center.z = ((int)center.z + 1) - aabb.extents.z - 0.001f;
-        } else {
-          center.z = ((int)center.z) + aabb.extents.z + 0.001f;
+        if (d.z > 0) {
+          center.z = ((int)center.z + 1) - aabb.extents.z - 0.01f;
+        } else if (d.z < 0) {
+          center.z = ((int)center.z) + aabb.extents.z + 0.01f;
         }
 
         axis |= Axis::Z; target.z = center.z; d.z = 0;
@@ -557,11 +558,13 @@ Vector3 World::MoveAABB(
     center.z += d.z;
 
     // check if nothing left to do for horizontal movement
-    if (axis & Axis::X  &&  axis & Axis::Z) break;
+    if (axis & Axis::X  && axis & Axis::Z) break;
 
     // was this the final pass?
     if (!keepGoing) break;
   }
+  
+  //if (axis) std::cerr << std::endl;
 
   if (movingUp) {
     float endY = size.y;
@@ -593,8 +596,7 @@ Vector3 World::MoveAABB(
   }
   
   // update y position
-  center.y = target.y;
-  
+  center.y = target.y; 
 
   // done
   return center;

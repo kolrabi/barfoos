@@ -178,6 +178,12 @@ Player::DrawGUI() {
   glPopMatrix();
   glMatrixMode(GL_PROJECTION);
   glPopMatrix();
+  
+  std::stringstream str;
+  str << (GetAngles().EulerToVector()) << smoothPosition;
+  
+  RenderString rs(str.str());
+  rs.Draw(0,0);
 }
 
 void

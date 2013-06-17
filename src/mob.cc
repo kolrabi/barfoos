@@ -105,9 +105,9 @@ Mob::Update(float t) {
     Vector3 step(0, move.GetMag()!=0 ? stepHeight : 0, 0);
     
     aabb.center = this->world->MoveAABB(aabb, aabb.center + step, axis2);
-    aabb.extents.y -= stepHeight/2;
+    //aabb.extents.y -= stepHeight/2;
     aabb.center = this->world->MoveAABB(aabb, aabb.center + velocity.Horiz()*deltaT, axis);
-    aabb.extents.y += stepHeight/2;
+    //aabb.extents.y += stepHeight/2;
     aabb.center = this->world->MoveAABB(aabb, aabb.center - step*1.25 + velocity.Vert()*deltaT, axis2);
     axis |= axis2;
     if (!axis2 & Axis::Y) aabb.center = aabb.center + step*0.25;

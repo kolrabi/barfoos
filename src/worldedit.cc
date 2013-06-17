@@ -5,6 +5,11 @@ WorldEdit::WorldEdit(World *world) : world(world) {}
 WorldEdit::WorldEdit(const std::shared_ptr<World> &world) : WorldEdit(world.get()) {}
 WorldEdit::~WorldEdit() {}
 
+WorldEdit &WorldEdit::SetBrush(const Cell &brush) {
+  this->brush = brush; 
+  return *this; 
+}
+
 WorldEdit &WorldEdit::ApplyBrush(const IVector3 &pos) { 
   this->world->SetCell(pos, this->brush); 
   return *this; 

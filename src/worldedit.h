@@ -13,7 +13,7 @@ public:
   WorldEdit(const std::shared_ptr<World> &world);
   ~WorldEdit();
  
-  WorldEdit &SetBrush(const Cell &brush) { this->brush = brush; return *this; }
+  WorldEdit &SetBrush(const Cell &brush);
   WorldEdit &ApplyBrush(const IVector3 &pos);
 
   WorldEdit &LineX(const IVector3 &pos, size_t length);

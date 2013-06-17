@@ -4,22 +4,42 @@
 #include <sys/stat.h>
 #include <dirent.h>
 
-static const std::string assetPrefix("../assets/");
+static const std::vector<const char *> assetPrefix { "../assets/", DATA_PATH "/" };
 
-FILE *openAsset(const std::string &path) {
-  FILE *f;
-  f = fopen((assetPrefix + path).c_str(), "rb");
+static std::string getAssetPath(const std::string &name) {
+  for (std::string prefix : assetPrefix) {
+    std::string fullPath = prefix + name;
+    struct stat st;
+    int res = stat(fullPath.c_str(), &st);
+    if (res >= 0) return fullPath;
+  }
+  return "";
+}
+
+static bool fileIsDir(const std::string &path) {
+  struct stat st;
+  int res = stat(path.c_str(), &st);
+  if (res < 0) return false;
+  return S_ISDIR(st.st_mode);
+}
+
+FILE *openAsset(const std::string &name) {
+  std::string fullPath = getAssetPath(name);
+  
+  FILE *f = fopen(fullPath.c_str(), "rb");
   if (f) {
-    std::cerr << "reading " << (assetPrefix + path) << std::endl;
+    std::cerr << "reading " << fullPath << std::endl;
   } else {
-    std::cerr << "could not open " << (assetPrefix + path) << std::endl;
+    std::cerr << "could not open asset file " << name << std::endl;
   }
   return f;
 }
 
 static size_t getFileSize(const std::string &name) {
+  std::string fullPath = getAssetPath(name);
+  
   struct stat st;
-  int res = stat((assetPrefix + name).c_str(), &st);
+  int res = stat(fullPath.c_str(), &st);
   if (res < 0) return 0;
   return st.st_size;
 }
@@ -43,20 +63,24 @@ std::string loadAssetAsString(const std::string &name) {
 }
 
 time_t getFileChangeTime(const std::string &name) {
+  std::string fullPath = getAssetPath(name);
+  
   struct stat st;
-  int res = stat((assetPrefix + name).c_str(), &st);
+  int res = stat(fullPath.c_str(), &st);
   if (res < 0) return 0;
   return st.st_mtime;
 }
 
 std::vector<std::string> findAssets(const std::string &type) {
+  std::string fullPath = getAssetPath(type);
   std::vector<std::string> assets;
 
-  DIR *dir = opendir((assetPrefix+type).c_str());
+  DIR *dir = opendir(fullPath.c_str());
 
   dirent *ent;
   while((ent = readdir(dir)) != nullptr) { 
-    assets.push_back(ent->d_name);
+    if (ent->d_name[0] != '.' && !fileIsDir(fullPath+"/"+ent->d_name))
+      assets.push_back(ent->d_name);
   }
 
   closedir(dir);

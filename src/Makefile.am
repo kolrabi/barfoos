@@ -1,8 +1,8 @@
-# vim:noet
+## vim:noet
 
 ## Build ----------------------------------------------------------
 
-CF=$(GL_CFLAGS) -Werror -Wall -Wextra -I$(top_srcdir)/src
+CF=$(GL_CFLAGS) -Werror -Wall -Wextra -I$(top_srcdir)/src -DDATA_PATH=\"$(pkgdatadir)\"
 
 if WINDOOF
 RESFILE=res.rc icon.ico
