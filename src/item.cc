@@ -5,6 +5,8 @@
 
 #include <GL/glfw.h>
 
+extern int screenWidth, screenHeight;
+
 Item::Item() {
   range = 5;
   cooldown = 1;
@@ -58,7 +60,11 @@ void Item::Use(Entity &entity, const Vector3 &pos, const Vector3 &dir, bool left
 }
 
 void
-Item::DrawIcon(float x, float y) {
-  (void)x;
-  (void)y;
+Item::DrawIcon(float x, float y, float w, float h) {
+  drawIcon(x,y, w, h, icon);
+}
+
+void
+Item::DrawBillboard(const Vector3 &pos) {
+  drawBillboard(pos+Vector3(0,0.25,0), 0.25, 0.25, icon);
 }

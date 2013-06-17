@@ -54,9 +54,8 @@ void RenderString::Draw(float x, float y) {
     dirty = false;
   }
   
-  if (screenWidth <= 320) scaleX = 8;
-  else if (screenWidth <= 640) scaleX = 16;
-  else scaleX = 32;
+  if (screenWidth <= 640) scaleX = 8;
+  else scaleX = 16;
   scaleY = scaleX*2;
   
   glBindTexture(GL_TEXTURE_2D, tex);

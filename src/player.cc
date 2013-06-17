@@ -35,6 +35,7 @@ Player::Player() {
   this->itemActiveLeft = false;
   this->itemActiveRight = false;
   this->crosshairTex = loadTexture("gui/crosshair");
+  this->slotTex = loadTexture("gui/slot");
 }
 
 Player::~Player() {
@@ -90,6 +91,10 @@ Player::Update(float t) {
 }
 
 void Player::Draw() {
+  Vector3 pos(this->spawnPos);
+  pos.y = this->smoothPosition.y;
+  glColor3ub(255, 255, 255);
+  activeItem->DrawBillboard(pos);
 }
 
 void
@@ -164,20 +169,18 @@ Player::DrawWeapons() {
 
 void 
 Player::DrawGUI() {
-  glMatrixMode(GL_PROJECTION);
-  glPushMatrix();
-  glLoadIdentity();
+  viewGUI();
   
-  glMatrixMode(GL_MODELVIEW);
-  glPushMatrix();
-  glLoadIdentity();
-
   glColor3ub(255, 255, 255);
-  drawBillboard(Vector3(), 32.0/screenWidth, 32.0/screenHeight, crosshairTex);  
   
-  glPopMatrix();
-  glMatrixMode(GL_PROJECTION);
-  glPopMatrix();
+  drawIcon(screenWidth/2, screenHeight/2, 16, 16, crosshairTex);  
+  
+  float scale = 1;
+  if (screenWidth <= 640) scale = 1;
+  else scale = 2;
+  
+  drawIcon(screenWidth-16*scale, screenHeight-(32+16)*scale, 16*scale, 16*scale, slotTex);
+  activeItem->DrawIcon(screenWidth-16*scale, screenHeight-(32+16)*scale, 16*scale, 16*scale);
   
   std::stringstream str;
   str << (GetAngles().EulerToVector()) << smoothPosition;

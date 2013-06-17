@@ -2,6 +2,8 @@
 
 #include <GL/glfw.h>
 
+extern int screenWidth, screenHeight;
+
 void drawUnitCube() {
   glBegin(GL_QUADS);
     
@@ -75,6 +77,35 @@ void drawBillboard(const Vector3 &pos, float w, float h, unsigned int tex, float
   glTexCoord2f(u,   0); glVertex2f(-w,-h);
   glTexCoord2f(u+uw,0); glVertex2f( w,-h);
   glTexCoord2f(u+uw,1); glVertex2f( w, h);
+  glEnd();
+
+  glPopMatrix();
+}
+
+void viewGUI() {
+  glMatrixMode(GL_PROJECTION);
+  glLoadIdentity();
+  
+  glMatrixMode(GL_MODELVIEW);
+  glLoadIdentity();
+  
+  glScalef(2.0/screenWidth, -2.0/screenHeight, 1);
+  glTranslatef(-screenWidth/2,-screenHeight/2, 0);
+}
+
+void drawIcon(float x, float y, float w, float h, unsigned int tex, float u, float uw) {
+  glMatrixMode(GL_MODELVIEW);
+  glPushMatrix();
+  
+  glTranslatef(x, y, 0);
+  
+  glBindTexture(GL_TEXTURE_2D, tex);
+
+  glBegin(GL_QUADS);
+  glTexCoord2f(u,   0); glVertex2f(-w, h);
+  glTexCoord2f(u,   1); glVertex2f(-w,-h);
+  glTexCoord2f(u+uw,1); glVertex2f( w,-h);
+  glTexCoord2f(u+uw,0); glVertex2f( w, h);
   glEnd();
 
   glPopMatrix();

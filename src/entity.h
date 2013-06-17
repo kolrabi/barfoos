@@ -5,6 +5,7 @@
 
 class Cell;
 class World;
+class Item;
 
 class Entity {
 public:
@@ -39,6 +40,8 @@ protected:
   float frame;
   size_t animation;
   std::vector<Animation> anims;
+  
+  std::vector<std::shared_ptr<Item>> inventory;
   
   unsigned int texture, aboveTexture, belowTexture;
   

@@ -37,6 +37,7 @@ private:
   bool itemActiveLeft, itemActiveRight;
   
   unsigned int crosshairTex;
+  unsigned int slotTex;
 };
 
 

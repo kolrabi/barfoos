@@ -6,6 +6,7 @@
 
 Weapon::Weapon() {
   this->texture = loadTexture("items/sword2");
+  this->icon = loadTexture("items/sword2");
   this->cooldown = 0.2;
 }
 
