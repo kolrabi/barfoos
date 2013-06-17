@@ -11,7 +11,7 @@ Mob::Mob() {
   lastJumpT = 0;
   inWater  = false;
   underWater  = false;
-  stepHeight = 0.35;
+  stepHeight = 0.5;
   mass = 1.0;
   maxSpeed = 2;
 
@@ -103,12 +103,14 @@ Mob::Update(float t) {
   } else if (movingDown) {
     // when moving down and pushing use step height
     Vector3 step(0, move.GetMag()!=0 ? stepHeight : 0, 0);
+    Vector3 org = aabb.center + velocity.Horiz()*deltaT;
     
     aabb.center = this->world->MoveAABB(aabb, aabb.center + step, axis2);
-    //aabb.extents.y -= stepHeight/2;
     aabb.center = this->world->MoveAABB(aabb, aabb.center + velocity.Horiz()*deltaT, axis);
-    //aabb.extents.y += stepHeight/2;
     aabb.center = this->world->MoveAABB(aabb, aabb.center - step*1.25 + velocity.Vert()*deltaT, axis2);
+    org.y = aabb.center.y;
+    axis |= axis2;
+    aabb.center = this->world->MoveAABB(aabb, org, axis2);
     axis |= axis2;
     if (!axis2 & Axis::Y) aabb.center = aabb.center + step*0.25;
   } else if (!movingDown) {

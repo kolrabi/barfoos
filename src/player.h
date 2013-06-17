@@ -28,12 +28,13 @@ public:
 private:
 
   void UpdateInput();
+  void DrawInventorySlot(float x, float y, size_t slot);
+
   float bobPhase;
   float bobAmplitude;
 
   std::shared_ptr<Entity> selectedMob;
   
-  std::shared_ptr<Item> activeItem;
   bool itemActiveLeft, itemActiveRight;
   
   unsigned int crosshairTex;

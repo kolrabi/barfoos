@@ -31,7 +31,7 @@ Player::Player() {
 
   noclip = false;
   
-  this->activeItem = std::make_shared<Weapon>(Weapon());
+  this->inventory[(size_t)InventorySlot::RightHand] = std::make_shared<Weapon>(Weapon());
   this->itemActiveLeft = false;
   this->itemActiveRight = false;
   this->crosshairTex = loadTexture("gui/crosshair");
@@ -82,19 +82,19 @@ Player::Update(float t) {
 
   Vector3 fwd   = (GetAngles()).EulerToVector();
   Vector3 pos = smoothPosition + Vector3(0,eyeHeight,0);
-  if (itemActiveLeft) {
-    this->activeItem->Use(*this, pos, fwd, true);
+  if (itemActiveLeft && this->inventory[(size_t)InventorySlot::RightHand]) {
+    this->inventory[(int)InventorySlot::RightHand]->Use(*this, pos, fwd, true);
   }
-  if (itemActiveRight) {
-    this->activeItem->Use(*this, pos, fwd, false);
+  if (itemActiveRight && this->inventory[(size_t)InventorySlot::LeftHand]) {
+    this->inventory[(int)InventorySlot::LeftHand]->Use(*this, pos, fwd, false);
   }
 }
 
 void Player::Draw() {
-  Vector3 pos(this->spawnPos);
-  pos.y = this->smoothPosition.y;
-  glColor3ub(255, 255, 255);
-  activeItem->DrawBillboard(pos);
+  //Vector3 pos(this->spawnPos);
+  //pos.y = this->smoothPosition.y;
+  //glColor3ub(255, 255, 255);
+  //activeItem->DrawBillboard(pos);
 }
 
 void
@@ -164,7 +164,7 @@ Player::DrawWeapons() {
 
   glColor3ub(light.r, light.g, light.b);
 
-  this->activeItem->Draw();
+  this->inventory[(size_t)InventorySlot::RightHand]->Draw();
 }
 
 void 
@@ -180,7 +180,9 @@ Player::DrawGUI() {
   else scale = 2;
   
   drawIcon(screenWidth-16*scale, screenHeight-(32+16)*scale, 16*scale, 16*scale, slotTex);
-  activeItem->DrawIcon(screenWidth-16*scale, screenHeight-(32+16)*scale, 16*scale, 16*scale);
+  inventory[(size_t)InventorySlot::RightHand]->DrawIcon(screenWidth-16*scale, screenHeight-(32+16)*scale, 16*scale, 16*scale);
+
+  DrawInventorySlot(screenWidth - 16*scale, screenHeight-(32+16)*scale, (size_t)InventorySlot::RightHand);
   
   std::stringstream str;
   str << (GetAngles().EulerToVector()) << smoothPosition;
@@ -194,3 +196,15 @@ Player::MouseClick(int button, bool down) {
   if (button == GLFW_MOUSE_BUTTON_LEFT) this->itemActiveLeft = down;
   if (button == GLFW_MOUSE_BUTTON_RIGHT) this->itemActiveRight = down;
 }
+
+void 
+Player::DrawInventorySlot(float x, float y, size_t slot) {
+  float scale = 1;
+  if (screenWidth <= 640) scale = 1;
+  else scale = 2;
+
+  drawIcon(x, y, 16*scale, 16*scale, slotTex);
+  if (slot < inventory.size() && inventory[slot] != nullptr)
+    inventory[slot]->DrawIcon(x, y, 16*scale, 16*scale);
+}
+

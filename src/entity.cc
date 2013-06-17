@@ -19,6 +19,8 @@ Entity::Entity() {
   texture = 0;
   aboveTexture = 0;
   belowTexture = 0;
+
+  inventory.resize(48, nullptr);
 }
 
 Entity::~Entity() {
