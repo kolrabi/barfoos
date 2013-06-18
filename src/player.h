@@ -25,6 +25,8 @@ public:
   
   void MouseClick(int button, bool down);
 
+  const IColor &GetTorchLight();
+
 private:
 
   void UpdateInput();
@@ -34,6 +36,8 @@ private:
   float bobAmplitude;
 
   std::shared_ptr<Entity> selectedMob;
+
+  IColor torchLight;
   
   bool itemActiveLeft, itemActiveRight;
   

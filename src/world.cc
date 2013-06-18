@@ -4,6 +4,7 @@
 #include "cell.h"
 #include "util.h"
 #include "mob.h"
+#include "player.h"
 #include "simplex.h"
 
 #include "random.h"
@@ -15,7 +16,7 @@
 World::World(const IVector3 &size, int level, Random &rnd) :random(rnd)
 {  
   this->defaultShader = new Shader("default");
-  this->ambientLight = IColor(32, 32, 64);
+  this->ambientLight = IColor();
   this->checkOverwrite = false;
   this->size = size;
   this->dirty = true;
@@ -257,13 +258,10 @@ World::Draw() {
   glEnableClientState(GL_VERTEX_ARRAY);
   glEnableClientState(GL_COLOR_ARRAY);
   glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-
-  float torch = simplexNoise(Vector3(lastT*5, lastT, 0));
-  IColor torchColor(torch*128+192, (torch*128+192)*0.9, (torch*128+192)*0.6);
   
   this->defaultShader->Bind();
   this->defaultShader->Uniform("u_texture", 0);
-  this->defaultShader->Uniform("u_torch", torchColor);
+  this->defaultShader->Uniform("u_torch", player->GetTorchLight());
 
   // draw each vertex buffer 
   auto iter = vertices.begin();
@@ -277,7 +275,6 @@ World::Draw() {
   }
 
   glBindBuffer(GL_ARRAY_BUFFER, 0);
-  Shader::Unbind();
 
   // get vertices for dynamic cells
   std::map<GLuint, std::vector<Vertex>> dynvertices;
@@ -300,6 +297,7 @@ World::Draw() {
   glDisableClientState(GL_TEXTURE_COORD_ARRAY);
   glDisableClientState(GL_COLOR_ARRAY);
   glDisableClientState(GL_VERTEX_ARRAY);
+  Shader::Unbind();
 
   // draw all mobs
   for (auto mob : this->mobs) {
@@ -683,12 +681,19 @@ World::AddMob(const std::shared_ptr<Mob> &mob) {
   mob->SetWorld(this);
 }
 
+void 
+World::AddPlayer(const std::shared_ptr<Player> &mob) {
+  AddMob(mob);
+  this->player = mob;
+}
+
 void
 World::RemoveMob(const std::shared_ptr<Mob> &mob) {
   auto iter = std::find(mobs.begin(), mobs.end(), mob);
   if (iter == mobs.end()) return;
   (*iter)->SetWorld(nullptr);
   mobs.erase(iter);
+  if (this->player == mob) this->player = nullptr;
 }
 
 std::vector<std::shared_ptr<Mob>> 

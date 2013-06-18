@@ -7,6 +7,7 @@
 #include "feature.h"
 
 class Mob;
+class Player;
 class Random;
 class Shader;
 
@@ -23,6 +24,7 @@ public:
   void Update(float t);
   
   void AddMob(const std::shared_ptr<Mob> &mob);
+  void AddPlayer(const std::shared_ptr<Player> &mob);
   void RemoveMob(const std::shared_ptr<Mob> &mob);
   bool CheckMob(const IVector3 &pos);
   std::vector<std::shared_ptr<Mob>> FindMobs(const AABB &aabb);
@@ -85,6 +87,7 @@ private:
   IColor ambientLight;
   
   std::vector<std::shared_ptr<Mob>> mobs;
+  std::shared_ptr<Player> player;
 
   std::map<unsigned int, std::vector<Vertex>> vertices;
   std::vector<unsigned int> vbos;  

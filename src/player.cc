@@ -3,6 +3,7 @@
 #include "cell.h"
 #include "text.h"
 #include "util.h"
+#include "simplex.h"
 #include "worldedit.h"
 #include "weapon.h"
 
@@ -93,6 +94,9 @@ Player::Update(float t) {
   if (itemActiveRight && this->inventory[(size_t)InventorySlot::LeftHand]) {
     this->inventory[(int)InventorySlot::LeftHand]->Use(*this, pos, fwd, true);
   }
+  
+  float torch = simplexNoise(Vector3(lastT*4, lastT, 0)) * simplexNoise(Vector3(lastT*5, -lastT, 0));
+  this->torchLight = IColor(torch*128+192, (torch*128+192)*0.9, (torch*128+192)*0.6);
 }
 
 void Player::Draw() {
@@ -167,7 +171,8 @@ Player::DrawWeapons() {
   glLoadIdentity();
   gluLookAt(pos.x, pos.y, pos.z, tpos.x, tpos.y, tpos.z, 0,1,0);
 
-  glColor3ub(light.r, light.g, light.b);
+  IColor l = light + torchLight;
+  glColor3f(l.r/255.0, l.g/255.0, l.b/255.0);
 
   this->inventory[(size_t)InventorySlot::RightHand]->Draw(false);
   this->inventory[(size_t)InventorySlot::LeftHand]->Draw(true);
@@ -231,3 +236,6 @@ Player::DrawInventorySlot(float x, float y, size_t slot) {
     inventory[slot]->DrawIcon(x, y, 16*scale, 16*scale);
 }
 
+const IColor &Player::GetTorchLight() {
+  return torchLight;
+}

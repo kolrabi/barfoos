@@ -19,7 +19,7 @@ Game::Game(const std::string &seed, size_t level) : seed(seed), random(seed) {
   this->player = std::make_shared<Player>(Player());
   this->player->SetPosition(IVector3(32,32,32));
   this->player->SetSpawnPos(IVector3(32,32,32));
-  this->world->AddMob(this->player);
+  this->world->AddPlayer(this->player);
   this->lastT = 0;
 }
 
