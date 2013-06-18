@@ -38,6 +38,7 @@ GLuint loadTexture(const std::string &name, GLuint texture) {
   png_structp png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
   if (!png_ptr)
   {
+    std::cerr << "Error: png_create_read_struct returned 0.\n";
     fclose(fp);
     return 0;
   }
@@ -46,7 +47,7 @@ GLuint loadTexture(const std::string &name, GLuint texture) {
   png_infop info_ptr = png_create_info_struct(png_ptr);
   if (!info_ptr)
   {
-    fprintf(stderr, "error: png_create_info_struct returned 0.\n");
+    std::cerr << "Error: png_create_info_struct returned 0.\n";
     png_destroy_read_struct(&png_ptr, (png_infopp)NULL, (png_infopp)NULL);
     fclose(fp);
     return 0;
@@ -56,6 +57,7 @@ GLuint loadTexture(const std::string &name, GLuint texture) {
   png_infop end_info = png_create_info_struct(png_ptr);
   if (!end_info)
   {
+    std::cerr << "Error: png_create_info_struct returned 0.\n";
     png_destroy_read_struct(&png_ptr, &info_ptr, (png_infopp) NULL);
     fclose(fp);
     return 0;
@@ -63,9 +65,10 @@ GLuint loadTexture(const std::string &name, GLuint texture) {
 
   // the code in this if statement gets called if libpng encounters an error
   if (setjmp(png_jmpbuf(png_ptr))) {
-      png_destroy_read_struct(&png_ptr, &info_ptr, &end_info);
-      fclose(fp);
-      return 0;
+    std::cerr << "Error: Could not read image.\n";
+    png_destroy_read_struct(&png_ptr, &info_ptr, &end_info);
+    fclose(fp);
+    return 0;
   }
 
   // init png reading
@@ -82,8 +85,6 @@ GLuint loadTexture(const std::string &name, GLuint texture) {
 
   // get info about png
   png_get_IHDR(png_ptr, info_ptr, &w, &h, &bit_depth, &color_type, NULL, NULL, NULL);
-
-  fprintf(stderr, "%lu %lu %d % d\n", w, h, bit_depth, color_type);
 
   // Update the png info struct.
   png_read_update_info(png_ptr, info_ptr);

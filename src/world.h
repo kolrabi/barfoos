@@ -37,6 +37,8 @@ public:
   float CastRayYDown(const Vector3 &org);
 
   Cell &CastRayCell(const Vector3 &org, const Vector3 &dir, float &distance, Side &side);
+  bool IsPointSolid(const Vector3 &org);
+  bool IsAABBSolid(const AABB &aabb);
 
   Vector3 MoveAABB(const AABB &aabb, const Vector3 &dir, uint8_t &axis);
   

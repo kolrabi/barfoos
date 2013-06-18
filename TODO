@@ -1,0 +1,32 @@
+shaders for better lighting
+
+gui
+  inventory gui
+  main menu
+
+items (entities)
+  torches (equippable, placable)
+  wands
+  scrolls
+  armor
+  rings
+  amulets
+  more weapons
+
+particles (entities)
+doors
+treasure chests
+
+projectiles (magic, ranged weapons)
+persistence
+connect maps
+
+experience
+  level up
+
+npcs
+  dialogs
+  shops
+  more monsters
+
+

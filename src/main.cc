@@ -6,6 +6,8 @@
 #include "world.h"
 #include "player.h"
 #include "game.h"
+#include <png.h>
+#include <zlib.h>
 
 #include <cctype>
 
@@ -61,7 +63,31 @@ void resize(int x, int y) {
   glMatrixMode(GL_MODELVIEW);
 }
 
+static std::string credits() {
+  std::string str;
+
+  str += " GLFW - An OpenGL framework Version 2.7.8";
+  str += "\n"
+         "   Copyright (c) 2002-2006 Marcus Geelnard\n"
+         "   Copyright (c) 2006-2010 Camilla Berglund\n";
+  str += "\n";
+  
+  str += " GLee (OpenGL Easy Extension library) Version 5.2\n"
+         "   Copyright (c)2006  Ben Woodhouse  All rights reserved.\n";
+  str += "\n";
+
+  str += " zlib version ";
+  str += ZLIB_VERSION;
+  str += "\n"
+         "   Copyright (C) 1995-2012 Jean-loup Gailly and Mark Adler\n";
+         
+  str += png_get_copyright(nullptr);  
+  return str;
+}
+
 int main() {
+  std::cerr << credits() << std::endl;
+
   // Set up glfw
   if (!glfwInit()) {
     std::cerr << "Could not initialize GLFW\n";

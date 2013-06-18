@@ -24,7 +24,6 @@ World::World(const IVector3 &size, int level, Random &rnd) :random(rnd)
   this->defaultMask = std::vector<bool>(this->cellCount, true);
   
   IVector3 r(random.Integer(), random.Integer(), random.Integer());
-  std::cerr << r << std::endl;
   std::cerr << this->cellCount << " cells, " << (sizeof(Cell)*this->cellCount) << std::endl;
   
   for (size_t i=0; i<this->cellCount; i++) {
@@ -390,7 +389,7 @@ World::CastRayX(const Vector3 &org, float dir) {
   size_t x = org.x - (movingRight?0.01f:-0.01f); // start cell x
   size_t y = org.y; // start cell y
   size_t z = org.z; // start cell z
-
+  
   // end cell x
   size_t x2 = (org.x+dir + 2*(movingRight?0.01f:-0.01f));
   if (x2 == x) return false; // not crossing cell borders
@@ -399,7 +398,6 @@ World::CastRayX(const Vector3 &org, float dir) {
   bool solid = cell.GetInfo().flags & CellFlags::Solid;
   bool heightCheck = org.y < (y + cell.GetHeight( movingRight?0:0.999f, org.z))/* &&
                      org.y > (y + cell.GetHeightBottom( movingRight?0:0.999f, org.z)) */;
-//  if (solid && heightCheck) std::cerr << "X" << IVector3(x2,y,z);
   return solid && heightCheck;
 }
 
@@ -425,7 +423,6 @@ World::CastRayZ(const Vector3 &org, float dir) {
   bool solid = cell.GetInfo().flags & CellFlags::Solid;
   bool heightCheck = org.y < (y+cell.GetHeight( org.x, movingForward?0:0.999f)) /*&&
                      org.y > (y+cell.GetHeightBottom( org.x, movingForward?0:0.999f)) */;
-//  if (solid && heightCheck) std::cerr << "Z" << IVector3(x,y,z2);
   return solid && heightCheck;
 }
 
@@ -440,6 +437,8 @@ World::CastRayYUp(const Vector3 &org) {
   size_t x = org.x; // start cell x
   size_t y = org.y; // start cell y
   size_t z = org.z; // start cell z
+  
+  if (GetCell(IVector3(x,y,z)).IsSolid() && y > GetCell(IVector3(x,y,z)).GetHeightBottom(org.x, org.z)) return y;
   
   while (y < this->size.y) {
     const Cell &cell = this->GetCell(IVector3(x,y,z));
@@ -463,6 +462,8 @@ World::CastRayYDown(const Vector3 &org) {
   size_t y = org.y; // start cell y
   size_t z = org.z; // start cell z
 
+  if (GetCell(IVector3(x,y,z)).IsSolid() && y < GetCell(IVector3(x,y,z)).GetHeight(org.x, org.z)) return y-1;
+  
   float endY = 0;
 
   // iterate from the bottom of the world up to the start cell
@@ -473,6 +474,47 @@ World::CastRayYDown(const Vector3 &org) {
     }
   }
   return endY;
+}
+
+bool
+World::IsPointSolid(const Vector3 &org) {
+  size_t x = org.x; // start cell x
+  size_t y = org.y; // start cell y
+  size_t z = org.z; // start cell z
+  
+  const Cell &cell = this->GetCell(IVector3(x,y,z));
+  return cell.IsSolid() && (org.y - y) >= cell.GetHeightBottom(org.x, org.z) && (org.y - y) <= cell.GetHeight(org.x, org.z);
+}
+
+bool 
+World::IsAABBSolid(const AABB &aabb) {
+  std::vector<Vector3> verts;
+  verts.push_back(Vector3(-aabb.extents.x, -aabb.extents.y, -aabb.extents.z));
+  verts.push_back(Vector3( aabb.extents.x, -aabb.extents.y, -aabb.extents.z));
+  verts.push_back(Vector3(-aabb.extents.x, -aabb.extents.y,  aabb.extents.z));
+  verts.push_back(Vector3( aabb.extents.x, -aabb.extents.y,  aabb.extents.z));
+  verts.push_back(Vector3(-aabb.extents.x,  aabb.extents.y, -aabb.extents.z));
+  verts.push_back(Vector3( aabb.extents.x,  aabb.extents.y, -aabb.extents.z));
+  verts.push_back(Vector3(-aabb.extents.x,  aabb.extents.y,  aabb.extents.z));
+  verts.push_back(Vector3( aabb.extents.x,  aabb.extents.y,  aabb.extents.z));
+  
+  for (Vector3 v : verts) {
+    if (IsPointSolid(aabb.center + v)) return true;
+  }
+  
+  float top = aabb.center.y + aabb.extents.y + 0.01;
+  if (CastRayYUp(verts[0]) < top) return true;
+  if (CastRayYUp(verts[1]) < top) return true;
+  if (CastRayYUp(verts[2]) < top) return true;
+  if (CastRayYUp(verts[3]) < top) return true;
+  
+  float bot = aabb.center.y - aabb.extents.y - 0.01;
+  if (CastRayYDown(verts[4]) > bot) return true;
+  if (CastRayYDown(verts[5]) > bot) return true;
+  if (CastRayYDown(verts[6]) > bot) return true;
+  if (CastRayYDown(verts[7]) > bot) return true;
+  
+  return false;
 }
 
 /**
@@ -539,47 +581,55 @@ Vector3 World::MoveAABB(
       d = d.Normalize()*1.0;
       keepGoing = true;
     }
-
+    
     for (const Vector3 &v : verts) {
-      if (d.x && std::signbit(v.x) == std::signbit(d.x) && CastRayX(center + v, d.x)) {
-        // collided along x axis, move aabb to collider cell side
+      if (IsPointSolid(center + v + Vector3(d.x + (d.x>0?0.01:-0.01), 0, 0))) {
+        float newX = d.x;
         if (d.x > 0) {
-          center.x = ((int)center.x + 1) - aabb.extents.x - 0.01f;
+          newX = ((int)center.x + 1) - aabb.extents.x - 0.01f;
         } else if (d.x < 0) {
-          center.x = ((int)center.x) + aabb.extents.x + 0.01f;
+          newX = ((int)center.x) + aabb.extents.x + 0.01f;
         }
 
-        axis |= Axis::X; target.x = center.x; d.x = 0;
+        if (std::abs(newX - center.x) < std::abs(d.x))        
+          d.x = newX - center.x;
+          
+        axis |= Axis::X; 
       }
-
-      if (d.z && std::signbit(v.z) == std::signbit(d.z) && CastRayZ(center + v, d.z)) {
-        // collided along z axis, move aabb to collider cell side
-        if (d.z > 0) {
-          center.z = ((int)center.z + 1) - aabb.extents.z - 0.01f;
-        } else if (d.z < 0) {
-          center.z = ((int)center.z) + aabb.extents.z + 0.01f;
-        }
-
-        axis |= Axis::Z; target.z = center.z; d.z = 0;
-      }
-      
-      // check if nothing left to do for horizontal movement
-      if (axis & Axis::X  &&  axis & Axis::Z) break;
     }
 
     // update center to new position
     center.x += d.x;
+    
+    for (const Vector3 &v : verts) {
+      if (IsPointSolid(center + v + Vector3(0, 0, d.z + (d.z>0?0.01:-0.01)))) {
+        float newZ = d.z;
+        if (d.z > 0) {
+          newZ = ((int)center.z + 1) - aabb.extents.z - 0.01f;
+        } else if (d.z < 0) {
+          newZ = ((int)center.z) + aabb.extents.z + 0.01f;
+        }
+
+        if (std::abs(newZ - center.z) < std::abs(d.z))
+          d.z = newZ - center.z;
+          
+        axis |= Axis::Z; 
+      }
+    }
+    
+    // update center to new position
     center.z += d.z;
+    
+    if (axis & Axis::X) target.x = center.x;
+    if (axis & Axis::Z) target.z = center.z;
 
     // check if nothing left to do for horizontal movement
-    if (axis & Axis::X  && axis & Axis::Z) break;
+    if (axis & Axis::X && axis & Axis::Z) break;
 
     // was this the final pass?
     if (!keepGoing) break;
   }
   
-  //if (axis) std::cerr << std::endl;
-
   if (movingUp) {
     float endY = size.y;
     // get lowest collision point

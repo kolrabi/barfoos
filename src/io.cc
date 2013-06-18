@@ -27,9 +27,7 @@ FILE *openAsset(const std::string &name) {
   std::string fullPath = getAssetPath(name);
   
   FILE *f = fopen(fullPath.c_str(), "rb");
-  if (f) {
-    std::cerr << "reading " << fullPath << std::endl;
-  } else {
+  if (!f) {
     std::cerr << "could not open asset file " << name << std::endl;
   }
   return f;
