@@ -11,7 +11,7 @@ public:
 
   virtual void UseOnEntity(const std::shared_ptr<Entity> &ent, const Vector3 &p, bool left);
   virtual void UseOnCell(Cell *cell, Side side, bool left);
-  virtual void Draw();
+  virtual void Draw(bool left);
 
 protected:
 

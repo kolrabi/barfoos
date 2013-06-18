@@ -32,10 +32,15 @@ Player::Player() {
   noclip = false;
   
   this->inventory[(size_t)InventorySlot::RightHand] = std::make_shared<Weapon>(Weapon());
+  this->inventory[(size_t)InventorySlot::LeftHand] = std::make_shared<Weapon>(Weapon());
+
   this->itemActiveLeft = false;
   this->itemActiveRight = false;
+
   this->crosshairTex = loadTexture("gui/crosshair");
   this->slotTex = loadTexture("gui/slot");
+  this->slotLeftHandTex = loadTexture("gui/slot-lh");
+  this->slotRightHandTex = loadTexture("gui/slot-rh");
 }
 
 Player::~Player() {
@@ -86,7 +91,7 @@ Player::Update(float t) {
     this->inventory[(int)InventorySlot::RightHand]->Use(*this, pos, fwd, true);
   }
   if (itemActiveRight && this->inventory[(size_t)InventorySlot::LeftHand]) {
-    this->inventory[(int)InventorySlot::LeftHand]->Use(*this, pos, fwd, false);
+    this->inventory[(int)InventorySlot::LeftHand]->Use(*this, pos, fwd, true);
   }
 }
 
@@ -164,7 +169,8 @@ Player::DrawWeapons() {
 
   glColor3ub(light.r, light.g, light.b);
 
-  this->inventory[(size_t)InventorySlot::RightHand]->Draw();
+  this->inventory[(size_t)InventorySlot::RightHand]->Draw(false);
+  this->inventory[(size_t)InventorySlot::LeftHand]->Draw(true);
 }
 
 void 
@@ -179,10 +185,21 @@ Player::DrawGUI() {
   if (screenWidth <= 640) scale = 1;
   else scale = 2;
   
-  drawIcon(screenWidth-16*scale, screenHeight-(32+16)*scale, 16*scale, 16*scale, slotTex);
-  inventory[(size_t)InventorySlot::RightHand]->DrawIcon(screenWidth-16*scale, screenHeight-(32+16)*scale, 16*scale, 16*scale);
+//  drawIcon(screenWidth-16*scale, screenHeight-(32+16)*scale, 16*scale, 16*scale, slotTex);
+//  inventory[(size_t)InventorySlot::RightHand]->DrawIcon(screenWidth-16*scale, screenHeight-(32+16)*scale, 16*scale, 16*scale);
 
   DrawInventorySlot(screenWidth - 16*scale, screenHeight-(32+16)*scale, (size_t)InventorySlot::RightHand);
+  DrawInventorySlot(16*scale, screenHeight-(32+16)*scale, (size_t)InventorySlot::LeftHand);
+  
+  DrawInventorySlot(16*scale + 0*32*scale, screenHeight-(16)*scale, (size_t)InventorySlot::QuickSlot1);
+  DrawInventorySlot(16*scale + 1*32*scale, screenHeight-(16)*scale, (size_t)InventorySlot::QuickSlot2);
+  DrawInventorySlot(16*scale + 2*32*scale, screenHeight-(16)*scale, (size_t)InventorySlot::QuickSlot3);
+  DrawInventorySlot(16*scale + 3*32*scale, screenHeight-(16)*scale, (size_t)InventorySlot::QuickSlot4);
+  
+  DrawInventorySlot(screenWidth - 16*scale - 3*32*scale, screenHeight-(16)*scale, (size_t)InventorySlot::QuickSlot5);
+  DrawInventorySlot(screenWidth - 16*scale - 2*32*scale, screenHeight-(16)*scale, (size_t)InventorySlot::QuickSlot6);
+  DrawInventorySlot(screenWidth - 16*scale - 1*32*scale, screenHeight-(16)*scale, (size_t)InventorySlot::QuickSlot7);
+  DrawInventorySlot(screenWidth - 16*scale - 0*32*scale, screenHeight-(16)*scale, (size_t)InventorySlot::QuickSlot8);
   
   std::stringstream str;
   str << (GetAngles().EulerToVector()) << smoothPosition;
@@ -203,7 +220,13 @@ Player::DrawInventorySlot(float x, float y, size_t slot) {
   if (screenWidth <= 640) scale = 1;
   else scale = 2;
 
-  drawIcon(x, y, 16*scale, 16*scale, slotTex);
+  if (slot == (size_t)InventorySlot::LeftHand)
+    drawIcon(x, y, 16*scale, 16*scale, slotLeftHandTex);
+  else if (slot == (size_t)InventorySlot::RightHand)
+    drawIcon(x, y, 16*scale, 16*scale, slotRightHandTex);
+  else
+    drawIcon(x, y, 16*scale, 16*scale, slotTex);
+
   if (slot < inventory.size() && inventory[slot] != nullptr)
     inventory[slot]->DrawIcon(x, y, 16*scale, 16*scale);
 }

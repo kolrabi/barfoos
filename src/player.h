@@ -39,6 +39,8 @@ private:
   
   unsigned int crosshairTex;
   unsigned int slotTex;
+  unsigned int slotRightHandTex;
+  unsigned int slotLeftHandTex;
 };
 
 

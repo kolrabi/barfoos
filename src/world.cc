@@ -397,8 +397,8 @@ World::CastRayX(const Vector3 &org, float dir) {
   
   const Cell &cell = this->GetCell(IVector3(x2,y,z));
   bool solid = cell.GetInfo().flags & CellFlags::Solid;
-  bool heightCheck = org.y < (y + cell.GetHeight( movingRight?0:0.999f, org.z)) &&
-                     org.y > (y + cell.GetHeightBottom( movingRight?0:0.999f, org.z));
+  bool heightCheck = org.y < (y + cell.GetHeight( movingRight?0:0.999f, org.z))/* &&
+                     org.y > (y + cell.GetHeightBottom( movingRight?0:0.999f, org.z)) */;
 //  if (solid && heightCheck) std::cerr << "X" << IVector3(x2,y,z);
   return solid && heightCheck;
 }
@@ -423,8 +423,8 @@ World::CastRayZ(const Vector3 &org, float dir) {
 
   const Cell &cell = this->GetCell(IVector3(x, y, z2));
   bool solid = cell.GetInfo().flags & CellFlags::Solid;
-  bool heightCheck = org.y < (y+cell.GetHeight( org.x, movingForward?0:0.999f)) &&
-                     org.y > (y+cell.GetHeightBottom( org.x, movingForward?0:0.999f));
+  bool heightCheck = org.y < (y+cell.GetHeight( org.x, movingForward?0:0.999f)) /*&&
+                     org.y > (y+cell.GetHeightBottom( org.x, movingForward?0:0.999f)) */;
 //  if (solid && heightCheck) std::cerr << "Z" << IVector3(x,y,z2);
   return solid && heightCheck;
 }
@@ -507,10 +507,22 @@ Vector3 World::MoveAABB(
   verts.push_back(Vector3(-aabb.extents.x, -aabb.extents.y,  aabb.extents.z));
   verts.push_back(Vector3( aabb.extents.x, -aabb.extents.y, -aabb.extents.z));
   verts.push_back(Vector3( aabb.extents.x, -aabb.extents.y,  aabb.extents.z));
+
+  verts.push_back(Vector3(-aabb.extents.x, -aabb.extents.y/2, -aabb.extents.z));
+  verts.push_back(Vector3(-aabb.extents.x, -aabb.extents.y/2,  aabb.extents.z));
+  verts.push_back(Vector3( aabb.extents.x, -aabb.extents.y/2, -aabb.extents.z));
+  verts.push_back(Vector3( aabb.extents.x, -aabb.extents.y/2,  aabb.extents.z));
+
   verts.push_back(Vector3(-aabb.extents.x,               0, -aabb.extents.z));
   verts.push_back(Vector3(-aabb.extents.x,               0,  aabb.extents.z));
   verts.push_back(Vector3( aabb.extents.x,               0, -aabb.extents.z));
   verts.push_back(Vector3( aabb.extents.x,               0,  aabb.extents.z));
+
+  verts.push_back(Vector3(-aabb.extents.x,  aabb.extents.y/2, -aabb.extents.z));
+  verts.push_back(Vector3(-aabb.extents.x,  aabb.extents.y/2,  aabb.extents.z));
+  verts.push_back(Vector3( aabb.extents.x,  aabb.extents.y/2, -aabb.extents.z));
+  verts.push_back(Vector3( aabb.extents.x,  aabb.extents.y/2,  aabb.extents.z));
+
   verts.push_back(Vector3(-aabb.extents.x,  aabb.extents.y, -aabb.extents.z));
   verts.push_back(Vector3(-aabb.extents.x,  aabb.extents.y,  aabb.extents.z));
   verts.push_back(Vector3( aabb.extents.x,  aabb.extents.y, -aabb.extents.z));

@@ -63,7 +63,7 @@ public:
 
   virtual void UseOnEntity(const std::shared_ptr<Entity> &ent, const Vector3 &p, bool left) = 0;
   virtual void UseOnCell(Cell *cell, Side side, bool left) = 0;
-  virtual void Draw() {}
+  virtual void Draw(bool left) { (void)left; }
   virtual void DrawIcon(float x, float y, float w, float h);
   virtual void DrawBillboard(const Vector3 &pos);
   

@@ -26,13 +26,14 @@ void Weapon::UseOnCell(Cell *cell, Side side, bool left) {
   }
 }
 
-void Weapon::Draw() {
+void Weapon::Draw(bool left) {
   float now = glfwGetTime();
+
+  glPushMatrix();
   
   glDisable(GL_CULL_FACE);
-  glScalef(1, 1, 1);
+  glScalef(left ? -1 : 1, 1, 1);
   glTranslatef(-1, -2, 4);
-  // glScalef(0.25, 0.25, 0.5);
   glRotatef(-60, 0, 1, 0);
 
   // cooldown fraction: 1.0 full cooldown left, 0.0 cooldown over
@@ -50,4 +51,6 @@ void Weapon::Draw() {
   glTexCoord2f(0,0); glVertex3f( 1,-1,0);
   glTexCoord2f(1,0); glVertex3f(-1,-1,0);
   glEnd();
+  
+  glPopMatrix();
 }
