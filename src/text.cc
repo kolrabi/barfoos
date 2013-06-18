@@ -77,7 +77,7 @@ void RenderString::Draw(float x, float y) {
   glEnableClientState(GL_TEXTURE_COORD_ARRAY);
   
   glBindTexture(GL_TEXTURE_2D, tex);
-  glInterleavedArrays(GL_T2F_C3F_V3F, sizeof(Vertex), &vertices[0]);
+  glInterleavedArrays(GL_T2F_C4F_N3F_V3F, sizeof(Vertex), &vertices[0]);
 
   glColor3ub(255, 255, 0);  
   glTranslatef(x+0.5, y+0.5, 0);

@@ -10,8 +10,11 @@
 #include "serializer.h"
 #include "worldedit.h"
 
+#include "shader.h"
+
 World::World(const IVector3 &size, int level, Random &rnd) :random(rnd)
 {  
+  this->defaultShader = new Shader("default");
   this->ambientLight = IColor(32, 32, 64);
   this->checkOverwrite = false;
   this->size = size;
@@ -255,18 +258,26 @@ World::Draw() {
   glEnableClientState(GL_COLOR_ARRAY);
   glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
+  float torch = simplexNoise(Vector3(lastT*5, lastT, 0));
+  IColor torchColor(torch*128+192, (torch*128+192)*0.9, (torch*128+192)*0.6);
+  
+  this->defaultShader->Bind();
+  this->defaultShader->Uniform("u_texture", 0);
+  this->defaultShader->Uniform("u_torch", torchColor);
+
   // draw each vertex buffer 
   auto iter = vertices.begin();
   for (size_t i=0; i<this->vertices.size(); i++, iter++) {
     glBindBuffer       (GL_ARRAY_BUFFER, this->vbos[i]);
     //glBindBuffer       (GL_ARRAY_BUFFER, 0);
     glBindTexture      (GL_TEXTURE_2D,   iter->first);
-    glInterleavedArrays(GL_T2F_C3F_V3F,  sizeof(Vertex), nullptr);
-    //glInterleavedArrays(GL_T2F_C3F_V3F,  sizeof(Vertex), &iter->second[0]);
+    glInterleavedArrays(GL_T2F_C4F_N3F_V3F,  sizeof(Vertex), nullptr);
+    //glInterleavedArrays(GL_T2F_C4F_N3F_V3F,  sizeof(Vertex), &iter->second[0]);
     glDrawArrays       (GL_TRIANGLES,    0, iter->second.size());
   }
 
   glBindBuffer(GL_ARRAY_BUFFER, 0);
+  Shader::Unbind();
 
   // get vertices for dynamic cells
   std::map<GLuint, std::vector<Vertex>> dynvertices;
@@ -282,7 +293,7 @@ World::Draw() {
   iter = dynvertices.begin();
   for (size_t i=0; i<dynvertices.size(); i++, iter++) {
     glBindTexture      (GL_TEXTURE_2D,  iter->first);
-    glInterleavedArrays(GL_T2F_C3F_V3F, sizeof(Vertex), &iter->second[0]);
+    glInterleavedArrays(GL_T2F_C4F_N3F_V3F, sizeof(Vertex), &iter->second[0]);
     glDrawArrays       (GL_TRIANGLES,   0, iter->second.size());
   }
 
@@ -324,7 +335,7 @@ World::DrawMap(
   glEnableClientState(GL_TEXTURE_COORD_ARRAY);
   
   glBindTexture      (GL_TEXTURE_2D,  0);
-  glInterleavedArrays(GL_T2F_C3F_V3F, sizeof(Vertex), &verts[0]);
+  glInterleavedArrays(GL_T2F_C4F_N3F_V3F, sizeof(Vertex), &verts[0]);
   glDrawArrays       (GL_QUADS,       0, verts.size());
 
   glDisableClientState(GL_TEXTURE_COORD_ARRAY);

@@ -28,6 +28,7 @@ barfoos_SOURCES=\
   game.cc game.h \
   simplex.cc simplex.h \
   text.cc text.h \
+  shader.cc shader.h \
   \
   entity.cc entity.h \
   mob.cc mob.h \

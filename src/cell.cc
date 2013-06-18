@@ -483,13 +483,15 @@ Cell::SideVerts(Side side, std::vector<Vertex> &verts, bool reverse) const {
   int tile = 0;
   int inv = 0;
   int r, s, t;
+  Vector3 norm;
+  
   switch(side) {
-    case Side::Right:    r = Corner100; s = CornerY; t = CornerZ; uvec.z = uscale; break;
-    case Side::Left:     r = Corner000; s = CornerY; t = CornerZ; uvec.z = uscale; inv = CornerZ; tile = 1; break;
-    case Side::Forward:  r = Corner001; s = CornerY; t = CornerX; uvec.x = uscale; inv = CornerX; tile = 2; break;
-    case Side::Backward: r = Corner000; s = CornerY; t = CornerX; uvec.x = uscale; tile = 3; break;
-    case Side::Up:       r = Corner010; s = CornerZ; t = CornerX; uvec.x = uscale; vvec = Vector3(0,0,1); tile = 4; break;
-    case Side::Down:     r = Corner000; s = CornerZ; t = CornerX; uvec.x = uscale; vvec = Vector3(0,0,1); inv = CornerZ; tile = 5; break;
+    case Side::Right:    norm = Vector3( 1,0,0); r = Corner100; s = CornerY; t = CornerZ; uvec.z = uscale; break;
+    case Side::Left:     norm = Vector3(-1,0,0); r = Corner000; s = CornerY; t = CornerZ; uvec.z = uscale; inv = CornerZ; tile = 1; break;
+    case Side::Forward:  norm = Vector3(0,0, 1); r = Corner001; s = CornerY; t = CornerX; uvec.x = uscale; inv = CornerX; tile = 2; break;
+    case Side::Backward: norm = Vector3(0,0,-1); r = Corner000; s = CornerY; t = CornerX; uvec.x = uscale; tile = 3; break;
+    case Side::Up:       norm = Vector3(0, 1,0); r = Corner010; s = CornerZ; t = CornerX; uvec.x = uscale; vvec = Vector3(0,0,1); tile = 4; break;
+    case Side::Down:     norm = Vector3(0,-1,0); r = Corner000; s = CornerZ; t = CornerX; uvec.x = uscale; vvec = Vector3(0,0,1); inv = CornerZ; tile = 5; break;
     default: return;
   }
   
@@ -531,27 +533,27 @@ Cell::SideVerts(Side side, std::vector<Vertex> &verts, bool reverse) const {
 
   if (reverse) {
     if (drawA) {
-      verts.push_back(Vertex(pos[0]+this->pos, colors[0], u[0], v[0]));
-      verts.push_back(Vertex(pos[1]+this->pos, colors[1], u[1], v[1]));
-      verts.push_back(Vertex(pos[3]+this->pos, colors[3], u[3], v[3]));
+      verts.push_back(Vertex(pos[0]+this->pos, colors[0], u[0], v[0], norm));
+      verts.push_back(Vertex(pos[1]+this->pos, colors[1], u[1], v[1], norm));
+      verts.push_back(Vertex(pos[3]+this->pos, colors[3], u[3], v[3], norm));
     }
 
     if (drawB) {
-      verts.push_back(Vertex(pos[1]+this->pos, colors[1], u[1], v[1]));
-      verts.push_back(Vertex(pos[2]+this->pos, colors[2], u[2], v[2]));
-      verts.push_back(Vertex(pos[3]+this->pos, colors[3], u[3], v[3]));
+      verts.push_back(Vertex(pos[1]+this->pos, colors[1], u[1], v[1], norm));
+      verts.push_back(Vertex(pos[2]+this->pos, colors[2], u[2], v[2], norm));
+      verts.push_back(Vertex(pos[3]+this->pos, colors[3], u[3], v[3], norm));
     }
   } else {
     if (drawA) {
-      verts.push_back(Vertex(pos[0]+this->pos, colors[0], u[0], v[0]));
-      verts.push_back(Vertex(pos[1]+this->pos, colors[1], u[1], v[1]));
-      verts.push_back(Vertex(pos[2]+this->pos, colors[2], u[2], v[2]));
+      verts.push_back(Vertex(pos[0]+this->pos, colors[0], u[0], v[0], norm));
+      verts.push_back(Vertex(pos[1]+this->pos, colors[1], u[1], v[1], norm));
+      verts.push_back(Vertex(pos[2]+this->pos, colors[2], u[2], v[2], norm));
     }
 
     if (drawB) {
-      verts.push_back(Vertex(pos[0]+this->pos, colors[0], u[0], v[0]));
-      verts.push_back(Vertex(pos[2]+this->pos, colors[2], u[2], v[2]));
-      verts.push_back(Vertex(pos[3]+this->pos, colors[3], u[3], v[3]));
+      verts.push_back(Vertex(pos[0]+this->pos, colors[0], u[0], v[0], norm));
+      verts.push_back(Vertex(pos[2]+this->pos, colors[2], u[2], v[2], norm));
+      verts.push_back(Vertex(pos[3]+this->pos, colors[3], u[3], v[3], norm));
     }
   }
 }

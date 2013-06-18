@@ -8,6 +8,7 @@
 
 class Mob;
 class Random;
+class Shader;
 
 class World final {
 public:
@@ -95,6 +96,8 @@ private:
 
   int level;
   std::vector<FeatureInstance> instances;
+
+  Shader *defaultShader;
 };
 
 inline Cell &
