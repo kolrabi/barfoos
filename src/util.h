@@ -25,7 +25,7 @@ void updateTextures();
 std::vector <std::string> findAssets(const std::string &type);
 
 void drawUnitCube();
-void drawBillboard(const Vector3 &pos, float w, float h, unsigned int tex, float u=0, float uw=1);  
+void drawBillboard(const Vector3 &pos, float w, float h, unsigned int tex, float u=0, float uw=1, float ofsX = 0, float ofsY = 0);  
 void drawIcon(float x, float y, float w, float h, unsigned int tex, float u=0, float uw=1);  
 void drawAABB(const AABB &aabb);
 float Wave(float x, float z, float t, float a = 0.2, float o = 0.5);

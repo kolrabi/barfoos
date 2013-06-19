@@ -12,7 +12,7 @@ void main() {
   vec3 e = -normalize(v_pos.xyz);
   float dist = length(p);
   dist *= dist;
-  dist += 1;
+  dist += 1.0;
   dist *= 0.1;
   dist = max(1.0, dist);
   

@@ -5,38 +5,34 @@
 
 #include <cmath>
 
-Mob::Mob() {
+Mob::Mob(const std::string &propertyName) : Entity(propertyName) {
   onGround = false;
   wantJump = false;
   lastJumpT = 0;
   inWater  = false;
   underWater  = false;
-  stepHeight = 0.5;
-  mass = 1.0;
-  maxSpeed = 2;
 
   this->headCell = this->groundCell = this->footCell = nullptr;
 
   sneak = false;
   noclip = false;
   
-  moveInterval = 2;
   nextMoveT = 0;
   validMoveTarget = false;
-  
-  texture = loadTexture("entities/slime");
+
   frame = 0;
-  frames = 2;
   animation = 0;
+/*  
+  mass = 1.0;
+  maxSpeed = 2;
+  moveInterval = 2;
+  texture = loadTexture("entities/texture/slime");
+  frames = 2;
   anims.clear();
   anims.push_back(Animation(0,2,5));
-  
-  
-  aboveTexture = 0;
-  belowTexture = 0;
   maxHealth = health = 5;
-
   aabb.extents = Vector3(0.4, 0.4, 0.4);
+  */
 }
 
 Mob::~Mob() {
@@ -47,20 +43,20 @@ Mob::Update(float t) {
   Entity::Update(t);
   if (!this->world) return;
   
-  if (moveInterval != 0) {
+  if (this->properties->moveInterval != 0) {
     if (t > nextMoveT) {
-      nextMoveT += moveInterval;
+      nextMoveT += this->properties->moveInterval;
       moveTarget = aabb.center + (Vector3::Rand()-Vector3(0.5,0.5,0.5)) * 4.0;
       validMoveTarget = true;
     }
     
     Vector3 tmove = (moveTarget - aabb.center).Horiz();
     if (tmove.GetMag() < 0.1) validMoveTarget = false;
-    if (validMoveTarget) move = tmove.Normalize() * maxSpeed;
+    if (validMoveTarget) move = tmove.Normalize() * this->properties->maxSpeed;
   }
  
   float speed = move.GetMag();
-  if (speed > maxSpeed) move = move * (maxSpeed/speed);
+  if (speed > this->properties->maxSpeed) move = move * (this->properties->maxSpeed/speed);
   velocity.x = std::abs(move.x) > std::abs(velocity.x) ? move.x : velocity.x;
   velocity.z = std::abs(move.z) > std::abs(velocity.z) ? move.z : velocity.z;
 
@@ -102,7 +98,7 @@ Mob::Update(float t) {
     aabb.center = aabb.center + velocity*deltaT;
   } else if (movingDown) {
     // when moving down and pushing use step height
-    Vector3 step(0, move.GetMag()!=0 ? stepHeight : 0, 0);
+    Vector3 step(0, move.GetMag()!=0 ? this->properties->stepHeight : 0, 0);
     Vector3 org = aabb.center + velocity.Horiz()*deltaT;
     
     aabb.center = this->world->MoveAABB(aabb, aabb.center + step, axis2);
@@ -119,11 +115,11 @@ Mob::Update(float t) {
   }
 
   // jump out of water
-  if (axis & Axis::Horizontal && inWater && move.GetMag() != 0) {
+  if (axis & Axis::Horizontal && (inWater || validMoveTarget) && move.GetMag() != 0) {
     wantJump = true;
   }
 
-  IVector3 footPos(aabb.center.x, aabb.center.y - aabb.extents.y + stepHeight, aabb.center.z);
+  IVector3 footPos(aabb.center.x, aabb.center.y - aabb.extents.y + this->properties->stepHeight, aabb.center.z);
   footCell = &this->world->GetCell(footPos);
 
   if (onGround) {
@@ -152,12 +148,12 @@ Mob::Update(float t) {
   else 
     smoothPosition = smoothPosition + (aabb.center - smoothPosition) * deltaT * 30.0f;
 
-  if (anims.size() > 0) {
-    const Animation &a = anims[animation];
+  if (this->properties->anims.size() > 0) {
+    const Animation &a = this->properties->anims[animation];
     frame += a.fps * deltaT;
     if (frame >= a.frameCount+a.firstFrame) {
       animation = 0;
-      frame = frame - (int)frame + anims[0].firstFrame;
+      frame = frame - (int)frame + this->properties->anims[0].firstFrame;
     }
   }
   lastT = t;
@@ -176,7 +172,7 @@ Mob::SetInLiquid(bool inLiquid) {
 
 void
 Mob::Die() {
-  health = maxHealth;
+  health = this->properties->maxHealth;
   SetPosition(spawnPos);
 }
 

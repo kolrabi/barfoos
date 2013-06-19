@@ -5,22 +5,89 @@
 
 #include <GL/glfw.h>
 
-Entity::Entity() {
+#include <cstring>
+
+static std::map<std::string, EntityProperties *> allEntities;
+EntityProperties defaultEntity;
+
+const EntityProperties *getEntity(const std::string &name) {
+  if (allEntities.find(name) == allEntities.end()) {
+    std::cerr << "entity " << name << " not found" << std::endl;
+    return nullptr;
+  }
+  return allEntities[name];
+}
+
+EntityProperties::EntityProperties() {
+}
+
+EntityProperties::EntityProperties(FILE *f) {
+  char line[256];
+  
+  while(fgets(line, 256, f) && !feof(f)) {
+    if (line[0] == '#') continue;
+    
+    std::vector<std::string> tokens;
+    char *p = line;
+    char *q;
+    do {
+      q = strchr(p, ' ');
+      if (!q) q = strchr(p, '\r');
+      if (!q) q = strchr(p, '\n');
+      if (q) *q = 0;
+      tokens.push_back(p);
+      if (q) { p = q+1; }
+    } while(q);
+    if (tokens.size() == 0) continue;
+
+    if (tokens[0] == "tex") {
+      this->texture = loadTexture("entities/texture/"+tokens[1]);
+    } else if (tokens[0] == "frames") {
+      this->frames = std::atoi(tokens[1].c_str());
+    } else if (tokens[0] == "anim") {
+      this->anims.push_back(Animation(std::atoi(tokens[1].c_str()), std::atoi(tokens[2].c_str()), std::atof(tokens[3].c_str())));
+    } else if (tokens[0] == "step") {
+      this->stepHeight = std::atof(tokens[1].c_str());
+    } else if (tokens[0] == "mass") {
+      this->mass = std::atof(tokens[1].c_str());
+    } else if (tokens[0] == "move") {
+      this->moveInterval = std::atof(tokens[1].c_str());
+    } else if (tokens[0] == "speed") {
+      this->maxSpeed = std::atof(tokens[1].c_str());
+    } else if (tokens[0] == "health") {
+      this->maxHealth = std::atoi(tokens[1].c_str());
+    } else if (tokens[0] == "extents") {
+      this->extents = Vector3( std::atof(tokens[1].c_str()), std::atof(tokens[2].c_str()), std::atof(tokens[3].c_str()) );
+    } else if (tokens[0] != "") {
+      std::cerr << "ignoring '" << tokens[0] << "'" << std::endl;
+    }
+  }
+}
+
+void
+LoadEntities() {
+  std::vector<std::string> assets = findAssets("entities");
+  for (const std::string &name : assets) {
+    FILE *f = openAsset("entities/"+name);
+    if (f) {
+      std::cerr << "loading entity " << name << std::endl;
+      allEntities[name] = new EntityProperties(f);
+      fclose(f);
+    }
+  }
+}
+
+Entity::Entity(const std::string &type) {
   lastT = 0;
   deltaT = 0;
   
   frame = 0;
-  frames = 1;
-  animation = 0;
-  anims.push_back(Animation(0,1,10));
   
-  aabb.extents = Vector3(0.5,0.5,0.5);
-
-  texture = 0;
-  aboveTexture = 0;
-  belowTexture = 0;
-
+  properties = getEntity(type);
+  aabb.extents = properties->extents;
   inventory.resize(48, nullptr);
+  
+  health = properties->maxHealth;
 }
 
 Entity::~Entity() {
@@ -39,18 +106,18 @@ Entity::Update(float t) {
 
 void
 Entity::Draw() {
-  if (this->texture == 0) return;
+  if (this->properties->texture == 0) return;
 
   float u = 0.0;
   float uw = 1.0;
-  if (frames) {
-    int f = ((int)frame) % frames;
-    uw = 1.0/frames;
+  if (this->properties->frames) {
+    int f = ((int)this->frame) % this->properties->frames;
+    uw = 1.0/this->properties->frames;
     u = f*uw;
   }
   
   glColor3ub(light.r, light.g, light.b);
-  drawBillboard(aabb.center, aabb.extents.x, aabb.extents.y, texture, u, uw);
+  drawBillboard(aabb.center, this->properties->w/2.0, this->properties->h/2.0, this->properties->texture, u, uw, -(this->properties->originX-0.5)*this->properties->w, -(this->properties->originY-0.5)*this->properties->h);
   
   if (glfwGetKey('E')) {
     glColor3f(0.25,0.25,0.25);

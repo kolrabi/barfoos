@@ -12,7 +12,7 @@ class Cell;
 class Mob : public Entity {
 public:
 
-  Mob();
+  Mob(const std::string &entityPropertyName);
   virtual ~Mob();
 
   void SetSpawnPos(const Vector3 &p) { this->spawnPos = p; }
@@ -20,7 +20,7 @@ public:
 
   virtual void Update(float t);
   
-  void ApplyForce(const Vector3 &f) { velocity = velocity + f * (deltaT/mass); }
+  void ApplyForce(const Vector3 &f) { velocity = velocity + f * (deltaT/properties->mass); }
   virtual void Die();
 
 protected:
@@ -33,18 +33,13 @@ protected:
   bool onGround;
   bool inWater;
   bool underWater;
-  float stepHeight;
-  float mass;
-
+  
   bool noclip;
   bool sneak;
   
-  float moveInterval;
   float nextMoveT;
   Vector3 moveTarget;
   bool validMoveTarget;
-  
-  float maxSpeed;
 
   Cell *headCell, *footCell, *groundCell;
 

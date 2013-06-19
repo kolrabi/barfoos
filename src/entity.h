@@ -7,9 +7,34 @@ class Cell;
 class World;
 class Item;
 
+struct EntityProperties {
+  // rendering
+  unsigned int texture = 0;
+  size_t frames = 1;
+  std::vector<Animation> anims;
+  float w = 1.0, h = 1.0;
+  float originX = 0.5, originY = 0.5;
+  
+  // movement
+  float stepHeight = 0.5f;
+  float mass = 1;
+  float moveInterval = 0;
+  float maxSpeed = 2;
+
+  // gameplay
+  int maxHealth = 5;
+  Vector3 extents;
+  
+  EntityProperties();
+  EntityProperties(FILE *f);
+};
+
+void LoadEntities();
+const EntityProperties *getEntity(const std::string &name);
+
 class Entity {
 public:
-  Entity();
+  Entity(const std::string &visualName);
   virtual ~Entity();
 
   void SetWorld(World *world) { this->world = world; }
@@ -35,20 +60,15 @@ protected:
   AABB aabb;
   Vector3 smoothPosition;
   float lastT, deltaT;
-  
-  size_t frames;
   float frame;
   size_t animation;
-  std::vector<Animation> anims;
-  
+    
   std::vector<std::shared_ptr<Item>> inventory;
-  
-  unsigned int texture, aboveTexture, belowTexture;
+  const EntityProperties *properties;
   
   IColor light;
 
   int health;
-  int maxHealth;
 };
 
 #endif

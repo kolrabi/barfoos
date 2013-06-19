@@ -48,7 +48,7 @@ void drawAABB(const AABB &aabb) {
   glPopMatrix();
 }
 
-void drawBillboard(const Vector3 &pos, float w, float h, unsigned int tex, float u, float uw) {
+void drawBillboard(const Vector3 &pos, float w, float h, unsigned int tex, float u, float uw, float ofsX, float ofsY) {
   glMatrixMode(GL_MODELVIEW);
   glPushMatrix();
   
@@ -69,6 +69,7 @@ void drawBillboard(const Vector3 &pos, float w, float h, unsigned int tex, float
   m[8] = 0; m[9] = 0; m[10] = 1;
   
   glLoadMatrixf(m);
+  glTranslatef(ofsX, ofsY, 0);
  
   glBindTexture(GL_TEXTURE_2D, tex);
 

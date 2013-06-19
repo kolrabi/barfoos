@@ -58,7 +58,7 @@ cell step
 bottom 1 1 0 1
 
 def T
-cell torch2
+cell torch
 
 slice 0 1
 &&&&&&&

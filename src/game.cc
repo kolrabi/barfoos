@@ -13,6 +13,7 @@ extern int screenHeight;
 Game::Game(const std::string &seed, size_t level) : seed(seed), random(seed) {
   LoadCells();
   LoadFeatures();
+  LoadEntities();
  
   this->BuildWorld(level);
   

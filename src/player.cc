@@ -15,21 +15,12 @@ static float eyeHeight = 0.7f;
 extern float mouseDX, mouseDY;
 extern int screenWidth, screenHeight;
 
-Player::Player() {
+Player::Player() : Mob("player") {
   aabb.center = Vector3(16,16,16);
-  aabb.extents = Vector3(0.2,0.8,0.2);
-  velocity = Vector3(0,0,1);
-
-  mass = 100;
 
   bobPhase = 0;
   bobAmplitude = 0;
   
-  texture = 0;
-  moveInterval = 0;
-  
-  maxSpeed = 5;
-
   noclip = false;
   
   this->inventory[(size_t)InventorySlot::RightHand] = std::make_shared<Weapon>(Weapon());
@@ -127,14 +118,14 @@ Player::UpdateInput(
 
   Vector3 fwd( Vector3(angles.x, 0, 0).EulerToVector() );
   Vector3 right( Vector3(angles.x+3.14159/2, 0, 0).EulerToVector() );
-  maxSpeed = sneak?2:5;
+  float speed = sneak?this->properties->maxSpeed*0.5:this->properties->maxSpeed;
 
   move = Vector3();
   
-  if (glfwGetKey('D')) move = move + right * maxSpeed;
-  if (glfwGetKey('A')) move = move - right * maxSpeed;
-  if (glfwGetKey('W')) move = move + fwd * maxSpeed;
-  if (glfwGetKey('S')) move = move - fwd * maxSpeed;
+  if (glfwGetKey('D')) move = move + right * speed;
+  if (glfwGetKey('A')) move = move - right * speed;
+  if (glfwGetKey('W')) move = move + fwd * speed;
+  if (glfwGetKey('S')) move = move - fwd * speed;
 
   if (move.GetMag() > 1.5) {
     bobAmplitude += deltaT*4;

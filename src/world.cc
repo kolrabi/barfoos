@@ -60,7 +60,7 @@ World::World(const IVector3 &size, int level, Random &rnd) :random(rnd)
   this->defaultMask = std::vector<bool>(this->cellCount, true);
   
   this->lastT = 0;
-  this->tickInterval = 1;
+  this->tickInterval = 0.3;
   this->nextTickT = 0;
 
   // build features -------------------------------------------
@@ -102,7 +102,7 @@ World::World(const IVector3 &size, int level, Random &rnd) :random(rnd)
       instances.push_back(nextFeature->BuildFeature(this, pos, conn->dir, instance.dist, instances.size()));
       instances.back().prevID = featNum;
 
-      auto m = std::make_shared<Mob>(Mob());
+      auto m = std::make_shared<Mob>(Mob("torch"));
       m->SetPosition(instances.back().pos + (instances.back().feature->GetSize())/2);
       m->SetSpawnPos(instances.back().pos + (instances.back().feature->GetSize())/2);
       this->AddMob(m);
