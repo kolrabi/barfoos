@@ -37,7 +37,7 @@ Game::Render() const {
 
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
-  gluPerspective(60.0f, (float)screenWidth/(float)screenHeight, 0.15f, 64.0f);
+  gluPerspective(60.0f, (float)screenWidth/(float)screenHeight, 0.015f, 64.0f);
 
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity();

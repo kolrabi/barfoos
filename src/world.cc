@@ -72,7 +72,7 @@ World::World(const IVector3 &size, int level, Random &rnd) :random(rnd)
   
   int loop = 0;
   do {
-    if (loop++ > 10000) break;
+    if (loop++ > 100000) break;
 
     // select a feature from which to go
     bool useLast = random.Chance(0.90);

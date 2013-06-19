@@ -15,8 +15,8 @@ Game *game = nullptr;
 size_t level = 0;
 
 bool mouseGrab = false;
-int screenWidth = 320;
-int screenHeight = 240;
+int screenWidth = 640;
+int screenHeight = 400;
 float mouseDX = 0;
 float mouseDY = 0;
 

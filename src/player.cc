@@ -95,8 +95,9 @@ Player::Update(float t) {
     this->inventory[(int)InventorySlot::LeftHand]->Use(*this, pos, fwd, true);
   }
   
-  float torch = simplexNoise(Vector3(lastT*4, lastT, 0)) * simplexNoise(Vector3(lastT*5, -lastT, 0));
-  this->torchLight = IColor(torch*128+192, (torch*128+192)*0.9, (torch*128+192)*0.6);
+  //float torch = simplexNoise(Vector3(lastT*4, lastT, 0)) * simplexNoise(Vector3(lastT*5, -lastT, 0));
+  //this->torchLight = IColor(torch*128+192, (torch*128+192)*0.9, (torch*128+192)*0.6);
+  this->torchLight = IColor(32,32,128);
 }
 
 void Player::Draw() {

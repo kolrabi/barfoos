@@ -178,20 +178,13 @@ Cell::Update(
   
   if (GetInfo().flags & CellFlags::UVTurb) {
   
-#define U(xx,zz) (sin((zz)+t*0.7)*0.5)
-#define V(xx,zz) (sin((xx)+t*0.5)*0.5)
+#define U(xx,zz) (sin((2*zz*3.14159)+t*0.5)*0.25)
+#define V(xx,zz) (cos((2*xx*3.14159)+t*0.5)*0.25)
 
-    u[0] = U(this->pos.x,this->pos.z);     
-    v[0] = V(this->pos.x,this->pos.z);
-
-    u[1] = U(this->pos.x,this->pos.z+1);
-    v[1] = V(this->pos.x,this->pos.z+1);
-
-    u[2] = U(this->pos.x+1,this->pos.z+1);
-    v[2] = V(this->pos.x+1,this->pos.z+1);
-
-    u[3] = U(this->pos.x+1,this->pos.z);
-    v[3] = V(this->pos.x+1,this->pos.z);
+    u[0] = U(0,0); v[0] = V(0,0);
+    u[1] = U(0,1); v[1] = V(0,1);
+    u[2] = U(1,1); v[2] = V(1,1);
+    u[3] = U(1,0); v[3] = V(1,0);
   }
   
   UpdateNeighbours();
