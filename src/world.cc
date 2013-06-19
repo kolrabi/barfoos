@@ -102,11 +102,10 @@ World::World(const IVector3 &size, int level, Random &rnd) :random(rnd)
       instances.push_back(nextFeature->BuildFeature(this, pos, conn->dir, instance.dist, instances.size()));
       instances.back().prevID = featNum;
 
-      /*
       auto m = std::make_shared<Mob>(Mob());
       m->SetPosition(instances.back().pos + (instances.back().feature->GetSize())/2);
       m->SetSpawnPos(instances.back().pos + (instances.back().feature->GetSize())/2);
-      this->AddMob(m);*/
+      this->AddMob(m);
     }
   } while(instances.size() < 500); 
 
