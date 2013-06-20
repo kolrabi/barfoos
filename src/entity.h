@@ -52,6 +52,7 @@ public:
   virtual void DrawBoundingBox();
   virtual void AddHealth(int points); 
   virtual void Die() {}
+  virtual void OnCollide(const std::shared_ptr<Entity> &other) { (void)other; }
 
 protected:
 

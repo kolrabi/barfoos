@@ -18,8 +18,6 @@ struct ItemClass {
 //   6  2  7       x  x  x  x
 //      3          x  x  x  x
 //                 x  x  x  x
-//
-//  16 17 18 19   20 21 22 23 
 
 enum class InventorySlot {
   Helmet     =  0, 
@@ -39,17 +37,8 @@ enum class InventorySlot {
   Reserved13 = 13,
   Reserved14 = 14,
   Reserved15 = 15,
-  
-  QuickSlot1 = 16,
-  QuickSlot2 = 17,
-  QuickSlot3 = 18,
-  QuickSlot4 = 19,
-  QuickSlot5 = 20,
-  QuickSlot6 = 21,
-  QuickSlot7 = 22,
-  QuickSlot8 = 23,
-  
-  Backpack   = 24
+
+  Backpack   = 16
   // ...
 };
 
@@ -59,21 +48,26 @@ public:
   Item();
   virtual ~Item();
 
-  virtual void Use(Entity &entity, const Vector3 &pos, const Vector3 &dir, bool left);
-
-  virtual void UseOnEntity(const std::shared_ptr<Entity> &ent, const Vector3 &p, bool left) = 0;
-  virtual void UseOnCell(Cell *cell, Side side, bool left) = 0;
-  virtual void Draw(bool left) { (void)left; }
-  virtual void DrawIcon(float x, float y, float w, float h);
-  virtual void DrawBillboard(const Vector3 &pos);
+  virtual bool CanUse() const;
+  virtual void StartCooldown();
   
-  virtual uint32_t GetEquippableSlots() { return 0; }
-  virtual bool IsTwoHanded() { return false; }
+  virtual void UseOnEntity(const std::shared_ptr<Entity> &ent) = 0;
+  virtual void UseOnCell(Cell *cell, Side side) = 0;
+  virtual void Draw(bool left) { (void)left; }
+
+  float GetRange() const { return range; }  
+  uint32_t GetEquippableSlots() { return equippable; }
+  bool IsTwoHanded() { return twoHanded; }
+  
+  virtual unsigned int GetIconTexture() const { return icon; }
 
 protected:
 
   float range;  
   unsigned int icon;
+  
+  bool twoHanded;
+  uint32_t equippable;
   
   float cooldown;
   float nextUseT;

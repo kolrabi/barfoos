@@ -1,12 +1,9 @@
 #ifndef BARFOOS_PLAYER_H
 #define BARFOOS_PLAYER_H
 
-
 #include "common.h"
 #include "mob.h"
-
-class World;
-class Item;
+#include "item.h"
 
 class Player : public Mob {
 public:
@@ -30,12 +27,16 @@ public:
 private:
 
   void UpdateInput();
-  void DrawInventorySlot(float x, float y, size_t slot);
+  void UpdateSelection();
+  void DrawInventorySlot(Point p, InventorySlot slot);
 
   float bobPhase;
   float bobAmplitude;
 
-  std::shared_ptr<Entity> selectedMob;
+  std::shared_ptr<Entity> selectedEntity;
+  Cell *selectedCell;
+  Side selectedCellSide;
+  float selectionRange;
 
   IColor torchLight;
   

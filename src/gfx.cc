@@ -1,8 +1,9 @@
 #include "common.h"
+#include "util.h"
 
 #include <GL/glfw.h>
 
-extern int screenWidth, screenHeight;
+int virtualScreenWidth, virtualScreenHeight;
 
 void drawUnitCube() {
   glBegin(GL_QUADS);
@@ -92,22 +93,47 @@ void viewGUI() {
   
   glScalef(2.0/screenWidth, -2.0/screenHeight, 1);
   glTranslatef(-screenWidth/2,-screenHeight/2, 0);
+  
+  if (screenWidth < 640) {
+    virtualScreenWidth = screenWidth;
+    virtualScreenHeight = screenHeight;
+  } else {
+    virtualScreenWidth = screenWidth/2;
+    virtualScreenHeight = screenHeight/2;
+    glScalef(2,2,1);
+  }
+  
+  glColor3ub(255, 255, 255);
 }
 
-void drawIcon(float x, float y, float w, float h, unsigned int tex, float u, float uw) {
-  glMatrixMode(GL_MODELVIEW);
+void drawIcon(const Point &center, const Point &size, unsigned int tex, float u, float uw) {
   glPushMatrix();
-  
-  glTranslatef(x, y, 0);
+  glTranslatef(center.x, center.y, 0);
   
   glBindTexture(GL_TEXTURE_2D, tex);
 
   glBegin(GL_QUADS);
-  glTexCoord2f(u,   0); glVertex2f(-w, h);
-  glTexCoord2f(u,   1); glVertex2f(-w,-h);
-  glTexCoord2f(u+uw,1); glVertex2f( w,-h);
-  glTexCoord2f(u+uw,0); glVertex2f( w, h);
+  glTexCoord2f(u,   0); glVertex2f(-size.x/2, size.y/2);
+  glTexCoord2f(u,   1); glVertex2f(-size.x/2,-size.y/2);
+  glTexCoord2f(u+uw,1); glVertex2f( size.x/2,-size.y/2);
+  glTexCoord2f(u+uw,0); glVertex2f( size.x/2, size.y/2);
   glEnd();
 
   glPopMatrix();
+}
+
+Point alignBottomLeftScreen(const Point &size, int padding) {
+  return Point( padding + size.x/2, virtualScreenHeight - padding - size.y/2 );
+}
+
+Point alignBottomRightScreen(const Point &size, int padding) {
+  return Point( virtualScreenWidth - padding - size.x/2, virtualScreenHeight - padding - size.y/2 );
+}
+
+Point alignTopLeftScreen(const Point &size, int padding) {
+  return Point( padding + size.x/2, padding + size.y/2 );
+}
+
+Point alignTopRightScreen(const Point &size, int padding) {
+  return Point( virtualScreenWidth - padding - size.x/2, padding + size.y/2 );
 }

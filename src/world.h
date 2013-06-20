@@ -6,7 +6,7 @@
 #include "util.h"
 #include "feature.h"
 
-class Mob;
+class Entity;
 class Player;
 class Random;
 class Shader;
@@ -23,11 +23,11 @@ public:
   void DrawMap();
   void Update(float t);
   
-  void AddMob(const std::shared_ptr<Mob> &mob);
-  void AddPlayer(const std::shared_ptr<Player> &mob);
-  void RemoveMob(const std::shared_ptr<Mob> &mob);
+  void AddEntity(const std::shared_ptr<Entity> &entity);
+  void AddPlayer(const std::shared_ptr<Player> &entity);
+  void RemoveEntity(const std::shared_ptr<Entity> &entity);
   bool CheckMob(const IVector3 &pos);
-  std::vector<std::shared_ptr<Mob>> FindMobs(const AABB &aabb);
+  std::vector<std::shared_ptr<Entity>> FindEntities(const AABB &aabb);
 
   Cell &GetCell(const IVector3 &pos) const;
   Cell &SetCell(const IVector3 &pos, const Cell &cell, bool ignoreLock = false);
@@ -86,7 +86,7 @@ private:
 
   IColor ambientLight;
   
-  std::vector<std::shared_ptr<Mob>> mobs;
+  std::vector<std::shared_ptr<Entity>> entities;
   std::shared_ptr<Player> player;
 
   std::map<unsigned int, std::vector<Vertex>> vertices;

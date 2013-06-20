@@ -216,5 +216,12 @@ struct Animation {
   Animation(size_t firstFrame, size_t frameCount, float fps) : firstFrame(firstFrame), frameCount(frameCount), fps(fps) {}
 };
 
+struct Point {
+  int x;
+  int y;
+  
+  Point(int x, int y) : x(x), y(y) {}
+};
+
 #endif
 

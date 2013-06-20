@@ -6,33 +6,20 @@
 #include <cmath>
 
 Mob::Mob(const std::string &propertyName) : Entity(propertyName) {
-  onGround = false;
-  wantJump = false;
-  lastJumpT = 0;
-  inWater  = false;
-  underWater  = false;
+  this->onGround = false;
+  this->wantJump = false;
+  this->lastJumpT = 0;
+  
+  this->inWater  = false;
+  this->underWater  = false;
 
   this->headCell = this->groundCell = this->footCell = nullptr;
 
-  sneak = false;
-  noclip = false;
+  this->sneak = false;
+  this->noclip = false;
   
-  nextMoveT = 0;
-  validMoveTarget = false;
-
-  frame = 0;
-  animation = 0;
-/*  
-  mass = 1.0;
-  maxSpeed = 2;
-  moveInterval = 2;
-  texture = loadTexture("entities/texture/slime");
-  frames = 2;
-  anims.clear();
-  anims.push_back(Animation(0,2,5));
-  maxHealth = health = 5;
-  aabb.extents = Vector3(0.4, 0.4, 0.4);
-  */
+  this->nextMoveT = 0;
+  this->validMoveTarget = false;
 }
 
 Mob::~Mob() {
@@ -40,7 +27,9 @@ Mob::~Mob() {
 
 void 
 Mob::Update(float t) {
+
   Entity::Update(t);
+  
   if (!this->world) return;
   
   if (this->properties->moveInterval != 0) {
@@ -142,21 +131,6 @@ Mob::Update(float t) {
     velocity.y = 0;
     onGround |= movingDown;
   }
- 
-  if (deltaT > 1.0/30.0)
-    smoothPosition = aabb.center;
-  else 
-    smoothPosition = smoothPosition + (aabb.center - smoothPosition) * deltaT * 30.0f;
-
-  if (this->properties->anims.size() > 0) {
-    const Animation &a = this->properties->anims[animation];
-    frame += a.fps * deltaT;
-    if (frame >= a.frameCount+a.firstFrame) {
-      animation = 0;
-      frame = frame - (int)frame + this->properties->anims[0].firstFrame;
-    }
-  }
-  lastT = t;
 }
 
 void
@@ -176,3 +150,9 @@ Mob::Die() {
   SetPosition(spawnPos);
 }
 
+void
+Mob::OnCollide(const std::shared_ptr<Entity> &other) {
+  Vector3 d = this->GetAABB().center - other->GetAABB().center;
+  Vector3 f = d * (100 / (1+d.GetSquareMag()));
+  this->ApplyForce(f);
+}

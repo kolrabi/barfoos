@@ -78,16 +78,18 @@ LoadEntities() {
 }
 
 Entity::Entity(const std::string &type) {
-  lastT = 0;
-  deltaT = 0;
+  this->properties = getEntity(type);
   
-  frame = 0;
+  this->lastT = 0;
+  this->deltaT = 0;
   
-  properties = getEntity(type);
-  aabb.extents = properties->extents;
-  inventory.resize(48, nullptr);
+  this->frame = 0;
+  this->animation = 0;
   
-  health = properties->maxHealth;
+  this->aabb.extents = properties->extents;
+  this->inventory.resize(48, nullptr);
+  
+  this->health = properties->maxHealth;
 }
 
 Entity::~Entity() {
@@ -101,7 +103,23 @@ Entity::Update(float t) {
   if (lastT == 0) lastT = t;
   deltaT = t - lastT;
   
+  if (this->properties->anims.size() > 0) {
+    const Animation &a = this->properties->anims[animation];
+    frame += a.fps * deltaT;
+    if (frame >= a.frameCount+a.firstFrame) {
+      animation = 0;
+      frame = frame - (int)frame + this->properties->anims[0].firstFrame;
+    }
+  }
+  
   this->light = this->world->GetLight(IVector3(aabb.center.x, aabb.center.y, aabb.center.z)).Saturate();
+  
+  if (deltaT > 1.0/30.0)
+    smoothPosition = aabb.center;
+  else 
+    smoothPosition = smoothPosition + (aabb.center - smoothPosition) * deltaT * 30.0f;
+    
+  lastT = t;
 }
 
 void

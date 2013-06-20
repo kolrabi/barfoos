@@ -13,17 +13,18 @@ Weapon::Weapon() {
 Weapon::~Weapon() {
 }
 
-void Weapon::UseOnEntity(const std::shared_ptr<Entity> &mob, const Vector3 &p, bool left) {
-  (void)p;
-  if (left) mob->AddHealth(-1);
+void Weapon::UseOnEntity(const std::shared_ptr<Entity> &entity) {
+  if (!this->CanUse()) return;
+  
+  entity->AddHealth(-1);
+  
+  this->StartCooldown();
 }
 
-void Weapon::UseOnCell(Cell *cell, Side side, bool left) {
-  if (left) {
-    cell->GetWorld()->SetCell(cell->GetPosition(), Cell("air"));
-  } else {
-    cell->GetWorld()->SetCell(cell->GetPosition()[side], Cell("lava"));
-  }
+void Weapon::UseOnCell(Cell *cell, Side side) {
+  (void)side;
+  
+  cell->GetWorld()->SetCell(cell->GetPosition(), Cell("air"));
 }
 
 void Weapon::Draw(bool left) {

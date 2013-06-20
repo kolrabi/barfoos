@@ -65,49 +65,53 @@ World::World(const IVector3 &size, int level, Random &rnd) :random(rnd)
 
   // build features -------------------------------------------
 
-  std::map<const Feature *, int> featureCounts;
+  for (size_t tries=0; tries < 10 && instances.size() < 50; tries++) {
+    instances.clear();
+    instances.push_back(getFeature("start")->BuildFeature(this, IVector3(32-4, 32-8,32-4), 0, 0, instances.size()));
+    instances.back().prevID = ~0UL;
   
-  instances.push_back(getFeature("start")->BuildFeature(this, IVector3(32-4, 32-8,32-4), 0, 0, instances.size()));
-  instances.back().prevID = ~0UL;
-  
-  int loop = 0;
-  do {
-    if (loop++ > 100000) break;
+    int loop = 0;
+    do {
+      if (loop++ > 100000) break;
 
-    // select a feature from which to go
-    bool useLast = random.Chance(0.90);
-    size_t featNum = useLast ? instances.size()-1 : (random.Integer(instances.size()));
-    const FeatureInstance &instance = instances[featNum];
+      // select a feature from which to go
+      bool useLast = random.Chance(0.90);
+      size_t featNum = useLast ? instances.size()-1 : (random.Integer(instances.size()));
+      const FeatureInstance &instance = instances[featNum];
     
-    // select a random connection from the current feature
-    const Feature *feature = instance.feature;
-    const FeatureConnection *conn = feature->GetRandomConnection(random);
-    if (!conn) continue;
+      // select a random connection from the current feature
+      const Feature *feature = instance.feature;
+      const FeatureConnection *conn = feature->GetRandomConnection(random);
+      if (!conn) continue;
 
-    // select next feature
-    const Feature *nextFeature = conn->GetRandomFeature(this, instance.pos, random);
-    if (!nextFeature) continue;
+      // select next feature
+      const Feature *nextFeature = conn->GetRandomFeature(this, instance.pos, random);
+      if (!nextFeature) continue;
     
-    // make sure both features can connect
-    const FeatureConnection *revConn = nextFeature->GetRandomConnection(-conn->dir, random);
-    if (!revConn) continue;
+      // make sure both features can connect
+      const FeatureConnection *revConn = nextFeature->GetRandomConnection(-conn->dir, random);
+      if (!revConn) continue;
 
-    // snap both connection points together
-    IVector3 pos = instance.pos + conn->pos - revConn->pos;
+      // snap both connection points together
+      IVector3 pos = instance.pos + conn->pos - revConn->pos;
     
-    // build the next feature if possible
-    this->BeginCheckOverwrite();
-    nextFeature->BuildFeature(this, pos, conn->dir, instance.dist, instances.size());
-    if (this->FinishCheckOverwrite()) {
-      instances.push_back(nextFeature->BuildFeature(this, pos, conn->dir, instance.dist, instances.size()));
-      instances.back().prevID = featNum;
+      // build the next feature if possible
+      this->BeginCheckOverwrite();
+      nextFeature->BuildFeature(this, pos, conn->dir, instance.dist, instances.size());
+      if (this->FinishCheckOverwrite()) {
+        instances.push_back(nextFeature->BuildFeature(this, pos, conn->dir, instance.dist, instances.size()));
+        instances.back().prevID = featNum;
 
-      auto m = std::make_shared<Mob>(Mob("torch"));
-      m->SetPosition(instances.back().pos + (instances.back().feature->GetSize())/2);
-      m->SetSpawnPos(instances.back().pos + (instances.back().feature->GetSize())/2);
-      this->AddMob(m);
-    }
-  } while(instances.size() < 500); 
+        if (random.Chance(0.1)) {
+          auto m = std::make_shared<Entity>(Entity("torch"));
+          IVector3 p = instances.back().pos + (instances.back().feature->GetSize())/2;
+          m->SetPosition(Vector3(p) + Vector3(0.5,0.5,0.5));
+          this->SetCell(p, Cell("torch"));
+          this->AddEntity(m);
+        }
+      }
+    } while(instances.size() < 500); 
+  }
 
   std::cerr << "built world with " << instances.size() << " features. level " << (level) << std::endl;
  
@@ -298,9 +302,9 @@ World::Draw() {
   glDisableClientState(GL_VERTEX_ARRAY);
   Shader::Unbind();
 
-  // draw all mobs
-  for (auto mob : this->mobs) {
-    mob->Draw();
+  // draw all entities
+  for (auto entity : this->entities) {
+    entity->Draw();
   }
 }
 
@@ -350,22 +354,20 @@ World::Update(
   }
   deltaT = t - lastT;
 
-  // handle collision between mobs
-  for (auto mob1 : this->mobs) {
-    for (auto mob2 : this->mobs) {
-      if (mob1 == mob2) continue;
-      if (mob1->GetAABB().Overlap(mob2->GetAABB())) {
-        Vector3 d = mob2->GetAABB().center - mob1->GetAABB().center;
-        Vector3 f = d * (100 / (1+d.GetSquareMag()));
-        mob2->ApplyForce(f);
-        mob1->ApplyForce(f * (-1));
+  // handle collision between entities
+  for (auto entity1 : this->entities) {
+    for (auto entity2 : this->entities) {
+      if (entity1 == entity2) continue;
+      if (entity1->GetAABB().Overlap(entity2->GetAABB())) {
+        entity1->OnCollide(entity2);
+        entity2->OnCollide(entity1);
       }
     }
   }
 
-  // update all mobs
-  for (auto mob : this->mobs) {
-    mob->Update(t);
+  // update all entities
+  for (auto entity : this->entities) {
+    entity->Update(t);
   }
 
   // update all dynamic cells
@@ -373,6 +375,7 @@ World::Update(
     this->cells[i].Update(t, random);
   }
 
+  // tick world
   while (tickInterval != 0.0 && t > nextTickT) {
     nextTickT += tickInterval;
     for (size_t i : this->dynamicCells) {
@@ -484,6 +487,11 @@ World::CastRayYDown(const Vector3 &org) {
   return endY;
 }
 
+/**
+ * Check if a point is within the solid of a cell.
+ * @param org Point to check
+ * @return true if point is inside a solid.
+ */
 bool
 World::IsPointSolid(const Vector3 &org) {
   size_t x = org.x; // start cell x
@@ -494,6 +502,14 @@ World::IsPointSolid(const Vector3 &org) {
   return cell.IsSolid() && (org.y - y) >= cell.GetHeightBottom(org.x, org.z) && (org.y - y) <= cell.GetHeight(org.x, org.z);
 }
 
+/**
+ * Check if an AABB is intersection with solid geometry.
+ * This checks each vertex position of the AABB, then check the
+ * lines between the top and bottom vertices for solidity.
+ * @note Experimental
+ * @param aabb AABB to check
+ * @return true if AABB intersects solid geometry.
+ */
 bool 
 World::IsAABBSolid(const AABB &aabb) {
   std::vector<Vector3> verts;
@@ -531,6 +547,7 @@ World::IsAABBSolid(const AABB &aabb) {
  * @param targ The target position where to move the AABB.
  * @param axis Output of the colliding axis flags.
  * @return The final center position of the AABB.
+ * @note Might not work for too big AABBs.
  */
 Vector3 World::MoveAABB(
   const AABB &aabb, 
@@ -552,7 +569,8 @@ Vector3 World::MoveAABB(
   // one cell size apart for correct collision detection.
   std::vector<Vector3> verts;
 
-  // TODO: optimize generation
+  // TODO: automate/optimize generation for a given aabb size
+  // TODO: also cache these
   verts.push_back(Vector3(-aabb.extents.x, -aabb.extents.y, -aabb.extents.z));
   verts.push_back(Vector3(-aabb.extents.x, -aabb.extents.y,  aabb.extents.z));
   verts.push_back(Vector3( aabb.extents.x, -aabb.extents.y, -aabb.extents.z));
@@ -590,6 +608,7 @@ Vector3 World::MoveAABB(
       keepGoing = true;
     }
     
+    // try to move along the x axis
     for (const Vector3 &v : verts) {
       if (IsPointSolid(center + v + Vector3(d.x + (d.x>0?0.01:-0.01), 0, 0))) {
         float newX = d.x;
@@ -609,6 +628,7 @@ Vector3 World::MoveAABB(
     // update center to new position
     center.x += d.x;
     
+    // try to move along the z axis
     for (const Vector3 &v : verts) {
       if (IsPointSolid(center + v + Vector3(0, 0, d.z + (d.z>0?0.01:-0.01)))) {
         float newZ = d.z;
@@ -638,6 +658,7 @@ Vector3 World::MoveAABB(
     if (!keepGoing) break;
   }
   
+  // now try to move along y axis
   if (movingUp) {
     float endY = size.y;
     // get lowest collision point
@@ -674,36 +695,71 @@ Vector3 World::MoveAABB(
   return center;
 }
 
+/**
+ * Add an entity to this world.
+ * @param entity Entity to add
+ */
 void 
-World::AddMob(const std::shared_ptr<Mob> &mob) {
-  mobs.push_back(mob);
-  mob->SetWorld(this);
+World::AddEntity(const std::shared_ptr<Entity> &entity) {
+  this->entities.push_back(entity);
+  entity->SetWorld(this);
 }
 
+/**
+ * Add the player entity to this world. 
+ * Also stores the player for future reference.
+ * @param player Player to add
+ */
 void 
-World::AddPlayer(const std::shared_ptr<Player> &mob) {
-  AddMob(mob);
-  this->player = mob;
+World::AddPlayer(const std::shared_ptr<Player> &player) {
+  this->AddEntity(player);
+  this->player = player;
 }
 
+/**
+ * Remove an entity from this world.
+ * If the entity is the player entity, the player reference will be unset.
+ * @param entity Entity to remove
+ */
 void
-World::RemoveMob(const std::shared_ptr<Mob> &mob) {
-  auto iter = std::find(mobs.begin(), mobs.end(), mob);
-  if (iter == mobs.end()) return;
+World::RemoveEntity(const std::shared_ptr<Entity> &entity) {
+  auto iter = std::find(this->entities.begin(), this->entities.end(), entity);
+  if (iter == this->entities.end()) {
+    return;
+  }
+  
   (*iter)->SetWorld(nullptr);
-  mobs.erase(iter);
-  if (this->player == mob) this->player = nullptr;
+  this->entities.erase(iter);
+  
+  if (this->player == entity) {
+    this->player = nullptr;
+  }
 }
 
-std::vector<std::shared_ptr<Mob>> 
-World::FindMobs(const AABB &aabb) {
-  std::vector<std::shared_ptr<Mob>> mobs;
-  for (auto mob : this->mobs) {
-    if (aabb.Overlap(mob->GetAABB())) mobs.push_back(mob);
+/** 
+ * Find entities within an AABB.
+ * The entities' AABBs have to intersesct the given AABB to be returned.
+ * @param aabb AABB within which to look for entities
+ * @return A vector of entities.
+ */
+std::vector<std::shared_ptr<Entity>> 
+World::FindEntities(const AABB &aabb) {
+  std::vector<std::shared_ptr<Entity>> entities;
+  
+  for (auto entity : this->entities) {
+    if (aabb.Overlap(entity->GetAABB())) {
+      entities.push_back(entity);
+    }
   } 
-  return mobs;
+  
+  return entities;
 }
 
+/**
+ * Check if a cell is free of entities.
+ * @param pos Cell position to check
+ * @return true if no entities are inside the cell.
+ */
 bool 
 World::CheckMob(const IVector3 &pos) {
   if (!IsValidCellPosition(pos)) return false;
@@ -712,9 +768,10 @@ World::CheckMob(const IVector3 &pos) {
   aabb.extents = Vector3(0.5, 0.5, 0.5);
   aabb.center = Vector3(pos) + aabb.extents;
   
-  for (auto mob : this->mobs) {
-    if (aabb.Overlap(mob->GetAABB())) return false;
-  } 
+  for (auto entity : this->entities) {
+    if (aabb.Overlap(entity->GetAABB())) return false;
+  }
+  
   return true;
 }
 
@@ -723,6 +780,9 @@ World::GetLight(const IVector3 &pos) const {
   return (GetCell(pos).GetLightLevel().Gamma(2.2)) + ambientLight;
 }
 
+/**
+ * Write some ASCII art representation of this world to a file. (DEBUG)
+ */
 void
 World::Dump() {
   FILE *f = fopen("world.txt", "w");
@@ -747,7 +807,16 @@ World::Dump() {
   fclose(f);
 }
   
-
+/**
+ * Find the final cell along a ray.
+ * @param org Ray origin
+ * @param dir Ray direction
+ * @param[out] distance Distance along the ray to the surface of the cell
+ * @param[out] side Side of the cell that was hit
+ * @return The hit cell.
+ * @note This will always return a cell. Outside the world or on the boundaries
+ *       it will be the default cell, which has no world or position value.
+ */
 Cell &
 World::CastRayCell(const Vector3 &org, const Vector3 &dir, float &distance, Side &side) {
   int dx = dir.x == 0 ? 0 : (dir.x > 0 ? 1 : -1);
@@ -804,19 +873,37 @@ World::CastRayCell(const Vector3 &org, const Vector3 &dir, float &distance, Side
   return *currentCell;
 }
 
+/**
+ * Check if a cell at a given position is still original or if it 
+ * is part of a feature.
+ * @param pos Cell position.
+ * @return true if cell wasn't modified.
+ */
 bool 
 World::IsDefault(const IVector3 &pos) {
   if (!IsValidCellPosition(pos)) return true;
   return defaultMask[GetCellIndex(pos)];
 }
 
+/**
+ * Mark a feature as seen (e.g. for minimap).
+ * @param f Feature id.
+ */
 void
 World::AddFeatureSeen(size_t f) {
   if (f == ~0UL) return;
-  if (seenFeatures.size() <= f) seenFeatures.resize(f+1, false);
+  
+  // make sure vector is large enough
+  if (seenFeatures.size() <= f) {
+    seenFeatures.resize(f+1, false);
+  }
+  
   seenFeatures[f] = true;
  
-  if (instances[f].prevID != ~0UL) seenFeatures[instances[f].prevID] = true;
+  // mark neighbouring features as seen as well
+  if (instances[f].prevID != ~0UL) {
+    seenFeatures[instances[f].prevID] = true;
+  }
   for (size_t i=0; i<instances.size(); i++) {
     if (instances[i].prevID == f) {
       if (seenFeatures.size() <= i) seenFeatures.resize(i+1, false);

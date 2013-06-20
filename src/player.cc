@@ -22,6 +22,7 @@ Player::Player() : Mob("player") {
   bobAmplitude = 0;
   
   noclip = false;
+  this->selectedCell = nullptr;
   
   this->inventory[(size_t)InventorySlot::RightHand] = std::make_shared<Weapon>(Weapon());
   this->inventory[(size_t)InventorySlot::LeftHand] = std::make_shared<Weapon>(Weapon());
@@ -76,19 +77,67 @@ Player::Update(float t) {
   if (!this->world) return;
 
   UpdateInput();
+  UpdateSelection();
 
-  Vector3 fwd   = (GetAngles()).EulerToVector();
-  Vector3 pos = smoothPosition + Vector3(0,eyeHeight,0);
-  if (itemActiveLeft && this->inventory[(size_t)InventorySlot::RightHand]) {
-    this->inventory[(int)InventorySlot::RightHand]->Use(*this, pos, fwd, true);
-  }
-  if (itemActiveRight && this->inventory[(size_t)InventorySlot::LeftHand]) {
-    this->inventory[(int)InventorySlot::LeftHand]->Use(*this, pos, fwd, true);
+  if (itemActiveLeft && this->inventory[(size_t)InventorySlot::RightHand] &&
+      this->inventory[(size_t)InventorySlot::RightHand]->GetRange() >= this->selectionRange) {
+    if (this->selectedCell) {
+      this->inventory[(int)InventorySlot::RightHand]->UseOnCell(this->selectedCell, this->selectedCellSide);
+    } else {
+      this->inventory[(int)InventorySlot::RightHand]->UseOnEntity(this->selectedEntity);
+    }
   }
   
-  //float torch = simplexNoise(Vector3(lastT*4, lastT, 0)) * simplexNoise(Vector3(lastT*5, -lastT, 0));
-  //this->torchLight = IColor(torch*128+192, (torch*128+192)*0.9, (torch*128+192)*0.6);
+  if (itemActiveRight && this->inventory[(size_t)InventorySlot::LeftHand] &&
+      this->inventory[(size_t)InventorySlot::LeftHand]->GetRange() >= this->selectionRange) {
+    if (this->selectedCell) {
+      this->inventory[(int)InventorySlot::LeftHand]->UseOnCell(this->selectedCell, this->selectedCellSide);
+    } else {
+      this->inventory[(int)InventorySlot::LeftHand]->UseOnEntity(this->selectedEntity);
+    }
+  }
+  
   this->torchLight = IColor(32,32,128);
+}
+
+void Player::UpdateSelection() {
+  static const float range = 10.0;
+  
+  // update selection
+  Vector3 dir = (this->GetAngles()).EulerToVector();
+  Vector3 pos = this->smoothPosition + Vector3(0, eyeHeight, 0);
+  
+  float dist  = range;
+  
+  AABB aabbRange;
+  aabbRange.center = pos;
+  aabbRange.extents = Vector3(range,range,range); 
+  auto entitiesInRange = world->FindEntities(aabbRange);
+
+  float hitDist;
+  Vector3 hitPos;
+
+  // check entities in range  
+  for (auto entity : entitiesInRange) {
+    if (entity.get() == this) continue;
+
+    if (entity->GetAABB().Ray(pos, dir, hitDist, hitPos)) {
+      if (hitDist < dist) { 
+        dist = hitDist;
+        this->selectedEntity = entity;
+      }
+    }
+  }
+  
+  // check cells
+  Cell &cell = this->world->CastRayCell(pos, dir, hitDist, this->selectedCellSide);
+  if (hitDist < dist) {
+    dist = hitDist;
+    this->selectedCell = &cell;
+    this->selectedEntity = nullptr;
+  }
+  
+  this->selectionRange = dist;
 }
 
 void Player::Draw() {
@@ -174,30 +223,9 @@ void
 Player::DrawGUI() {
   viewGUI();
   
-  glColor3ub(255, 255, 255);
-  
-  drawIcon(screenWidth/2, screenHeight/2, 16, 16, crosshairTex);  
-  
-  float scale = 1;
-  if (screenWidth <= 640) scale = 1;
-  else scale = 2;
-  
-//  drawIcon(screenWidth-16*scale, screenHeight-(32+16)*scale, 16*scale, 16*scale, slotTex);
-//  inventory[(size_t)InventorySlot::RightHand]->DrawIcon(screenWidth-16*scale, screenHeight-(32+16)*scale, 16*scale, 16*scale);
+  drawIcon(Point(virtualScreenWidth/2, virtualScreenHeight/2), Point(32,32), crosshairTex);  
+  DrawInventorySlot(alignBottomLeftScreen(Point(32,32)), InventorySlot::LeftHand);
 
-  DrawInventorySlot(screenWidth - 16*scale, screenHeight-(32+16)*scale, (size_t)InventorySlot::RightHand);
-  DrawInventorySlot(16*scale, screenHeight-(32+16)*scale, (size_t)InventorySlot::LeftHand);
-  
-  DrawInventorySlot(16*scale + 0*32*scale, screenHeight-(16)*scale, (size_t)InventorySlot::QuickSlot1);
-  DrawInventorySlot(16*scale + 1*32*scale, screenHeight-(16)*scale, (size_t)InventorySlot::QuickSlot2);
-  DrawInventorySlot(16*scale + 2*32*scale, screenHeight-(16)*scale, (size_t)InventorySlot::QuickSlot3);
-  DrawInventorySlot(16*scale + 3*32*scale, screenHeight-(16)*scale, (size_t)InventorySlot::QuickSlot4);
-  
-  DrawInventorySlot(screenWidth - 16*scale - 3*32*scale, screenHeight-(16)*scale, (size_t)InventorySlot::QuickSlot5);
-  DrawInventorySlot(screenWidth - 16*scale - 2*32*scale, screenHeight-(16)*scale, (size_t)InventorySlot::QuickSlot6);
-  DrawInventorySlot(screenWidth - 16*scale - 1*32*scale, screenHeight-(16)*scale, (size_t)InventorySlot::QuickSlot7);
-  DrawInventorySlot(screenWidth - 16*scale - 0*32*scale, screenHeight-(16)*scale, (size_t)InventorySlot::QuickSlot8);
-  
   std::stringstream str;
   str << (GetAngles().EulerToVector()) << smoothPosition;
   
@@ -212,22 +240,21 @@ Player::MouseClick(int button, bool down) {
 }
 
 void 
-Player::DrawInventorySlot(float x, float y, size_t slot) {
-  float scale = 1;
-  if (screenWidth <= 640) scale = 1;
-  else scale = 2;
+Player::DrawInventorySlot(Point p, InventorySlot slot) {
+  unsigned int tex = slotTex;
+  
+  if (slot == InventorySlot::LeftHand)
+    tex = slotLeftHandTex;
+  else if (slot == InventorySlot::RightHand)
+    tex = slotRightHandTex;
 
-  if (slot == (size_t)InventorySlot::LeftHand)
-    drawIcon(x, y, 16*scale, 16*scale, slotLeftHandTex);
-  else if (slot == (size_t)InventorySlot::RightHand)
-    drawIcon(x, y, 16*scale, 16*scale, slotRightHandTex);
-  else
-    drawIcon(x, y, 16*scale, 16*scale, slotTex);
+  drawIcon(p, Point(32,32), tex);
 
-  if (slot < inventory.size() && inventory[slot] != nullptr)
-    inventory[slot]->DrawIcon(x, y, 16*scale, 16*scale);
+  if ((size_t)slot < inventory.size() && inventory[(size_t)slot] != nullptr)
+    drawIcon(p, Point(32,32), inventory[(size_t)slot]->GetIconTexture());
 }
 
 const IColor &Player::GetTorchLight() {
   return torchLight;
 }
+

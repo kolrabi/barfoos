@@ -22,6 +22,7 @@ public:
   
   void ApplyForce(const Vector3 &f) { velocity = velocity + f * (deltaT/properties->mass); }
   virtual void Die();
+  virtual void OnCollide(const std::shared_ptr<Entity> &other);
 
 protected:
 
