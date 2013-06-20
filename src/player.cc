@@ -25,7 +25,7 @@ Player::Player() : Mob("player") {
   this->selectedCell = nullptr;
   
   this->inventory[(size_t)InventorySlot::RightHand] = std::make_shared<Weapon>(Weapon());
-  this->inventory[(size_t)InventorySlot::LeftHand] = std::make_shared<Weapon>(Weapon());
+  this->inventory[(size_t)InventorySlot::LeftHand] = std::make_shared<Item>(Item("torch"));
 
   this->itemActiveLeft = false;
   this->itemActiveRight = false;
@@ -96,8 +96,6 @@ Player::Update(float t) {
       this->inventory[(int)InventorySlot::LeftHand]->UseOnEntity(this->selectedEntity);
     }
   }
-  
-  this->torchLight = IColor(32,32,128);
 }
 
 void Player::UpdateSelection() {
@@ -117,6 +115,9 @@ void Player::UpdateSelection() {
   float hitDist;
   Vector3 hitPos;
 
+  this->selectedEntity = nullptr;
+  this->selectedCell = nullptr;
+  
   // check entities in range  
   for (auto entity : entitiesInRange) {
     if (entity.get() == this) continue;
@@ -212,11 +213,15 @@ Player::DrawWeapons() {
   glLoadIdentity();
   gluLookAt(pos.x, pos.y, pos.z, tpos.x, tpos.y, tpos.z, 0,1,0);
 
-  IColor l = light + torchLight;
+  IColor l = light+GetTorchLight();
   glColor3f(l.r/255.0, l.g/255.0, l.b/255.0);
 
-  this->inventory[(size_t)InventorySlot::RightHand]->Draw(false);
-  this->inventory[(size_t)InventorySlot::LeftHand]->Draw(true);
+  if (this->inventory[(size_t)InventorySlot::RightHand]) {
+    this->inventory[(size_t)InventorySlot::RightHand]->Draw(false);
+  }
+  if (this->inventory[(size_t)InventorySlot::LeftHand]) {
+    this->inventory[(size_t)InventorySlot::LeftHand]->Draw(true);
+  }
 }
 
 void 
@@ -229,8 +234,27 @@ Player::DrawGUI() {
   std::stringstream str;
   str << (GetAngles().EulerToVector()) << smoothPosition;
   
-  RenderString rs(str.str());
-  rs.Draw(0,0);
+  RenderString(str.str()).Draw(0,0);
+  
+  str.str("");
+  str.clear();
+  
+  if (this->selectedCell) {
+    str << this->selectedCell->GetType();
+  } else {
+    str << "(null)";
+  }
+  RenderString(str.str()).Draw(0,1);
+  
+  str.str("");
+  str.clear();
+  
+  if (this->selectedEntity) {
+    str << this->selectedEntity->GetAABB().center;
+  } else {
+    str << "(null)";
+  }
+  RenderString(str.str()).Draw(0,2);
 }
 
 void
@@ -250,11 +274,33 @@ Player::DrawInventorySlot(Point p, InventorySlot slot) {
 
   drawIcon(p, Point(32,32), tex);
 
-  if ((size_t)slot < inventory.size() && inventory[(size_t)slot] != nullptr)
-    drawIcon(p, Point(32,32), inventory[(size_t)slot]->GetIconTexture());
+  std::shared_ptr<Item> item = inventory[(size_t)slot];
+  
+  if ((size_t)slot < inventory.size() && item != nullptr)
+    item->DrawIcon(p);
 }
 
-const IColor &Player::GetTorchLight() {
-  return torchLight;
+const IColor Player::GetTorchLight() {
+  IColor torch;
+  std::shared_ptr<Item> l = this->inventory[(size_t)InventorySlot::LeftHand];
+  std::shared_ptr<Item> r = this->inventory[(size_t)InventorySlot::RightHand];
+  
+  if (r) {
+    float f = 1.0;
+    if (r->GetProperties()->flicker) {
+      f = simplexNoise(Vector3(lastT*3, 0, 0)) * simplexNoise(Vector3(lastT*2, -lastT, 0));
+      f = f * 0.4 + 0.5;
+    }
+    torch = torch + r->GetProperties()->light * f;
+  }
+  if (l) {
+    float f = 1.0;
+    if (l->GetProperties()->flicker) {
+      f = simplexNoise(Vector3(-lastT*3, 0, 0)) * simplexNoise(Vector3(lastT*2, lastT, 0));
+      f = f * 0.4 + 0.5;
+    }
+    torch = torch + l->GetProperties()->light * f;
+  }
+  return torch;
 }
 

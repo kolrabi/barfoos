@@ -24,6 +24,9 @@ struct CellInfo {
   std::vector<unsigned int> textures;
   IColor light;
   uint32_t flags;
+  
+  float lightFactor = 0.85;
+  int lightFade = 0;
 
   CellInfo():flags(0) {}
   CellInfo(const std::string &texture, const IColor &light, uint32_t flags = Solid);

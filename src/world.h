@@ -55,6 +55,8 @@ public:
   bool IsDefault(const IVector3 &pos);
 
   float GetDeltaT() const { return deltaT; }
+  
+  Random &GetRandom() { return random; }
 
   void AddFeatureSeen(size_t f);
 

@@ -14,6 +14,7 @@ Game::Game(const std::string &seed, size_t level) : seed(seed), random(seed) {
   LoadCells();
   LoadFeatures();
   LoadEntities();
+  LoadItems();
  
   this->BuildWorld(level);
   

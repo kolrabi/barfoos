@@ -16,7 +16,7 @@
 World::World(const IVector3 &size, int level, Random &rnd) :random(rnd)
 {  
   this->defaultShader = new Shader("default");
-  this->ambientLight = IColor();
+  this->ambientLight = IColor(16,16,32);
   this->checkOverwrite = false;
   this->size = size;
   this->dirty = true;
@@ -27,45 +27,55 @@ World::World(const IVector3 &size, int level, Random &rnd) :random(rnd)
   this->cells = std::vector<Cell>(this->cellCount, Cell("default"));
   this->defaultMask = std::vector<bool>(this->cellCount, true);
   
-  IVector3 r(random.Integer(), random.Integer(), random.Integer());
   std::cerr << this->cellCount << " cells, " << (sizeof(Cell)*this->cellCount) << std::endl;
-  
-  for (size_t i=0; i<this->cellCount; i++) {
-    IVector3 pos = GetCellPos(i);
-    if (pos.x < 2 || pos.y < 2 || pos.z < 2 || pos.x >= size.x-2 || pos.y >= size.y-2 || pos.z >= size.z-2) {
-      this->cells[i] = Cell("bedrock");
-      this->cells[i].SetLocked(true);
-      this->cells[i].SetIgnoreWrite(true);
-    } else {
-      IVector3 ppp(pos+r);
-      ppp.x %= 256;
-      ppp.y %= 256;
-      ppp.z %= 256;
-      Vector3 vpos(ppp);
-      float f = (simplexNoise(vpos*0.03) * simplexNoise(vpos*0.06));
-      float g = (simplexNoise(vpos*(-0.05)));
-      if (g < -0.5) {
-        SetCell(pos, Cell("rock"));
-      } else if (f > 0) {
-        this->cells[i] = Cell("rock");
-      } else if (f < -0.5) {
-        SetCell(pos, Cell("brick"));
-      }
-    }
-    this->cells[i].SetWorld(this);
-    this->cells[i].SetPosition(pos);
-  }
-
-  // reinitialize, as it is modified by above SetCell  
-  this->defaultMask = std::vector<bool>(this->cellCount, true);
-  
+    
   this->lastT = 0;
   this->tickInterval = 0.3;
   this->nextTickT = 0;
 
   // build features -------------------------------------------
+  
+  // some basic parameters for this world
+  IVector3 r(random.Integer(), random.Integer(), random.Integer());
+  size_t featureCount  = random.Integer(400)+100;             // 100 - 500
+  float  useLastChance = 0.1 + random.Float01()*0.8;          // 0.1 - 0.9
+  size_t caveCount     = random.Integer(30)+5;                //   5 -  35
+  size_t caveLengthMin = random.Integer(100);                 //   0 - 100
+  size_t caveLengthMax = caveLengthMin + random.Integer(100); //   0 - 200
+  size_t caveRepeat    = 10+random.Integer(20);               //  10 -  30
 
+  // try 10 times to build a world with at least 50 features
   for (size_t tries=0; tries < 10 && instances.size() < 50; tries++) {
+    
+    for (size_t i=0; i<this->cellCount; i++) {
+      IVector3 pos = GetCellPos(i);
+      if (pos.x < 2 || pos.y < 2 || pos.z < 2 || pos.x >= size.x-2 || pos.y >= size.y-2 || pos.z >= size.z-2) {
+        this->cells[i] = Cell("bedrock");
+        this->cells[i].SetLocked(true);
+        this->cells[i].SetIgnoreWrite(true);
+      } else {
+        IVector3 ppp(pos+r);
+        ppp.x %= 256;
+        ppp.y %= 256;
+        ppp.z %= 256;
+        Vector3 vpos(ppp);
+        float f = (simplexNoise(vpos*0.03) * simplexNoise(vpos*0.06));
+        float g = (simplexNoise(vpos*(-0.05)));
+        if (g < -0.5) {
+          SetCell(pos, Cell("rock"));
+        } else if (f > 0) {
+          this->cells[i] = Cell("rock");
+        } else if (f < -0.5) {
+          SetCell(pos, Cell("brick"));
+        }
+      }
+      this->cells[i].SetWorld(this);
+      this->cells[i].SetPosition(pos);
+    }
+
+    // reinitialize, as it is modified by above SetCell  
+    this->defaultMask = std::vector<bool>(this->cellCount, true);
+  
     instances.clear();
     instances.push_back(getFeature("start")->BuildFeature(this, IVector3(32-4, 32-8,32-4), 0, 0, instances.size()));
     instances.back().prevID = ~0UL;
@@ -75,7 +85,7 @@ World::World(const IVector3 &size, int level, Random &rnd) :random(rnd)
       if (loop++ > 100000) break;
 
       // select a feature from which to go
-      bool useLast = random.Chance(0.90);
+      bool useLast = random.Chance(useLastChance);
       size_t featNum = useLast ? instances.size()-1 : (random.Integer(instances.size()));
       const FeatureInstance &instance = instances[featNum];
     
@@ -101,16 +111,8 @@ World::World(const IVector3 &size, int level, Random &rnd) :random(rnd)
       if (this->FinishCheckOverwrite()) {
         instances.push_back(nextFeature->BuildFeature(this, pos, conn->dir, instance.dist, instances.size()));
         instances.back().prevID = featNum;
-
-        if (random.Chance(0.1)) {
-          auto m = std::make_shared<Entity>(Entity("torch"));
-          IVector3 p = instances.back().pos + (instances.back().feature->GetSize())/2;
-          m->SetPosition(Vector3(p) + Vector3(0.5,0.5,0.5));
-          this->SetCell(p, Cell("torch"));
-          this->AddEntity(m);
-        }
       }
-    } while(instances.size() < 500); 
+    } while(instances.size() < featureCount); 
   }
 
   std::cerr << "built world with " << instances.size() << " features. level " << (level) << std::endl;
@@ -118,8 +120,6 @@ World::World(const IVector3 &size, int level, Random &rnd) :random(rnd)
   WorldEdit e(this);
   
   // create caves
-  size_t caveCount = random.Integer(30)+5;
-  
   e.SetBrush(Cell("air"));
 
   for (size_t i = 0; i<caveCount; i++) {
@@ -127,22 +127,27 @@ World::World(const IVector3 &size, int level, Random &rnd) :random(rnd)
     const FeatureInstance &instance = instances[featNum];
     IVector3 size = instance.feature->GetSize();
    
-    for (size_t k=0; k<10; k++) {
-    IVector3 cavePos(instance.pos + IVector3(random.Integer(size.x), random.Integer(size.y), random.Integer(size.z)));
-    size_t caveLength = random.Integer(300);
-    bool lastSolid = false;
-    
-    for (size_t j=0; j<caveLength; j++) {
-      Side nextSide = (Side)(random.Integer(6));
-      bool solid = this->GetCell(cavePos).GetInfo().flags & CellFlags::Solid;
-      if (solid && !lastSolid) {
-        e.ApplyBrush(cavePos);
+    for (size_t k=0; k<caveRepeat; k++) {
+      IVector3 cavePos(instance.pos + IVector3(random.Integer(size.x), random.Integer(size.y), random.Integer(size.z)));
+      size_t caveLength = caveLengthMin + random.Integer(caveLengthMax);
+      bool lastSolid = false;
+      
+      for (size_t j=0; j<caveLength; j++) {
+        Side nextSide = (Side)(random.Integer(6));
+        bool solid = this->GetCell(cavePos).GetInfo().flags & CellFlags::Solid;
+        if (solid && !lastSolid) {
+          e.ApplyBrush(cavePos);
+        }
+        lastSolid = solid;
+        cavePos = cavePos[nextSide];
       }
-      lastSolid = solid;
-      cavePos = cavePos[nextSide];
-    }
     }
   }
+
+  for (auto instance : instances) {
+    instance.feature->SpawnEntities(this, instance.pos);
+  }
+
   this->Dump();
 }
 
@@ -370,6 +375,16 @@ World::Update(
     entity->Update(t);
   }
 
+  // remove removable entities
+  auto entityIter = this->entities.begin();
+  while(entityIter != this->entities.end()) {
+    if ((*entityIter)->IsRemovable()) {
+      entityIter = this->entities.erase(entityIter);
+    } else {
+      entityIter++;
+    }
+  }
+  
   // update all dynamic cells
   for (size_t i : this->dynamicCells) {
     this->cells[i].Update(t, random);

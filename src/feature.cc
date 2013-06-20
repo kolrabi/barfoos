@@ -3,6 +3,7 @@
 #include "world.h"
 #include "cell.h"
 #include "random.h"
+#include "mob.h"
 
 #include <cstring>
 
@@ -119,6 +120,22 @@ FileFeature::FileFeature(FILE *f, const std::string &name) {
       defs[lastDef].botRev = true;
     } else if (tokens[0] == "trev") {
       defs[lastDef].topRev = true;
+    } else if (tokens[0] == "mob") {
+      FeatureSpawn spawn;
+      spawn.spawnClass = SpawnClass::Mob;
+      spawn.probability = std::atof(tokens[1].c_str());
+      spawn.type = tokens[2];
+      spawn.attach = std::atoi(tokens[3].c_str());
+      spawn.pos = Vector3(std::atof(tokens[4].c_str()), std::atof(tokens[5].c_str()), std::atof(tokens[6].c_str()));
+      this->spawns.push_back(spawn);
+    } else if (tokens[0] == "entity") {
+      FeatureSpawn spawn;
+      spawn.spawnClass = SpawnClass::Entity;
+      spawn.probability = std::atof(tokens[1].c_str());
+      spawn.type = tokens[2];
+      spawn.attach = std::atoi(tokens[3].c_str());
+      spawn.pos = Vector3(std::atof(tokens[4].c_str()), std::atof(tokens[5].c_str()), std::atof(tokens[6].c_str()));
+      this->spawns.push_back(spawn);
     } else if (tokens[0] == "slice") {
       size_t y0 = std::atof(tokens[1].c_str());
       size_t y1 = std::atof(tokens[2].c_str());
@@ -183,6 +200,43 @@ FeatureInstance FileFeature::BuildFeature(World *world, const IVector3 &pos, int
     }
   }
   return FeatureInstance(this, pos, dir, dist+1);
+}
+
+void FileFeature::SpawnEntities(World *world, const IVector3 &pos) const {
+  for (const FeatureSpawn &spawn : spawns) {
+    if (world->GetRandom().Chance(spawn.probability)) {
+      std::shared_ptr<Entity> entity;
+
+      switch(spawn.spawnClass) {
+        case SpawnClass::Mob: entity = std::make_shared<Entity>(Mob(spawn.type)); break;
+        case SpawnClass::Entity: entity = std::make_shared<Entity>(Entity(spawn.type)); break;
+        default: continue;
+      }
+      
+      Vector3 spawnPos = Vector3(pos)+spawn.pos+Vector3(0.5,0.5,0.5);
+      if (spawn.attach) {
+        IVector3 cellPos = spawnPos;
+        
+        if (world->GetCell(cellPos + IVector3(0,-1,0)).IsSolid()) {
+          spawnPos.y = cellPos.y + entity->GetAABB().extents.y;
+        } else if (world->GetCell(cellPos + IVector3(1,0,0)).IsSolid()) {
+          spawnPos.x = cellPos.x + 1-entity->GetAABB().extents.x;
+        } else if (world->GetCell(cellPos + IVector3(-1,0,0)).IsSolid()) {
+          spawnPos.x = cellPos.x + entity->GetAABB().extents.x;
+        } else if (world->GetCell(cellPos + IVector3(0,0,1)).IsSolid()) {
+          spawnPos.z = cellPos.z + 1-entity->GetAABB().extents.z;
+        } else if (world->GetCell(cellPos + IVector3(0,0,-1)).IsSolid()) {
+          spawnPos.z = cellPos.z + entity->GetAABB().extents.z;
+        } else {
+          continue;
+        }
+      }
+      
+      entity->SetPosition(spawnPos);
+      
+      world->AddEntity(entity);
+    }
+  }
 }
 
 void FeatureConnection::Resolve() {

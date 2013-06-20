@@ -25,6 +25,8 @@ struct EntityProperties {
   int maxHealth = 5;
   Vector3 extents;
   
+  std::string cellEnter, cellLeave;
+  
   EntityProperties();
   EntityProperties(FILE *f);
 };
@@ -51,12 +53,15 @@ public:
   
   virtual void DrawBoundingBox();
   virtual void AddHealth(int points); 
-  virtual void Die() {}
+  virtual void Die();
   virtual void OnCollide(const std::shared_ptr<Entity> &other) { (void)other; }
+  
+  bool IsRemovable() const { return removable; }
 
 protected:
 
   World *world;
+  bool removable;
   
   AABB aabb;
   Vector3 smoothPosition;
@@ -66,6 +71,8 @@ protected:
     
   std::vector<std::shared_ptr<Item>> inventory;
   const EntityProperties *properties;
+  
+  Cell *lastCell;
   
   IColor light;
 

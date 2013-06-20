@@ -2,6 +2,7 @@
 #include "world.h"
 #include "cell.h"
 #include "util.h"
+#include "item.h"
 
 #include <GL/glfw.h>
 
@@ -13,7 +14,7 @@ EntityProperties defaultEntity;
 const EntityProperties *getEntity(const std::string &name) {
   if (allEntities.find(name) == allEntities.end()) {
     std::cerr << "entity " << name << " not found" << std::endl;
-    return nullptr;
+    return &defaultEntity;
   }
   return allEntities[name];
 }
@@ -58,6 +59,9 @@ EntityProperties::EntityProperties(FILE *f) {
       this->maxHealth = std::atoi(tokens[1].c_str());
     } else if (tokens[0] == "extents") {
       this->extents = Vector3( std::atof(tokens[1].c_str()), std::atof(tokens[2].c_str()), std::atof(tokens[3].c_str()) );
+    } else if (tokens[0] == "cell") {
+      this->cellEnter = tokens[1];
+      this->cellLeave = tokens[2];
     } else if (tokens[0] != "") {
       std::cerr << "ignoring '" << tokens[0] << "'" << std::endl;
     }
@@ -78,6 +82,9 @@ LoadEntities() {
 }
 
 Entity::Entity(const std::string &type) {
+  this->world = nullptr;
+  this->removable = false;
+  
   this->properties = getEntity(type);
   
   this->lastT = 0;
@@ -112,7 +119,28 @@ Entity::Update(float t) {
     }
   }
   
-  this->light = this->world->GetLight(IVector3(aabb.center.x, aabb.center.y, aabb.center.z)).Saturate();
+  IVector3 cellPos(aabb.center.x, aabb.center.y, aabb.center.z);
+  Cell *cell = &this->world->GetCell(cellPos);
+  if (cell != this->lastCell) {
+    if (this->lastCell && this->properties->cellLeave != "") {
+      this->world->SetCell(this->lastCell->GetPosition(), Cell(this->properties->cellLeave));
+    }
+    if (this->properties->cellEnter != "") {
+      this->world->SetCell(cellPos, Cell(this->properties->cellEnter));
+    }
+    this->lastCell = cell;
+  }
+  
+  for (size_t i=0; i<this->inventory.size(); i++) {
+    if (this->inventory[i]) {
+      this->inventory[i]->Update(t);
+      if (this->inventory[i]->IsRemovable()) {
+        this->inventory[i] = nullptr;
+      }
+    }
+  }
+  
+  this->light = this->world->GetLight(cellPos).Saturate();
   
   if (deltaT > 1.0/30.0)
     smoothPosition = aabb.center;
@@ -174,3 +202,13 @@ Entity::AddHealth(int points) {
   }
 }
 
+void
+Entity::Die() {
+  this->removable = true;
+  
+  if (this->lastCell && this->properties->cellLeave != "") {
+    this->world->SetCell(this->lastCell->GetPosition(), Cell(this->properties->cellLeave));
+  }
+  
+  // TODO: drop inventory
+}

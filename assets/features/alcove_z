@@ -22,9 +22,6 @@ cell brick
 nolock
 onlydefault
 
-def T
-cell torch
-
 slice 0
 &&&&&
 #####
@@ -37,7 +34,7 @@ slice 1 2
 
 slice 3 3
 &&&&&
-#/T\#
+#/.\#
 &&&&&
 
 slice 4 4
@@ -45,3 +42,5 @@ slice 4 4
 #####
 &&&&&
 
+
+entity 1.0 torch 1 2 2 1

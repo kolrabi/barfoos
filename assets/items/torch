@@ -1,0 +1,13 @@
+tex torch
+frames 2
+
+anim 0 2 10
+
+damage 1
+durability 10 10
+usedurability 0
+equipdurability 0.1
+
+cooldown 0.4
+light 64 64 64
+flicker

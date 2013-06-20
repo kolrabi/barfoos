@@ -134,7 +134,7 @@ int main() {
   glHint(GL_FOG_HINT, GL_NICEST);
 
   // Create new game
-  game = new Game("seed", time(0));
+  game = new Game("seed", 0);
   
   float lastT = glfwGetTime();
   while (glfwGetWindowParam(GLFW_OPENED)) {

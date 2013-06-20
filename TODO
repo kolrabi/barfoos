@@ -3,7 +3,6 @@ gui
   main menu
 
 items (entities)
-  torches (equippable, placable)
   wands
   scrolls
   armor

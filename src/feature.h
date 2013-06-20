@@ -40,11 +40,24 @@ struct FeatureInstance {
   size_t prevID;
 };
 
+enum class SpawnClass {
+  Entity, Mob, Item
+};
+
+struct FeatureSpawn {
+  std::string type;
+  SpawnClass spawnClass;
+  bool attach;
+  float probability;
+  Vector3 pos;
+};
+
 class Feature {
 public:
   virtual const IVector3 GetSize() const = 0; 
   virtual float GetProbability(const World *world, const IVector3 &pos) const = 0;
   virtual FeatureInstance BuildFeature(World *world, const IVector3 &pos, int dir, int dist, size_t id) const = 0;
+  virtual void SpawnEntities(World *world, const IVector3 &pos) const = 0;
   
   const std::vector<FeatureConnection> &GetConnections() const { return conns; }
 
@@ -59,6 +72,7 @@ public:
 protected:
 
   std::vector<FeatureConnection> conns;
+  std::vector<FeatureSpawn> spawns;
   std::string name;
   std::string group;
 };
@@ -71,12 +85,15 @@ public:
   virtual const IVector3 GetSize() const; 
   virtual float GetProbability(const World *world, const IVector3 &pos) const;
   virtual FeatureInstance BuildFeature(World *world, const IVector3 &pos, int dir, int dist, size_t id) const;
+  virtual void SpawnEntities(World *world, const IVector3 &pos) const;
 
 private:
 
   Cell *cells;
   std::vector<bool> defaultMask;
   IVector3 size; 
+  
+  std::vector<FeatureSpawn> spawns;
 
   int minLevel, maxLevel;
   float maxProbability;

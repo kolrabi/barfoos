@@ -46,6 +46,10 @@ CellInfo::CellInfo(FILE *f) {
     } else if (tokens[0] == "light") {
       // TODO: check
       this->light = IColor(std::atoi(tokens[1].c_str()), std::atoi(tokens[2].c_str()), std::atoi(tokens[3].c_str()));
+    } else if (tokens[0] == "lightfactor") {
+      this->lightFactor = std::atof(tokens[1].c_str());
+    } else if (tokens[0] == "lightfade") {
+      this->lightFade = std::atoi(tokens[1].c_str());
     } 
     else if (tokens[0] == "uvturb") this->flags |= UVTurb | Dynamic;
     else if (tokens[0] == "wave") this->flags |= Waving | Dynamic;
@@ -363,7 +367,7 @@ Cell::UpdateNeighbours(
     for (size_t i=0; i<6; i++) {
       c = c.Max(neighbours[i]->lightLevel);
     }
-    c = (c * 0.75f);
+    c = (c * this->info->lightFactor) - this->info->lightFade;
     c = c.Max(info->light);
     c = c.Max(this->torchLight);
   }

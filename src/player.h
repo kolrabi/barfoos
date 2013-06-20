@@ -22,7 +22,7 @@ public:
   
   void MouseClick(int button, bool down);
 
-  const IColor &GetTorchLight();
+  const IColor GetTorchLight();
 
 private:
 
@@ -37,8 +37,6 @@ private:
   Cell *selectedCell;
   Side selectedCellSide;
   float selectionRange;
-
-  IColor torchLight;
   
   bool itemActiveLeft, itemActiveRight;
   
