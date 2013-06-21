@@ -97,6 +97,7 @@ Entity::Entity(const std::string &type) {
   this->inventory.resize(48, nullptr);
   
   this->health = properties->maxHealth;
+  this->lastCell = nullptr;
 }
 
 Entity::~Entity() {

@@ -255,6 +255,23 @@ Player::DrawGUI() {
     str << "(null)";
   }
   RenderString(str.str()).Draw(0,2);
+
+  str.str("");
+  str.clear();
+  str << "!\"§$%&/()=?ß'#äöü+-.,;:`\\^°<>_~";
+  RenderString(str.str()).Draw(0,3);
+  str.str("");
+  str.clear();
+  str << "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  RenderString(str.str()).Draw(0,4);
+  str.str("");
+  str.clear();
+  str << "abcdefghijklmnopqrstuvwxyz";
+  RenderString(str.str()).Draw(0,5);
+  str.str("");
+  str.clear();
+  str << "0123456789*€\u00a3";
+  RenderString(str.str()).Draw(0,6);
 }
 
 void

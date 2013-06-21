@@ -87,6 +87,7 @@ static std::string credits() {
 
 int main() {
   std::cerr << credits() << std::endl;
+  std::setlocale(LC_ALL, "en_US.utf8");
 
   // Set up glfw
   if (!glfwInit()) {

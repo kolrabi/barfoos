@@ -7,9 +7,9 @@ extern int screenWidth;
 extern int screenHeight;
 
 static GLuint tex = 0;
-static float scaleX = 8, scaleY = 16;
+static float scaleX = 8, scaleY = 8;
 
-static void drawChar(float x, uint8_t c, std::vector<Vertex> &verts) {
+static void drawChar(float x, wchar_t c, std::vector<Vertex> &verts) {
   float u =   (c%32)/32.0;
   float v = 1-(c/32)/ 8.0;
 
@@ -25,12 +25,20 @@ static void drawChar(float x, uint8_t c, std::vector<Vertex> &verts) {
 }
 
 static void drawString(const std::string &text, std::vector<Vertex> &verts) {
-  const char *p = text.c_str();
   float x = 0;
 
+  const char *p = text.c_str();
+  size_t max = text.length();
+  int l = mbtowc(0,0,0);
+
   while (*p) {
-    drawChar(x, *p, verts);
-    p++;
+    wchar_t wc;
+    
+    l = mbtowc(&wc, p, max);
+    if (l < 1) break;
+    max -= l;
+    p += l;
+    drawChar(x, wc, verts);
     x++;
   }
 }
@@ -56,7 +64,7 @@ void RenderString::Draw(float x, float y) {
   
   if (screenWidth <= 640) scaleX = 8;
   else scaleX = 16;
-  scaleY = scaleX*2;
+  scaleY = scaleX;
   
   glBindTexture(GL_TEXTURE_2D, tex);
 
