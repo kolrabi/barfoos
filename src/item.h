@@ -38,36 +38,6 @@ struct ItemProperties {
   ItemProperties(FILE *f);
 };
 
-//                 x  x  x  x
-//   8  0          x  x  x  x
-//   4  1  5       x  x  x  x
-//   6  2  7       x  x  x  x
-//      3          x  x  x  x
-//                 x  x  x  x
-
-enum class InventorySlot {
-  Helmet     =  0, 
-  Armor      =  1, 
-  Greaves    =  2, 
-  Boots      =  3,
-  LeftHand   =  4, 
-  RightHand  =  5,
-  LeftRing   =  6, 
-  RightRing  =  7,
-  Amulet     =  8, 
-  
-  Reserved9  =  9,
-  Reserved10 = 10,
-  Reserved11 = 11,
-  Reserved12 = 12,
-  Reserved13 = 13,
-  Reserved14 = 14,
-  Reserved15 = 15,
-
-  Backpack   = 16
-  // ...
-};
-
 void LoadItems();
 const ItemProperties *getItem(const std::string &name);
 
@@ -98,6 +68,10 @@ public:
   virtual unsigned int GetIconTexture() const { return this->properties->texture; }
   
   const ItemProperties *GetProperties() const { return this->properties; }
+  virtual std::shared_ptr<Item> Combine(const std::shared_ptr<Item> &other) {
+    (void)other;
+    return nullptr;
+  }
   
   void DrawIcon(const Point &p) const;
 

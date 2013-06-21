@@ -30,6 +30,9 @@ barfoos_SOURCES=\
   text.cc text.h \
   shader.cc shader.h \
   \
+  gui.cc gui.h \
+  inventorygui.cc inventorygui.h \
+  \
   entity.cc entity.h \
   mob.cc mob.h \
   player.cc player.h \

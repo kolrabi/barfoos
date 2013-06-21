@@ -94,7 +94,7 @@ Entity::Entity(const std::string &type) {
   this->animation = 0;
   
   this->aabb.extents = properties->extents;
-  this->inventory.resize(48, nullptr);
+  this->inventory.resize(32, nullptr);
   
   this->health = properties->maxHealth;
   this->lastCell = nullptr;
@@ -213,3 +213,46 @@ Entity::Die() {
   
   // TODO: drop inventory
 }
+
+bool
+Entity::AddToInventory(const std::shared_ptr<Item> &item) {
+  for (size_t i=(size_t)InventorySlot::Backpack; i<this->inventory.size(); i++) {
+    if (!this->inventory[i]) {
+      this->inventory[i] = item;
+      item->SetEquipped(false);
+      return true;
+    }
+  }
+  return false;
+}
+
+bool
+Entity::AddToInventory(const std::shared_ptr<Item> &item, InventorySlot slot) {
+  size_t i = (size_t)slot;
+  if (!this->inventory[i]) {
+    this->Equip(item, slot);
+    return true;
+  }
+
+  std::shared_ptr<Item> combo;
+
+  combo = item->Combine(this->inventory[i]);
+  if (!combo) combo = this->inventory[i]->Combine(item);
+  if (combo) {
+    this->Equip(combo, slot);
+    return true;
+  }
+  return false;
+}
+ 
+void 
+Entity::Equip(const std::shared_ptr<Item> &item, InventorySlot slot) {
+  bool equip = (size_t)slot < (size_t)InventorySlot::Backpack;
+  if (this->inventory[(size_t)slot]) {
+    this->inventory[(size_t)slot]->SetEquipped(false);
+    this->AddToInventory(this->inventory[(size_t)slot]);
+  }
+  this->inventory[(size_t)slot] = item;
+  if (item) item->SetEquipped(equip);
+}
+

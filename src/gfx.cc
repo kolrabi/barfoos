@@ -3,8 +3,6 @@
 
 #include <GL/glfw.h>
 
-int virtualScreenWidth, virtualScreenHeight;
-
 void drawUnitCube() {
   glBegin(GL_QUADS);
     
@@ -93,13 +91,7 @@ void viewGUI() {
   
   glScalef(2.0/screenWidth, -2.0/screenHeight, 1);
   glTranslatef(-screenWidth/2,-screenHeight/2, 0);
-  
-  if (screenWidth < 640) {
-    virtualScreenWidth = screenWidth;
-    virtualScreenHeight = screenHeight;
-  } else {
-    virtualScreenWidth = screenWidth/2;
-    virtualScreenHeight = screenHeight/2;
+  if (screenWidth > 640) {
     glScalef(2,2,1);
   }
   

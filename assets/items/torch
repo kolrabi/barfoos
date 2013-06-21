@@ -2,6 +2,7 @@ tex torch
 frames 2
 
 anim 0 2 10
+anim 0 1 1
 
 damage 1
 durability 10 10

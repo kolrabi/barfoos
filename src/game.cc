@@ -6,11 +6,12 @@
 #include "worldedit.h"
 #include "feature.h"
 #include "random.h"
+#include "inventorygui.h"
 
 extern int screenWidth;
 extern int screenHeight;
 
-Game::Game(const std::string &seed, size_t level) : seed(seed), random(seed) {
+Game::Game(const std::string &seed, size_t level) : seed(seed), random(seed, level) {
   LoadCells();
   LoadFeatures();
   LoadEntities();
@@ -22,6 +23,9 @@ Game::Game(const std::string &seed, size_t level) : seed(seed), random(seed) {
   this->player->SetPosition(IVector3(32,32,32));
   this->player->SetSpawnPos(IVector3(32,32,32));
   this->world->AddPlayer(this->player);
+
+  this->inventoryGui = std::shared_ptr<InventoryGui>(new InventoryGui(this->player));
+  this->showInventory = false;
   this->lastT = 0;
 }
 
@@ -78,6 +82,11 @@ Game::Render() const {
   glDisable(GL_DEPTH_TEST);
   glColor3ub(255,255,0);
   player->DrawGUI();
+  
+  if (this->activeGui) {
+    viewGUI();
+    this->activeGui->Draw(Point());
+  }
 }
 
 void 
@@ -86,6 +95,23 @@ Game::Update(float t) {
   deltaT = t - lastT;
   world->Update(t);
   lastT = t;
+
+  if (glfwGetKey(GLFW_KEY_TAB)) {
+    if (!this->showInventory) {
+      guiActive ++;
+      if (this->activeGui) this->activeGui->OnHide();
+      this->activeGui = this->inventoryGui;
+      this->activeGui->OnShow();
+    }
+    this->showInventory = true;
+  } else {
+    if (this->showInventory) {
+      guiActive --;
+      if (this->activeGui) this->activeGui->OnHide();
+      this->activeGui = nullptr;
+    }
+    this->showInventory = false;
+  }
 }
 
 void 
@@ -95,6 +121,17 @@ Game::BuildWorld(size_t level) {
 
 }
 
-void Game::MouseClick(int button, bool down) {
-  this->player->MouseClick(button, down);
+void Game::OnMouseMove(const Point &pos) {
+  if (this->activeGui) {
+    this->activeGui->OnMouseMove(pos);
+  }
 }
+
+void Game::OnMouseClick(const Point &pos, int button, bool down) {
+  if (this->activeGui) {
+    this->activeGui->OnMouseClick(pos, button, down);
+  } else {
+    this->player->MouseClick(pos, button, down);
+  }
+}
+

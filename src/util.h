@@ -8,6 +8,7 @@
 #include <sys/time.h>
 #include <random>
 
+extern size_t guiActive;
 extern int screenWidth, screenHeight;
 extern int virtualScreenWidth, virtualScreenHeight;
 

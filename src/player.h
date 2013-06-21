@@ -20,7 +20,7 @@ public:
   void DrawWeapons();
   void DrawGUI();
   
-  void MouseClick(int button, bool down);
+  void MouseClick(const Point &pos, int button, bool down);
 
   const IColor GetTorchLight();
 
@@ -28,7 +28,6 @@ private:
 
   void UpdateInput();
   void UpdateSelection();
-  void DrawInventorySlot(Point p, InventorySlot slot);
 
   float bobPhase;
   float bobAmplitude;
@@ -41,9 +40,6 @@ private:
   bool itemActiveLeft, itemActiveRight;
   
   unsigned int crosshairTex;
-  unsigned int slotTex;
-  unsigned int slotRightHandTex;
-  unsigned int slotLeftHandTex;
 };
 
 

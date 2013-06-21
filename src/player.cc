@@ -6,6 +6,7 @@
 #include "simplex.h"
 #include "worldedit.h"
 #include "weapon.h"
+#include "gui.h"
 
 #include <GL/glfw.h>
 #include <cmath>
@@ -23,17 +24,15 @@ Player::Player() : Mob("player") {
   
   noclip = false;
   this->selectedCell = nullptr;
-  
-  this->inventory[(size_t)InventorySlot::RightHand] = std::make_shared<Weapon>(Weapon());
-  this->inventory[(size_t)InventorySlot::LeftHand] = std::make_shared<Item>(Item("torch"));
+
+  this->Equip(std::make_shared<Item>(Item("sword")), InventorySlot::RightHand);
+  this->Equip(std::make_shared<Item>(Item("torch")), InventorySlot::LeftHand);
+  this->AddToInventory(std::make_shared<Item>(Item("torch")));
 
   this->itemActiveLeft = false;
   this->itemActiveRight = false;
 
   this->crosshairTex = loadTexture("gui/crosshair");
-  this->slotTex = loadTexture("gui/slot");
-  this->slotLeftHandTex = loadTexture("gui/slot-lh");
-  this->slotRightHandTex = loadTexture("gui/slot-rh");
 }
 
 Player::~Player() {
@@ -229,7 +228,6 @@ Player::DrawGUI() {
   viewGUI();
   
   drawIcon(Point(virtualScreenWidth/2, virtualScreenHeight/2), Point(32,32), crosshairTex);  
-  DrawInventorySlot(alignBottomLeftScreen(Point(32,32)), InventorySlot::LeftHand);
 
   std::stringstream str;
   str << (GetAngles().EulerToVector()) << smoothPosition;
@@ -275,26 +273,10 @@ Player::DrawGUI() {
 }
 
 void
-Player::MouseClick(int button, bool down) {
+Player::MouseClick(const Point &pos, int button, bool down) {
+  (void)pos;
   if (button == GLFW_MOUSE_BUTTON_LEFT) this->itemActiveLeft = down;
   if (button == GLFW_MOUSE_BUTTON_RIGHT) this->itemActiveRight = down;
-}
-
-void 
-Player::DrawInventorySlot(Point p, InventorySlot slot) {
-  unsigned int tex = slotTex;
-  
-  if (slot == InventorySlot::LeftHand)
-    tex = slotLeftHandTex;
-  else if (slot == InventorySlot::RightHand)
-    tex = slotRightHandTex;
-
-  drawIcon(p, Point(32,32), tex);
-
-  std::shared_ptr<Item> item = inventory[(size_t)slot];
-  
-  if ((size_t)slot < inventory.size() && item != nullptr)
-    item->DrawIcon(p);
 }
 
 const IColor Player::GetTorchLight() {
@@ -320,4 +302,5 @@ const IColor Player::GetTorchLight() {
   }
   return torch;
 }
+
 

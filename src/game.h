@@ -8,6 +8,8 @@
 class World;
 class Player;
 class Mob;
+class InventoryGui;
+class Gui;
 
 class Game final {
 public:
@@ -20,18 +22,23 @@ public:
 
   float GetDeltaT() const { return deltaT; }
   
-  void MouseClick(int button, bool down);
+  void OnMouseMove(const Point &pos);
+  void OnMouseClick(const Point &pos, int button, bool down);
 
 private:
 
   std::shared_ptr<World> world;
   std::shared_ptr<Player> player;
+  std::shared_ptr<InventoryGui> inventoryGui;
+  std::shared_ptr<Gui> activeGui;
 
   float lastT;
   float deltaT;
   
   std::string seed;
   Random random;
+  
+  bool showInventory;
   
   void BuildWorld(size_t level);
 };

@@ -14,18 +14,38 @@
 Game *game = nullptr;
 size_t level = 0;
 
+size_t guiActive = false;
 bool mouseGrab = false;
 int screenWidth = 640;
 int screenHeight = 400;
 float mouseDX = 0;
 float mouseDY = 0;
 
+int mouseX = 0, mouseY = 0;
+
 float Wave(float x, float z, float t, float a, float o) {
   return o + a * cos( ((x+z+t)*0.4 )*0.1) * cos( ((x-z  )*0.6+t*0.3) * 0.5) * 0.5;
 }
 
+int virtualScreenWidth, virtualScreenHeight;
+
+void updateScreenSize() {  
+  if (screenWidth <= 640) {
+    virtualScreenWidth = screenWidth;
+    virtualScreenHeight = screenHeight;
+  } else {
+    virtualScreenWidth = screenWidth/2;
+    virtualScreenHeight = screenHeight/2;
+  }
+}
+
 void mouseMove(int x, int y) {
-  if (mouseGrab) {
+  if (guiActive) {
+    mouseDX = mouseDY = 0;
+    mouseX = x;
+    mouseY = y;
+    game->OnMouseMove(Point(x,y));
+  } else if (mouseGrab) {
     mouseDX = (x-screenWidth/2)*0.005;
     mouseDY = (y-screenHeight/2)*0.005;
     glfwSetMousePos(screenWidth/2, screenHeight/2);
@@ -35,11 +55,15 @@ void mouseMove(int x, int y) {
 void mouseClick(int button, int down) {
   if (game) {
     if (!mouseGrab && down && button == GLFW_MOUSE_BUTTON_LEFT) {
-      glfwSetMousePos(screenWidth/2, screenHeight/2);
-//      glfwDisable(GLFW_MOUSE_CURSOR);
+      if (!guiActive) {
+        glfwSetMousePos(screenWidth/2, screenHeight/2);
+        // glfwDisable(GLFW_MOUSE_CURSOR);
+      }
       mouseGrab = true;
     } else {
-      game->MouseClick(button, down);
+      float x = (mouseX / (float)screenWidth)*virtualScreenWidth;
+      float y = (mouseY / (float)screenHeight)*virtualScreenHeight;
+      game->OnMouseClick(Point(x,y), button, down);
     }
   }
 }
@@ -61,6 +85,7 @@ void resize(int x, int y) {
   gluPerspective(60.0f, (float)screenWidth/(float)screenHeight, 0.0015f, 64.0f);
 
   glMatrixMode(GL_MODELVIEW);
+  updateScreenSize();
 }
 
 static std::string credits() {
@@ -134,6 +159,8 @@ int main() {
   glFogf(GL_FOG_END, 64);
   glHint(GL_FOG_HINT, GL_NICEST);
 
+  updateScreenSize();
+
   // Create new game
   game = new Game("seed", 0);
   
@@ -155,6 +182,9 @@ int main() {
     if (mouseGrab && glfwGetKey(GLFW_KEY_ESC)) {
       glfwEnable(GLFW_MOUSE_CURSOR);
       mouseGrab = false;
+    }
+    if (guiActive) {
+      glfwEnable(GLFW_MOUSE_CURSOR);
     }
     mouseDX = mouseDY = 0;
 

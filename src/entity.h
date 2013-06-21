@@ -57,6 +57,15 @@ public:
   virtual void OnCollide(const std::shared_ptr<Entity> &other) { (void)other; }
   
   bool IsRemovable() const { return removable; }
+  bool AddToInventory(const std::shared_ptr<Item> &item);
+  bool AddToInventory(const std::shared_ptr<Item> &item, InventorySlot slot);
+
+  size_t GetInventorySize() const { return inventory.size(); }
+  std::shared_ptr<Item> GetInventory(InventorySlot slot) { 
+    return inventory[(size_t)slot]; 
+  }
+
+  void Equip(const std::shared_ptr<Item> &item, InventorySlot slot);
 
 protected:
 
