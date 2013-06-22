@@ -42,9 +42,9 @@ void updateScreenSize() {
 void mouseMove(int x, int y) {
   if (guiActive) {
     mouseDX = mouseDY = 0;
-    mouseX = x;
-    mouseY = y;
-    game->OnMouseMove(Point(x,y));
+    mouseX = (x / (float)screenWidth)*virtualScreenWidth;
+    mouseY = (y / (float)screenHeight)*virtualScreenHeight;
+    game->OnMouseMove(Point(mouseX,mouseY));
   } else if (mouseGrab) {
     mouseDX = (x-screenWidth/2)*0.005;
     mouseDY = (y-screenHeight/2)*0.005;
@@ -61,9 +61,7 @@ void mouseClick(int button, int down) {
       }
       mouseGrab = true;
     } else {
-      float x = (mouseX / (float)screenWidth)*virtualScreenWidth;
-      float y = (mouseY / (float)screenHeight)*virtualScreenHeight;
-      game->OnMouseClick(Point(x,y), button, down);
+      game->OnMouseClick(Point(mouseX,mouseY), button, down);
     }
   }
 }

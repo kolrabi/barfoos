@@ -49,7 +49,7 @@ protected:
 
 private:
 
-  void AddSlotGui(const Point &p, InventorySlot slot);
+  Gui* AddSlotGui(const Point &p, InventorySlot slot);
 };
 
 #endif

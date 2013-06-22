@@ -13,9 +13,9 @@ InventoryGui::InventoryGui(const std::shared_ptr<Entity> &entity)
   //      3          x  x  x  x
   //                 x  x  x  x
 
-  Point topLeft  = alignTopLeftScreen(Point(32,32), 16);
-//  Point topRight = alignTopRightScreen(Point(32,32), 16);
   Point slotDist(36, 36);
+  Point topLeft  = alignTopLeftScreen(Point(32,32), 16);
+  Point topRight = alignTopRightScreen(Point(32,32), 16);
 
   AddSlotGui(topLeft+Point(slotDist.x*0, slotDist.y*0), InventorySlot::Amulet);
   AddSlotGui(topLeft+Point(slotDist.x*1, slotDist.y*0), InventorySlot::Helmet);
@@ -26,6 +26,12 @@ InventoryGui::InventoryGui(const std::shared_ptr<Entity> &entity)
   AddSlotGui(topLeft+Point(slotDist.x*1, slotDist.y*2), InventorySlot::Greaves);
   AddSlotGui(topLeft+Point(slotDist.x*2, slotDist.y*2), InventorySlot::RightHand);
   AddSlotGui(topLeft+Point(slotDist.x*1, slotDist.y*3), InventorySlot::Boots);
+
+  for (size_t i=(size_t)InventorySlot::Backpack; i<entity->GetInventorySize(); i++) {
+    int x = i%4-3;
+    int y = (i-(size_t)InventorySlot::Backpack)/4;
+    AddSlotGui(topRight+Point(slotDist.x*x, slotDist.y*y), (InventorySlot)i)->SetGravity(true, true, false, false);
+  }
   
   this->dragItem = nullptr;
 }
@@ -40,8 +46,9 @@ void InventoryGui::Update(float t) {
 void InventoryGui::Draw(const Point &parentPos) {
   Gui::Draw(parentPos);
   
-  if (dragItem != nullptr)
+  if (dragItem != nullptr) {
     dragItem->DrawIcon(mousePos);
+  }
 }
 
 void InventoryGui::OnMouseMove(const Point &pos) {
@@ -51,13 +58,21 @@ void InventoryGui::OnMouseMove(const Point &pos) {
 
 void InventoryGui::OnMouseClick(const Point &pos, int button, bool down) {
   Gui::OnMouseClick(pos, button, down);
+  if (down == false) {
+    if (dragItem) {
+      // FIXME: drop item instead?
+      this->entity->AddToInventory(dragItem);
+      this->dragItem = nullptr;
+    }
+  }
 }
 
-void InventoryGui::AddSlotGui(const Point &p, InventorySlot slot) {
+Gui *InventoryGui::AddSlotGui(const Point &p, InventorySlot slot) {
   Gui *gui = new InventorySlotGui(this, entity, slot);
   gui->SetPosition(p - Point(16,16));
   gui->SetSize(Point(32,32));
   this->children.push_back(gui);
+  return gui;
 }
 
 void InventoryGui::OnHide() {

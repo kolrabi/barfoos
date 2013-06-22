@@ -10,6 +10,7 @@ public:
   ~Shader();
 
   void Uniform(const std::string &name, int value);
+  void Uniform(const std::string &name, float value);
   void Uniform(const std::string &name, const IColor &value);
 
   void Bind();

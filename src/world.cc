@@ -30,7 +30,7 @@ World::World(const IVector3 &size, int level, Random &rnd) :random(rnd)
   std::cerr << this->cellCount << " cells, " << (sizeof(Cell)*this->cellCount) << std::endl;
     
   this->lastT = 0;
-  this->tickInterval = 0.3;
+  this->tickInterval = 0.05;
   this->nextTickT = 0;
 
   // build features -------------------------------------------
@@ -270,6 +270,7 @@ World::Draw() {
   this->defaultShader->Bind();
   this->defaultShader->Uniform("u_texture", 0);
   this->defaultShader->Uniform("u_torch", player->GetTorchLight());
+  this->defaultShader->Uniform("u_time", lastT);
 
   // draw each vertex buffer 
   auto iter = vertices.begin();
@@ -848,7 +849,7 @@ World::CastRayCell(const Vector3 &org, const Vector3 &dir, float &distance, Side
 
   while (IsValidCellPosition(IVector3(x,y,z))) {
     currentCell = &this->GetCell(IVector3(x,y,z));
-    if (!(currentCell->GetInfo().flags & CellFlags::DoNotRender)) {
+    if ((currentCell->GetInfo().flags & CellFlags::Solid)) {
       distance = t;
       return *currentCell;
     }

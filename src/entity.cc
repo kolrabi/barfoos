@@ -143,10 +143,10 @@ Entity::Update(float t) {
   
   this->light = this->world->GetLight(cellPos).Saturate();
   
-  if (deltaT > 1.0/30.0)
+  if (deltaT > 1.0/10.0)
     smoothPosition = aabb.center;
   else 
-    smoothPosition = smoothPosition + (aabb.center - smoothPosition) * deltaT * 30.0f;
+    smoothPosition = smoothPosition + (aabb.center - smoothPosition) * deltaT * 10.0f;
     
   lastT = t;
 }
@@ -235,11 +235,16 @@ Entity::AddToInventory(const std::shared_ptr<Item> &item, InventorySlot slot) {
   }
 
   std::shared_ptr<Item> combo;
-
   combo = item->Combine(this->inventory[i]);
   if (!combo) combo = this->inventory[i]->Combine(item);
   if (combo) {
     this->Equip(combo, slot);
+    return true;
+  }
+
+  if (this->AddToInventory(this->inventory[i])) {
+    this->inventory[i] = nullptr;
+    this->Equip(item, slot);
     return true;
   }
   return false;
@@ -248,7 +253,7 @@ Entity::AddToInventory(const std::shared_ptr<Item> &item, InventorySlot slot) {
 void 
 Entity::Equip(const std::shared_ptr<Item> &item, InventorySlot slot) {
   bool equip = (size_t)slot < (size_t)InventorySlot::Backpack;
-  if (this->inventory[(size_t)slot]) {
+  if (this->inventory[(size_t)slot] && item) {
     this->inventory[(size_t)slot]->SetEquipped(false);
     this->AddToInventory(this->inventory[(size_t)slot]);
   }

@@ -92,6 +92,8 @@ Cell::Cell(const std::string &type) : info(&cellInfos[type])
   this->type = type;
   this->featureID = ~0;
   this->SetDirty();
+  this->tickPhase = 0;
+  this->tickInterval = 16;
   
   for (size_t i=0; i<6; i++)
     this->neighbours[i] = nullptr;
@@ -164,6 +166,11 @@ Cell::Update(
   }
 
   if (info->flags & CellFlags::Liquid) {
+    if (GetInfo().flags & CellFlags::Viscous) {
+      this->tickInterval = 16;
+    } else {
+      this->tickInterval = 5;
+    }
     float h = smoothDetail/16.0;
     if (neighbours[(int)Side::Up]->info == info && neighbours[(int)Side::Down]->info == info) {
       // liquid and top and bottom cells are the same as this one
@@ -195,6 +202,9 @@ Cell::Update(
 }
 
 void Cell::Tick(Random &random) {
+  this->tickPhase = (this->tickPhase + 1) % this->tickInterval;
+  if (this->tickPhase) return;
+
   if (this->neighbours[0] == nullptr) return;
   if (this->info->flags & CellFlags::Liquid) {
     if (this->neighbours[(int)Side::Up]->info == this->info && detail < 16) return;
@@ -688,3 +698,9 @@ Serializer &operator << (Serializer &ser, const Cell &cell) {
   ser << cell.bottomHeights[0] << cell.bottomHeights[1] << cell.bottomHeights[2] << cell.bottomHeights[3];
   return ser;
 }
+
+void Cell::SetWorld(World *world) { 
+  this->world = world; 
+  this->tickPhase = this->world->GetRandom().Integer(this->tickInterval);
+}
+

@@ -67,6 +67,13 @@ Shader::Uniform(const std::string &name, int value) {
   glUniform1iARB(loc, value);
 }
 
+void
+Shader::Uniform(const std::string &name, float value) {
+  glUseProgramObjectARB(program);
+  int loc = glGetUniformLocationARB(program, name.c_str());
+  glUniform1fARB(loc, value);
+}
+
 void 
 Shader::Uniform(const std::string &name, const IColor &value) {
   float rgb[3] = { value.r / 255.0f, value.g / 255.0f, value.b / 255.0f };

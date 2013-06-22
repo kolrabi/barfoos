@@ -71,9 +71,7 @@ bool Gui::IsOver(const Point &p) const {
 Gui *Gui::GetChildAt(const Point &p) {
   for (size_t i=0; i<children.size(); i++) {
     Gui *child = children[i];
-    std::cerr << child->rect << " " << p << std::endl;
     if (child->IsOver(p - child->rect.pos)) {
-      std::cerr << std::hex << child << std::endl;
       return child;
     }
   }

@@ -27,6 +27,7 @@ Game::Game(const std::string &seed, size_t level) : seed(seed), random(seed, lev
   this->inventoryGui = std::shared_ptr<InventoryGui>(new InventoryGui(this->player));
   this->showInventory = false;
   this->lastT = 0;
+      this->activeGui = this->inventoryGui;
 }
 
 Game::~Game() {
@@ -112,6 +113,8 @@ Game::Update(float t) {
     }
     this->showInventory = false;
   }
+
+  if (this->activeGui) this->activeGui->Update(t);
 }
 
 void 

@@ -131,6 +131,9 @@ protected:
   float uscale;
   Vector3 corners[8];
   std::vector<Vertex> verts;
+
+  size_t tickPhase;
+  size_t tickInterval;
   
   Cell *neighbours[6];
   
@@ -147,10 +150,6 @@ protected:
 };
 
 Serializer &operator << (Serializer &ser, const Cell &);
-
-inline void Cell::SetWorld(World *world) { 
-  this->world = world; 
-}
 
 inline World *Cell::GetWorld() const { 
   return this->world; 
