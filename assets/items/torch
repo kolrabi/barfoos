@@ -7,7 +7,7 @@ anim 0 1 1
 damage 1
 durability 10 10
 usedurability 0
-equipdurability 0.1
+#equipdurability 0.1
 
 cooldown 0.4
 light 255 255 255

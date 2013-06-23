@@ -228,7 +228,7 @@ Player::DrawGUI() {
   viewGUI();
   
   drawIcon(Point(virtualScreenWidth/2, virtualScreenHeight/2), Point(32,32), crosshairTex);  
-
+/*
   std::stringstream str;
   str << (GetAngles().EulerToVector()) << smoothPosition;
   
@@ -270,6 +270,7 @@ Player::DrawGUI() {
   str.clear();
   str << "0123456789*€\u00a3";
   RenderString(str.str()).Draw(0,6);
+*/
 }
 
 void

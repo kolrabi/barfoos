@@ -127,6 +127,7 @@ Mob::Update(float t) {
     if (velocity.y < -15) {
       AddHealth((velocity.y+15)/5);
       std::cerr << velocity.y << std::endl;
+      this->smoothPosition.y = aabb.center.y;
     }
     velocity.y = 0;
     onGround |= movingDown;
