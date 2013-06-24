@@ -25,6 +25,8 @@ struct EntityProperties {
   int maxHealth = 5;
   Vector3 extents;
   
+  std::map<std::string, float> items;
+  
   std::string cellEnter, cellLeave;
   
   EntityProperties();
@@ -39,7 +41,7 @@ public:
   Entity(const std::string &visualName);
   virtual ~Entity();
 
-  void SetWorld(World *world) { this->world = world; }
+  void SetWorld(World *world);
   World *GetWorld() { return this->world; }
   
   const AABB &GetAABB() const { return aabb; }
@@ -55,6 +57,7 @@ public:
   virtual void AddHealth(int points); 
   virtual void Die();
   virtual void OnCollide(const std::shared_ptr<Entity> &other) { (void)other; }
+  virtual void OnUse(Entity *other) { (void)other; }
   
   bool IsRemovable() const { return removable; }
   bool AddToInventory(const std::shared_ptr<Item> &item);

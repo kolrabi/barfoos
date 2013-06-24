@@ -1,12 +1,13 @@
+#include <GL/glfw.h>
+#include <cstring>
+
 #include "entity.h"
 #include "world.h"
 #include "cell.h"
 #include "util.h"
 #include "item.h"
-
-#include <GL/glfw.h>
-
-#include <cstring>
+#include "itementity.h"
+#include "random.h"
 
 static std::map<std::string, EntityProperties *> allEntities;
 EntityProperties defaultEntity;
@@ -59,6 +60,8 @@ EntityProperties::EntityProperties(FILE *f) {
       this->maxHealth = std::atoi(tokens[1].c_str());
     } else if (tokens[0] == "extents") {
       this->extents = Vector3( std::atof(tokens[1].c_str()), std::atof(tokens[2].c_str()), std::atof(tokens[3].c_str()) );
+    } else if (tokens[0] == "inventory") {
+      this->items[tokens[2]] = std::atof(tokens[1].c_str());
     } else if (tokens[0] == "cell") {
       this->cellEnter = tokens[1];
       this->cellLeave = tokens[2];
@@ -101,6 +104,36 @@ Entity::Entity(const std::string &type) {
 }
 
 Entity::~Entity() {
+}
+
+void
+Entity::SetWorld(World *world) {
+  if (!this->world && world) {
+    for (auto item : this->properties->items) {
+      if (world->GetRandom().Chance(item.second)) {
+        this->AddToInventory(std::shared_ptr<Item>(new Item(item.first)));
+      }
+    }
+    
+    // resolve initial collision with world
+    std::vector<Vector3> verts;
+    verts.push_back(Vector3(-aabb.extents.x, -aabb.extents.y, -aabb.extents.z));
+    verts.push_back(Vector3( aabb.extents.x, -aabb.extents.y, -aabb.extents.z));
+    verts.push_back(Vector3(-aabb.extents.x, -aabb.extents.y,  aabb.extents.z));
+    verts.push_back(Vector3( aabb.extents.x, -aabb.extents.y,  aabb.extents.z));
+    verts.push_back(Vector3(-aabb.extents.x,  aabb.extents.y, -aabb.extents.z));
+    verts.push_back(Vector3( aabb.extents.x,  aabb.extents.y, -aabb.extents.z));
+    verts.push_back(Vector3(-aabb.extents.x,  aabb.extents.y,  aabb.extents.z));
+    verts.push_back(Vector3( aabb.extents.x,  aabb.extents.y,  aabb.extents.z));
+
+    for (Vector3 v : verts) {
+      if (world->IsPointSolid(aabb.center + v)) {
+        aabb.center = aabb.center - v;
+      }
+    }
+  }
+  
+  this->world = world;
 }
 
 void 
@@ -153,20 +186,20 @@ Entity::Update(float t) {
 
 void
 Entity::Draw() {
-  if (this->properties->texture == 0) return;
-
-  float u = 0.0;
-  float uw = 1.0;
-  if (this->properties->frames) {
-    int f = ((int)this->frame) % this->properties->frames;
-    uw = 1.0/this->properties->frames;
-    u = f*uw;
+  if (this->properties->texture != 0) {
+    float u = 0.0;
+    float uw = 1.0;
+    if (this->properties->frames) {
+      int f = ((int)this->frame) % this->properties->frames;
+      uw = 1.0/this->properties->frames;
+      u = f*uw;
+    }
+    
+    glColor3ub(light.r, light.g, light.b);
+    drawBillboard(aabb.center, this->properties->w/2.0, this->properties->h/2.0, this->properties->texture, u, uw, -(this->properties->originX-0.5)*this->properties->w, -(this->properties->originY-0.5)*this->properties->h);
   }
   
-  glColor3ub(light.r, light.g, light.b);
-  drawBillboard(aabb.center, this->properties->w/2.0, this->properties->h/2.0, this->properties->texture, u, uw, -(this->properties->originX-0.5)*this->properties->w, -(this->properties->originY-0.5)*this->properties->h);
-  
-  if (glfwGetKey('E')) {
+  if (glfwGetKey(GLFW_KEY_F2)) {
     glColor3f(0.25,0.25,0.25);
     this->DrawBoundingBox();
   }
@@ -193,10 +226,9 @@ Entity::DrawBoundingBox() {
 
 void
 Entity::AddHealth(int points) {
-  if (health == 0) return;
+  if (health == 0 || this->properties->maxHealth == 0) return;
   
   health += points;
-  std::cerr << health << std::endl;
   if (health <= 0) {
     health = 0;
     Die();
@@ -211,7 +243,14 @@ Entity::Die() {
     this->world->SetCell(this->lastCell->GetPosition(), Cell(this->properties->cellLeave));
   }
   
-  // TODO: drop inventory
+  // drop inventory
+  for (auto item : this->inventory) {
+    if (item) {
+      std::shared_ptr<Entity> entity(new ItemEntity(item));
+      entity->SetPosition(this->aabb.center);
+      this->world->AddEntity(entity);
+    }
+  }
 }
 
 bool
@@ -230,8 +269,12 @@ bool
 Entity::AddToInventory(const std::shared_ptr<Item> &item, InventorySlot slot) {
   size_t i = (size_t)slot;
   if (!this->inventory[i]) {
-    this->Equip(item, slot);
-    return true;
+    if (i>=(size_t)InventorySlot::Backpack ||(item->GetProperties()->equippable & 1<<i)) {
+      this->Equip(item, slot);
+      return true;
+    } else {
+      return this->AddToInventory(item);
+    }
   }
 
   std::shared_ptr<Item> combo;

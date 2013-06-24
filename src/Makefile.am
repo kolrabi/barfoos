@@ -36,6 +36,7 @@ barfoos_SOURCES=\
   entity.cc entity.h \
   mob.cc mob.h \
   player.cc player.h \
+  itementity.cc itementity.h \
   \
   cell.cc cell.h \
   feature.cc feature.h \

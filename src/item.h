@@ -13,6 +13,7 @@ struct ItemProperties {
   unsigned int texture = 0;
   size_t frames = 1;
   std::vector<Animation> anims;
+  size_t equipAnim;
   IColor light;
   bool flicker = false;
 
@@ -29,6 +30,8 @@ struct ItemProperties {
   float durability = 10;
   float useDurability = 1.0;
   float equipDurability = 0.0;
+  
+  std::string replacement;
   
   // std::string placeEntity = "";
   // bool destroyBlock = false;
@@ -74,6 +77,7 @@ public:
   }
   
   void DrawIcon(const Point &p) const;
+  void DrawSprite(const Vector3 &p, float w, float h) const;
 
 protected:
 

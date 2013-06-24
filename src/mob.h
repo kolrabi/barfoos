@@ -1,7 +1,6 @@
 #ifndef BARFOOS_MOB_H
 #define BARFOOS_MOB_H
 
-
 #include "common.h"
 
 #include "entity.h"
@@ -19,10 +18,11 @@ public:
   const Vector3 &GetAngles() const { return angles; }
 
   virtual void Update(float t);
-  
-  void ApplyForce(const Vector3 &f) { velocity = velocity + f * (deltaT/properties->mass); }
   virtual void Die();
   virtual void OnCollide(const std::shared_ptr<Entity> &other);
+  
+  void ApplyForce(const Vector3 &f) { velocity = velocity + f * (deltaT/properties->mass); }
+  void AddVelocity(const Vector3 &v) { velocity = velocity + v; }
 
 protected:
 

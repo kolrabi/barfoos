@@ -2,6 +2,8 @@
 #include "entity.h"
 #include "util.h"
 #include "item.h"
+#include "itementity.h"
+#include "world.h"
 
 InventoryGui::InventoryGui(const std::shared_ptr<Entity> &entity) 
 : entity(entity) {
@@ -60,8 +62,12 @@ void InventoryGui::OnMouseClick(const Point &pos, int button, bool down) {
   Gui::OnMouseClick(pos, button, down);
   if (down == false) {
     if (dragItem) {
-      // FIXME: drop item instead?
-      this->entity->AddToInventory(dragItem);
+      // drop item into world
+      std::shared_ptr<Mob> entity(new ItemEntity(dragItem));
+      entity->SetPosition(this->entity->GetAABB().center + this->forward);
+      entity->AddVelocity(this->forward * 10);
+      this->entity->GetWorld()->AddEntity(entity);
+      
       this->dragItem = nullptr;
     }
   }

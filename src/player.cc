@@ -154,6 +154,9 @@ Player::UpdateInput(
   angles.y -= mouseDY*0.5;
   
   if (glfwGetKey('R')) Die();
+  if (glfwGetKey('E') && this->selectedEntity) {
+    this->selectedEntity->OnUse(this);
+  }
 
   if (glfwGetKey(GLFW_KEY_LEFT))  angles.x -= deltaT;
   if (glfwGetKey(GLFW_KEY_RIGHT)) angles.x += deltaT;
@@ -282,24 +285,16 @@ Player::MouseClick(const Point &pos, int button, bool down) {
 
 const IColor Player::GetTorchLight() {
   IColor torch;
-  std::shared_ptr<Item> l = this->inventory[(size_t)InventorySlot::LeftHand];
-  std::shared_ptr<Item> r = this->inventory[(size_t)InventorySlot::RightHand];
   
-  if (r) {
+  for (auto item : this->inventory) {
+    if (!item || !item->IsEquipped()) continue;
+    
     float f = 1.0;
-    if (r->GetProperties()->flicker) {
+    if (item->GetProperties()->flicker) {
       f = simplexNoise(Vector3(lastT*3, 0, 0)) * simplexNoise(Vector3(lastT*2, -lastT, 0));
       f = f * 0.4 + 0.5;
     }
-    torch = torch + r->GetProperties()->light * f;
-  }
-  if (l) {
-    float f = 1.0;
-    if (l->GetProperties()->flicker) {
-      f = simplexNoise(Vector3(-lastT*3, 0, 0)) * simplexNoise(Vector3(lastT*2, lastT, 0));
-      f = f * 0.4 + 0.5;
-    }
-    torch = torch + l->GetProperties()->light * f;
+    torch = torch + item->GetProperties()->light * f;
   }
   return torch;
 }

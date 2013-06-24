@@ -23,8 +23,9 @@ void main() {
   v_pos = gl_ModelViewMatrix * vertex;
  
   /* turbulence */
-  v_pos.x *= 1.0+0.25*cos(u_time*2+v_pos.z);
-  v_pos.y *= 1.0+0.25*sin(u_time*2.5+v_pos.z);
+  float turbulence = 0.0;
+  v_pos.x *= 1.0+(0.25*cos(u_time*2+v_pos.z))*turbulence;
+  v_pos.y *= 1.0+(0.25*sin(u_time*2.5+v_pos.z))*turbulence;
 //  v_pos.z += 0.15*cos(u_time*5+v_pos.z*2);
 //  v_pos.xy *= 1.0 + 0.1*cos(v_pos.z+u_time);
 //  vec3 tc = Distort(v_pos);

@@ -21,6 +21,7 @@ void updateTextures();
 std::vector <std::string> findAssets(const std::string &type);
 
 void drawUnitCube();
+void drawVerticalBillboard(const Vector3 &pos, float w, float h, unsigned int tex, float u=0, float uw=1, float ofsX = 0, float ofsY = 0);  
 void drawBillboard(const Vector3 &pos, float w, float h, unsigned int tex, float u=0, float uw=1, float ofsX = 0, float ofsY = 0);  
 void drawAABB(const AABB &aabb);
 float Wave(float x, float z, float t, float a = 0.2, float o = 0.5);
@@ -32,6 +33,8 @@ Point alignBottomLeftScreen(const Point &size, int padding = 0);
 Point alignBottomRightScreen(const Point &size, int padding = 0);
 Point alignTopLeftScreen(const Point &size, int padding = 0);
 Point alignTopRightScreen(const Point &size, int padding = 0);
+
+std::vector<std::string> Tokenize(const char *line);
 
 #endif
 

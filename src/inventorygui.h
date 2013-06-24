@@ -37,15 +37,16 @@ public:
   virtual void OnHide();
 
   virtual void Draw(const Point &parentPos);  
+  
+  void SetForward(const Vector3 &forward) { this->forward = forward; }
 
-//  void SetDragItem(const std::shared_ptr<Item> &item);
-//  std::shared_ptr<Item> GetDragItem();
   std::shared_ptr<Item> dragItem;
 
 protected:
 
   std::shared_ptr<Entity> entity;
   Point mousePos;
+  Vector3 forward;
 
 private:
 
