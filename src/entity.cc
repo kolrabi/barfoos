@@ -60,6 +60,11 @@ EntityProperties::EntityProperties(FILE *f) {
       this->maxHealth = std::atoi(tokens[1].c_str());
     } else if (tokens[0] == "extents") {
       this->extents = Vector3( std::atof(tokens[1].c_str()), std::atof(tokens[2].c_str()), std::atof(tokens[3].c_str()) );
+      this->w = this->extents.x;
+      this->h = this->extents.y;
+    } else if (tokens[0] == "size") {
+      this->w = std::atof(tokens[1].c_str());
+      this->h = std::atof(tokens[2].c_str());
     } else if (tokens[0] == "inventory") {
       this->items[tokens[2]] = std::atof(tokens[1].c_str());
     } else if (tokens[0] == "cell") {

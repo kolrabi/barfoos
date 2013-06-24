@@ -6,6 +6,7 @@
 #include "mob.h"
 #include "player.h"
 #include "simplex.h"
+#include "particle.h"
 
 #include "random.h"
 #include "serializer.h"
@@ -172,6 +173,7 @@ World::SetCell(const IVector3 &pos, const Cell &cell, bool ignoreLock) {
   defaultMask[i] = false;
  
   size_t featId = this->cells[i].GetFeatureID();
+  
   this->cells[i] = cell;
   this->cells[i].SetWorld(this);
   this->cells[i].SetPosition(pos);
@@ -373,7 +375,7 @@ World::Update(
 
   // update all entities
   for (auto entity : this->entities) {
-    entity->Update(t);
+    if (entity) entity->Update(t);
   }
 
   // remove removable entities
@@ -928,3 +930,15 @@ World::AddFeatureSeen(size_t f) {
   }
 }
 
+
+void
+World::BreakBlock(const IVector3 &pos) {
+  AABB aabb = this->SetCell(pos, Cell("air")).GetAABB();
+  for (size_t i=0; i<16; i++) {
+    std::shared_ptr<Mob> particle = std::shared_ptr<Mob>(new Particle());
+    Vector3 s = aabb.extents - particle->GetAABB().extents;
+    Vector3 p = Vector3(random.Float()*s.x, random.Float()*s.y, random.Float()*s.z) + aabb.center;
+    particle->SetPosition(p);
+    this->AddEntity(particle);
+  }
+}

@@ -704,3 +704,9 @@ void Cell::SetWorld(World *world) {
   this->tickPhase = this->world->GetRandom().Integer(this->tickInterval);
 }
 
+AABB Cell::GetAABB() const {
+  AABB aabb;
+  aabb.center = Vector3(pos) + Vector3(0.5,0.5,0.5);
+  aabb.extents = Vector3(0.5,0.5,0.5);
+  return aabb;
+}

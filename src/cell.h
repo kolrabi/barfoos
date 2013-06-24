@@ -96,6 +96,8 @@ public:
   
   void SetDirty() { dirty = 1; }
   bool IsDirty() const { return dirty; }
+  
+  AABB GetAABB() const;
 
   void UpdateVertices();
   void Tick(Random &random);

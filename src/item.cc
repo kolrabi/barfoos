@@ -192,8 +192,7 @@ void Item::UseOnCell(Cell *cell, Side side) {
   (void)side;
   if (!this->CanUse()) return;
   
-  cell->GetWorld()->SetCell(cell->GetPosition(), Cell("air"));
-  
+  cell->GetWorld()->BreakBlock(cell->GetPosition());
   this->StartCooldown();
 }
 

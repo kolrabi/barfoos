@@ -59,6 +59,7 @@ public:
   Random &GetRandom() { return random; }
 
   void AddFeatureSeen(size_t f);
+  void BreakBlock(const IVector3 &pos);
 
 private:
 
