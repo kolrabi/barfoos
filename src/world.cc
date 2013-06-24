@@ -41,9 +41,9 @@ World::World(const IVector3 &size, int level, Random &rnd) :random(rnd)
   size_t featureCount  = random.Integer(400)+100;             // 100 - 500
   float  useLastChance = 0.1 + random.Float01()*0.8;          // 0.1 - 0.9
   size_t caveCount     = random.Integer(30)+5;                //   5 -  35
-  size_t caveLengthMin = random.Integer(100);                 //   0 - 100
+  size_t caveLengthMin = random.Integer(20);                  //   0 -  20
   size_t caveLengthMax = caveLengthMin + random.Integer(100); //   0 - 200
-  size_t caveRepeat    = 10+random.Integer(20);               //  10 -  30
+  size_t caveRepeat    = random.Integer(20)+1;                //   1 -  21
 
   // try 10 times to build a world with at least 50 features
   for (size_t tries=0; tries < 10 && instances.size() < 50; tries++) {
@@ -60,14 +60,13 @@ World::World(const IVector3 &size, int level, Random &rnd) :random(rnd)
         ppp.y %= 256;
         ppp.z %= 256;
         Vector3 vpos(ppp);
-        float f = (simplexNoise(vpos*0.03) * simplexNoise(vpos*0.06));
-        float g = (simplexNoise(vpos*(-0.05)));
-        if (g < -0.5) {
-          SetCell(pos, Cell("rock"));
-        } else if (f > 0) {
-          this->cells[i] = Cell("rock");
-        } else if (f < -0.5) {
+        float f = (simplexNoise(vpos*0.07) * simplexNoise(vpos*(-0.06)) * simplexNoise(vpos*(-0.13)));
+        if (f > 0.75) {
           SetCell(pos, Cell("brick"));
+        } else if (f > 0.5) {
+          SetCell(pos, Cell("rock"));
+        } else {
+          SetCell(pos, Cell("dirt"));
         }
       }
       this->cells[i].SetWorld(this);
@@ -117,6 +116,20 @@ World::World(const IVector3 &size, int level, Random &rnd) :random(rnd)
   }
 
   std::cerr << "built world with " << instances.size() << " features. level " << (level) << std::endl;
+  for (size_t i=0; i<this->cellCount; i++) {
+    IVector3 pos = GetCellPos(i);
+
+    IVector3 ppp(pos+r);
+    ppp.x %= 256;
+    ppp.y %= 256;
+    ppp.z %= 256;
+    Vector3 vpos(ppp);
+    vpos.y *= 2;
+    float f = (simplexNoise(vpos*0.01) * simplexNoise(vpos*0.02) * simplexNoise(vpos*0.04));
+    if (f < -0.2 && cells[i].GetFeatureID() > 10) {
+      SetCell(pos, Cell("air"));
+    }
+  }  
  
   WorldEdit e(this);
   
@@ -930,7 +943,6 @@ World::AddFeatureSeen(size_t f) {
   }
 }
 
-
 void
 World::BreakBlock(const IVector3 &pos) {
   AABB aabb = this->SetCell(pos, Cell("air")).GetAABB();
@@ -939,6 +951,7 @@ World::BreakBlock(const IVector3 &pos) {
     Vector3 s = aabb.extents - particle->GetAABB().extents;
     Vector3 p = Vector3(random.Float()*s.x, random.Float()*s.y, random.Float()*s.z) + aabb.center;
     particle->SetPosition(p);
+    particle->AddVelocity(Vector3(random.Float(), random.Float(), random.Float()*10));
     this->AddEntity(particle);
   }
 }

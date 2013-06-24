@@ -1,3 +1,5 @@
+treasure chests
+
 gui
   main menu
 
@@ -10,7 +12,6 @@ items (entities)
   more weapons
 
 doors
-treasure chests
 
 projectiles (magic, ranged weapons)
 persistence
