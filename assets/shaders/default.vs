@@ -10,8 +10,8 @@ uniform float u_time;
 vec3 Distort(vec4 vertex) {
   float t = u_time;
   return vec3(
-    cos(t+vertex.y),
-    cos(t+vertex.x),
+    cos(t+vertex.z)*vertex.x,
+    sin(t+vertex.z)*vertex.y,
     0 //cos(t+vertex.x+vertex.y-vertex.z) 
   );
 }
@@ -23,10 +23,14 @@ void main() {
   v_pos = gl_ModelViewMatrix * vertex;
  
   /* turbulence */
-  vec3 tc = Distort(gl_ModelViewMatrix * vertex);
-  vertex = vertex + vec4(tc*0.2, 0.0);
+  v_pos.x *= 1.0+0.25*cos(u_time*2+v_pos.z);
+  v_pos.y *= 1.0+0.25*sin(u_time*2.5+v_pos.z);
+//  v_pos.z += 0.15*cos(u_time*5+v_pos.z*2);
+//  v_pos.xy *= 1.0 + 0.1*cos(v_pos.z+u_time);
+//  vec3 tc = Distort(v_pos);
+//  v_pos = v_pos + vec4(tc*0.2, 0.0);
 
-  vec4 pos = gl_ModelViewProjectionMatrix * vertex;
+  vec4 pos = gl_ProjectionMatrix * v_pos;
 
   /* output */
   gl_Position = pos;
