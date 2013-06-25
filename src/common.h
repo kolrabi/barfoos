@@ -304,5 +304,36 @@ static inline std::ostream & operator<< (std::ostream &out, const Rect &r) {
   return out;
 }
 
+
+template<class T> 
+class temp_ptr {
+public:
+  temp_ptr(T *ptr) : ptr(ptr), moved(false) {}
+  temp_ptr(const temp_ptr<T> &o) = delete;
+  temp_ptr(temp_ptr<T> &&o) {
+    if (o.moved) {
+      ptr = nullptr;
+    } else {      
+      ptr = o.ptr;
+    }
+    moved = true;
+    o.ptr = nullptr;
+  }
+  T* operator -> () { return ptr; }
+  const T* operator -> () const { return ptr; }
+  
+  operator bool() const { return ptr != nullptr; }
+  bool operator == (const temp_ptr<T> &o) {
+    return o.ptr == this->ptr;
+  }
+  bool operator == (const T *o) {
+    return o == this->ptr;
+  }
+  
+private:
+  T *ptr;
+  bool moved;
+};
+
 #endif
 

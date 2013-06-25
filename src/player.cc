@@ -7,6 +7,7 @@
 #include "worldedit.h"
 #include "weapon.h"
 #include "gui.h"
+#include "game.h"
 
 #include <GL/glfw.h>
 #include <cmath>
@@ -39,7 +40,7 @@ Player::~Player() {
 }
 
 void
-Player::View() {
+Player::View() const {
   Vector3 fwd   = (GetAngles()).EulerToVector();
   Vector3 right = (GetAngles()+Vector3(3.14159/2, 0, 0)).EulerToVector();
   Vector3 bob = Vector3(0,sin(bobPhase*3.14159*4)*0.05, 0) * bobAmplitude + right * cos(bobPhase*3.14159*2)*0.05 * bobAmplitude;
@@ -53,10 +54,10 @@ Player::View() {
 }
 
 void
-Player::MapView() {
-  if (!headCell) return;
-
-  this->world->AddFeatureSeen(headCell->GetFeatureID());
+Player::MapView() const {
+  if (headCell) {
+    Game::Instance->GetWorld()->AddFeatureSeen(headCell->GetFeatureID());
+  }
 
   Vector3 fwd   = (GetAngles()).EulerToVector();
   Vector3 pos(smoothPosition);
@@ -71,9 +72,8 @@ Player::MapView() {
 }
 
 void 
-Player::Update(float t) {
-  Mob::Update(t);
-  if (!this->world) return;
+Player::Update() {
+  Mob::Update();
 
   UpdateInput();
   UpdateSelection();
@@ -95,6 +95,8 @@ Player::Update(float t) {
       this->inventory[(int)InventorySlot::LeftHand]->UseOnEntity(this->selectedEntity);
     }
   }
+  
+  Game::Instance->GetWorld()->SetTorchLight(this->GetTorchLight());
 }
 
 void Player::UpdateSelection() {
@@ -109,38 +111,39 @@ void Player::UpdateSelection() {
   AABB aabbRange;
   aabbRange.center = pos;
   aabbRange.extents = Vector3(range,range,range); 
-  auto entitiesInRange = world->FindEntities(aabbRange);
+  auto entitiesInRange = Game::Instance->FindEntities(aabbRange);
 
   float hitDist;
   Vector3 hitPos;
 
-  this->selectedEntity = nullptr;
+  this->selectedEntity = ~0UL;
   this->selectedCell = nullptr;
   
   // check entities in range  
-  for (auto entity : entitiesInRange) {
-    if (entity.get() == this) continue;
+  for (auto id : entitiesInRange) {
+    temp_ptr<Entity> entity = Game::Instance->GetEntity(id);
+    if (!entity || entity == this) continue;
 
     if (entity->GetAABB().Ray(pos, dir, hitDist, hitPos)) {
       if (hitDist < dist) { 
         dist = hitDist;
-        this->selectedEntity = entity;
+        this->selectedEntity = id;
       }
     }
   }
   
   // check cells
-  Cell &cell = this->world->CastRayCell(pos, dir, hitDist, this->selectedCellSide);
+  Cell &cell = Game::Instance->GetWorld()->CastRayCell(pos, dir, hitDist, this->selectedCellSide);
   if (hitDist < dist) {
     dist = hitDist;
     this->selectedCell = &cell;
-    this->selectedEntity = nullptr;
+    this->selectedEntity = ~0UL;
   }
   
   this->selectionRange = dist;
 }
 
-void Player::Draw() {
+void Player::Draw() const {
   //Vector3 pos(this->spawnPos);
   //pos.y = this->smoothPosition.y;
   //glColor3ub(255, 255, 255);
@@ -150,12 +153,16 @@ void Player::Draw() {
 void
 Player::UpdateInput(
 ) {
+  float deltaT = Game::Instance->GetDeltaT();
   angles.x += mouseDX*0.5;
   angles.y -= mouseDY*0.5;
   
+  mouseDX = mouseDY = 0;
+  
   if (glfwGetKey('R')) Die();
-  if (glfwGetKey('E') && this->selectedEntity) {
-    this->selectedEntity->OnUse(this);
+  if (glfwGetKey('E') && this->selectedEntity != ~0UL) {
+    temp_ptr<Entity> entity(Game::Instance->GetEntity(this->selectedEntity));
+    if (entity) entity->OnUse(*this);
   }
 
   if (glfwGetKey(GLFW_KEY_LEFT))  angles.x -= deltaT;
@@ -203,7 +210,7 @@ Player::UpdateInput(
 }
 
 void 
-Player::DrawWeapons() {
+Player::DrawWeapons() const {
   Vector3 fwd(0,0,1);
   Vector3 right(1,0,0);
   Vector3 bob = Vector3(0,sin(bobPhase*3.14159*4)*0.05, 0) * bobAmplitude + right * cos(bobPhase*3.14159*2)*0.05 * bobAmplitude;
@@ -227,53 +234,9 @@ Player::DrawWeapons() {
 }
 
 void 
-Player::DrawGUI() {
+Player::DrawGUI() const {
   viewGUI();
-  
   drawIcon(Point(virtualScreenWidth/2, virtualScreenHeight/2), Point(32,32), crosshairTex);  
-/*
-  std::stringstream str;
-  str << (GetAngles().EulerToVector()) << smoothPosition;
-  
-  RenderString(str.str()).Draw(0,0);
-  
-  str.str("");
-  str.clear();
-  
-  if (this->selectedCell) {
-    str << this->selectedCell->GetType();
-  } else {
-    str << "(null)";
-  }
-  RenderString(str.str()).Draw(0,1);
-  
-  str.str("");
-  str.clear();
-  
-  if (this->selectedEntity) {
-    str << this->selectedEntity->GetAABB().center;
-  } else {
-    str << "(null)";
-  }
-  RenderString(str.str()).Draw(0,2);
-
-  str.str("");
-  str.clear();
-  str << "!\"§$%&/()=?ß'#äöü+-.,;:`\\^°<>_~";
-  RenderString(str.str()).Draw(0,3);
-  str.str("");
-  str.clear();
-  str << "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-  RenderString(str.str()).Draw(0,4);
-  str.str("");
-  str.clear();
-  str << "abcdefghijklmnopqrstuvwxyz";
-  RenderString(str.str()).Draw(0,5);
-  str.str("");
-  str.clear();
-  str << "0123456789*€\u00a3";
-  RenderString(str.str()).Draw(0,6);
-*/
 }
 
 void
@@ -283,15 +246,16 @@ Player::MouseClick(const Point &pos, int button, bool down) {
   if (button == GLFW_MOUSE_BUTTON_RIGHT) this->itemActiveRight = down;
 }
 
-const IColor Player::GetTorchLight() {
+const IColor Player::GetTorchLight() const {
   IColor torch;
+  float t = Game::Instance->GetTime();
   
   for (auto item : this->inventory) {
     if (!item || !item->IsEquipped()) continue;
     
     float f = 1.0;
     if (item->GetProperties()->flicker) {
-      f = simplexNoise(Vector3(lastT*3, 0, 0)) * simplexNoise(Vector3(lastT*2, -lastT, 0));
+      f = simplexNoise(Vector3(t*3, 0, 0)) * simplexNoise(Vector3(t*2, -t, 0));
       f = f * 0.4 + 0.5;
     }
     torch = torch + item->GetProperties()->light * f;

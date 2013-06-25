@@ -17,18 +17,14 @@ public:
   World(const IVector3 &size, int level, Random &random);
   ~World();
   
+  void Build();
+  
   const IVector3 &GetSize() const { return size; }
 
   void Draw();
   void DrawMap();
   void Update(float t);
   
-  void AddEntity(const std::shared_ptr<Entity> &entity);
-  void AddPlayer(const std::shared_ptr<Player> &entity);
-  void RemoveEntity(const std::shared_ptr<Entity> &entity);
-  bool CheckMob(const IVector3 &pos);
-  std::vector<std::shared_ptr<Entity>> FindEntities(const AABB &aabb);
-
   Cell &GetCell(const IVector3 &pos) const;
   Cell &SetCell(const IVector3 &pos, const Cell &cell, bool ignoreLock = false);
   std::vector<const Cell *> GetCellNeighbours(const IVector3 &pos) const;
@@ -60,6 +56,8 @@ public:
 
   void AddFeatureSeen(size_t f);
   void BreakBlock(const IVector3 &pos);
+  
+  void SetTorchLight(const IColor &color) { this->torchLight = color; }
 
 private:
 
@@ -89,9 +87,6 @@ private:
 
   IColor ambientLight;
   
-  std::list<std::shared_ptr<Entity>> entities;
-  std::shared_ptr<Player> player;
-
   std::map<unsigned int, std::vector<Vertex>> vertices;
   std::vector<unsigned int> vbos;  
  
@@ -104,6 +99,7 @@ private:
   std::vector<FeatureInstance> instances;
 
   Shader *defaultShader;
+  IColor torchLight;
 };
 
 inline Cell &

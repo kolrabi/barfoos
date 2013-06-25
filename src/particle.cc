@@ -1,20 +1,21 @@
 #include "particle.h"
 #include "world.h"
 #include "random.h"
+#include "game.h"
 
 Particle::Particle() : 
   Mob("particle") {
-  this->dieT = 0;
+  this->dieT = 0.0;
 }
 
 Particle::~Particle() {
 }
 
-void Particle::Update(float t) {
-  if (this->dieT == 0.0) this->dieT = t+2+ this->world->GetRandom().Float();
+void Particle::Update() {
+  Mob::Update();
   
-  Mob::Update(t);
-  if (t > this->dieT) this->removable = true;
+  if (this->dieT == 0.0) this->dieT = Game::Instance->GetTime() + 2 + Game::Instance->GetWorld()->GetRandom().Float();
+  if (Game::Instance->GetTime() > this->dieT) this->removable = true;
 }
 
 void Particle::Draw() {

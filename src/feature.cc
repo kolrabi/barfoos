@@ -4,6 +4,7 @@
 #include "cell.h"
 #include "random.h"
 #include "mob.h"
+#include "game.h"
 
 #include <cstring>
 
@@ -205,11 +206,11 @@ FeatureInstance FileFeature::BuildFeature(World *world, const IVector3 &pos, int
 void FileFeature::SpawnEntities(World *world, const IVector3 &pos) const {
   for (const FeatureSpawn &spawn : spawns) {
     if (world->GetRandom().Chance(spawn.probability)) {
-      std::shared_ptr<Entity> entity;
+      Entity *entity = nullptr;
 
       switch(spawn.spawnClass) {
-        case SpawnClass::Mob: entity = std::make_shared<Entity>(Mob(spawn.type)); break;
-        case SpawnClass::Entity: entity = std::make_shared<Entity>(Entity(spawn.type)); break;
+        case SpawnClass::Mob: entity = new Mob(spawn.type); break;
+        case SpawnClass::Entity: entity = new Entity(spawn.type); break;
         default: continue;
       }
       
@@ -234,7 +235,7 @@ void FileFeature::SpawnEntities(World *world, const IVector3 &pos) const {
       
       entity->SetPosition(spawnPos);
       
-      world->AddEntity(entity);
+      Game::Instance->AddEntity(entity);
     }
   }
 }

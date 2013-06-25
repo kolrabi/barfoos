@@ -4,7 +4,7 @@
 #include "common.h"
 
 class Cell;
-class World;
+class Game;
 class Item;
 
 struct EntityProperties {
@@ -41,23 +41,21 @@ public:
   Entity(const std::string &visualName);
   virtual ~Entity();
 
-  void SetWorld(World *world);
-  World *GetWorld() { return this->world; }
-  
   const AABB &GetAABB() const { return aabb; }
   void SetPosition(const Vector3 &pos) { aabb.center = pos; }
   void SetPosition(const IVector3 &pos) { 
     smoothPosition = aabb.center = Vector3(pos) + Vector3(0.5,0.5,0.5); 
   }
   
-  virtual void Update(float t);
-  virtual void Draw();
+  virtual void Start();
+  virtual void Update();
+  virtual void Draw() const;
+  virtual void DrawBoundingBox() const;
   
-  virtual void DrawBoundingBox();
   virtual void AddHealth(int points); 
   virtual void Die();
-  virtual void OnCollide(const std::shared_ptr<Entity> &other) { (void)other; }
-  virtual void OnUse(Entity *other) { (void)other; }
+  virtual void OnCollide(Entity &other) { (void)other; }
+  virtual void OnUse(Entity &other) { (void)other; }
   
   bool IsRemovable() const { return removable; }
   bool AddToInventory(const std::shared_ptr<Item> &item);
@@ -69,15 +67,14 @@ public:
   }
 
   void Equip(const std::shared_ptr<Item> &item, InventorySlot slot);
-
+  
 protected:
 
-  World *world;
   bool removable;
   
   AABB aabb;
   Vector3 smoothPosition;
-  float lastT, deltaT;
+  
   float frame;
   size_t animation;
     

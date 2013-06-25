@@ -11,18 +11,18 @@ public:
   Player();
   virtual ~Player();
 
-  virtual void Update(float t);
-  virtual void Draw();
+  virtual void Update();
+  virtual void Draw() const;
   
-  void View();
-  void MapView();
+  void View() const;
+  void MapView() const;
   
-  void DrawWeapons();
-  void DrawGUI();
+  void DrawWeapons() const;
+  void DrawGUI() const;
   
   void MouseClick(const Point &pos, int button, bool down);
 
-  const IColor GetTorchLight();
+  const IColor GetTorchLight() const;
 
 private:
 
@@ -32,7 +32,7 @@ private:
   float bobPhase;
   float bobAmplitude;
 
-  std::shared_ptr<Entity> selectedEntity;
+  size_t selectedEntity;
   Cell *selectedCell;
   Side selectedCellSide;
   float selectionRange;

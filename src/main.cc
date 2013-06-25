@@ -11,7 +11,6 @@
 
 #include <cctype>
 
-Game *game = nullptr;
 size_t level = 0;
 
 size_t guiActive = false;
@@ -44,7 +43,7 @@ void mouseMove(int x, int y) {
     mouseDX = mouseDY = 0;
     mouseX = (x / (float)screenWidth)*virtualScreenWidth;
     mouseY = (y / (float)screenHeight)*virtualScreenHeight;
-    game->OnMouseMove(Point(mouseX,mouseY));
+    Game::Instance->OnMouseMove(Point(mouseX,mouseY));
   } else if (mouseGrab) {
     mouseDX = (x-screenWidth/2)*0.005;
     mouseDY = (y-screenHeight/2)*0.005;
@@ -53,7 +52,7 @@ void mouseMove(int x, int y) {
 }
 
 void mouseClick(int button, int down) {
-  if (game) {
+  if (Game::Instance) {
     if (!mouseGrab && down && button == GLFW_MOUSE_BUTTON_LEFT) {
       if (!guiActive) {
         glfwSetMousePos(screenWidth/2, screenHeight/2);
@@ -61,15 +60,14 @@ void mouseClick(int button, int down) {
       }
       mouseGrab = true;
     } else {
-      game->OnMouseClick(Point(mouseX,mouseY), button, down);
+      Game::Instance->OnMouseClick(Point(mouseX,mouseY), button, down);
     }
   }
 }
 
 void keyEvent(int key, int action) {
   if (key == GLFW_KEY_F12 && action == GLFW_PRESS) {
-    delete game;
-    game = new Game("seed", ++level);
+    new Game("seed", ++level);
   }
 }
 
@@ -160,20 +158,20 @@ int main() {
   updateScreenSize();
 
   // Create new game
-  game = new Game("seed", 0);
+  new Game("seed", 0);
   
   float lastT = glfwGetTime();
   while (glfwGetWindowParam(GLFW_OPENED)) {
     // render game
-    game->Render();
+    Game::Instance->Render();
 
     // update game (at most 0.1s at a time)
     float t = glfwGetTime();
     while(t - lastT > 0.1) {
       lastT += 0.1;
-      game->Update(lastT);
+      Game::Instance->Update(lastT, t - lastT);
     }
-    game->Update(t);
+    Game::Instance->Update(t, t - lastT);
     lastT = t;
 
     // update input   

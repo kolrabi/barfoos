@@ -13,7 +13,7 @@ public:
   Particle();
   virtual ~Particle();
 
-  virtual void Update(float t);
+  virtual void Update();
   virtual void Draw();
   
 protected:

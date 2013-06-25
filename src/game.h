@@ -10,6 +10,7 @@ class Player;
 class Mob;
 class InventoryGui;
 class Gui;
+class Entity;
 
 class Game final {
 public:
@@ -18,17 +19,33 @@ public:
   ~Game();
 
   void Render() const;
-  void Update(float t);
+  void Update(float t, float deltaT);
 
+  float GetTime() const { return this->lastT; }
   float GetDeltaT() const { return deltaT; }
   
   void OnMouseMove(const Point &pos);
   void OnMouseClick(const Point &pos, int button, bool down);
+  
+  size_t AddEntity(Entity *entity);
+  size_t AddPlayer(Player *entity);
+  void RemoveEntity(size_t entity);
+  bool CheckEntities(const IVector3 &pos);
+  std::vector<size_t> FindEntities(const AABB &aabb);
+  temp_ptr<Entity> GetEntity(size_t id);
+  std::shared_ptr<World> GetWorld() { return this->world; }
 
+  static Game *Instance;
+  
 private:
 
   std::shared_ptr<World> world;
-  std::shared_ptr<Player> player;
+  
+  std::map<size_t, Entity*> entities;
+  Player *player;
+  size_t nextEntityId;
+  size_t GetNextEntityId() { return nextEntityId++; }
+  
   std::shared_ptr<InventoryGui> inventoryGui;
   std::shared_ptr<Gui> activeGui;
 
@@ -42,7 +59,6 @@ private:
   
   void BuildWorld(size_t level);
 };
-
 
 #endif
 

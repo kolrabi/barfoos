@@ -17,11 +17,11 @@ public:
   void SetSpawnPos(const Vector3 &p) { this->spawnPos = p; }
   const Vector3 &GetAngles() const { return angles; }
 
-  virtual void Update(float t);
+  virtual void Update();
   virtual void Die();
-  virtual void OnCollide(const std::shared_ptr<Entity> &other);
+  virtual void OnCollide(Entity &other);
   
-  void ApplyForce(const Vector3 &f) { velocity = velocity + f * (deltaT/properties->mass); }
+  void ApplyForce(const Vector3 &f);
   void AddVelocity(const Vector3 &v) { velocity = velocity + v; }
 
 protected:

@@ -2,6 +2,7 @@
 #include "entity.h"
 #include "world.h"
 #include "mob.h"
+#include "game.h"
 
 #include <GL/glfw.h>
 
@@ -127,7 +128,6 @@ LoadItems() {
 Item::Item(const std::string &type) {
   this->properties = getItem(type);
   this->nextUseT = 0;
-  this->lastT = 0;
   this->isEquipped = false;
   this->animation = 0;
   this->frame = 0;
@@ -149,14 +149,10 @@ void Item::StartCooldown() {
   this->nextUseT = glfwGetTime() + this->properties->cooldown;
 }
 
-void Item::Update(float t) {
-  if (this->lastT == 0.0) this->lastT = t;
-  float deltaT = t - lastT;
-  this->lastT = t;
-
+void Item::Update() {
   if (this->properties->anims.size() > 0) {
     const Animation &a = this->properties->anims[animation];
-    frame += a.fps * deltaT;
+    frame += a.fps * Game::Instance->GetDeltaT();
     if (frame >= a.frameCount+a.firstFrame) {
       animation = this->IsEquipped()?this->properties->equipAnim:0;
       frame = frame - (int)frame + this->properties->anims[0].firstFrame;
@@ -164,7 +160,7 @@ void Item::Update(float t) {
   }
   
   if (this->isEquipped) { 
-    this->durability -= this->properties->equipDurability * deltaT;
+    this->durability -= this->properties->equipDurability * Game::Instance->GetDeltaT();
   }
   
   if (this->durability <= 0 && this->properties->durability != 0.0) {
@@ -180,8 +176,11 @@ void Item::Update(float t) {
   }
 }
 
-void Item::UseOnEntity(const std::shared_ptr<Entity> &entity) {
+void Item::UseOnEntity(size_t id) {
   if (!this->CanUse()) return;
+  
+  temp_ptr<Entity> entity(Game::Instance->GetEntity(id));
+  if (!entity) return;
   
   entity->AddHealth(-this->properties->damage);
   
@@ -213,7 +212,7 @@ void Item::Draw(bool left) {
   glRotatef(-60, 0, 1, 0);
 
   // cooldown fraction: 1.0 full cooldown left, 0.0 cooldown over
-  float f = (nextUseT - lastT)/this->properties->cooldown;
+  float f = (nextUseT - Game::Instance->GetTime())/this->properties->cooldown;
   if (f < 0) f = 0;
 
   glTranslatef(-1,-1,0);

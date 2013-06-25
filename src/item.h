@@ -53,11 +53,11 @@ public:
   virtual bool CanUse() const;
   virtual void StartCooldown();
   
-  virtual void UseOnEntity(const std::shared_ptr<Entity> &ent);
+  virtual void UseOnEntity(size_t ent);
   virtual void UseOnCell(Cell *cell, Side side);
   virtual void Draw(bool left);
   
-  virtual void Update(float t);
+  virtual void Update();
 
   float GetRange() const { return this->properties->range; }  
   uint32_t GetEquippableSlots() { return this->properties->equippable; }
@@ -86,11 +86,10 @@ protected:
   size_t animation;
   float frame;  
 
-  float lastT;
-  float nextUseT;
   float durability;
   bool isEquipped;
-  
+  float nextUseT;
+ 
   bool isRemovable;
   
   // bool isBlessed;

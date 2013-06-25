@@ -3,10 +3,10 @@
 #include "util.h"
 #include "item.h"
 #include "itementity.h"
-#include "world.h"
+#include "game.h"
 
-InventoryGui::InventoryGui(const std::shared_ptr<Entity> &entity) 
-: entity(entity) {
+InventoryGui::InventoryGui(size_t entityId) 
+: entityId(entityId) {
 
   //                 x  x  x  x
   //   8  0          x  x  x  x
@@ -29,6 +29,8 @@ InventoryGui::InventoryGui(const std::shared_ptr<Entity> &entity)
   AddSlotGui(topLeft+Point(slotDist.x*2, slotDist.y*2), InventorySlot::RightHand);
   AddSlotGui(topLeft+Point(slotDist.x*1, slotDist.y*3), InventorySlot::Boots);
 
+  temp_ptr<Entity> entity(Game::Instance->GetEntity(entityId));
+  
   for (size_t i=(size_t)InventorySlot::Backpack; i<entity->GetInventorySize(); i++) {
     int x = i%4-3;
     int y = (i-(size_t)InventorySlot::Backpack)/4;
@@ -60,13 +62,20 @@ void InventoryGui::OnMouseMove(const Point &pos) {
 
 void InventoryGui::OnMouseClick(const Point &pos, int button, bool down) {
   Gui::OnMouseClick(pos, button, down);
+  
+  temp_ptr<Entity> entity = Game::Instance->GetEntity(entityId);
+  
   if (down == false) {
     if (dragItem) {
-      // drop item into world
-      std::shared_ptr<Mob> entity(new ItemEntity(dragItem));
-      entity->SetPosition(this->entity->GetAABB().center + this->forward);
-      entity->AddVelocity(this->forward * 10);
-      this->entity->GetWorld()->AddEntity(entity);
+      if (entity) {
+        // drop item into world
+        Mob *itemEntity = new ItemEntity(dragItem);
+      
+        itemEntity->SetPosition(entity->GetAABB().center + this->forward);
+        itemEntity->AddVelocity(this->forward * 10);
+      
+        Game::Instance->AddEntity(itemEntity);
+      }
       
       this->dragItem = nullptr;
     }
@@ -74,7 +83,7 @@ void InventoryGui::OnMouseClick(const Point &pos, int button, bool down) {
 }
 
 Gui *InventoryGui::AddSlotGui(const Point &p, InventorySlot slot) {
-  Gui *gui = new InventorySlotGui(this, entity, slot);
+  Gui *gui = new InventorySlotGui(this, entityId, slot);
   gui->SetPosition(p - Point(16,16));
   gui->SetSize(Point(32,32));
   this->children.push_back(gui);
@@ -83,32 +92,21 @@ Gui *InventoryGui::AddSlotGui(const Point &p, InventorySlot slot) {
 
 void InventoryGui::OnHide() {
   if (dragItem) {
-    this->entity->AddToInventory(dragItem);
+    temp_ptr<Entity> entity = Game::Instance->GetEntity(entityId);
+    entity->AddToInventory(dragItem);
+    
     this->dragItem = nullptr;
   }
 }
 
-/*
-void InventoryGui::SetDragItem(const std::shared_ptr<Item> &item) {
-  (void)item;
-  //this->dragItem = item;
-}
-
-std::shared_ptr<Item> InventoryGui::GetDragItem() {
-  return this->dragItem;
-}
-*/
 // -----------------------------------------------------------------------
 
 InventorySlotGui::InventorySlotGui(
-  InventoryGui *parent, const std::shared_ptr<Entity> &entity, InventorySlot slot) {
+  InventoryGui *parent, size_t entityId, InventorySlot slot) {
   this->parent = parent;
-  this->entity = entity;
+  this->entityId = entityId;
   this->slot = slot;
   this->slotTex = loadTexture("gui/slot");
-  
-  std::shared_ptr<Item> test(parent->dragItem);
-  if (test) this->entity->AddToInventory(test);
 }
 
 InventorySlotGui::~InventorySlotGui() {
@@ -117,17 +115,21 @@ InventorySlotGui::~InventorySlotGui() {
 void InventorySlotGui::OnMouseClick(const Point &pos, int button, bool down) {
   (void)pos;
   (void)button;
+  
+  temp_ptr<Entity> entity(Game::Instance->GetEntity(this->entityId));
+  if (!entity) return;
+  
   if (down) {
-    std::shared_ptr<Item> item(this->entity->GetInventory(slot));
+    std::shared_ptr<Item> item(entity->GetInventory(slot));
     if (item) {
       parent->dragItem = item;
-      this->entity->Equip(nullptr, slot);
+      entity->Equip(nullptr, slot);
     }
   } else {
     std::shared_ptr<Item> item(parent->dragItem);
     if (!item) return;
-    if (!this->entity->AddToInventory(item, slot)) {
-      this->entity->AddToInventory(item);
+    if (!entity->AddToInventory(item, slot)) {
+      entity->AddToInventory(item);
     }
     parent->dragItem = nullptr;
   }
@@ -140,6 +142,9 @@ InventorySlotGui::Draw(const Point &parentPos) {
   
   drawIcon(p, Point(32,32), tex);
 
+  temp_ptr<Entity> entity(Game::Instance->GetEntity(this->entityId));
+  if (!entity) return;
+  
   std::shared_ptr<Item> item = entity->GetInventory(slot);
   
   if (item != nullptr)

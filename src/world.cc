@@ -13,6 +13,7 @@
 #include "worldedit.h"
 
 #include "shader.h"
+#include "game.h"
 
 World::World(const IVector3 &size, int level, Random &rnd) :random(rnd)
 {  
@@ -33,7 +34,14 @@ World::World(const IVector3 &size, int level, Random &rnd) :random(rnd)
   this->lastT = 0;
   this->tickInterval = 0.05;
   this->nextTickT = 0;
+}
 
+World::~World() {
+  if (this->vbos.size()) glDeleteBuffersARB(this->vbos.size(), &this->vbos[0]);
+}
+
+void
+World::Build() {
   // build features -------------------------------------------
   
   // some basic parameters for this world
@@ -165,10 +173,6 @@ World::World(const IVector3 &size, int level, Random &rnd) :random(rnd)
   this->Dump();
 }
 
-World::~World() {
-  if (this->vbos.size()) glDeleteBuffersARB(this->vbos.size(), &this->vbos[0]);
-}
-
 Cell &
 World::SetCell(const IVector3 &pos, const Cell &cell, bool ignoreLock) {
   if (checkOverwrite) {
@@ -284,8 +288,8 @@ World::Draw() {
   
   this->defaultShader->Bind();
   this->defaultShader->Uniform("u_texture", 0);
-  this->defaultShader->Uniform("u_torch", player->GetTorchLight());
-  this->defaultShader->Uniform("u_time", lastT);
+  this->defaultShader->Uniform("u_torch", this->torchLight);
+  this->defaultShader->Uniform("u_time", Game::Instance->GetTime());
 
   // draw each vertex buffer 
   auto iter = vertices.begin();
@@ -322,11 +326,6 @@ World::Draw() {
   glDisableClientState(GL_COLOR_ARRAY);
   glDisableClientState(GL_VERTEX_ARRAY);
   Shader::Unbind();
-
-  // draw all entities
-  for (auto entity : this->entities) {
-    entity->Draw();
-  }
 }
 
 void
@@ -375,32 +374,6 @@ World::Update(
   }
   deltaT = t - lastT;
 
-  // handle collision between entities
-  for (auto entity1 : this->entities) {
-    for (auto entity2 : this->entities) {
-      if (entity1 == entity2) continue;
-      if (entity1->GetAABB().Overlap(entity2->GetAABB())) {
-        entity1->OnCollide(entity2);
-        entity2->OnCollide(entity1);
-      }
-    }
-  }
-
-  // update all entities
-  for (const std::shared_ptr<Entity> &entity : this->entities) {
-    if (entity) entity->Update(t);
-  }
-
-  // remove removable entities
-  auto entityIter = this->entities.begin();
-  while(entityIter != this->entities.end()) {
-    if ((*entityIter)->IsRemovable()) {
-      entityIter = this->entities.erase(entityIter);
-    } else {
-      entityIter++;
-    }
-  }
-  
   // update all dynamic cells
   for (size_t i : this->dynamicCells) {
     this->cells[i].Update(t, random);
@@ -726,86 +699,6 @@ Vector3 World::MoveAABB(
   return center;
 }
 
-/**
- * Add an entity to this world.
- * @param entity Entity to add
- */
-void 
-World::AddEntity(const std::shared_ptr<Entity> &entity) {
-  entity->SetWorld(this);
-  this->entities.emplace_back(entity);
-}
-
-/**
- * Add the player entity to this world. 
- * Also stores the player for future reference.
- * @param player Player to add
- */
-void 
-World::AddPlayer(const std::shared_ptr<Player> &player) {
-  this->AddEntity(player);
-  this->player = player;
-}
-
-/**
- * Remove an entity from this world.
- * If the entity is the player entity, the player reference will be unset.
- * @param entity Entity to remove
- */
-void
-World::RemoveEntity(const std::shared_ptr<Entity> &entity) {
-  auto iter = std::find(this->entities.begin(), this->entities.end(), entity);
-  if (iter == this->entities.end()) {
-    return;
-  }
-  
-  (*iter)->SetWorld(nullptr);
-  this->entities.erase(iter);
-  
-  if (this->player == entity) {
-    this->player = nullptr;
-  }
-}
-
-/** 
- * Find entities within an AABB.
- * The entities' AABBs have to intersesct the given AABB to be returned.
- * @param aabb AABB within which to look for entities
- * @return A vector of entities.
- */
-std::vector<std::shared_ptr<Entity>> 
-World::FindEntities(const AABB &aabb) {
-  std::vector<std::shared_ptr<Entity>> entities;
-  
-  for (auto entity : this->entities) {
-    if (aabb.Overlap(entity->GetAABB())) {
-      entities.push_back(entity);
-    }
-  } 
-  
-  return entities;
-}
-
-/**
- * Check if a cell is free of entities.
- * @param pos Cell position to check
- * @return true if no entities are inside the cell.
- */
-bool 
-World::CheckMob(const IVector3 &pos) {
-  if (!IsValidCellPosition(pos)) return false;
-
-  AABB aabb;
-  aabb.extents = Vector3(0.5, 0.5, 0.5);
-  aabb.center = Vector3(pos) + aabb.extents;
-  
-  for (auto entity : this->entities) {
-    if (aabb.Overlap(entity->GetAABB())) return false;
-  }
-  
-  return true;
-}
-
 IColor 
 World::GetLight(const IVector3 &pos) const {
   return (GetCell(pos).GetLightLevel().Gamma(2.2)) + ambientLight;
@@ -952,6 +845,6 @@ World::BreakBlock(const IVector3 &pos) {
     Vector3 p = Vector3(random.Float()*s.x, random.Float()*s.y, random.Float()*s.z) + aabb.center;
     particle->SetPosition(p);
     particle->AddVelocity(Vector3(random.Float(), random.Float(), random.Float()*10));
-    this->AddEntity(std::shared_ptr<Entity>(particle));
+    Game::Instance->AddEntity(particle);
   }
 }

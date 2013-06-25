@@ -11,7 +11,7 @@ class Item;
 
 class InventorySlotGui : public Gui {
 public: 
-  InventorySlotGui(InventoryGui *parent, const std::shared_ptr<Entity> &entity, InventorySlot slot);
+  InventorySlotGui(InventoryGui *parent, size_t entityId, InventorySlot slot);
   virtual ~InventorySlotGui();
 
   virtual void Draw(const Point &parentPos);  
@@ -19,7 +19,7 @@ public:
 
 private:
   InventoryGui *parent;
-  std::shared_ptr<Entity> entity;
+  size_t entityId;
   InventorySlot slot;
 
   unsigned int slotTex;
@@ -28,7 +28,7 @@ private:
 class InventoryGui : public Gui {
 public:
   
-  InventoryGui(const std::shared_ptr<Entity> &entity);
+  InventoryGui(size_t entityId);
   virtual ~InventoryGui();
 
   virtual void Update(float t);
@@ -44,7 +44,7 @@ public:
 
 protected:
 
-  std::shared_ptr<Entity> entity;
+  size_t entityId;
   Point mousePos;
   Vector3 forward;
 

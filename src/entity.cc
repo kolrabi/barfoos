@@ -8,6 +8,7 @@
 #include "item.h"
 #include "itementity.h"
 #include "random.h"
+#include "game.h"
 
 static std::map<std::string, EntityProperties *> allEntities;
 EntityProperties defaultEntity;
@@ -90,14 +91,10 @@ LoadEntities() {
 }
 
 Entity::Entity(const std::string &type) {
-  this->world = nullptr;
   this->removable = false;
   
   this->properties = getEntity(type);
-  
-  this->lastT = 0;
-  this->deltaT = 0;
-  
+
   this->frame = 0;
   this->animation = 0;
   
@@ -112,46 +109,40 @@ Entity::~Entity() {
 }
 
 void
-Entity::SetWorld(World *world) {
-  if (!this->world && world) {
-    for (auto item : this->properties->items) {
-      if (world->GetRandom().Chance(item.second)) {
-        this->AddToInventory(std::shared_ptr<Item>(new Item(item.first)));
-      }
-    }
-    
-    // resolve initial collision with world
-    std::vector<Vector3> verts;
-    verts.push_back(Vector3(-aabb.extents.x, -aabb.extents.y, -aabb.extents.z));
-    verts.push_back(Vector3( aabb.extents.x, -aabb.extents.y, -aabb.extents.z));
-    verts.push_back(Vector3(-aabb.extents.x, -aabb.extents.y,  aabb.extents.z));
-    verts.push_back(Vector3( aabb.extents.x, -aabb.extents.y,  aabb.extents.z));
-    verts.push_back(Vector3(-aabb.extents.x,  aabb.extents.y, -aabb.extents.z));
-    verts.push_back(Vector3( aabb.extents.x,  aabb.extents.y, -aabb.extents.z));
-    verts.push_back(Vector3(-aabb.extents.x,  aabb.extents.y,  aabb.extents.z));
-    verts.push_back(Vector3( aabb.extents.x,  aabb.extents.y,  aabb.extents.z));
-
-    for (Vector3 v : verts) {
-      if (world->IsPointSolid(aabb.center + v)) {
-        aabb.center = aabb.center - v;
-      }
+Entity::Start() {
+  std::shared_ptr<World> world = Game::Instance->GetWorld();
+  
+  // fill inventory with random crap
+  for (auto item : this->properties->items) {
+    if (world->GetRandom().Chance(item.second)) {
+      std::cerr << item.first << std::endl;
+      this->AddToInventory(std::shared_ptr<Item>(new Item(item.first)));
     }
   }
   
-  this->world = world;
+  // resolve initial collision with world
+  std::vector<Vector3> verts;
+  verts.push_back(Vector3(-aabb.extents.x, -aabb.extents.y, -aabb.extents.z));
+  verts.push_back(Vector3( aabb.extents.x, -aabb.extents.y, -aabb.extents.z));
+  verts.push_back(Vector3(-aabb.extents.x, -aabb.extents.y,  aabb.extents.z));
+  verts.push_back(Vector3( aabb.extents.x, -aabb.extents.y,  aabb.extents.z));
+  verts.push_back(Vector3(-aabb.extents.x,  aabb.extents.y, -aabb.extents.z));
+  verts.push_back(Vector3( aabb.extents.x,  aabb.extents.y, -aabb.extents.z));
+  verts.push_back(Vector3(-aabb.extents.x,  aabb.extents.y,  aabb.extents.z));
+  verts.push_back(Vector3( aabb.extents.x,  aabb.extents.y,  aabb.extents.z));
+
+  for (Vector3 v : verts) {
+    if (world->IsPointSolid(aabb.center + v)) {
+      aabb.center = aabb.center - v;
+    }
+  }
 }
 
 void 
-Entity::Update(float t) {
-  if (!this->world) return;
-  
-  // update time
-  if (lastT == 0) lastT = t;
-  deltaT = t - lastT;
-  
+Entity::Update() {
   if (this->properties->anims.size() > 0) {
     const Animation &a = this->properties->anims[animation];
-    frame += a.fps * deltaT;
+    frame += a.fps * Game::Instance->GetDeltaT();
     if (frame >= a.frameCount+a.firstFrame) {
       animation = 0;
       frame = frame - (int)frame + this->properties->anims[0].firstFrame;
@@ -159,38 +150,33 @@ Entity::Update(float t) {
   }
   
   IVector3 cellPos(aabb.center.x, aabb.center.y, aabb.center.z);
-  Cell *cell = &this->world->GetCell(cellPos);
+  Cell *cell = &Game::Instance->GetWorld()->GetCell(cellPos);
   if (cell != this->lastCell) {
     if (this->lastCell && this->properties->cellLeave != "") {
-      this->world->SetCell(this->lastCell->GetPosition(), Cell(this->properties->cellLeave));
+      Game::Instance->GetWorld()->SetCell(this->lastCell->GetPosition(), Cell(this->properties->cellLeave));
     }
     if (this->properties->cellEnter != "") {
-      this->world->SetCell(cellPos, Cell(this->properties->cellEnter));
+      Game::Instance->GetWorld()->SetCell(cellPos, Cell(this->properties->cellEnter));
     }
     this->lastCell = cell;
   }
   
   for (size_t i=0; i<this->inventory.size(); i++) {
     if (this->inventory[i]) {
-      this->inventory[i]->Update(t);
+      this->inventory[i]->Update();
       if (this->inventory[i]->IsRemovable()) {
         this->inventory[i] = nullptr;
       }
     }
   }
   
-  this->light = this->world->GetLight(cellPos).Saturate();
+  this->light = Game::Instance->GetWorld()->GetLight(cellPos).Saturate();
   
-  if (deltaT > 1.0/10.0)
-    smoothPosition = aabb.center;
-  else 
-    smoothPosition = smoothPosition + (aabb.center - smoothPosition) * deltaT * 10.0f;
-    
-  lastT = t;
+  this->smoothPosition = this->smoothPosition + (aabb.center - this->smoothPosition) * Game::Instance->GetDeltaT() * 10.0f;
 }
 
 void
-Entity::Draw() {
+Entity::Draw() const {
   if (this->properties->texture != 0) {
     float u = 0.0;
     float uw = 1.0;
@@ -211,7 +197,7 @@ Entity::Draw() {
 }
 
 void
-Entity::DrawBoundingBox() {
+Entity::DrawBoundingBox() const {
   glPushMatrix();
   glTranslatef(aabb.center.x, aabb.center.y, aabb.center.z);
   glScalef(aabb.extents.x, aabb.extents.y, aabb.extents.z);
@@ -245,15 +231,15 @@ Entity::Die() {
   this->removable = true;
   
   if (this->lastCell && this->properties->cellLeave != "") {
-    this->world->SetCell(this->lastCell->GetPosition(), Cell(this->properties->cellLeave));
+    Game::Instance->GetWorld()->SetCell(this->lastCell->GetPosition(), Cell(this->properties->cellLeave));
   }
   
   // drop inventory
   for (auto item : this->inventory) {
     if (item) {
-      std::shared_ptr<Entity> entity(new ItemEntity(item));
+      Entity *entity = new ItemEntity(item);
       entity->SetPosition(this->aabb.center);
-      this->world->AddEntity(entity);
+      Game::Instance->AddEntity(entity);
     }
   }
 }

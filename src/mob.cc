@@ -2,6 +2,7 @@
 #include "world.h"
 #include "cell.h"
 #include "util.h"
+#include "game.h"
 
 #include <cmath>
 
@@ -26,14 +27,13 @@ Mob::~Mob() {
 }
 
 void 
-Mob::Update(float t) {
-
-  Entity::Update(t);
+Mob::Update() {
+  Entity::Update();
   
-  if (!this->world) return;
+  std::shared_ptr<World> world = Game::Instance->GetWorld();
   
   if (this->properties->moveInterval != 0) {
-    if (t > nextMoveT) {
+    if (Game::Instance->GetTime() > nextMoveT) {
       nextMoveT += this->properties->moveInterval;
       moveTarget = aabb.center + (Vector3::Rand()-Vector3(0.5,0.5,0.5)) * 4.0;
       validMoveTarget = true;
@@ -48,6 +48,9 @@ Mob::Update(float t) {
   if (speed > this->properties->maxSpeed) move = move * (this->properties->maxSpeed/speed);
   velocity.x = std::abs(move.x) > std::abs(velocity.x) ? move.x : velocity.x;
   velocity.z = std::abs(move.z) > std::abs(velocity.z) ? move.z : velocity.z;
+  
+  float gravity = 3*9.81*Game::Instance->GetDeltaT();
+  float friction = 1.0 / (1.0+Game::Instance->GetDeltaT() * 10);
 
   if (noclip) {
     if (wantJump) {
@@ -58,49 +61,47 @@ Mob::Update(float t) {
     }
   } else if (inWater) { 
     if (wantJump) {
-      velocity.y += 9.81*deltaT*3 * (underWater?2:1);
+      velocity.y += gravity * (underWater?2:1);
       wantJump = false;
     } else {
-      velocity.y -= 9.81*deltaT*3;
+      velocity.y -= gravity;
     }
-    velocity.x = velocity.x / (1+deltaT*10);
-    velocity.y = velocity.y / (1+deltaT*10);
-    velocity.z = velocity.z / (1+deltaT*10);
+    velocity.y = velocity.y * friction;
   } else {
-    velocity.y -= 9.81*deltaT*3;
+    velocity.y -= gravity;
     if (wantJump && onGround) {
-      if (t - lastJumpT > 0.5) {
+      if (Game::Instance->GetTime() - lastJumpT > 0.5) {
         velocity.y = 8;
-        lastJumpT = t;
+        lastJumpT = Game::Instance->GetTime();
       }
     }
     wantJump = false;
   }
-  velocity.x = velocity.x / (1+deltaT*10);
-  velocity.z = velocity.z / (1+deltaT*10);
+  velocity.x = velocity.x * friction;
+  velocity.z = velocity.z * friction;
 
   // move
   uint8_t axis, axis2;
   bool movingDown = velocity.y <= 0;
 
   if (noclip) {
-    aabb.center = aabb.center + velocity*deltaT;
+    aabb.center = aabb.center + velocity * Game::Instance->GetDeltaT();
   } else if (movingDown) {
     // when moving down and pushing use step height
     Vector3 step(0, move.GetMag()!=0 ? this->properties->stepHeight : 0, 0);
-    Vector3 org = aabb.center + velocity.Horiz()*deltaT;
+    Vector3 org = aabb.center + velocity.Horiz() * Game::Instance->GetDeltaT();
     
-    aabb.center = this->world->MoveAABB(aabb, aabb.center + step, axis2);
-    aabb.center = this->world->MoveAABB(aabb, aabb.center + velocity.Horiz()*deltaT, axis);
-    aabb.center = this->world->MoveAABB(aabb, aabb.center - step*1.25 + velocity.Vert()*deltaT, axis2);
+    aabb.center = world->MoveAABB(aabb, aabb.center + step, axis2);
+    aabb.center = world->MoveAABB(aabb, aabb.center + velocity.Horiz()*Game::Instance->GetDeltaT(), axis);
+    aabb.center = world->MoveAABB(aabb, aabb.center - step*1.25 + velocity.Vert()*Game::Instance->GetDeltaT(), axis2);
     org.y = aabb.center.y;
     axis |= axis2;
-    aabb.center = this->world->MoveAABB(aabb, org, axis2);
+    aabb.center = world->MoveAABB(aabb, org, axis2);
     axis |= axis2;
     if (!axis2 & Axis::Y) aabb.center = aabb.center + step*0.25;
   } else if (!movingDown) {
     onGround = false;
-    aabb.center = this->world->MoveAABB(aabb, aabb.center + velocity*deltaT, axis);
+    aabb.center = world->MoveAABB(aabb, aabb.center + velocity*Game::Instance->GetDeltaT(), axis);
   }
 
   // jump out of water
@@ -109,16 +110,16 @@ Mob::Update(float t) {
   }
 
   IVector3 footPos(aabb.center.x, aabb.center.y - aabb.extents.y + this->properties->stepHeight, aabb.center.z);
-  footCell = &this->world->GetCell(footPos);
+  footCell = &world->GetCell(footPos);
 
   if (onGround) {
-    groundCell = &this->world->GetCell(footPos[Side::Down]);
+    groundCell = &world->GetCell(footPos[Side::Down]);
   } else {
     groundCell = nullptr;
   }
   
   IVector3 headPos(aabb.center.x, aabb.center.y + aabb.extents.y, aabb.center.z);
-  headCell = &this->world->GetCell(headPos);
+  headCell = &world->GetCell(headPos);
 
   underWater = headCell->GetInfo().flags & CellFlags::Liquid;
   if (!noclip) this->SetInLiquid(footCell->GetInfo().flags & CellFlags::Liquid);
@@ -152,8 +153,13 @@ Mob::Die() {
 }
 
 void
-Mob::OnCollide(const std::shared_ptr<Entity> &other) {
-  Vector3 d = this->GetAABB().center - other->GetAABB().center;
+Mob::OnCollide(Entity &other) {
+  Vector3 d = this->GetAABB().center - other.GetAABB().center;
   Vector3 f = d * (100 / (1+d.GetSquareMag()));
   this->ApplyForce(f);
+}
+
+void
+Mob::ApplyForce(const Vector3 &f) {
+  velocity = velocity + f * (Game::Instance->GetDeltaT() / this->properties->mass); 
 }
