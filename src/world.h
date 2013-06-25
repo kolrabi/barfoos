@@ -89,7 +89,7 @@ private:
 
   IColor ambientLight;
   
-  std::vector<std::shared_ptr<Entity>> entities;
+  std::list<std::shared_ptr<Entity>> entities;
   std::shared_ptr<Player> player;
 
   std::map<unsigned int, std::vector<Vertex>> vertices;

@@ -387,7 +387,7 @@ World::Update(
   }
 
   // update all entities
-  for (auto entity : this->entities) {
+  for (const std::shared_ptr<Entity> &entity : this->entities) {
     if (entity) entity->Update(t);
   }
 
@@ -732,8 +732,8 @@ Vector3 World::MoveAABB(
  */
 void 
 World::AddEntity(const std::shared_ptr<Entity> &entity) {
-  this->entities.push_back(entity);
   entity->SetWorld(this);
+  this->entities.emplace_back(entity);
 }
 
 /**
@@ -947,11 +947,11 @@ void
 World::BreakBlock(const IVector3 &pos) {
   AABB aabb = this->SetCell(pos, Cell("air")).GetAABB();
   for (size_t i=0; i<16; i++) {
-    std::shared_ptr<Mob> particle = std::shared_ptr<Mob>(new Particle());
+    Mob *particle = new Particle();
     Vector3 s = aabb.extents - particle->GetAABB().extents;
     Vector3 p = Vector3(random.Float()*s.x, random.Float()*s.y, random.Float()*s.z) + aabb.center;
     particle->SetPosition(p);
     particle->AddVelocity(Vector3(random.Float(), random.Float(), random.Float()*10));
-    this->AddEntity(particle);
+    this->AddEntity(std::shared_ptr<Entity>(particle));
   }
 }

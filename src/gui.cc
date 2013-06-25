@@ -6,6 +6,8 @@ Gui::Gui() {
   this->gravE = false;
   this->gravS = false;
   this->gravW = true;
+
+  this->lastT = 0.0;
 }
 
 Gui::~Gui() {

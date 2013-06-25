@@ -41,8 +41,8 @@ AC_CHECK_LIB(png, main)
 AH_TEMPLATE(WIN32, [define if compiling for windows])
 AH_TEMPLATE(X11, [define if compiling for X11])
 
-#CFLAGS="-O0 -ggdb -pg"
-#CXXFLAGS="-O0 -ggdb -pg"
+#CFLAGS="-O0 -ggdb"
+#CXXFLAGS="-O0 -ggdb"
 CFLAGS="-O2 -ggdb"
 CXXFLAGS="-O2 -ggdb"
 
