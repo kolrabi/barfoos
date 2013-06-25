@@ -39,7 +39,7 @@ std::vector<std::string> Tokenize(const char *l) {
   return tokens;
 }
 
-static std::map<std::string, ItemProperties *> allItems;
+static std::map<std::string, ItemProperties> allItems;
 ItemProperties defaultItem;
 
 const ItemProperties *getItem(const std::string &name) {
@@ -47,7 +47,7 @@ const ItemProperties *getItem(const std::string &name) {
     std::cerr << "entity " << name << " not found" << std::endl;
     return &defaultItem;
   }
-  return allItems[name];
+  return &allItems[name];
 }
 
 ItemProperties::ItemProperties() {
@@ -119,7 +119,7 @@ LoadItems() {
     FILE *f = openAsset("items/"+name);
     if (f) {
       std::cerr << "loading item " << name << std::endl;
-      allItems[name] = new ItemProperties(f);
+      allItems[name] = ItemProperties(f);
       fclose(f);
     }
   }

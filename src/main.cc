@@ -189,7 +189,8 @@ int main() {
 
     updateTextures();
   }
-
+  
+  glfwCloseWindow();
   glfwTerminate();
 
   return 0;

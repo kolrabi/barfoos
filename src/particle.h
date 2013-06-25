@@ -13,8 +13,8 @@ public:
   Particle();
   virtual ~Particle();
 
-  virtual void Update();
-  virtual void Draw();
+  virtual void Update() override;
+  virtual void Draw() const override;
   
 protected:
 

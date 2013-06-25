@@ -10,7 +10,7 @@
 #include "random.h"
 #include "game.h"
 
-static std::map<std::string, EntityProperties *> allEntities;
+static std::map<std::string, EntityProperties> allEntities;
 EntityProperties defaultEntity;
 
 const EntityProperties *getEntity(const std::string &name) {
@@ -18,7 +18,7 @@ const EntityProperties *getEntity(const std::string &name) {
     std::cerr << "entity " << name << " not found" << std::endl;
     return &defaultEntity;
   }
-  return allEntities[name];
+  return &allEntities[name];
 }
 
 EntityProperties::EntityProperties() {
@@ -84,7 +84,7 @@ LoadEntities() {
     FILE *f = openAsset("entities/"+name);
     if (f) {
       std::cerr << "loading entity " << name << std::endl;
-      allEntities[name] = new EntityProperties(f);
+      allEntities[name] = EntityProperties(f);
       fclose(f);
     }
   }

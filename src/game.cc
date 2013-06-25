@@ -31,6 +31,9 @@ Game::Game(const std::string &seed, size_t level) : seed(seed), random(seed, lev
 }
 
 Game::~Game() {
+  for (auto entity : this->entities) {
+    delete entity.second;
+  }
 }
 
 void

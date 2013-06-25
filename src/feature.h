@@ -3,11 +3,11 @@
 
 #include "common.h"
 #include "util.h"
+#include "cell.h"
 
 class Feature;
 class Template;
 class World;
-class Cell;
 class Random;
 
 struct FeatureConnection {
@@ -54,10 +54,14 @@ struct FeatureSpawn {
 
 class Feature {
 public:
-  virtual const IVector3 GetSize() const = 0; 
-  virtual float GetProbability(const World *world, const IVector3 &pos) const = 0;
-  virtual FeatureInstance BuildFeature(World *world, const IVector3 &pos, int dir, int dist, size_t id) const = 0;
-  virtual void SpawnEntities(World *world, const IVector3 &pos) const = 0;
+  Feature() {}
+  Feature(FILE *f, const std::string &name);
+  ~Feature();
+  
+  const IVector3 GetSize() const; 
+  float GetProbability(const World *world, const IVector3 &pos) const;
+  FeatureInstance BuildFeature(World *world, const IVector3 &pos, int dir, int dist, size_t id) const;
+  void SpawnEntities(World *world, const IVector3 &pos) const;
   
   const std::vector<FeatureConnection> &GetConnections() const { return conns; }
 
@@ -75,26 +79,11 @@ protected:
   std::vector<FeatureSpawn> spawns;
   std::string name;
   std::string group;
-};
 
-class FileFeature final : public Feature {
-public:
-  FileFeature(FILE *f, const std::string &name);
-  ~FileFeature();
-
-  virtual const IVector3 GetSize() const; 
-  virtual float GetProbability(const World *world, const IVector3 &pos) const;
-  virtual FeatureInstance BuildFeature(World *world, const IVector3 &pos, int dir, int dist, size_t id) const;
-  virtual void SpawnEntities(World *world, const IVector3 &pos) const;
-
-private:
-
-  Cell *cells;
+  std::vector<Cell> cells;
   std::vector<bool> defaultMask;
   IVector3 size; 
   
-  std::vector<FeatureSpawn> spawns;
-
   int minLevel, maxLevel;
   float maxProbability;
 

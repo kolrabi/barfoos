@@ -113,7 +113,7 @@ void Player::UpdateSelection() {
   aabbRange.extents = Vector3(range,range,range); 
   auto entitiesInRange = Game::Instance->FindEntities(aabbRange);
 
-  float hitDist;
+  float hitDist = range;
   Vector3 hitPos;
 
   this->selectedEntity = ~0UL;

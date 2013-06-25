@@ -8,20 +8,19 @@
 
 #include <cstring>
 
-static std::map<std::string, Feature *> allFeatures;
+static std::map<std::string, Feature> allFeatures;
 
 const Feature *getFeature(const std::string &name) {
   if (allFeatures.find(name) == allFeatures.end()) {
     std::cerr << "feature " << name << " not found" << std::endl;
     return nullptr;
   }
-  return allFeatures[name];
+  return &allFeatures[name];
 }
 
-FileFeature::FileFeature(FILE *f, const std::string &name) {
+Feature::Feature(FILE *f, const std::string &name) {
   this->name = name;
   this->group = name;
-  this->cells = nullptr;
   this->minLevel = 0;
   this->maxLevel = -1;
   this->maxProbability = 1.0;
@@ -75,8 +74,7 @@ FileFeature::FileFeature(FILE *f, const std::string &name) {
         std::atoi(tokens[2].c_str()), 
         std::atoi(tokens[3].c_str())
       );
-      delete[]cells; 
-      cells = new Cell[size.x*size.y*size.z];
+      cells = std::vector<Cell>(size.x * size.y * size.z);
       defaultMask = std::vector<bool>(size.x*size.y*size.z, false);
     } else if (tokens[0] == "level") {
       this->minLevel = std::atoi(tokens[1].c_str());
@@ -165,15 +163,14 @@ FileFeature::FileFeature(FILE *f, const std::string &name) {
 
 }
 
-FileFeature::~FileFeature() {
-  delete[]cells;
+Feature::~Feature() {
 }
 
-const IVector3 FileFeature::GetSize() const {
+const IVector3 Feature::GetSize() const {
   return size;
 }
 
-float FileFeature::GetProbability(const World *world, const IVector3 &pos) const {
+float Feature::GetProbability(const World *world, const IVector3 &pos) const {
   if (this->minY) std::cerr << pos.y << std::endl;
   if (pos.y < this->minY) {
     return 0;
@@ -189,7 +186,7 @@ float FileFeature::GetProbability(const World *world, const IVector3 &pos) const
   return maxProbability * std::sin(3.14159*levelFrac);
 }
 
-FeatureInstance FileFeature::BuildFeature(World *world, const IVector3 &pos, int dir, int dist, size_t id) const {
+FeatureInstance Feature::BuildFeature(World *world, const IVector3 &pos, int dir, int dist, size_t id) const {
   for (size_t z=0; z<size.z; z++) {
     for (size_t y=0; y<size.y; y++) {
       for (size_t x=0; x<size.x; x++) { 
@@ -203,7 +200,7 @@ FeatureInstance FileFeature::BuildFeature(World *world, const IVector3 &pos, int
   return FeatureInstance(this, pos, dir, dist+1);
 }
 
-void FileFeature::SpawnEntities(World *world, const IVector3 &pos) const {
+void Feature::SpawnEntities(World *world, const IVector3 &pos) const {
   for (const FeatureSpawn &spawn : spawns) {
     if (world->GetRandom().Chance(spawn.probability)) {
       Entity *entity = nullptr;
@@ -250,7 +247,7 @@ void FeatureConnection::Resolve() {
         std::string group = iter->substr(1);
         iter = nextFeatures.erase(iter);
         for (auto f : allFeatures) {
-          if (f.second->GetGroup() == group) {
+          if (f.second.GetGroup() == group) {
             iter = nextFeatures.insert(iter, f.first);
           }
         }
@@ -332,13 +329,13 @@ LoadFeatures() {
     FILE *f = openAsset("features/"+name);
     if (f) {
       std::cerr << "loading feature " << name << std::endl;
-      allFeatures[name] = new FileFeature(f, name);
+      allFeatures[name] = Feature(f, name);
       fclose(f);
     }
   }
 
-  for (auto f : allFeatures) {
-    f.second->ResolveConnections();
+  for (std::pair<std::string,Feature> f : allFeatures) {
+    allFeatures[f.first].ResolveConnections();
   }
 
 }
