@@ -10,6 +10,9 @@
 #include <zlib.h>
 
 #include <cctype>
+#include <cstring>
+
+#include "simplex.h"
 
 size_t level = 0;
 
@@ -106,10 +109,149 @@ static std::string credits() {
   return str;
 }
 
+int saveImage(const std::string &fileName, size_t w, size_t h, const uint8_t *rgb);
+
 int main() {
   std::cerr << credits() << std::endl;
   std::setlocale(LC_ALL, "en_US.utf8");
+  /*
+  size_t w = 512, h = 512;
+  uint8_t *data = new uint8_t[w*h*3];
+  
+  for (size_t x = 0; x<w; x++) {
+    for (size_t y = 0; y<h; y++) {
+      Vector3 p(x,y,0);
+      float f = (simplexNoise(p*0.1) * 0.5 + 0.5)*255;
+      data[(x+y*w)*3 + 0] = f;
+      data[(x+y*w)*3 + 1] = f;
+      data[(x+y*w)*3 + 2] = f;
+    }
+  }
+  saveImage("test.png", w,h,data);
+  
+  for (size_t x = 0; x<w; x++) {
+    for (size_t y = 0; y<h; y++) {
+      Vector3 p(x,y,0);
+      float f = (simplexNoise(p*0.1) * simplexNoise(p*0.05) * 0.5 + 0.5)*255;
+      data[(x+y*w)*3 + 0] = f;
+      data[(x+y*w)*3 + 1] = f;
+      data[(x+y*w)*3 + 2] = f;
+    }
+  }
+  saveImage("test-2o-mul.png", w,h,data);
 
+  for (size_t x = 0; x<w; x++) {
+    for (size_t y = 0; y<h; y++) {
+      Vector3 p(x,y,0);
+      float f = (simplexNoise(p*0.025) * simplexNoise(p*0.2) * simplexNoise(p*0.1) * simplexNoise(p*0.05) * 10 + 0.5)*255;
+      if (f < 0) f = 0; if (f > 255) f = 255;
+      data[(x+y*w)*3 + 0] = f;
+      data[(x+y*w)*3 + 1] = f;
+      data[(x+y*w)*3 + 2] = f;
+    }
+  }
+  saveImage("test-4o-mul.png", w,h,data);
+
+  for (size_t x = 0; x<w; x++) {
+    for (size_t y = 0; y<h; y++) {
+      Vector3 p(x,y,0);
+      float f = std::abs(simplexNoise(p*0.025) * simplexNoise(p*0.2) * simplexNoise(p*0.1) * simplexNoise(p*0.05) * 5)*255;
+      if (f < 0) f = 0; if (f > 255) f = 255;
+      data[(x+y*w)*3 + 0] = f;
+      data[(x+y*w)*3 + 1] = f;
+      data[(x+y*w)*3 + 2] = f;
+    }
+  }
+  saveImage("test-4o-mul-abs.png", w,h,data);
+
+  for (size_t x = 0; x<w; x++) {
+    for (size_t y = 0; y<h; y++) {
+      Vector3 p(x,y,0);
+      float f = std::abs(simplexNoise(p*0.025)) * std::abs(simplexNoise(p*0.2)) * std::abs(simplexNoise(p*0.1)) * std::abs(simplexNoise(p*0.05)) * 5 *255;
+      if (f < 0) f = 0; if (f > 255) f = 255;
+      data[(x+y*w)*3 + 0] = f;
+      data[(x+y*w)*3 + 1] = f;
+      data[(x+y*w)*3 + 2] = f;
+    }
+  }
+  saveImage("test-4o-abs-mul.png", w,h,data);
+  
+  for (size_t x = 0; x<w; x++) {
+    for (size_t y = 0; y<h; y++) {
+      Vector3 p(x,y,0);
+      float f = ((simplexNoise(p*0.1) + simplexNoise(p*0.05)) * 0.25 + 0.5)*255;
+      data[(x+y*w)*3 + 0] = f;
+      data[(x+y*w)*3 + 1] = f;
+      data[(x+y*w)*3 + 2] = f;
+    }
+  }
+  saveImage("test-2o-add.png", w,h,data);
+
+  for (size_t x = 0; x<w; x++) {
+    for (size_t y = 0; y<h; y++) {
+      Vector3 p(x,y,0);
+      float f = (simplexNoise(p*0.025) + simplexNoise(p*0.2) + (simplexNoise(p*0.1) + simplexNoise(p*0.05)) / 8.0 + 0.5)*255;
+      data[(x+y*w)*3 + 0] = f;
+      data[(x+y*w)*3 + 1] = f;
+      data[(x+y*w)*3 + 2] = f;
+    }
+  }
+  saveImage("test-4o-add.png", w,h,data);  
+  
+  for (size_t x = 0; x<w; x++) {
+    for (size_t y = 0; y<h; y++) {
+      Vector3 p(x,y,0);
+      p.x += simplexNoise(p*0.1 + Vector3(0,0, 1))*2;
+      p.y += simplexNoise(p*0.1 + Vector3(0,0,-1))*2;
+      
+      float f = (simplexNoise(p*0.1) * 0.5 + 0.5)*255;
+      data[(x+y*w)*3 + 0] = f;
+      data[(x+y*w)*3 + 1] = f;
+      data[(x+y*w)*3 + 2] = f;
+    }
+  }
+  saveImage("test-ofs-add.png", w,h,data);
+  
+  for (size_t x = 0; x<w; x++) {
+    for (size_t y = 0; y<h; y++) {
+      Vector3 p(x,y,0);
+      float f = (std::abs(simplexNoise(p*0.1)))*255;
+      data[(x+y*w)*3 + 0] = f;
+      data[(x+y*w)*3 + 1] = f;
+      data[(x+y*w)*3 + 2] = f;
+    }
+  }
+  saveImage("test-abs.png", w,h,data);
+  
+  for (size_t x = 0; x<w; x++) {
+    for (size_t y = 0; y<h; y++) {
+      Vector3 p(x,y,0);
+      p.x += simplexNoise(p*0.1 + Vector3(0,0, 1))*2;
+      p.y += simplexNoise(p*0.1 + Vector3(0,0,-1))*2;
+      
+      float f = (std::abs(simplexNoise(p*0.1)))*255;
+      data[(x+y*w)*3 + 0] = f;
+      data[(x+y*w)*3 + 1] = f;
+      data[(x+y*w)*3 + 2] = f;
+    }
+  }
+  saveImage("test-abs-ofs.png", w,h,data);
+  delete[] data;
+  return 0;
+  */
+/*
+  char abc[]= "abcdefghijklmnopqrstuvwxyz";
+  for (size_t i=0; i<26*26*26*26; i++) {
+    char tmp[5] = { 0 };
+    size_t n = i;
+    tmp [3] = (abc[n%26]); n/=26;
+    tmp [2] = (abc[n%26]); n/=26;
+    tmp [1] = (abc[n%26]); n/=26;
+    tmp [0] = (abc[n%26]); n/=26;
+    if (strchr(tmp, 'a') || strchr(tmp,'e') || strchr(tmp, 'i') || strchr(tmp, 'o') || strchr(tmp, 'u')) std::cerr << tmp << std::endl;
+  }
+return 0;
+*/
   // Set up glfw
   if (!glfwInit()) {
     std::cerr << "Could not initialize GLFW\n";

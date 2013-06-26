@@ -7,38 +7,44 @@ extern int screenWidth;
 extern int screenHeight;
 
 static GLuint tex = 0;
-static float scaleX = 8, scaleY = 8;
+static float scaleX = 4, scaleY = 8;
 
-static void drawChar(float x, wchar_t c, std::vector<Vertex> &verts) {
+static void drawChar(float x, float y, wchar_t c, std::vector<Vertex> &verts) {
   float u =   (c%32)/32.0;
   float v = 1-(c/32)/ 8.0;
 
-  verts.push_back(Vertex(Vector3(x+1+0.1, 0+0.1, 0), IColor(), u+1.0/32.0,v));
-  verts.push_back(Vertex(Vector3(x  +0.1, 0+0.1, 0), IColor(), u,v));
-  verts.push_back(Vertex(Vector3(x  +0.1, 1+0.1, 0), IColor(), u,v-1.0/8.0));
-  verts.push_back(Vertex(Vector3(x+1+0.1, 1+0.1, 0), IColor(), u+1.0/32.0,v-1.0/8.0));
+  verts.push_back(Vertex(Vector3(x+1+0.1, 0+0.1+y, 0), IColor(), u+1.0/32.0,v));
+  verts.push_back(Vertex(Vector3(x  +0.1, 0+0.1+y, 0), IColor(), u,v));
+  verts.push_back(Vertex(Vector3(x  +0.1, 1+0.1+y, 0), IColor(), u,v-1.0/8.0));
+  verts.push_back(Vertex(Vector3(x+1+0.1, 1+0.1+y, 0), IColor(), u+1.0/32.0,v-1.0/8.0));
 
-  verts.push_back(Vertex(Vector3(x+1, 0, 0), IColor(255, 255, 255), u+1.0/32.0,v));
-  verts.push_back(Vertex(Vector3(x  , 0, 0), IColor(255, 255, 255), u,v));
-  verts.push_back(Vertex(Vector3(x  , 1, 0), IColor(255, 255, 255), u,v-1.0/8.0));
-  verts.push_back(Vertex(Vector3(x+1, 1, 0), IColor(255, 255, 255), u+1.0/32.0,v-1.0/8.0));
+  verts.push_back(Vertex(Vector3(x+1, 0+y, 0), IColor(255, 255, 255), u+1.0/32.0,v));
+  verts.push_back(Vertex(Vector3(x  , 0+y, 0), IColor(255, 255, 255), u,v));
+  verts.push_back(Vertex(Vector3(x  , 1+y, 0), IColor(255, 255, 255), u,v-1.0/8.0));
+  verts.push_back(Vertex(Vector3(x+1, 1+y, 0), IColor(255, 255, 255), u+1.0/32.0,v-1.0/8.0));
 }
 
 static void drawString(const std::string &text, std::vector<Vertex> &verts) {
   float x = 0;
+  float y = 0;
 
   const char *p = text.c_str();
   size_t max = text.length();
   int l = mbtowc(0,0,0);
 
   while (*p) {
+    if (*p == '\n') {
+      x = 0;
+      y ++;
+      p ++;
+      continue;
+    }
     wchar_t wc;
-    
     l = mbtowc(&wc, p, max);
     if (l < 1) break;
     max -= l;
     p += l;
-    drawChar(x, wc, verts);
+    drawChar(x, y, wc, verts);
     x++;
   }
 }
@@ -64,7 +70,7 @@ void RenderString::Draw(float x, float y) {
   
   if (screenWidth <= 640) scaleX = 8;
   else scaleX = 16;
-  scaleY = scaleX;
+  scaleY = scaleX*2;
   
   glBindTexture(GL_TEXTURE_2D, tex);
 

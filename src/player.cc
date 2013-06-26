@@ -237,6 +237,18 @@ void
 Player::DrawGUI() const {
   viewGUI();
   drawIcon(Point(virtualScreenWidth/2, virtualScreenHeight/2), Point(32,32), crosshairTex);  
+
+  std::string str;
+  for (wchar_t i=0x0001; i<0x0100; i++) {
+    char tmp[MB_CUR_MAX+1];
+    tmp[0] = 0;
+    int len = wctomb(tmp, i);
+    tmp[len] = 0;
+    str += tmp;
+    if ((i%32)==0) str += "\n";
+  }
+  RenderString rs(str);
+  rs.Draw(0,0);
 }
 
 void
