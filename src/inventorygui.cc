@@ -4,6 +4,7 @@
 #include "item.h"
 #include "itementity.h"
 #include "game.h"
+#include "gfx.h"
 
 InventoryGui::InventoryGui(size_t entityId) 
 : entityId(entityId) {

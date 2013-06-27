@@ -1,9 +1,10 @@
 tex sword2
 frames 1
+size 2 2
 
 damage 1
 durability 10 10
-usedurability 1
+usedurability 0
 
 cooldown 0.2
 light 64 64 64

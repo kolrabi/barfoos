@@ -5,17 +5,14 @@
 #include "util.h"
 #include "simplex.h"
 #include "worldedit.h"
-#include "weapon.h"
 #include "gui.h"
 #include "game.h"
+#include "gfx.h"
 
 #include <GL/glfw.h>
 #include <cmath>
 
 static float eyeHeight = 0.7f;
-
-extern float mouseDX, mouseDY;
-extern int screenWidth, screenHeight;
 
 Player::Player() : Mob("player") {
   aabb.center = Vector3(16,16,16);
@@ -46,11 +43,8 @@ Player::View() const {
   Vector3 bob = Vector3(0,sin(bobPhase*3.14159*4)*0.05, 0) * bobAmplitude + right * cos(bobPhase*3.14159*2)*0.05 * bobAmplitude;
 
   Vector3 pos = smoothPosition + Vector3(0,eyeHeight,0)+bob;
-  Vector3 tpos = pos + fwd;
-
-  glMatrixMode(GL_MODELVIEW);
-  glLoadIdentity();
-  gluLookAt(pos.x, pos.y, pos.z, tpos.x, tpos.y, tpos.z, 0,1,0);
+  
+  Gfx::Instance->View3D(pos, fwd);
 }
 
 void
@@ -59,16 +53,10 @@ Player::MapView() const {
     Game::Instance->GetWorld()->AddFeatureSeen(headCell->GetFeatureID());
   }
 
-  Vector3 fwd   = (GetAngles()).EulerToVector();
-  Vector3 pos(smoothPosition);
-
-  glMatrixMode(GL_PROJECTION);
-  glLoadIdentity();
-  glOrtho(-32, 32, -32, 32, 0.15, 64);
-
-  glMatrixMode(GL_MODELVIEW);
-  glLoadIdentity();
-  gluLookAt(pos.x, pos.y+16, pos.z, pos.x, 0, pos.z, fwd.x,fwd.y,fwd.z);
+  Vector3 fwd = this->GetAngles().EulerToVector();
+  Vector3 pos = this->smoothPosition + Vector3(0,16,0);
+  
+  Gfx::Instance->View3D(pos, Vector3(0,-1,0), -32.0, fwd);
 }
 
 void 
@@ -144,20 +132,12 @@ void Player::UpdateSelection() {
 }
 
 void Player::Draw() const {
-  //Vector3 pos(this->spawnPos);
-  //pos.y = this->smoothPosition.y;
-  //glColor3ub(255, 255, 255);
-  //activeItem->DrawBillboard(pos);
 }
 
 void
 Player::UpdateInput(
 ) {
   float deltaT = Game::Instance->GetDeltaT();
-  angles.x += mouseDX*0.5;
-  angles.y -= mouseDY*0.5;
-  
-  mouseDX = mouseDY = 0;
   
   if (glfwGetKey('R')) Die();
   if (glfwGetKey('E') && this->selectedEntity != ~0UL) {
@@ -235,8 +215,9 @@ Player::DrawWeapons() const {
 
 void 
 Player::DrawGUI() const {
-  viewGUI();
-  drawIcon(Point(virtualScreenWidth/2, virtualScreenHeight/2), Point(32,32), crosshairTex);  
+  Gfx::Instance->ViewGUI();
+  const Point &vsize = Gfx::Instance->GetVirtualScreenSize();
+  drawIcon(Point(vsize.x/2, vsize.y/2), Point(32,32), crosshairTex);  
 
   std::string str;
   for (wchar_t i=0x0001; i<0x0100; i++) {
@@ -252,10 +233,16 @@ Player::DrawGUI() const {
 }
 
 void
-Player::MouseClick(const Point &pos, int button, bool down) {
+Player::OnMouseClick(const Point &pos, int button, bool down) {
   (void)pos;
   if (button == GLFW_MOUSE_BUTTON_LEFT) this->itemActiveLeft = down;
   if (button == GLFW_MOUSE_BUTTON_RIGHT) this->itemActiveRight = down;
+}
+
+void
+Player::OnMouseDelta(const Point &delta) {
+  angles.x += delta.x*0.025;
+  angles.y -= delta.y*0.025;
 }
 
 const IColor Player::GetTorchLight() const {

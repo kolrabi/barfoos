@@ -17,6 +17,7 @@ public:
 
   Game(const std::string &seed, size_t level = 0);
   ~Game();
+  static Game *Instance;
 
   void Render() const;
   void Update(float t, float deltaT);
@@ -26,6 +27,8 @@ public:
   
   void OnMouseMove(const Point &pos);
   void OnMouseClick(const Point &pos, int button, bool down);
+  void OnMouseDelta(const Point &delta);
+  void OnKey(int key, bool down);
   
   size_t AddEntity(Entity *entity);
   size_t AddPlayer(Player *entity);
@@ -34,8 +37,6 @@ public:
   std::vector<size_t> FindEntities(const AABB &aabb);
   temp_ptr<Entity> GetEntity(size_t id);
   std::shared_ptr<World> GetWorld() { return this->world; }
-
-  static Game *Instance;
   
 private:
 

@@ -3,6 +3,7 @@
 #include "world.h"
 #include "mob.h"
 #include "game.h"
+#include "gfx.h"
 
 #include <GL/glfw.h>
 
@@ -61,11 +62,14 @@ ItemProperties::ItemProperties(FILE *f) {
     if (tokens.size() == 0) continue;
 
     if (tokens[0] == "tex") {
-      this->texture = loadTexture("items/texture/"+tokens[1]);
+      this->sprite.texture = loadTexture("items/texture/"+tokens[1]);
     } else if (tokens[0] == "frames") {
-      this->frames = std::atoi(tokens[1].c_str());
+      this->sprite.totalFrames = std::atoi(tokens[1].c_str());
     } else if (tokens[0] == "anim") {
-      this->anims.push_back(Animation(std::atoi(tokens[1].c_str()), std::atoi(tokens[2].c_str()), std::atof(tokens[3].c_str())));
+      this->sprite.animations.push_back(Animation(std::atoi(tokens[1].c_str()), std::atoi(tokens[2].c_str()), std::atof(tokens[3].c_str())));
+    } else if (tokens[0] == "size") {
+      this->sprite.width = std::atof(tokens[1].c_str());
+      this->sprite.height = std::atof(tokens[2].c_str());
     } else if (tokens[0] == "damage") {
       this->damage = std::atof(tokens[1].c_str());
     } else if (tokens[0] == "armor") {
@@ -127,10 +131,9 @@ LoadItems() {
 
 Item::Item(const std::string &type) {
   this->properties = getItem(type);
+  this->sprite = this->properties->sprite;
   this->nextUseT = 0;
   this->isEquipped = false;
-  this->animation = 0;
-  this->frame = 0;
   this->isRemovable = false;
   this->durability = this->properties->durability;
 }
@@ -150,19 +153,14 @@ void Item::StartCooldown() {
 }
 
 void Item::Update() {
-  if (this->properties->anims.size() > 0) {
-    const Animation &a = this->properties->anims[animation];
-    frame += a.fps * Game::Instance->GetDeltaT();
-    if (frame >= a.frameCount+a.firstFrame) {
-      animation = this->IsEquipped()?this->properties->equipAnim:0;
-      frame = frame - (int)frame + this->properties->anims[0].firstFrame;
-    }
-  }
-  
+  this->sprite.Update(Game::Instance->GetDeltaT());
+
+  // reduce durability while equipped  
   if (this->isEquipped) { 
     this->durability -= this->properties->equipDurability * Game::Instance->GetDeltaT();
   }
   
+  // when broken, replace or remove
   if (this->durability <= 0 && this->properties->durability != 0.0) {
     std::string replacement = this->properties->replacement;
     if (replacement != "") {
@@ -196,42 +194,31 @@ void Item::UseOnCell(Cell *cell, Side side) {
 }
 
 void Item::Draw(bool left) {
-  float u = 0.0;
-  float uw = 1.0;
-  if (this->properties->frames) {
-    int f = ((int)this->frame) % this->properties->frames;
-    uw = 1.0/this->properties->frames;
-    u = f*uw;
-  }
-
+  glDisable(GL_CULL_FACE);
   glPushMatrix();
   
-  glDisable(GL_CULL_FACE);
-  glScalef(left ? -1 : 1, 1, 1);
-  glTranslatef(-1, -2, 4);
-  glRotatef(-60, 0, 1, 0);
+  glScalef(left ? 1 : -1, 1, 1);
+  glTranslatef(1, -2, 4);
+  
+  glRotatef(40, 0, 1, 0);
 
   // cooldown fraction: 1.0 full cooldown left, 0.0 cooldown over
   float f = (nextUseT - Game::Instance->GetTime())/this->properties->cooldown;
   if (f < 0) f = 0;
 
-  glTranslatef(-1,-1,0);
-  glRotatef(60-f*60, 0,0,1);
-  glTranslatef(1,1,0);
+  glTranslatef(1,-1,0);
+  glRotatef(f*60-60, 0,0,1);
+  glTranslatef(-1,1,0);
   
-  glBindTexture(GL_TEXTURE_2D, this->properties->texture);
-  glBegin(GL_QUADS);
-  glTexCoord2f(u+uw,1); glVertex3f(-1, 1,0);
-  glTexCoord2f(u,1); glVertex3f( 1, 1,0);
-  glTexCoord2f(u,0); glVertex3f( 1,-1,0);
-  glTexCoord2f(u+uw,0); glVertex3f(-1,-1,0);
-  glEnd();
-  
+  Gfx::Instance->DrawSprite(this->sprite, Vector3(0,0,0), false);
+
   glPopMatrix();
+  glEnable(GL_CULL_FACE);
 }
 
 void Item::DrawIcon(const Point &p) const {
-  float u = 0.0;
+(void)p;
+/*  float u = 0.0;
   float uw = 1.0;
   if (this->properties->frames) {
     int f = ((int)this->frame) % this->properties->frames;
@@ -240,16 +227,9 @@ void Item::DrawIcon(const Point &p) const {
   }
 
   drawIcon(p, Point(32,32), this->properties->texture, u, uw);
+  */
 }
 
-void Item::DrawSprite(const Vector3 &p, float w, float h) const {
-  float u = 0.0;
-  float uw = 1.0;
-  if (this->properties->frames) {
-    int f = ((int)this->frame) % this->properties->frames;
-    uw = 1.0/this->properties->frames;
-    u = f*uw;
-  }
-
-  drawBillboard(p, w, h, this->properties->texture, u, uw);
+void Item::DrawSprite(const Vector3 &pos) const {
+  Gfx::Instance->DrawSprite(this->sprite, pos);
 }

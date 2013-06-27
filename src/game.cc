@@ -1,4 +1,5 @@
 #include <GL/glfw.h>
+#include "gfx.h"
 
 #include "game.h"
 #include "world.h"
@@ -7,9 +8,6 @@
 #include "feature.h"
 #include "random.h"
 #include "inventorygui.h"
-
-extern int screenWidth;
-extern int screenHeight;
 
 Game *Game::Instance = nullptr;
 
@@ -34,23 +32,15 @@ Game::~Game() {
   for (auto entity : this->entities) {
     delete entity.second;
   }
+  Game::Instance = nullptr;
 }
 
 void
 Game::Render() const {
   glClearColor(0.3,0.3,0.2, 1.0);
+  glClear(GL_DEPTH_BUFFER_BIT|GL_COLOR_BUFFER_BIT);
 
   // draw world first
-  glViewport(0,0, screenWidth, screenHeight);
-  glClear(GL_DEPTH_BUFFER_BIT|GL_COLOR_BUFFER_BIT);
-  glEnable(GL_DEPTH_TEST);
-
-  glMatrixMode(GL_PROJECTION);
-  glLoadIdentity();
-  gluPerspective(60.0f, (float)screenWidth/(float)screenHeight, 0.015f, 64.0f);
-
-  glMatrixMode(GL_MODELVIEW);
-  glLoadIdentity();
   if (glfwGetKey('Q')) {
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
   } else {
@@ -71,12 +61,11 @@ Game::Render() const {
   player->DrawWeapons();
 
   // next draw mini map
+  const Point &ssize = Gfx::Instance->GetScreenSize();
   if (glfwGetKey('M')) {
-    glScissor(screenWidth/2-screenHeight/2,0,screenHeight,screenHeight);
-    glViewport(screenWidth/2-screenHeight/2,0,screenHeight,screenHeight);
+    Gfx::Instance->Viewport(Rect(Point(ssize.x/2 - ssize.y/2, 0), Point(ssize.y, ssize.y)));
   } else {
-    glViewport(screenWidth-screenWidth/8,screenHeight-screenWidth/8, screenWidth/8, screenWidth/8);
-    glScissor(screenWidth-screenWidth/8,screenHeight-screenWidth/8, screenWidth/8, screenWidth/8);
+    Gfx::Instance->Viewport(Rect(Point(ssize.x - ssize.x/8, ssize.y - ssize.x/8), Point(ssize.x/8, ssize.x/8)));
   }
   glClear(GL_DEPTH_BUFFER_BIT|GL_COLOR_BUFFER_BIT);
 
@@ -86,16 +75,15 @@ Game::Render() const {
   world->DrawMap();
 //  glEnable(GL_FOG);
 
-  glScissor(0,0,screenWidth,screenHeight);
-  glViewport(0,0,screenWidth,screenHeight);
+  Gfx::Instance->Viewport(Rect());
 
   // next draw debug stuff
-  glDisable(GL_DEPTH_TEST);
+  //glDisable(GL_DEPTH_TEST);
   glColor3ub(255,255,0);
   player->DrawGUI();
   
   if (this->activeGui) {
-    viewGUI();
+    Gfx::Instance->ViewGUI();
     this->activeGui->Draw(Point());
   }
 }
@@ -109,17 +97,22 @@ Game::Update(float t, float deltaT) {
 
   if (glfwGetKey(GLFW_KEY_TAB)) {
     if (!this->showInventory) {
-      guiActive ++;
-      if (this->activeGui) this->activeGui->OnHide();
+      if (this->activeGui) {
+        this->activeGui->OnHide();
+        Gfx::Instance->DecGuiCount();
+      }
       this->activeGui = this->inventoryGui;
       this->inventoryGui->SetForward(this->player->GetAngles().EulerToVector());
       this->activeGui->OnShow();
+      Gfx::Instance->IncGuiCount();
     }
     this->showInventory = true;
   } else {
     if (this->showInventory) {
-      guiActive --;
-      if (this->activeGui) this->activeGui->OnHide();
+      if (this->activeGui) {
+        this->activeGui->OnHide();
+        Gfx::Instance->DecGuiCount();
+      }
       this->activeGui = nullptr;
     }
     this->showInventory = false;
@@ -179,7 +172,16 @@ void Game::OnMouseClick(const Point &pos, int button, bool down) {
   if (this->activeGui) {
     this->activeGui->OnMouseClick(pos, button, down);
   } else {
-    this->player->MouseClick(pos, button, down);
+    this->player->OnMouseClick(pos, button, down);
+  }
+}
+
+void Game::OnMouseDelta(const Point &delta) {
+  this->player->OnMouseDelta(delta);
+}
+
+void Game::OnKey(int key, bool down) {
+  if (down && key == GLFW_KEY_F12) {
   }
 }
 
