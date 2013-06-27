@@ -245,7 +245,7 @@ Player::DrawGUI() const {
     int len = wctomb(tmp, i);
     tmp[len] = 0;
     str += tmp;
-    if ((i%32)==0) str += "\n";
+    if ((i%32)==0) str += "\n\n";
   }
   RenderString rs(str);
   rs.Draw(0,0);

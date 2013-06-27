@@ -702,6 +702,7 @@ Serializer &operator << (Serializer &ser, const Cell &cell) {
 void Cell::SetWorld(World *world) { 
   this->world = world; 
   this->tickPhase = this->world->GetRandom().Integer(this->tickInterval);
+  this->SetDirty();
 }
 
 AABB Cell::GetAABB() const {
