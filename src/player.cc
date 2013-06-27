@@ -216,9 +216,12 @@ Player::DrawWeapons() const {
 void 
 Player::DrawGUI() const {
   Gfx::Instance->ViewGUI();
-  const Point &vsize = Gfx::Instance->GetVirtualScreenSize();
-  drawIcon(Point(vsize.x/2, vsize.y/2), Point(32,32), crosshairTex);  
 
+  const Point &vsize = Gfx::Instance->GetVirtualScreenSize();
+  Sprite sprite;
+  sprite.texture = crosshairTex;
+  Gfx::Instance->DrawIcon(sprite, Point(vsize.x/2, vsize.y/2));
+/*
   std::string str;
   for (wchar_t i=0x0001; i<0x0100; i++) {
     char tmp[MB_CUR_MAX+1];
@@ -228,7 +231,8 @@ Player::DrawGUI() const {
     str += tmp;
     if ((i%32)==0) str += "\n\n";
   }
-  RenderString rs(str);
+*/
+  RenderString rs("You pick up a mushroom.\nYou eat the mushroom.\nYou are hallucinating.");
   rs.Draw(0,0);
 }
 
@@ -241,8 +245,8 @@ Player::OnMouseClick(const Point &pos, int button, bool down) {
 
 void
 Player::OnMouseDelta(const Point &delta) {
-  angles.x += delta.x*0.025;
-  angles.y -= delta.y*0.025;
+  angles.x += delta.x*0.0025;
+  angles.y -= delta.y*0.0025;
 }
 
 const IColor Player::GetTorchLight() const {

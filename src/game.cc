@@ -90,6 +90,7 @@ Game::Render() const {
 
 void 
 Game::Update(float t, float deltaT) {
+  std::cerr << t << std::endl;
   this->lastT = t;
   this->deltaT = deltaT;
   

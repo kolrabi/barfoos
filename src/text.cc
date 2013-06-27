@@ -5,7 +5,7 @@
 #include "gfx.h"
 
 static GLuint tex = 0;
-static Point size(4,8);
+static Point size(8,16);
 
 static void drawChar(float x, float y, wchar_t c, std::vector<Vertex> &verts) {
   float u =   (c%32)/32.0;
@@ -58,7 +58,7 @@ RenderString& RenderString::operator =(const std::string &str) {
 }
 
 void RenderString::Draw(float x, float y) {
-  if (tex == 0) tex = loadTexture("gui/font");
+  if (tex == 0) tex = loadTexture("gui/fontbold");
 
   if (dirty) { 
     vertices = std::vector<Vertex>(); 

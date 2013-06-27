@@ -325,7 +325,7 @@ World::Draw() {
   glDisableClientState(GL_TEXTURE_COORD_ARRAY);
   glDisableClientState(GL_COLOR_ARRAY);
   glDisableClientState(GL_VERTEX_ARRAY);
-  Shader::Unbind();
+//  Shader::Unbind();
 }
 
 void

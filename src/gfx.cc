@@ -190,6 +190,7 @@ void Gfx::View3D(const Vector3 &pos, const Vector3 &forward, float fovY, const V
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity();
   gluLookAt(pos.x, pos.y, pos.z, tpos.x, tpos.y, tpos.z, up.x, up.y, up.z);
+  glEnable(GL_DEPTH_TEST);
 }
 
 void Gfx::ViewGUI() const {
@@ -204,6 +205,7 @@ void Gfx::ViewGUI() const {
   if (this->screenSize.x > 640) {
     glScalef(2,2,1);
   }
+  glDisable(GL_DEPTH_TEST);
 }
 
 void 
@@ -293,6 +295,25 @@ void Gfx::DrawSprite(const Sprite &sprite, const Vector3 &pos, bool billboard) c
   this->SetTextureFrame(0, 1);
 }
 
+void Gfx::DrawIcon(const Sprite &sprite, const Point &center, const Point &size) const {
+  this->SetTextureFrame(sprite.currentFrame, sprite.totalFrames);
+
+  glMatrixMode(GL_MODELVIEW);
+  glPushMatrix();
+  
+  glTranslatef(center.x, center.y, 0);
+  glTranslatef(sprite.offsetX*size.x, sprite.offsetY*size.y, 0);
+  glScalef((sprite.width*size.x)/2, -(sprite.height*size.y)/2, 1);
+ 
+  glBindTexture(GL_TEXTURE_2D, sprite.texture);
+
+  this->DrawQuads(this->quadVerts);
+
+  glPopMatrix();
+  
+  this->SetTextureFrame(0, 1);
+}
+
 void 
 Gfx::OnResize(const Point &size) {
   // update screen size
@@ -348,22 +369,6 @@ Gfx::OnKey(int key, int event) {
   }
 
   if (Game::Instance) Game::Instance->OnKey(key, down);
-}
-
-void drawIcon(const Point &center, const Point &size, unsigned int tex, float u, float uw) {
-  glPushMatrix();
-  glTranslatef(center.x, center.y, 0);
-  
-  glBindTexture(GL_TEXTURE_2D, tex);
-
-  glBegin(GL_QUADS);
-  glTexCoord2f(u,   0); glVertex2f(-size.x/2, size.y/2);
-  glTexCoord2f(u,   1); glVertex2f(-size.x/2,-size.y/2);
-  glTexCoord2f(u+uw,1); glVertex2f( size.x/2,-size.y/2);
-  glTexCoord2f(u+uw,0); glVertex2f( size.x/2, size.y/2);
-  glEnd();
-
-  glPopMatrix();
 }
 
 Point alignBottomLeftScreen(const Point &size, int padding) {

@@ -205,7 +205,7 @@ int saveImage(const std::string &fileName, size_t w, size_t h, const uint8_t *rg
   row_pointers = (png_byte**)png_malloc (png_ptr, h * sizeof (png_byte *));
   for (y = 0; y < h; ++y) {
     png_byte *row = (png_byte*)png_malloc (png_ptr, sizeof (uint8_t) * w * pixel_size);
-    row_pointers[y] = row;
+    row_pointers[h-y-1] = row;
     for (x = 0; x < w; ++x) {
       *row++ = rgb[(x+y*w)*3+0];
       *row++ = rgb[(x+y*w)*3+1];

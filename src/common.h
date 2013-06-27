@@ -267,11 +267,12 @@ struct Sprite {
     if (this->animations.size() > 0) {
       const Animation &anim = this->animations[currentAnimation];
       t += anim.fps * deltaT;
-      if (t >= anim.frameCount + anim.firstFrame) {
+      currentFrame = t;
+      if (t > anim.frameCount + anim.firstFrame) {
         currentAnimation = 0;
         t = t - currentFrame + this->animations[0].firstFrame;
+      	currentFrame = t;
       }
-      currentFrame = t;
     }
   }
   

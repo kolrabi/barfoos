@@ -139,9 +139,12 @@ void InventorySlotGui::OnMouseClick(const Point &pos, int button, bool down) {
 void 
 InventorySlotGui::Draw(const Point &parentPos) {
   unsigned int tex = slotTex;
+  Sprite sprite;
+  sprite.texture = tex;
+
   Point p = rect.pos+parentPos+Point(16,16);
   
-  drawIcon(p, Point(32,32), tex);
+  Gfx::Instance->DrawIcon(sprite, p);
 
   temp_ptr<Entity> entity(Game::Instance->GetEntity(this->entityId));
   if (!entity) return;

@@ -153,12 +153,13 @@ void Item::StartCooldown() {
 }
 
 void Item::Update() {
-  this->sprite.Update(Game::Instance->GetDeltaT());
-
   // reduce durability while equipped  
   if (this->isEquipped) { 
+    this->sprite.currentAnimation = this->properties->equipAnim;
     this->durability -= this->properties->equipDurability * Game::Instance->GetDeltaT();
   }
+
+  this->sprite.Update(Game::Instance->GetDeltaT());
   
   // when broken, replace or remove
   if (this->durability <= 0 && this->properties->durability != 0.0) {
@@ -209,7 +210,7 @@ void Item::Draw(bool left) {
   glTranslatef(1,-1,0);
   glRotatef(f*60-60, 0,0,1);
   glTranslatef(-1,1,0);
-  
+  glScalef(2,2,2);
   Gfx::Instance->DrawSprite(this->sprite, Vector3(0,0,0), false);
 
   glPopMatrix();
@@ -217,17 +218,7 @@ void Item::Draw(bool left) {
 }
 
 void Item::DrawIcon(const Point &p) const {
-(void)p;
-/*  float u = 0.0;
-  float uw = 1.0;
-  if (this->properties->frames) {
-    int f = ((int)this->frame) % this->properties->frames;
-    uw = 1.0/this->properties->frames;
-    u = f*uw;
-  }
-
-  drawIcon(p, Point(32,32), this->properties->texture, u, uw);
-  */
+  Gfx::Instance->DrawIcon(this->sprite, p);
 }
 
 void Item::DrawSprite(const Vector3 &pos) const {

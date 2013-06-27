@@ -4,6 +4,9 @@
 #include <png.h>
 #include <zlib.h>
 
+#include "GLee.h"
+#include <GL/glfw.h>
+
 float Wave(float x, float z, float t, float a, float o) {
   return o + a * cos( ((x+z+t)*0.4 )*0.1) * cos( ((x-z  )*0.6+t*0.3) * 0.5) * 0.5;
 }
@@ -42,9 +45,24 @@ int main() {
   new Game("seed", 0);
   
   float lastT = Gfx::Instance->GetTime();
+  size_t frame = 0;
   while (Gfx::Instance->Swap()) {
     // render game
     Game::Instance->Render();
+/*
+    const Point &ssize = Gfx::Instance->GetScreenSize();
+    uint8_t *data = new uint8_t[ssize.x*ssize.y*3];
+    glReadPixels(0,0, ssize.x, ssize.y, GL_RGB, GL_UNSIGNED_BYTE, data);
+
+    std::stringstream str;
+    str << "screen" << frame << ".png";
+    saveImage(str.str(), ssize.x, ssize.y, data);
+    std::cerr << str.str() << std::endl;
+    delete [] data;
+*/
+    frame++;
+
+ //   float t = lastT+0.1;
 
     // update game (at most 0.1s at a time)
     float t = Gfx::Instance->GetTime();
