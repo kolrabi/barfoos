@@ -1,5 +1,6 @@
 #include "gui.h"
 #include "util.h"
+#include "gfx.h"
 
 Gui::Gui() {
   this->gravN = true;
@@ -22,9 +23,11 @@ Gui::Update(float t) {
     c->Update(t);
   }
 
+  const Point &vsize = Gfx::Instance->GetVirtualScreenSize();
+  
   if (gravE) {
     int oldRight = rect.pos.x + rect.size.x;
-    int newRight = virtualScreenWidth - bottomRight.x;
+    int newRight = vsize.x - bottomRight.x;
     if (gravW) {
       rect.size.x += newRight-oldRight;
     } else {
@@ -34,7 +37,7 @@ Gui::Update(float t) {
 
   if (gravS) {
     int oldBottom = rect.pos.y + rect.size.y;
-    int newBottom = virtualScreenHeight - bottomRight.y;
+    int newBottom = vsize.y - bottomRight.y;
     if (gravN) {
       rect.size.y += newBottom-oldBottom;
     } else {
@@ -99,5 +102,6 @@ Gui::SetGravity(bool gravN, bool gravE, bool gravS, bool gravW) {
   this->gravS = gravS;
   this->gravW = gravW;
 
-  bottomRight = Point(virtualScreenWidth, virtualScreenHeight) - (rect.pos + rect.size);
+  const Point &vsize = Gfx::Instance->GetVirtualScreenSize();
+  bottomRight = vsize - (rect.pos + rect.size);
 }

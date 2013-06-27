@@ -248,6 +248,35 @@ struct Animation {
   Animation(size_t firstFrame, size_t frameCount, float fps) : firstFrame(firstFrame), frameCount(frameCount), fps(fps) {}
 };
 
+struct Sprite {
+  unsigned int texture = 0;
+  float width = 1.0;
+  float height = 1.0;
+  float offsetX = 0.0;
+  float offsetY = 0.0;
+  bool vertical = false;
+  
+  size_t currentFrame = 0;
+  size_t totalFrames = 1;
+  
+  float t = 0;
+  size_t currentAnimation = 0;
+  std::vector<Animation> animations;
+  
+  void Update(float deltaT) {
+    if (this->animations.size() > 0) {
+      const Animation &anim = this->animations[currentAnimation];
+      t += anim.fps * deltaT;
+      if (t >= anim.frameCount + anim.firstFrame) {
+        currentAnimation = 0;
+        t = t - currentFrame + this->animations[0].firstFrame;
+      }
+      currentFrame = t;
+    }
+  }
+  
+};
+
 struct Point {
   int x;
   int y;

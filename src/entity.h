@@ -9,11 +9,7 @@ class Item;
 
 struct EntityProperties {
   // rendering
-  unsigned int texture = 0;
-  size_t frames = 1;
-  std::vector<Animation> anims;
-  float w = 1.0, h = 1.0;
-  float originX = 0.5, originY = 0.5;
+  Sprite sprite;
   
   // movement
   float stepHeight = 0.5f;
@@ -75,8 +71,7 @@ protected:
   AABB aabb;
   Vector3 smoothPosition;
   
-  float frame;
-  size_t animation;
+  Sprite sprite;
     
   std::vector<std::shared_ptr<Item>> inventory;
   const EntityProperties *properties;
@@ -86,6 +81,7 @@ protected:
   IColor light;
 
   int health;
+  
 };
 
 #endif

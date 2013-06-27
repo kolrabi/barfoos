@@ -9,6 +9,7 @@
 #include "itementity.h"
 #include "random.h"
 #include "game.h"
+#include "gfx.h"
 
 static std::map<std::string, EntityProperties> allEntities;
 EntityProperties defaultEntity;
@@ -44,11 +45,13 @@ EntityProperties::EntityProperties(FILE *f) {
     if (tokens.size() == 0) continue;
 
     if (tokens[0] == "tex") {
-      this->texture = loadTexture("entities/texture/"+tokens[1]);
+      this->sprite.texture = loadTexture("entities/texture/"+tokens[1]);
     } else if (tokens[0] == "frames") {
-      this->frames = std::atoi(tokens[1].c_str());
+      this->sprite.totalFrames = std::atoi(tokens[1].c_str());
     } else if (tokens[0] == "anim") {
-      this->anims.push_back(Animation(std::atoi(tokens[1].c_str()), std::atoi(tokens[2].c_str()), std::atof(tokens[3].c_str())));
+      this->sprite.animations.push_back(Animation(std::atoi(tokens[1].c_str()), std::atoi(tokens[2].c_str()), std::atof(tokens[3].c_str())));
+    } else if (tokens[0] == "vert") {
+      this->sprite.vertical = true;
     } else if (tokens[0] == "step") {
       this->stepHeight = std::atof(tokens[1].c_str());
     } else if (tokens[0] == "mass") {
@@ -61,11 +64,11 @@ EntityProperties::EntityProperties(FILE *f) {
       this->maxHealth = std::atoi(tokens[1].c_str());
     } else if (tokens[0] == "extents") {
       this->extents = Vector3( std::atof(tokens[1].c_str()), std::atof(tokens[2].c_str()), std::atof(tokens[3].c_str()) );
-      this->w = this->extents.x;
-      this->h = this->extents.y;
+      this->sprite.width = this->extents.x;
+      this->sprite.height = this->extents.y;
     } else if (tokens[0] == "size") {
-      this->w = std::atof(tokens[1].c_str());
-      this->h = std::atof(tokens[2].c_str());
+      this->sprite.width = std::atof(tokens[1].c_str());
+      this->sprite.height = std::atof(tokens[2].c_str());
     } else if (tokens[0] == "inventory") {
       this->items[tokens[2]] = std::atof(tokens[1].c_str());
     } else if (tokens[0] == "cell") {
@@ -94,10 +97,8 @@ Entity::Entity(const std::string &type) {
   this->removable = false;
   
   this->properties = getEntity(type);
+  this->sprite = this->properties->sprite;
 
-  this->frame = 0;
-  this->animation = 0;
-  
   this->aabb.extents = properties->extents;
   this->inventory.resize(32, nullptr);
   
@@ -140,14 +141,7 @@ Entity::Start() {
 
 void 
 Entity::Update() {
-  if (this->properties->anims.size() > 0) {
-    const Animation &a = this->properties->anims[animation];
-    frame += a.fps * Game::Instance->GetDeltaT();
-    if (frame >= a.frameCount+a.firstFrame) {
-      animation = 0;
-      frame = frame - (int)frame + this->properties->anims[0].firstFrame;
-    }
-  }
+  this->sprite.Update(Game::Instance->GetDeltaT());
   
   IVector3 cellPos(aabb.center.x, aabb.center.y, aabb.center.z);
   Cell *cell = &Game::Instance->GetWorld()->GetCell(cellPos);
@@ -177,18 +171,8 @@ Entity::Update() {
 
 void
 Entity::Draw() const {
-  if (this->properties->texture != 0) {
-    float u = 0.0;
-    float uw = 1.0;
-    if (this->properties->frames) {
-      int f = ((int)this->frame) % this->properties->frames;
-      uw = 1.0/this->properties->frames;
-      u = f*uw;
-    }
-    
-    glColor3ub(light.r, light.g, light.b);
-    drawBillboard(aabb.center, this->properties->w/2.0, this->properties->h/2.0, this->properties->texture, u, uw, -(this->properties->originX-0.5)*this->properties->w, -(this->properties->originY-0.5)*this->properties->h);
-  }
+  glColor3ub(light.r, light.g, light.b);
+  Gfx::Instance->DrawSprite(this->sprite, this->aabb.center);
   
   if (glfwGetKey(GLFW_KEY_F2)) {
     glColor3f(0.25,0.25,0.25);
@@ -198,21 +182,17 @@ Entity::Draw() const {
 
 void
 Entity::DrawBoundingBox() const {
-  glPushMatrix();
-  glTranslatef(aabb.center.x, aabb.center.y, aabb.center.z);
-  glScalef(aabb.extents.x, aabb.extents.y, aabb.extents.z);
-  glDisable(GL_CULL_FACE);
-    
   glEnable(GL_BLEND);
   glBlendFunc(GL_ONE, GL_ONE);
+  
   glDepthMask(GL_FALSE);
     
   glBindTexture(GL_TEXTURE_2D, 0);
-  drawUnitCube();
+  
+  Gfx::Instance->DrawAABB(this->aabb);
+  
   glDepthMask(GL_TRUE);
   glDisable(GL_BLEND);
-  glEnable(GL_CULL_FACE);
-  glPopMatrix();
 }
 
 void

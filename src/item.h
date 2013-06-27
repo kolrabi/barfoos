@@ -10,9 +10,7 @@ class Cell;
 
 struct ItemProperties {
   // rendering
-  unsigned int texture = 0;
-  size_t frames = 1;
-  std::vector<Animation> anims;
+  Sprite sprite;
   size_t equipAnim;
   IColor light;
   bool flicker = false;
@@ -68,7 +66,7 @@ public:
   
   bool IsRemovable() const { return isRemovable; }
   
-  virtual unsigned int GetIconTexture() const { return this->properties->texture; }
+  //virtual unsigned int GetIconTexture() const { return this->properties->texture; }
   
   const ItemProperties *GetProperties() const { return this->properties; }
   virtual std::shared_ptr<Item> Combine(const std::shared_ptr<Item> &other) {
@@ -76,21 +74,24 @@ public:
     return nullptr;
   }
   
-  void DrawIcon(const Point &p) const;
-  void DrawSprite(const Vector3 &p, float w, float h) const;
+  void DrawIcon(const Point &pos) const;
+  void DrawSprite(const Vector3 &pos) const;
 
 protected:
 
   const ItemProperties *properties;
+  
+  // lifecycle management
+  bool isRemovable;
 
-  size_t animation;
-  float frame;  
+  // rendering
+  Sprite sprite;
 
+  // gameplay
   float durability;
   bool isEquipped;
   float nextUseT;
  
-  bool isRemovable;
   
   // bool isBlessed;
   // bool isCursed;

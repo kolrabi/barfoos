@@ -20,7 +20,8 @@ public:
   void DrawWeapons() const;
   void DrawGUI() const;
   
-  void MouseClick(const Point &pos, int button, bool down);
+  void OnMouseClick(const Point &pos, int button, bool down);
+  void OnMouseDelta(const Point &delta);
 
   const IColor GetTorchLight() const;
 

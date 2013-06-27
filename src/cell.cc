@@ -1,6 +1,7 @@
 #include "cell.h"
 #include "util.h"
 #include "world.h"
+#include "gfx.h"
 
 #include <GL/glfw.h>
 #include <cstring>

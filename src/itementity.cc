@@ -12,10 +12,10 @@ ItemEntity::~ItemEntity() {
 }
 
 void ItemEntity::Draw() const {
-  Entity::Draw();
+  //Entity::Draw();
   
   glColor3ub(light.r, light.g, light.b);
-  this->item->DrawSprite(this->aabb.center, this->properties->w/2, this->properties->h/2);
+  this->item->DrawSprite(this->aabb.center);
 }
 
 void ItemEntity::OnUse(Entity &other) {
