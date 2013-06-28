@@ -40,7 +40,7 @@ private:
   
   bool itemActiveLeft, itemActiveRight;
   
-  unsigned int crosshairTex;
+  const Texture *crosshairTex;
 };
 
 

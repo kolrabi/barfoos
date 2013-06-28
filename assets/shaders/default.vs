@@ -6,9 +6,11 @@ varying vec3 v_eye;
 varying vec3 v_worldpos;
 
 uniform float u_time;
+uniform sampler2D u_texture;
+uniform sampler2D u_texture2;
 
 vec3 Distort(vec4 vertex) {
-  float t = u_time;
+  float t = u_time * 2 * 3.14159 / 4;
   return vec3(
     cos(t+vertex.z)*vertex.x,
     sin(t+vertex.z)*vertex.y,
@@ -23,15 +25,18 @@ void main() {
   v_pos = gl_ModelViewMatrix * vertex;
  
   /* turbulence */
-  float turbulence = 0.0; //31;
-  v_pos.x *= 1.0+(0.25*cos(u_time*0.125*3.14159*2+v_pos.z+v_pos.y))*turbulence;
-  v_pos.y *= 1.0+(0.25*sin(u_time*0.250*3.14159*2+v_pos.z+v_pos.x))*turbulence;
+  float turbulence = 0.1;
+  
+// v_pos.xy += (texture2D(u_texture2, v_pos.xy+np).rg - 0.5)*turbulence;
+//  v_pos.x *= 1.0+(0.25*cos(u_time*0.125*3.14159*2+v_pos.z+v_pos.y))*turbulence;
+//  v_pos.y *= 1.0+(0.25*sin(u_time*0.250*3.14159*2+v_pos.z+v_pos.x))*turbulence;
 //  v_pos.z += 0.15*cos(u_time*5+v_pos.z*2);
 //  v_pos.xy *= 1.0 + 0.1*cos(v_pos.z+u_time);
-//  vec3 tc = Distort(v_pos);
-//  v_pos = v_pos + vec4(tc*0.2, 0.0);
+  vec3 tc = Distort(v_pos);
+  v_pos += vec4(tc, 0.0) * turbulence;
 
   vec4 pos = gl_ProjectionMatrix * v_pos;
+  vec2 np = texture2D(u_texture, pos.xy).rg;
 
   /* output */
   gl_Position = pos;

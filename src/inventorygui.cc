@@ -138,7 +138,7 @@ void InventorySlotGui::OnMouseClick(const Point &pos, int button, bool down) {
 
 void 
 InventorySlotGui::Draw(const Point &parentPos) {
-  unsigned int tex = slotTex;
+  const Texture *tex = slotTex;
   Sprite sprite;
   sprite.texture = tex;
 

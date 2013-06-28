@@ -236,7 +236,7 @@ World::Draw() {
 
     this->defaultCell = Cell("default");
 
-    this->vertices = std::map<GLuint, std::vector<Vertex>>();
+    this->vertices = std::map<uintmax_t, std::vector<Vertex>>();
     this->dynamicCells.clear();
 
     if (firstDirty) {
@@ -262,11 +262,12 @@ World::Draw() {
       cell.UpdateVertices();
 
       // group vertex buffers by texture
-      unsigned int tex = cell.GetTexture();
-      if (this->vertices.find(tex) == this->vertices.end()) 
-        this->vertices[tex] = std::vector<Vertex>();
+      const Texture *tex = cell.GetTexture();
+      uintmax_t texint = (uintmax_t)tex;
+      if (this->vertices.find(texint) == this->vertices.end()) 
+        this->vertices[texint] = std::vector<Vertex>();
  
-      cell.Draw(this->vertices[tex]);
+      cell.Draw(this->vertices[texint]);
     }
 
     // one vertex buffer for each texture
@@ -289,15 +290,16 @@ World::Draw() {
   
   this->defaultShader->Bind();
   this->defaultShader->Uniform("u_texture", 0);
+  this->defaultShader->Uniform("u_texture2", 1);
   this->defaultShader->Uniform("u_torch", this->torchLight);
   this->defaultShader->Uniform("u_time", Game::Instance->GetTime());
-
+  
   // draw each vertex buffer 
   auto iter = vertices.begin();
   for (size_t i=0; i<this->vertices.size(); i++, iter++) {
     glBindBuffer       (GL_ARRAY_BUFFER, this->vbos[i]);
     //glBindBuffer       (GL_ARRAY_BUFFER, 0);
-    glBindTexture      (GL_TEXTURE_2D,   iter->first);
+    Gfx::Instance->SetTextureFrame((const Texture *)iter->first);
     glInterleavedArrays(GL_T2F_C4F_N3F_V3F,  sizeof(Vertex), nullptr);
     //glInterleavedArrays(GL_T2F_C4F_N3F_V3F,  sizeof(Vertex), &iter->second[0]);
     glDrawArrays       (GL_TRIANGLES,    0, iter->second.size());
@@ -309,19 +311,20 @@ World::Draw() {
   glDisableClientState(GL_VERTEX_ARRAY);
 
   // get vertices for dynamic cells
-  std::map<GLuint, std::vector<Vertex>> dynvertices;
+  std::map<uintmax_t, std::vector<Vertex>> dynvertices;
   for (size_t i : dynamicCells) {
-    unsigned int tex = this->cells[i].GetTexture();
-    if (dynvertices.find(tex) == dynvertices.end()) 
-        dynvertices[tex] = std::vector<Vertex>();
+    const Texture *tex = this->cells[i].GetTexture();
+    uintmax_t texint = (uintmax_t)tex;
+    if (dynvertices.find(texint) == dynvertices.end()) 
+        dynvertices[texint] = std::vector<Vertex>();
     this->cells[i].UpdateVertices();
-    this->cells[i].Draw(dynvertices[tex]);
+    this->cells[i].Draw(dynvertices[texint]);
   }
 
   // render vertices for dynamic cells
   iter = dynvertices.begin();
   for (size_t i=0; i<dynvertices.size(); i++, iter++) {
-    glBindTexture      (GL_TEXTURE_2D,  iter->first);
+    Gfx::Instance->SetTextureFrame((const Texture *)iter->first);
     Gfx::Instance->DrawTriangles(iter->second);
   }
 

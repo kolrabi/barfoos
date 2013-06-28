@@ -6,25 +6,50 @@
 
 #include <sys/time.h>
 #include <iostream>
+#include "simplex.h"
 
-static std::map<std::string, GLuint> textures;
+static std::map<std::string, std::unique_ptr<Texture>> textures;
 static time_t lastUpdate = 0;
 
-GLuint loadTexture(const std::string &name, GLuint texture) {
-  if (name == "") return 0;
- 
-  if (texture == 0) { 
+Texture::Texture() {
+  handle = 0;
+}
+
+Texture::~Texture() {
+  if (handle) glDeleteTextures(1, &handle);
+}
+
+Texture::Texture(Texture &&rhs) {
+  this->size = rhs.size;
+  this->handle = rhs.handle;
+  
+  rhs.handle = 0;
+  rhs.size = Point();
+}
+
+const Texture *loadTexture(const std::string &name, const Texture * tex = nullptr) {
+  if (name == "") return nullptr;
+  
+  GLuint textureHandle = 0;
+  if (tex) {
+    textureHandle = tex->handle;
+  } else {
     auto iter = textures.find(name);
     if (iter != textures.end()) {
-      return iter->second;
+      return iter->second.get();
     }
-    glGenTextures(1, &texture);
+    glGenTextures(1, &textureHandle);
     lastUpdate = time(0);
+    
+    textures[name] = std::unique_ptr<Texture>(new Texture());
+    textures[name]->handle = textureHandle;
+    
+    std::cerr << "loading texture " << name << " as " << textureHandle << std::endl;
   }
 
   unsigned long w,h;
   FILE *fp = openAsset(name+".png");
-  if (!fp) return 0;
+  if (!fp) return nullptr;
   
   // read the header
   png_byte header[8];
@@ -32,7 +57,7 @@ GLuint loadTexture(const std::string &name, GLuint texture) {
   if (res != 8 || png_sig_cmp(header, 0, 8))
   {
     fclose(fp);
-    return 0;
+    return nullptr;
   }
 
   png_structp png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
@@ -40,7 +65,7 @@ GLuint loadTexture(const std::string &name, GLuint texture) {
   {
     std::cerr << "Error: png_create_read_struct returned 0.\n";
     fclose(fp);
-    return 0;
+    return nullptr;
   }
 
   // create png info struct
@@ -50,7 +75,7 @@ GLuint loadTexture(const std::string &name, GLuint texture) {
     std::cerr << "Error: png_create_info_struct returned 0.\n";
     png_destroy_read_struct(&png_ptr, (png_infopp)NULL, (png_infopp)NULL);
     fclose(fp);
-    return 0;
+    return nullptr;
   }
 
   // create png info struct
@@ -60,7 +85,7 @@ GLuint loadTexture(const std::string &name, GLuint texture) {
     std::cerr << "Error: png_create_info_struct returned 0.\n";
     png_destroy_read_struct(&png_ptr, &info_ptr, (png_infopp) NULL);
     fclose(fp);
-    return 0;
+    return nullptr;
   }
 
   // the code in this if statement gets called if libpng encounters an error
@@ -68,7 +93,7 @@ GLuint loadTexture(const std::string &name, GLuint texture) {
     std::cerr << "Error: Could not read image.\n";
     png_destroy_read_struct(&png_ptr, &info_ptr, &end_info);
     fclose(fp);
-    return 0;
+    return nullptr;
   }
 
   // init png reading
@@ -112,7 +137,7 @@ GLuint loadTexture(const std::string &name, GLuint texture) {
   png_read_image(png_ptr, row_pointers);
 
   // Generate the OpenGL texture object
-  glBindTexture(GL_TEXTURE_2D, texture);
+  glBindTexture(GL_TEXTURE_2D, textureHandle);
   if (color_type == 6) {
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, image_data);
   } else if (color_type == 3) {
@@ -141,20 +166,61 @@ GLuint loadTexture(const std::string &name, GLuint texture) {
   delete [] row_pointers;
   fclose(fp);
 
-  textures[name] = texture;
-  return texture;
+  textures[name]->size = Point(w,h);
+  return textures[name].get();
 }
 
 void updateTextures() {
   time_t lastMod = lastUpdate;
-  for (auto t : textures) {
+  for (auto &t : textures) {
+    if (t.first[0] == '*') continue;
     time_t mtime = getFileChangeTime(t.first+".png"); 
     if (mtime > lastUpdate) {
-      GLuint res = loadTexture(t.first, t.second);
-      if (res != 0 && mtime > lastMod) lastMod = mtime;
+      const Texture *res = loadTexture(t.first, t.second.get());
+      if (res && mtime > lastMod) lastMod = mtime;
     }
   }
   lastUpdate = lastMod;
+}
+
+const Texture * 
+noiseTexture(const Point &size, const Vector3 &scale = Vector3(1,1,1), const Vector3 &offset = Vector3()) {
+  float *image_data = new float[size.x*size.y*4];
+  for (int y=0; y<size.y; y++) {
+    for (int x=0; x<size.x; x++) {
+      Vector3 pr = Vector3( x*scale.x/size.x, y*scale.y/size.y, 0 ) + offset;
+      Vector3 pg = Vector3( x*scale.x/size.x, y*scale.y/size.y, 1 ) + offset;
+      Vector3 pb = Vector3( x*scale.x/size.x, y*scale.y/size.y,-1 ) + offset;
+      
+      image_data[(x+y*size.x)*4+0] = simplexNoise(pr)*0.5+0.5;
+      image_data[(x+y*size.x)*4+1] = simplexNoise(pg)*0.5+0.5;
+      image_data[(x+y*size.x)*4+2] = simplexNoise(pb)*0.5+0.5;
+      image_data[(x+y*size.x)*4+3] = 1;
+    }
+  }
+  
+  unsigned int texture = 0;  
+  glGenTextures(1, &texture);
+  std::cerr << glGetError() << std::endl;
+  
+  glBindTexture(GL_TEXTURE_2D, texture);
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, size.x, size.y, 0, GL_RGBA, GL_FLOAT, image_data);
+  glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+  glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+  delete [] image_data;
+  
+  std::stringstream str;
+  str << "*" << size << scale << offset;
+  
+  std::string name = str.str();
+  
+  std::cerr << "noise texture " << name << " as " << texture;
+  
+  textures[name] = std::unique_ptr<Texture>(new Texture());
+  textures[name]->handle = texture;
+  textures[name]->size = size;
+  
+  return textures[name].get();
 }
 
 int saveImage(const std::string &fileName, size_t w, size_t h, const uint8_t *rgb) {

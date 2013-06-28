@@ -27,13 +27,13 @@ public:
   void View3D(const Vector3 &pos, const Vector3 &forward, float fovY = 60.0, const Vector3 &up = Vector3(0,1,0)) const;
   void ViewGUI() const;
   
-  void SetTextureFrame(size_t currentFrame, size_t frameCount) const;
+  void SetTextureFrame(const Texture *texture, size_t stage = 0, size_t currentFrame = 0, size_t frameCount = 1) const;
 
   void DrawTriangles(const std::vector<Vertex> &vertices) const;
   void DrawQuads(const std::vector<Vertex> &vertices) const;
   
-  void DrawUnitCube(unsigned int tex = 0) const;
-  void DrawAABB(const AABB &aabb, unsigned int tex = 0) const;
+  void DrawUnitCube() const;
+  void DrawAABB(const AABB &aabb) const;
   void DrawSprite(const Sprite &sprite, const Vector3 &pos, bool billboard = true) const;
   void DrawIcon(const Sprite &sprite, const Point &pos, const Point &size = Point(32, 32)) const;
   
@@ -63,11 +63,13 @@ private:
   size_t guiActiveCount;
   
   // drawing
+  const Texture *noiseTex;
   std::vector<Vertex> cubeVerts;
   std::vector<Vertex> quadVerts;
 };
 
-unsigned int loadTexture(const std::string &name, unsigned int tex = 0);
+const Texture *noiseTexture(const Point &size, const Vector3 &scale = Vector3(1,1,1), const Vector3 &offset = Vector3());
+const Texture *loadTexture(const std::string &name, const Texture * tex = nullptr);
 void updateTextures();
 
 void drawIcon(const Point &center, const Point &size, unsigned int tex, float u=0, float uw=1);  

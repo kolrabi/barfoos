@@ -21,7 +21,7 @@ enum CellFlags {
 };
 
 struct CellInfo {
-  std::vector<unsigned int> textures;
+  std::vector<const Texture *> textures;
   IColor light;
   uint32_t flags;
   
@@ -59,8 +59,8 @@ public:
   float GetHeight(float x, float z) const;
   float GetHeightBottom(float x, float z) const;
 
-  Cell &SetTexture(unsigned int tex, bool multi = false);
-  unsigned int GetTexture() const;
+  Cell &SetTexture(const Texture *tex, bool multi = false);
+  const Texture *GetTexture() const;
 
   bool IsTopFlat() const;
   bool IsBottomFlat() const;
@@ -129,7 +129,7 @@ protected:
   float u[4], v[4];
   uint8_t visibility;
   uint8_t visibilityOverride;
-  unsigned int texture;
+  const Texture *texture;
   float uscale;
   Vector3 corners[8];
   std::vector<Vertex> verts;
@@ -177,7 +177,7 @@ inline void Cell::SetVisibility(uint8_t visibility) {
   this->visibility = visibility; 
 }
 
-inline unsigned int Cell::GetTexture() const { 
+inline const Texture *Cell::GetTexture() const { 
   return this->texture; 
 }
 

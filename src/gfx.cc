@@ -120,6 +120,9 @@ Gfx::Init() {
   glFogf(GL_FOG_END, 64);
   glHint(GL_FOG_HINT, GL_NICEST);
 
+  this->noiseTex = noiseTexture(Point(256,256), Vector3(32,32,32));
+  SetTextureFrame(this->noiseTex, 1);
+  
   isInit = true;
   return true;
 }
@@ -214,12 +217,26 @@ void Gfx::ViewGUI() const {
 }
 
 void 
-Gfx::SetTextureFrame(size_t currentFrame, size_t frameCount) const {
+Gfx::SetTextureFrame(const Texture *texture, size_t stage, size_t currentFrame, size_t frameCount) const {
+  glActiveTexture(GL_TEXTURE0 + stage);
+  glEnable(GL_TEXTURE_2D);
+  
   glMatrixMode(GL_TEXTURE);
   glLoadIdentity();
-  glScalef(1.0/frameCount, 1, 1);
-  glTranslatef(currentFrame, 0, 0);
+  
+  if (frameCount > 1) {
+    glScalef(1.0/frameCount, 1, 1);
+    glTranslatef(currentFrame, 0, 0);
+  }
+  
   glMatrixMode(GL_MODELVIEW);
+  
+  if (texture) {
+    glBindTexture(GL_TEXTURE_2D, texture->handle);
+    //std::cerr << "binding " << texture->handle << std::endl;
+  } else {
+    glBindTexture(GL_TEXTURE_2D, 0);
+  }
 }
 
 void 
@@ -252,25 +269,24 @@ Gfx::DrawQuads(const std::vector<Vertex> &vertices) const {
   glDisableClientState(GL_VERTEX_ARRAY);
 }
 
-void Gfx::DrawUnitCube(unsigned int tex) const {
-  glBindTexture(GL_TEXTURE_2D, tex);
+void Gfx::DrawUnitCube() const {
   this->DrawQuads(this->cubeVerts);
 }    
 
-void Gfx::DrawAABB(const AABB &aabb, unsigned int tex) const {
+void Gfx::DrawAABB(const AABB &aabb) const {
   glMatrixMode(GL_MODELVIEW);
   glPushMatrix();
   
   glTranslatef(aabb.center.x, aabb.center.y, aabb.center.z);
   glScalef(aabb.extents.x, aabb.extents.y, aabb.extents.z);
   
-  this->DrawUnitCube(tex);
+  this->DrawUnitCube();
   
   glPopMatrix();
 }
 
 void Gfx::DrawSprite(const Sprite &sprite, const Vector3 &pos, bool billboard) const {
-  this->SetTextureFrame(sprite.currentFrame, sprite.totalFrames);
+  this->SetTextureFrame(sprite.texture, 0, sprite.currentFrame, sprite.totalFrames);
 
   glMatrixMode(GL_MODELVIEW);
   glPushMatrix();
@@ -291,17 +307,13 @@ void Gfx::DrawSprite(const Sprite &sprite, const Vector3 &pos, bool billboard) c
   
   glScalef(sprite.width/2, sprite.height/2, 1);
  
-  glBindTexture(GL_TEXTURE_2D, sprite.texture);
-
   this->DrawQuads(this->quadVerts);
 
   glPopMatrix();
-  
-  this->SetTextureFrame(0, 1);
 }
 
 void Gfx::DrawIcon(const Sprite &sprite, const Point &center, const Point &size) const {
-  this->SetTextureFrame(sprite.currentFrame, sprite.totalFrames);
+  this->SetTextureFrame(sprite.texture, 0, sprite.currentFrame, sprite.totalFrames);
 
   glMatrixMode(GL_MODELVIEW);
   glPushMatrix();
@@ -310,13 +322,9 @@ void Gfx::DrawIcon(const Sprite &sprite, const Point &center, const Point &size)
   glTranslatef(sprite.offsetX*size.x, sprite.offsetY*size.y, 0);
   glScalef((sprite.width*size.x)/2, -(sprite.height*size.y)/2, 1);
  
-  glBindTexture(GL_TEXTURE_2D, sprite.texture);
-
   this->DrawQuads(this->quadVerts);
 
   glPopMatrix();
-  
-  this->SetTextureFrame(0, 1);
 }
 
 void 

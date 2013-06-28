@@ -186,8 +186,7 @@ Entity::DrawBoundingBox() const {
   
   glDepthMask(GL_FALSE);
     
-  glBindTexture(GL_TEXTURE_2D, 0);
-  
+  Gfx::Instance->SetTextureFrame(0);
   Gfx::Instance->DrawAABB(this->aabb);
   
   glDepthMask(GL_TRUE);

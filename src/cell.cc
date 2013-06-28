@@ -472,7 +472,7 @@ Cell::SetYOffsetsBottom(float a, float b, float c, float d) {
 }
 
 Cell &
-Cell::SetTexture(unsigned int tex, bool multi) {
+Cell::SetTexture(const Texture *tex, bool multi) {
   if (multi) {
     this->uscale = 1.0/8.0;
   } else {

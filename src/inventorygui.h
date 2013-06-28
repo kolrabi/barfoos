@@ -22,7 +22,7 @@ private:
   size_t entityId;
   InventorySlot slot;
 
-  unsigned int slotTex;
+  const Texture *slotTex;
 };
 
 class InventoryGui : public Gui {

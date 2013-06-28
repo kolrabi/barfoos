@@ -87,7 +87,7 @@ private:
 
   IColor ambientLight;
   
-  std::map<unsigned int, std::vector<Vertex>> vertices;
+  std::map<uintmax_t, std::vector<Vertex>> vertices;
   std::vector<unsigned int> vbos;  
  
   std::vector<bool> seenFeatures;

@@ -248,8 +248,39 @@ struct Animation {
   Animation(size_t firstFrame, size_t frameCount, float fps) : firstFrame(firstFrame), frameCount(frameCount), fps(fps) {}
 };
 
+
+struct Point {
+  int x;
+  int y;
+
+  Point() : x(0), y(0) {}  
+  Point(int x, int y) : x(x), y(y) {}
+
+  Point operator +(const Point &o) const {
+    return Point(x+o.x, y+o.y);
+  }
+
+  Point operator -(const Point &o) const {
+    return Point(x-o.x, y-o.y);
+  }
+};
+
+static inline std::ostream & operator<< (std::ostream &out, const Point &p) {
+  out << "{ " << p.x << ":" << p.y << " }";
+  return out;
+}
+
+struct Texture {
+  Texture();
+  Texture(Texture &&);
+  ~Texture();
+  
+  unsigned int handle;
+  Point size;
+};
+
 struct Sprite {
-  unsigned int texture = 0;
+  const Texture *texture = nullptr;
   float width = 1.0;
   float height = 1.0;
   float offsetX = 0.0;
@@ -277,27 +308,6 @@ struct Sprite {
   }
   
 };
-
-struct Point {
-  int x;
-  int y;
-
-  Point() : x(0), y(0) {}  
-  Point(int x, int y) : x(x), y(y) {}
-
-  Point operator +(const Point &o) const {
-    return Point(x+o.x, y+o.y);
-  }
-
-  Point operator -(const Point &o) const {
-    return Point(x-o.x, y-o.y);
-  }
-};
-
-static inline std::ostream & operator<< (std::ostream &out, const Point &p) {
-  out << "{ " << p.x << ":" << p.y << " }";
-  return out;
-}
 
 struct Rect {
   Point pos, size;

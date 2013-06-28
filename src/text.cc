@@ -4,7 +4,7 @@
 #include <GL/glfw.h>
 #include "gfx.h"
 
-static GLuint tex = 0;
+static const Texture *tex = nullptr;
 static Point size(8,16);
 
 static void drawChar(float x, float y, wchar_t c, std::vector<Vertex> &verts) {
@@ -58,7 +58,7 @@ RenderString& RenderString::operator =(const std::string &str) {
 }
 
 void RenderString::Draw(float x, float y) {
-  if (tex == 0) tex = loadTexture("gui/font.normal");
+  if (tex) tex = loadTexture("gui/font.normal");
 
   if (dirty) { 
     vertices = std::vector<Vertex>(); 
@@ -66,7 +66,7 @@ void RenderString::Draw(float x, float y) {
     dirty = false;
   }
   
-  glBindTexture(GL_TEXTURE_2D, tex);
+  Gfx::Instance->SetTextureFrame(tex);
   
   glPushMatrix();
   glTranslatef(x,y,0);
