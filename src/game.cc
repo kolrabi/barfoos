@@ -39,6 +39,7 @@ void
 Game::Render() const {
   glClearColor(0.3,0.3,0.2, 1.0);
   glClear(GL_DEPTH_BUFFER_BIT|GL_COLOR_BUFFER_BIT);
+  Gfx::Instance->Viewport(Rect());
 
   // draw world first
   if (glfwGetKey('Q')) {
@@ -59,7 +60,7 @@ Game::Render() const {
   
   glClear(GL_DEPTH_BUFFER_BIT);
   player->DrawWeapons();
-
+/*
   // next draw mini map
   const Point &ssize = Gfx::Instance->GetScreenSize();
   if (glfwGetKey('M')) {
@@ -76,7 +77,7 @@ Game::Render() const {
 //  glEnable(GL_FOG);
 
   Gfx::Instance->Viewport(Rect());
-
+*/
   // next draw debug stuff
   //glDisable(GL_DEPTH_TEST);
   glColor3ub(255,255,0);
@@ -90,7 +91,6 @@ Game::Render() const {
 
 void 
 Game::Update(float t, float deltaT) {
-  std::cerr << t << std::endl;
   this->lastT = t;
   this->deltaT = deltaT;
   

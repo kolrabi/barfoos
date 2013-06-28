@@ -58,7 +58,7 @@ RenderString& RenderString::operator =(const std::string &str) {
 }
 
 void RenderString::Draw(float x, float y) {
-  if (tex == 0) tex = loadTexture("gui/fontbold");
+  if (tex == 0) tex = loadTexture("gui/font.normal");
 
   if (dirty) { 
     vertices = std::vector<Vertex>(); 

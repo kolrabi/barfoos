@@ -143,7 +143,7 @@ Gfx::DecGuiCount() {
   
   if (!guiActiveCount && mouseGrab) {
     glfwSetMousePos(screenSize.x/2, screenSize.y/2);
-    // glfwDisable(GLFW_MOUSE_CURSOR);  
+//    glfwDisable(GLFW_MOUSE_CURSOR);  
   }
 }
 
@@ -152,8 +152,13 @@ Gfx::Swap() {
   glfwSwapBuffers();
   glViewport(0, 0, this->screenSize.x, this->screenSize.y);
   
-  updateTextures();
+  if (mouseGrab && !guiActiveCount && (mouseDelta.x || mouseDelta.y)) {
+    glfwSetMousePos(screenSize.x/2, screenSize.y/2);
+    if (Game::Instance) Game::Instance->OnMouseDelta(mouseDelta);
+  }
   mouseDelta = Point();
+
+  updateTextures();
   return glfwGetWindowParam(GLFW_OPENED);
 }
 
@@ -330,7 +335,7 @@ Gfx::OnResize(const Point &size) {
 void 
 Gfx::OnMouseMove(const Point &pos) {
   if (guiActiveCount) {
-    mouseDelta = Point();
+    //mouseDelta = Point();
     mousePos.x = (pos.x / (float)screenSize.x)*virtualScreenSize.x;
     mousePos.y = (pos.y / (float)screenSize.y)*virtualScreenSize.y;
     
@@ -338,9 +343,6 @@ Gfx::OnMouseMove(const Point &pos) {
   } else if (mouseGrab) {
     mouseDelta.x = pos.x-screenSize.x/2;
     mouseDelta.y = pos.y-screenSize.y/2;
-    glfwSetMousePos(screenSize.x/2, screenSize.y/2);
-    
-    if (Game::Instance) Game::Instance->OnMouseDelta(mouseDelta);
   }
 }
 
@@ -351,7 +353,7 @@ Gfx::OnMouseButton(int button, int event) {
   if (!mouseGrab && down && button == GLFW_MOUSE_BUTTON_LEFT) {
     if (!guiActiveCount) {
       glfwSetMousePos(screenSize.x/2, screenSize.y/2);
-      // glfwDisable(GLFW_MOUSE_CURSOR);
+      //glfwDisable(GLFW_MOUSE_CURSOR);
     }
     mouseGrab = true;
   } else {

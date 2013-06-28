@@ -23,7 +23,7 @@ void main() {
   v_pos = gl_ModelViewMatrix * vertex;
  
   /* turbulence */
-  float turbulence = 0.31;
+  float turbulence = 0.0; //31;
   v_pos.x *= 1.0+(0.25*cos(u_time*0.125*3.14159*2+v_pos.z+v_pos.y))*turbulence;
   v_pos.y *= 1.0+(0.25*sin(u_time*0.250*3.14159*2+v_pos.z+v_pos.x))*turbulence;
 //  v_pos.z += 0.15*cos(u_time*5+v_pos.z*2);

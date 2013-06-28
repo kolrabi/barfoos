@@ -116,7 +116,6 @@ Entity::Start() {
   // fill inventory with random crap
   for (auto item : this->properties->items) {
     if (world->GetRandom().Chance(item.second)) {
-      std::cerr << item.first << std::endl;
       this->AddToInventory(std::shared_ptr<Item>(new Item(item.first)));
     }
   }

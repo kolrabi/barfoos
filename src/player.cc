@@ -232,8 +232,8 @@ Player::DrawGUI() const {
     if ((i%32)==0) str += "\n\n";
   }
 */
-  RenderString rs("You pick up a mushroom.\nYou eat the mushroom.\nYou are hallucinating.");
-  rs.Draw(0,0);
+//  RenderString rs("You pick up a mushroom.\nYou eat the mushroom.\nYou are hallucinating.");
+//  rs.Draw(0,0);
 }
 
 void
@@ -245,8 +245,8 @@ Player::OnMouseClick(const Point &pos, int button, bool down) {
 
 void
 Player::OnMouseDelta(const Point &delta) {
-  angles.x += delta.x*0.0025;
-  angles.y -= delta.y*0.0025;
+  angles.x += delta.x*0.005;
+  angles.y -= delta.y*0.005;
 }
 
 const IColor Player::GetTorchLight() const {

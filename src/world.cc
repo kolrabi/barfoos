@@ -14,6 +14,7 @@
 
 #include "shader.h"
 #include "game.h"
+#include "gfx.h"
 
 World::World(const IVector3 &size, int level, Random &rnd) :random(rnd)
 {  
@@ -303,6 +304,9 @@ World::Draw() {
   }
 
   glBindBuffer(GL_ARRAY_BUFFER, 0);
+  glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+  glDisableClientState(GL_COLOR_ARRAY);
+  glDisableClientState(GL_VERTEX_ARRAY);
 
   // get vertices for dynamic cells
   std::map<GLuint, std::vector<Vertex>> dynvertices;
@@ -318,13 +322,9 @@ World::Draw() {
   iter = dynvertices.begin();
   for (size_t i=0; i<dynvertices.size(); i++, iter++) {
     glBindTexture      (GL_TEXTURE_2D,  iter->first);
-    glInterleavedArrays(GL_T2F_C4F_N3F_V3F, sizeof(Vertex), &iter->second[0]);
-    glDrawArrays       (GL_TRIANGLES,   0, iter->second.size());
+    Gfx::Instance->DrawTriangles(iter->second);
   }
 
-  glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-  glDisableClientState(GL_COLOR_ARRAY);
-  glDisableClientState(GL_VERTEX_ARRAY);
 //  Shader::Unbind();
 }
 
@@ -346,22 +346,12 @@ World::DrawMap(
     size.x -= 1.0;
     size.z -= 1.0;
 
-    verts.push_back(Vertex(pos,                          IColor(255,255,255), 0, 0));
-    verts.push_back(Vertex(pos+Vector3(     0,0,size.z), IColor(255,255,255), 0, 1));
-    verts.push_back(Vertex(pos+Vector3(size.x,0,size.z), IColor(255,255,255), 1, 1));
     verts.push_back(Vertex(pos+Vector3(size.x,0,     0), IColor(255,255,255), 1, 0));
+    verts.push_back(Vertex(pos+Vector3(size.x,0,size.z), IColor(255,255,255), 1, 1));
+    verts.push_back(Vertex(pos+Vector3(     0,0,size.z), IColor(255,255,255), 0, 1));
+    verts.push_back(Vertex(pos,                          IColor(255,255,255), 0, 0));
   }
-  glEnableClientState(GL_VERTEX_ARRAY);
-  glEnableClientState(GL_COLOR_ARRAY);
-  glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-  
-  glBindTexture      (GL_TEXTURE_2D,  0);
-  glInterleavedArrays(GL_T2F_C4F_N3F_V3F, sizeof(Vertex), &verts[0]);
-  glDrawArrays       (GL_QUADS,       0, verts.size());
-
-  glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-  glDisableClientState(GL_COLOR_ARRAY);
-  glDisableClientState(GL_VERTEX_ARRAY);
+  Gfx::Instance->DrawQuads(verts);
 }
 
 void 

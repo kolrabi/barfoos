@@ -16,7 +16,6 @@ public:
   const Point &GetScreenSize()        const { return screenSize; }
   const Point &GetVirtualScreenSize() const { return virtualScreenSize; }
   const Point &GetMousePos()          const { return mousePos; }
-  const Point &GetMouseDelta()        const { return mouseDelta; }
   
   void IncGuiCount();
   void DecGuiCount();

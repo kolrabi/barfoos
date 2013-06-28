@@ -7,6 +7,7 @@
 #include <cmath>
 
 Mob::Mob(const std::string &propertyName) : Entity(propertyName) {
+  this->sprite.t = Game::Instance->GetWorld()->GetRandom().Float01();
   this->onGround = false;
   this->wantJump = false;
   this->lastJumpT = 0;
