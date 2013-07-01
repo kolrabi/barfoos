@@ -10,10 +10,10 @@ uniform sampler2D u_texture;
 uniform sampler2D u_texture2;
 
 vec3 Distort(vec4 vertex) {
-  float t = u_time * 2 * 3.14159 / 4;
+  float t = u_time * 2 * 3.14159;
   return vec3(
-    cos(t+vertex.z)*vertex.x,
-    sin(t+vertex.z)*vertex.y,
+    cos(t*1.0+vertex.z+vertex.y)*vertex.x,
+    sin(t*0.5+vertex.z+vertex.x)*vertex.y,
     0 //cos(t+vertex.x+vertex.y-vertex.z) 
   );
 }
@@ -25,7 +25,7 @@ void main() {
   v_pos = gl_ModelViewMatrix * vertex;
  
   /* turbulence */
-  float turbulence = 0.1;
+  float turbulence = 0.0;
   
 // v_pos.xy += (texture2D(u_texture2, v_pos.xy+np).rg - 0.5)*turbulence;
 //  v_pos.x *= 1.0+(0.25*cos(u_time*0.125*3.14159*2+v_pos.z+v_pos.y))*turbulence;

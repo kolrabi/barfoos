@@ -3,13 +3,11 @@ level 0 -1 20
 
 conn 1 1 2 -1
 next $hallway
-next stairs_x_up
-next stairs_x_down
+next $stairs_x
 
 conn 1 1 2 1
 next $hallway
-next stairs_x_up
-next stairs_x_down
+next $stairs_x
 
 def #
 cell brick

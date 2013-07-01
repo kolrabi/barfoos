@@ -11,10 +11,10 @@ static void drawChar(float x, float y, wchar_t c, std::vector<Vertex> &verts) {
   float u =   (c%32)/32.0;
   float v = 1-(c/32)/ 8.0;
 
-  verts.push_back(Vertex(Vector3(x+size.x+1,      0+1+y, 0.1), IColor(), u+1.0/32.0,v));
-  verts.push_back(Vertex(Vector3(x       +1,      0+1+y, 0.1), IColor(), u,v));
-  verts.push_back(Vertex(Vector3(x       +1, size.y+1+y, 0.1), IColor(), u,v-1.0/8.0));
   verts.push_back(Vertex(Vector3(x+size.x+1, size.y+1+y, 0.1), IColor(), u+1.0/32.0,v-1.0/8.0));
+  verts.push_back(Vertex(Vector3(x       +1, size.y+1+y, 0.1), IColor(), u,v-1.0/8.0));
+  verts.push_back(Vertex(Vector3(x       +1,      0+1+y, 0.1), IColor(), u,v));
+  verts.push_back(Vertex(Vector3(x+size.x+1,      0+1+y, 0.1), IColor(), u+1.0/32.0,v));
 
   verts.push_back(Vertex(Vector3(x+size.x,      0+y, 0), IColor(255, 255, 255), u+1.0/32.0,v));
   verts.push_back(Vertex(Vector3(x       ,      0+y, 0), IColor(255, 255, 255), u,v));
@@ -58,7 +58,7 @@ RenderString& RenderString::operator =(const std::string &str) {
 }
 
 void RenderString::Draw(float x, float y) {
-  if (tex) tex = loadTexture("gui/font.normal");
+  if (!tex) tex = loadTexture("gui/fontbold");
 
   if (dirty) { 
     vertices = std::vector<Vertex>(); 
@@ -70,6 +70,7 @@ void RenderString::Draw(float x, float y) {
   
   glPushMatrix();
   glTranslatef(x,y,0);
+  glDisable(GL_DEPTH_TEST);
   
   Gfx::Instance->DrawQuads(vertices);
   

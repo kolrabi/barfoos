@@ -221,19 +221,13 @@ Player::DrawGUI() const {
   Sprite sprite;
   sprite.texture = crosshairTex;
   Gfx::Instance->DrawIcon(sprite, Point(vsize.x/2, vsize.y/2));
-/*
-  std::string str;
-  for (wchar_t i=0x0001; i<0x0100; i++) {
-    char tmp[MB_CUR_MAX+1];
-    tmp[0] = 0;
-    int len = wctomb(tmp, i);
-    tmp[len] = 0;
-    str += tmp;
-    if ((i%32)==0) str += "\n\n";
-  }
-*/
-//  RenderString rs("You pick up a mushroom.\nYou eat the mushroom.\nYou are hallucinating.");
-//  rs.Draw(0,0);
+
+  std::stringstream str;
+  str << smoothPosition << std::endl;
+  str << (this->selectedCell?this->selectedCell->GetType():"(null)") << std::endl;
+  str << (this->headCell?this->headCell->GetFeatureID():~0UL) << std::endl;
+  RenderString rs(str.str());
+  rs.Draw(0,0);
 }
 
 void

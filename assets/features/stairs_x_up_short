@@ -1,0 +1,66 @@
+size 3 6 5
+level 0 -1 20
+
+group stairs_x
+
+conn 3 2 2 -1
+next doorway_x
+next $stairs_x
+
+conn -1 1 2 1
+next doorway_x
+next $stairs_x
+
+def . 
+cell air
+
+def #
+cell brick
+
+def +
+cell step
+top 0.5 0.5 0.5 0.5
+
+def -
+cell step
+bottom 0.5 0.5 0.5 0.5
+
+def %
+cell step
+
+slice 0 0
+###
+###
+###
+###
+###
+
+slice 1 1
+###
+.+#
+.+#
+.+#
+###
+
+slice 2 3
+###
+...
+...
+...
+###
+
+slice 4 4
+###
+%-.
+%-.
+%-.
+###
+
+slice 5 5
+###
+###
+###
+###
+###
+
+
