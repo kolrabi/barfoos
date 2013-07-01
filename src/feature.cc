@@ -28,46 +28,14 @@ Feature::Feature(FILE *f, const std::string &name) {
   this->minY = 0;
 
   char line[256];
-
-  struct Def {
-    std::string type;
-    float top[4]; 
-    float bot[4];
-    bool botRev, topRev;
-    bool lockCell;
-    bool ignoreLock;
-    bool ignoreWrite;
-    bool onlydefault;
-    Def() {
-      top[0] = top[1] = top[2] = top[3] = 1.0;
-      bot[0] = bot[1] = bot[2] = bot[3] = 0.0;
-      botRev = false;
-      topRev = false;
-      lockCell = true;
-      ignoreLock = false;
-      ignoreWrite = false;
-      onlydefault = false;
-    }
-  };
   char lastDef = 0;
-  std::map<char, Def> defs;
   
   while(fgets(line, 256, f) && !feof(f)) {
-    if (line[0] == '#') continue;
-    
-    std::vector<std::string> tokens;
-    char *p = line;
-    char *q;
-    do {
-      q = strchr(p, ' ');
-      if (!q) q = strchr(p, '\r');
-      if (!q) q = strchr(p, '\n');
-      if (q) *q = 0;
-      tokens.push_back(p);
-      if (q) { p = q+1; }
-    } while(q);
+    std::vector<std::string> tokens = Tokenize(line);
     if (tokens.size() == 0) continue;
-
+    
+    for (auto &c:tokens[0]) c = ::tolower(c);
+    
     if (tokens[0] == "size") {
       this->size = IVector3(
         std::atoi(tokens[1].c_str()), 
@@ -76,6 +44,7 @@ Feature::Feature(FILE *f, const std::string &name) {
       );
       cells = std::vector<Cell>(size.x * size.y * size.z);
       defaultMask = std::vector<bool>(size.x*size.y*size.z, false);
+      chars = std::vector<char>(size.x * size.y * size.z);
     } else if (tokens[0] == "level") {
       this->minLevel = std::atoi(tokens[1].c_str());
       this->maxLevel = std::atoi(tokens[2].c_str());
@@ -87,12 +56,21 @@ Feature::Feature(FILE *f, const std::string &name) {
     } else if (tokens[0] == "conn") {
       IVector3 pos(std::atoi(tokens[1].c_str()), std::atoi(tokens[2].c_str()), std::atoi(tokens[3].c_str()));
       int dir = std::atoi(tokens[4].c_str());
-      conns.push_back(FeatureConnection(pos, dir));
+      conns.push_back(FeatureConnection(pos, dir, conns.size()));
+    } else if (tokens[0] == "onconnreplace") {
+      FeatureReplacement r;
+      r.conn = conns.size()-1;
+      r.orig = tokens[1][0];
+      r.replace = tokens[2][0];
+      replacements.push_back(r);
+      std::cerr << r.conn << " " << r.orig << " " << r.replace << std::endl;
     } else if (tokens[0] == "next") {
-      conns.back().nextFeatures.push_back(tokens[1]);
+      conns.back().nextFeatures[tokens[1]] = 1.0f;
+    } else if (tokens[0] == "nextp") {
+      conns.back().nextFeatures[tokens[1]] = std::atof(tokens[2].c_str());
     } else if (tokens[0] == "def") {
       lastDef = tokens[1][0];
-      defs[lastDef] = Def();
+      defs[lastDef] = FeatureCharDef();
     } else if (tokens[0] == "cell") {
       defs[lastDef].type = tokens[1];
       if (!IsCellTypeNameValid(tokens[1])) 
@@ -142,7 +120,7 @@ Feature::Feature(FILE *f, const std::string &name) {
         char *p = fgets(line, 256, f);
         if (!p) break;
         for (size_t x=0; x<size.x; x++) {
-          Def &def = defs[line[x]];
+          FeatureCharDef &def = defs[line[x]];
           for (size_t y=y0; y<=y1; y++) {
             cells[x+size.x*(y+size.y*z)] = Cell(def.type);
             cells[x+size.x*(y+size.y*z)].SetYOffsets(def.top[0],def.top[1],def.top[2],def.top[3]);
@@ -152,6 +130,7 @@ Feature::Feature(FILE *f, const std::string &name) {
             cells[x+size.x*(y+size.y*z)].SetIgnoreLock(def.ignoreLock);
             cells[x+size.x*(y+size.y*z)].SetIgnoreWrite(def.ignoreWrite);
             defaultMask[x+size.x*(y+size.y*z)] = def.onlydefault;
+            chars[x+size.x*(y+size.y*z)] = line[x];
           }
         }
       }
@@ -186,18 +165,57 @@ float Feature::GetProbability(const World *world, const IVector3 &pos) const {
   return maxProbability * std::sin(3.14159*levelFrac);
 }
 
-FeatureInstance Feature::BuildFeature(World *world, const IVector3 &pos, int dir, int dist, size_t id) const {
+FeatureInstance Feature::BuildFeature(World *world, const IVector3 &pos, int dir, int dist, size_t id, const FeatureConnection *conn) const {
   for (size_t z=0; z<size.z; z++) {
     for (size_t y=0; y<size.y; y++) {
       for (size_t x=0; x<size.x; x++) { 
         if (defaultMask[x+size.x*(y+size.y*z)] && world->IsChecking()) continue;
         if (defaultMask[x+size.x*(y+size.y*z)] && !world->IsDefault(pos+IVector3(x,y,z))) continue;
-        
         world->SetCell(pos+IVector3(x,y,z), cells[x+size.x*(y+size.y*z)]).SetFeatureID(id);
       }
     }
   }
-  return FeatureInstance(this, pos, dir, dist+1);
+  if (conn) {
+    this->ReplaceChars(world, pos, conn->id, id);
+  }
+  return FeatureInstance(this, pos, dir, dist+1, id);
+}
+
+void Feature::ReplaceChars(World *world, const IVector3 &pos, size_t connId, size_t featureId) const {
+  std::vector<char> repchars = this->chars;
+  for (const FeatureReplacement &r : replacements) {
+    if (r.conn == connId) {
+      this->ReplaceChars(r, repchars);
+    }
+  }
+  for (size_t z=0; z<size.z; z++) {
+    for (size_t y=0; y<size.y; y++) {
+      for (size_t x=0; x<size.x; x++) { 
+        size_t index = x+size.x*(y+size.y*z);
+        char co = this->chars[index];
+        char cr = repchars[index];
+        
+        if (co == cr) continue;
+        
+        const FeatureCharDef &def = this->defs.find(cr)->second;
+        
+        Cell cell = Cell(def.type);
+        cell.SetYOffsets(def.top[0],def.top[1],def.top[2],def.top[3]);
+        cell.SetYOffsetsBottom(def.bot[0],def.bot[1],def.bot[2],def.bot[3]);
+        cell.SetOrder(def.topRev, def.botRev);
+        cell.SetLocked(def.lockCell);
+        cell.SetIgnoreLock(true);
+        cell.SetIgnoreWrite(def.ignoreWrite);
+        world->SetCell(pos+IVector3(x,y,z), cell).SetFeatureID(featureId);
+      }
+    }
+  }
+}
+
+void Feature::ReplaceChars(const FeatureReplacement &r, std::vector<char> &chars) const {
+  for (size_t i=0; i<chars.size(); i++) {
+    if (chars[i] == r.orig) chars[i] = r.replace;
+  }
 }
 
 void Feature::SpawnEntities(World *world, const IVector3 &pos) const {
@@ -215,16 +233,16 @@ void Feature::SpawnEntities(World *world, const IVector3 &pos) const {
       if (spawn.attach) {
         IVector3 cellPos = spawnPos;
         
-        if (world->GetCell(cellPos + IVector3(0,-1,0)).IsSolid()) {
-          spawnPos.y = cellPos.y + entity->GetAABB().extents.y;
-        } else if (world->GetCell(cellPos + IVector3(1,0,0)).IsSolid()) {
-          spawnPos.x = cellPos.x + 1-entity->GetAABB().extents.x;
-        } else if (world->GetCell(cellPos + IVector3(-1,0,0)).IsSolid()) {
-          spawnPos.x = cellPos.x + entity->GetAABB().extents.x;
-        } else if (world->GetCell(cellPos + IVector3(0,0,1)).IsSolid()) {
-          spawnPos.z = cellPos.z + 1-entity->GetAABB().extents.z;
-        } else if (world->GetCell(cellPos + IVector3(0,0,-1)).IsSolid()) {
-          spawnPos.z = cellPos.z + entity->GetAABB().extents.z;
+        if (world->GetCell(cellPos + IVector3(0,-1,0)).IsSolid() && spawn.attach == -2) {
+          spawnPos.y = cellPos.y + entity->GetAABB().extents.y + 0.001;
+        } else if (world->GetCell(cellPos + IVector3(1,0,0)).IsSolid() && spawn.attach == 1) {
+          spawnPos.x = cellPos.x + 1-entity->GetAABB().extents.x - 0.001;
+        } else if (world->GetCell(cellPos + IVector3(-1,0,0)).IsSolid() && spawn.attach == -1) {
+          spawnPos.x = cellPos.x + entity->GetAABB().extents.x + 0.001;
+        } else if (world->GetCell(cellPos + IVector3(0,0,1)).IsSolid() && spawn.attach == 3) {
+          spawnPos.z = cellPos.z + 1-entity->GetAABB().extents.z - 0.001;
+        } else if (world->GetCell(cellPos + IVector3(0,0,-1)).IsSolid() && spawn.attach == -3) {
+          spawnPos.z = cellPos.z + entity->GetAABB().extents.z + 0.001;
         } else {
           continue;
         }
@@ -243,12 +261,18 @@ void FeatureConnection::Resolve() {
 
     auto iter = nextFeatures.begin();
     while(iter != nextFeatures.end()) {   
-      if ((*iter)[0] == '$') {
-        std::string group = iter->substr(1);
+      if (iter->first[0] == '$') {
+        std::string group = iter->first.substr(1);
+        float prob = iter->second;
         iter = nextFeatures.erase(iter);
         for (auto f : allFeatures) {
           if (f.second.GetGroup() == group) {
-            iter = nextFeatures.insert(iter, f.first);
+            if (nextFeatures.find(f.first) != nextFeatures.end()) {
+              nextFeatures[f.first] *= prob;
+            } else {
+              nextFeatures.insert({f.first, prob});
+              iter = nextFeatures.begin();
+            }
           }
         }
       } else { 
@@ -268,11 +292,11 @@ const Feature *FeatureConnection::GetRandomFeature(const World *world, const IVe
 
   std::vector<W> totals;
   float total = 0;
-  for (const std::string &fname : nextFeatures) {
-    const Feature *f = getFeature(fname);
+  for (auto fname : nextFeatures) {
+    const Feature *f = getFeature(fname.first);
     if (!f) continue;
     
-    total += std::abs(f->GetProbability(world, pos+this->pos));
+    total += std::abs(f->GetProbability(world, pos+this->pos)*fname.second);
     W w;
     w.f = f;
     w.w = total;
@@ -280,8 +304,8 @@ const Feature *FeatureConnection::GetRandomFeature(const World *world, const IVe
   }
   
   if (totals.size() == 0 || total == 0.0) {
-    std::cerr << "argh! " << total << std::endl;
-    return getFeature(nextFeatures[r.Integer(nextFeatures.size())]);
+    std::cerr << "argh! " << total << " " << totals.size() << std::endl;
+    return nullptr;
   }
 
   float select = total * r.Float01();
@@ -291,7 +315,8 @@ const Feature *FeatureConnection::GetRandomFeature(const World *world, const IVe
     }
   }
   
-  return getFeature(nextFeatures[r.Integer(nextFeatures.size())]);
+  std::cerr << "argh! " << std::endl;
+  return nullptr;
 }
 
 const FeatureConnection *

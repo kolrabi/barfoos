@@ -5,17 +5,11 @@ group stairs_x
 
 conn 3 1 2 -1
 next doorway_x
-next stairs_x_down_short
-next stairs_x_down_short
-next stairs_x_down_short
-next stairs_x_down_short
+next $stairs_x
 
 conn -1 2 2 1
 next doorway_x
-next stairs_x_down_short
-next stairs_x_down_short
-next stairs_x_down_short
-next stairs_x_down_short
+next $stairs_x
 
 def . 
 cell air

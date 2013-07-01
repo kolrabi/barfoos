@@ -86,7 +86,7 @@ World::Build() {
     this->defaultMask = std::vector<bool>(this->cellCount, true);
   
     instances.clear();
-    instances.push_back(getFeature("start")->BuildFeature(this, IVector3(32-4, 32-8,32-4), 0, 0, instances.size()));
+    instances.push_back(getFeature("start")->BuildFeature(this, IVector3(32-4, 32-8,32-4), 0, 0, instances.size(), nullptr));
     instances.back().prevID = ~0UL;
   
     int loop = 0;
@@ -116,9 +116,33 @@ World::Build() {
     
       // build the next feature if possible
       this->BeginCheckOverwrite();
-      nextFeature->BuildFeature(this, pos, conn->dir, instance.dist, instances.size());
+      nextFeature->BuildFeature(this, pos, conn->dir, instance.dist, instances.size(), nullptr);
       if (this->FinishCheckOverwrite()) {
-        instances.push_back(nextFeature->BuildFeature(this, pos, conn->dir, instance.dist, instances.size()));
+        FeatureInstance nextInstance = nextFeature->BuildFeature(this, pos, conn->dir, instance.dist, instances.size(), revConn);
+        feature->ReplaceChars(this, instance.pos, conn->id, featNum);
+
+        // check if we accidentally connected properly to anything else
+        for (const FeatureConnection &nextConn : nextInstance.feature->GetConnections()) {
+          IVector3 nextConnPos = nextInstance.pos + nextConn.pos;
+          int connDir = nextConn.dir;
+          
+          for (auto &inst : instances) {
+            for (const FeatureConnection &c : inst.feature->GetConnections()) {
+              // match direction
+              if (c.dir != -connDir) continue;
+              
+              // match position
+              IVector3 connPos = inst.pos + c.pos;
+              if (connPos != nextConnPos) continue;
+              
+              // do connect replacement of cells
+              inst.feature->ReplaceChars(this, inst.pos, c.id, inst.featureID);
+              nextInstance.feature->ReplaceChars(this, nextInstance.pos, nextConn.id, nextInstance.featureID);
+            }
+          }
+        }
+
+        instances.push_back(nextInstance);
         instances.back().prevID = featNum;
       }
     } while(instances.size() < featureCount); 

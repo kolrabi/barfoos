@@ -60,7 +60,9 @@ ItemProperties::ItemProperties(FILE *f) {
   while(fgets(line, 256, f) && !feof(f)) {
     std::vector<std::string> tokens = Tokenize(line);
     if (tokens.size() == 0) continue;
-
+    
+    for (auto &c:tokens[0]) c = ::tolower(c);
+    
     if (tokens[0] == "tex") {
       this->sprite.texture = loadTexture("items/texture/"+tokens[1]);
     } else if (tokens[0] == "frames") {
