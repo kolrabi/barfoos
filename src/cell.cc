@@ -59,6 +59,11 @@ CellInfo::CellInfo(FILE *f) {
     else if (tokens[0] == "liquid") this->flags |= Liquid;
     else if (tokens[0] == "norender") this->flags |= DoNotRender;
     else if (tokens[0] == "transparent") this->flags |= Transparent;
+    else if (tokens[0] == "detailbelowreplace") {
+      this->detailBelowReplace = std::atoi(tokens[1].c_str());
+      this->replaceChance = std::atof(tokens[2].c_str());
+      this->replace = tokens[3];
+    }
     else if (tokens[0] == "multi") this->flags |= MultiSided;
     else {
       std::cerr << "ignoring '" << tokens[0] << "'" << std::endl;
@@ -95,6 +100,12 @@ Cell::Cell(const std::string &type) : info(&cellInfos[type])
   this->SetDirty();
   this->tickPhase = 0;
   this->tickInterval = 16;
+
+  if (info->flags & CellFlags::Viscous) {
+    this->tickInterval = 16;
+  } else {
+    this->tickInterval = 5;
+  }
   
   for (size_t i=0; i<6; i++)
     this->neighbours[i] = nullptr;
@@ -111,7 +122,7 @@ Cell::Cell(const std::string &type) : info(&cellInfos[type])
     this->smoothDetail = this->detail = 0;
   }
 
-  reversedTop = reversedBottom = false;
+  reversedTop = reversedBottom = reversedSides = false;
   visibility = 0;
   visibilityOverride = 0;
 
@@ -167,11 +178,6 @@ Cell::Update(
   }
 
   if (info->flags & CellFlags::Liquid) {
-    if (GetInfo().flags & CellFlags::Viscous) {
-      this->tickInterval = 16;
-    } else {
-      this->tickInterval = 5;
-    }
     float h = smoothDetail/16.0;
     if (neighbours[(int)Side::Up]->info == info && neighbours[(int)Side::Down]->info == info) {
       // liquid and top and bottom cells are the same as this one
@@ -219,6 +225,19 @@ void Cell::Tick(Random &random) {
         }
       }
       if (detail > 16) Flow(Side::Up);
+    }
+  }
+  if (info->detailBelowReplace && detail < info->detailBelowReplace && info->replace != "") {
+    bool liquidNeighbours = false;
+    liquidNeighbours |= this->neighbours[(int)Side::Left]->info == this->info     && this->neighbours[(int)Side::Left]->detail > info->detailBelowReplace;
+    liquidNeighbours |= this->neighbours[(int)Side::Right]->info == this->info    && this->neighbours[(int)Side::Right]->detail > info->detailBelowReplace;
+    liquidNeighbours |= this->neighbours[(int)Side::Forward]->info == this->info  && this->neighbours[(int)Side::Forward]->detail > info->detailBelowReplace;
+    liquidNeighbours |= this->neighbours[(int)Side::Backward]->info == this->info && this->neighbours[(int)Side::Backward]->detail > info->detailBelowReplace;
+    liquidNeighbours |= this->neighbours[(int)Side::Down]->info == this->info     && this->neighbours[(int)Side::Down]->detail > info->detailBelowReplace;
+    if (!liquidNeighbours && world->GetRandom().Chance(info->replaceChance)) {
+      Cell c(info->replace);
+      c.SetYOffsets(topHeights[0]/32.0, topHeights[1]/32.0, topHeights[2]/32.0, topHeights[3]/32.0);
+      world->SetCell(GetPosition(), c);
     }
   }
 }
@@ -654,12 +673,12 @@ Cell::UpdateVertices() {
 
   verts.clear();
   
-  if (visibility & (1<<Side::Right))    SideVerts(Side::Right,    verts);
-  if (visibility & (1<<Side::Left))     SideVerts(Side::Left,     verts);
+  if (visibility & (1<<Side::Right))    SideVerts(Side::Right,    verts, reversedSides);
+  if (visibility & (1<<Side::Left))     SideVerts(Side::Left,     verts, reversedSides);
   if (visibility & (1<<Side::Up))       SideVerts(Side::Up,       verts, reversedTop);
   if (visibility & (1<<Side::Down))     SideVerts(Side::Down,     verts, reversedBottom);
-  if (visibility & (1<<Side::Forward))  SideVerts(Side::Forward,  verts);
-  if (visibility & (1<<Side::Backward)) SideVerts(Side::Backward, verts);
+  if (visibility & (1<<Side::Forward))  SideVerts(Side::Forward,  verts, reversedSides);
+  if (visibility & (1<<Side::Backward)) SideVerts(Side::Backward, verts, reversedSides);
 }
 
 void Cell::SetPosition(const IVector3 &pos) { 
@@ -703,6 +722,7 @@ Serializer &operator << (Serializer &ser, const Cell &cell) {
 void Cell::SetWorld(World *world) { 
   this->world = world; 
   this->tickPhase = this->world->GetRandom().Integer(this->tickInterval);
+  this->reversedSides = world->GetRandom().Integer(2);
   this->SetDirty();
 }
 

@@ -95,8 +95,10 @@ Feature::Feature(FILE *f, const std::string &name) {
       defs[lastDef].onlydefault = true;
     } else if (tokens[0] == "brev") {
       defs[lastDef].botRev = true;
+      defs[lastDef].revRand = false;
     } else if (tokens[0] == "trev") {
       defs[lastDef].topRev = true;
+      defs[lastDef].revRand = false;
     } else if (tokens[0] == "mob") {
       FeatureSpawn spawn;
       spawn.spawnClass = SpawnClass::Mob;
@@ -202,7 +204,11 @@ void Feature::ReplaceChars(World *world, const IVector3 &pos, size_t connId, siz
         Cell cell = Cell(def.type);
         cell.SetYOffsets(def.top[0],def.top[1],def.top[2],def.top[3]);
         cell.SetYOffsetsBottom(def.bot[0],def.bot[1],def.bot[2],def.bot[3]);
-        cell.SetOrder(def.topRev, def.botRev);
+        if (def.revRand) {
+          cell.SetOrder(world->GetRandom().Integer(2), world->GetRandom().Integer(2));
+        } else {
+          cell.SetOrder(def.topRev, def.botRev);
+        }
         cell.SetLocked(def.lockCell);
         cell.SetIgnoreLock(true);
         cell.SetIgnoreWrite(def.ignoreWrite);

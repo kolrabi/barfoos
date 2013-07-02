@@ -1,4 +1,6 @@
 transparent
 norender
 
-lightfactor 0.6
+lightfactor 0.8
+lightfade 0
+

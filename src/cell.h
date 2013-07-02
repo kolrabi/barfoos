@@ -28,6 +28,10 @@ struct CellInfo {
   float lightFactor = 0.85;
   int lightFade = 0;
 
+  std::string replace;
+  size_t detailBelowReplace = 0;
+  float replaceChance = 0.0;
+
   CellInfo():flags(0) {}
   CellInfo(const std::string &texture, const IColor &light, uint32_t flags = Solid);
   CellInfo(const std::string &texture, uint32_t flags = Solid);
@@ -124,6 +128,7 @@ protected:
   // rendering  
   bool reversedTop;
   bool reversedBottom;
+  bool reversedSides;
   
   int8_t topHeights[4], bottomHeights[4];
   float u[4], v[4];

@@ -65,6 +65,7 @@ struct FeatureCharDef {
   float top[4]; 
   float bot[4];
   bool botRev, topRev;
+  bool revRand;
   bool lockCell;
   bool ignoreLock;
   bool ignoreWrite;
@@ -74,6 +75,7 @@ struct FeatureCharDef {
     bot[0] = bot[1] = bot[2] = bot[3] = 0.0;
     botRev = false;
     topRev = false;
+    revRand = true;
     lockCell = true;
     ignoreLock = false;
     ignoreWrite = false;

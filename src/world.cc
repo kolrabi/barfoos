@@ -398,10 +398,10 @@ World::Update(
 
   // tick world
   while (tickInterval != 0.0 && t > nextTickT) {
-    nextTickT += tickInterval;
     for (size_t i : this->dynamicCells) {
       this->cells[i].Tick(random);
     }
+    nextTickT += tickInterval;
   }
 
   lastT = t;
