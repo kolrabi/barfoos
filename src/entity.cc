@@ -69,6 +69,8 @@ EntityProperties::EntityProperties(FILE *f) {
     } else if (tokens[0] == "size") {
       this->sprite.width = std::atof(tokens[1].c_str());
       this->sprite.height = std::atof(tokens[2].c_str());
+    } else if (tokens[0] == "nohit") {
+      this->nohit = true;
     } else if (tokens[0] == "inventory") {
       this->items[tokens[2]] = std::atof(tokens[1].c_str());
     } else if (tokens[0] == "cell") {
@@ -174,23 +176,22 @@ Entity::Draw() const {
   Gfx::Instance->DrawSprite(this->sprite, this->aabb.center);
   
   if (glfwGetKey(GLFW_KEY_F2)) {
-    glColor3f(0.25,0.25,0.25);
+    glColor4f(0.25,0.25,0.25,0.25);
     this->DrawBoundingBox();
   }
 }
 
 void
 Entity::DrawBoundingBox() const {
-  glEnable(GL_BLEND);
-  glBlendFunc(GL_ONE, GL_ONE);
+  //glBlendFunc(GL_ONE, GL_ONE);
   
   glDepthMask(GL_FALSE);
     
-  Gfx::Instance->SetTextureFrame(0);
+  Gfx::Instance->SetTextureFrame(Gfx::Instance->GetNoiseTexture());
   Gfx::Instance->DrawAABB(this->aabb);
   
   glDepthMask(GL_TRUE);
-  glDisable(GL_BLEND);
+  //glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
 }
 
 void

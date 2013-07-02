@@ -20,6 +20,7 @@ struct EntityProperties {
   // gameplay
   int maxHealth = 5;
   Vector3 extents;
+  bool nohit = false;
   
   std::map<std::string, float> items;
   
@@ -63,6 +64,7 @@ public:
   }
 
   void Equip(const std::shared_ptr<Item> &item, InventorySlot slot);
+  const EntityProperties *GetProperties() const { return properties; }
   
 protected:
 

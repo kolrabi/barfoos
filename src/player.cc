@@ -69,19 +69,27 @@ Player::Update() {
   if (itemActiveLeft && this->inventory[(size_t)InventorySlot::RightHand] &&
       this->inventory[(size_t)InventorySlot::RightHand]->GetRange() >= this->selectionRange) {
     if (this->selectedCell) {
-      this->inventory[(int)InventorySlot::RightHand]->UseOnCell(this->selectedCell, this->selectedCellSide);
+      this->inventory[(int)InventorySlot::RightHand]->UseOnCell(this, this->selectedCell, this->selectedCellSide);
+    } else if (this->selectedEntity != ~0UL) {
+      this->inventory[(int)InventorySlot::RightHand]->UseOnEntity(this, this->selectedEntity);
     } else {
-      this->inventory[(int)InventorySlot::RightHand]->UseOnEntity(this->selectedEntity);
+      this->inventory[(int)InventorySlot::RightHand]->UseOnNothing(this);
     }
+  } else if (itemActiveLeft) {
+    this->inventory[(int)InventorySlot::RightHand]->UseOnNothing(this);
   }
   
   if (itemActiveRight && this->inventory[(size_t)InventorySlot::LeftHand] &&
       this->inventory[(size_t)InventorySlot::LeftHand]->GetRange() >= this->selectionRange) {
     if (this->selectedCell) {
-      this->inventory[(int)InventorySlot::LeftHand]->UseOnCell(this->selectedCell, this->selectedCellSide);
+      this->inventory[(int)InventorySlot::LeftHand]->UseOnCell(this, this->selectedCell, this->selectedCellSide);
+    } else if (this->selectedEntity != ~0UL) {
+      this->inventory[(int)InventorySlot::LeftHand]->UseOnEntity(this, this->selectedEntity);
     } else {
-      this->inventory[(int)InventorySlot::LeftHand]->UseOnEntity(this->selectedEntity);
+      this->inventory[(int)InventorySlot::LeftHand]->UseOnNothing(this);
     }
+  } else if (itemActiveRight) {
+    this->inventory[(int)InventorySlot::LeftHand]->UseOnNothing(this);
   }
   
   Game::Instance->GetWorld()->SetTorchLight(this->GetTorchLight());
@@ -111,6 +119,7 @@ void Player::UpdateSelection() {
   for (auto id : entitiesInRange) {
     temp_ptr<Entity> entity = Game::Instance->GetEntity(id);
     if (!entity || entity == this) continue;
+    if (entity->GetProperties()->nohit) continue;
 
     if (entity->GetAABB().Ray(pos, dir, hitDist, hitPos)) {
       if (hitDist < dist) { 
@@ -226,6 +235,8 @@ Player::DrawGUI() const {
   str << smoothPosition << std::endl;
   str << (this->selectedCell?this->selectedCell->GetType():"(null)") << std::endl;
   str << (this->headCell?this->headCell->GetFeatureID():~0UL) << std::endl;
+  str << (this->selectedEntity) << std::endl;
+  str << (this->selectionRange) << std::endl;
   RenderString rs(str.str());
   rs.Draw(0,0);
 }

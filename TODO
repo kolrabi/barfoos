@@ -1,4 +1,6 @@
-treasure chests
+solid entities (occupying, blocking cells)
+  doors
+  treasure chests
 
 gui
   main menu
@@ -10,8 +12,6 @@ items (entities)
   rings
   amulets
   more weapons
-
-doors
 
 projectiles (magic, ranged weapons)
 persistence

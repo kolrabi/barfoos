@@ -160,6 +160,10 @@ Game::BuildWorld(size_t level) {
   player->SetSpawnPos(IVector3(32,32,32));
   size_t playerId = this->AddPlayer(player);
 
+  Entity *ent = new Entity("box");
+  ent->SetPosition(IVector3(32,28,34));
+  this->AddEntity(ent);
+  
   this->inventoryGui = std::shared_ptr<InventoryGui>(new InventoryGui(playerId));
 }
 

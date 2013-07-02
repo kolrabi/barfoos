@@ -27,6 +27,7 @@ public:
   void View3D(const Vector3 &pos, const Vector3 &forward, float fovY = 60.0, const Vector3 &up = Vector3(0,1,0)) const;
   void ViewGUI() const;
   
+  const Texture *GetNoiseTexture() const { return noiseTex; }
   void SetTextureFrame(const Texture *texture, size_t stage = 0, size_t currentFrame = 0, size_t frameCount = 1) const;
 
   void DrawTriangles(const std::vector<Vertex> &vertices) const;

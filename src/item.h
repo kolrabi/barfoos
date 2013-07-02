@@ -51,8 +51,9 @@ public:
   virtual bool CanUse() const;
   virtual void StartCooldown();
   
-  virtual void UseOnEntity(size_t ent);
-  virtual void UseOnCell(Cell *cell, Side side);
+  virtual void UseOnEntity(Mob *user, size_t ent);
+  virtual void UseOnCell(Mob *user, Cell *cell, Side side);
+  virtual void UseOnNothing(Mob *user);
   virtual void Draw(bool left);
   
   virtual void Update();

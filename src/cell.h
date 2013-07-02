@@ -31,6 +31,7 @@ struct CellInfo {
   std::string replace;
   size_t detailBelowReplace = 0;
   float replaceChance = 0.0;
+  float scaleX = 1.0, scaleZ = 1.0;
 
   CellInfo():flags(0) {}
   CellInfo(const std::string &texture, const IColor &light, uint32_t flags = Solid);
@@ -138,7 +139,7 @@ protected:
   float uscale;
   Vector3 corners[8];
   std::vector<Vertex> verts;
-
+  
   size_t tickPhase;
   size_t tickInterval;
   

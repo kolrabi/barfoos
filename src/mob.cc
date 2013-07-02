@@ -156,7 +156,7 @@ Mob::Die() {
 void
 Mob::OnCollide(Entity &other) {
   Vector3 d = this->GetAABB().center - other.GetAABB().center;
-  Vector3 f = d * (100 / (1+d.GetSquareMag()));
+  Vector3 f = d * (this->properties->mass * other.GetProperties()->mass / (1+d.GetSquareMag()));
   this->ApplyForce(f);
 }
 

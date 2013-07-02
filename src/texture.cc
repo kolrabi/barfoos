@@ -1,5 +1,6 @@
 #include "util.h"
 
+#include "GLee.h"
 #include <GL/glfw.h>
 #include <png.h>
 #include <map>
@@ -146,9 +147,9 @@ const Texture *loadTexture(const std::string &name, const Texture * tex = nullpt
     if (png_get_PLTE(png_ptr, info_ptr, &palette, &num_palette)) {
       uint8_t *data = new uint8_t[w*h*4];
       for (size_t i=0; i<w*h; i++) {
-        data[i*4+0] = palette[image_data[i]].red;
-        data[i*4+1] = palette[image_data[i]].green;
-        data[i*4+2] = palette[image_data[i]].blue;
+        data[i*4+0] = image_data[i]?palette[image_data[i]].red:0;
+        data[i*4+1] = image_data[i]?palette[image_data[i]].green:0;
+        data[i*4+2] = image_data[i]?palette[image_data[i]].blue:0;
         data[i*4+3] = image_data[i]?255:0;
       }
       glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
@@ -157,7 +158,8 @@ const Texture *loadTexture(const std::string &name, const Texture * tex = nullpt
   } else if (color_type == 2) {
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, w, h, 0, GL_RGB, GL_UNSIGNED_BYTE, image_data);
   }
-  glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+  glGenerateMipmapEXT(GL_TEXTURE_2D);
+  glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST);
   glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
   // clean up
@@ -201,11 +203,11 @@ noiseTexture(const Point &size, const Vector3 &scale = Vector3(1,1,1), const Vec
   
   unsigned int texture = 0;  
   glGenTextures(1, &texture);
-  std::cerr << glGetError() << std::endl;
   
   glBindTexture(GL_TEXTURE_2D, texture);
   glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, size.x, size.y, 0, GL_RGBA, GL_FLOAT, image_data);
-  glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+  glGenerateMipmapEXT(GL_TEXTURE_2D);
+  glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
   glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
   delete [] image_data;
   
@@ -214,7 +216,7 @@ noiseTexture(const Point &size, const Vector3 &scale = Vector3(1,1,1), const Vec
   
   std::string name = str.str();
   
-  std::cerr << "noise texture " << name << " as " << texture;
+  std::cerr << "generated noise texture " << name << " as " << texture << std::endl;
   
   textures[name] = std::unique_ptr<Texture>(new Texture());
   textures[name]->handle = texture;

@@ -1,0 +1,9 @@
+tex brickstep
+transparent
+solid
+
+lightfactor 0.6
+lightfade 2
+
+multi
+scale 0.5 0.5

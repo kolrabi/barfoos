@@ -105,6 +105,8 @@ Gfx::Init() {
   glEnable(GL_SCISSOR_TEST);
   
   glEnable(GL_DEPTH_TEST);
+  glEnable(GL_BLEND);
+  glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
 
   // Colors look nicer unclamped
   if (GLEE_ARB_color_buffer_float) {

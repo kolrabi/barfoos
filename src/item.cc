@@ -177,7 +177,9 @@ void Item::Update() {
   }
 }
 
-void Item::UseOnEntity(size_t id) {
+void Item::UseOnEntity(Mob *user, size_t id) {
+  (void)user;
+  
   if (!this->CanUse()) return;
   
   temp_ptr<Entity> entity(Game::Instance->GetEntity(id));
@@ -188,11 +190,19 @@ void Item::UseOnEntity(size_t id) {
   this->StartCooldown();
 }
 
-void Item::UseOnCell(Cell *cell, Side side) {
+void Item::UseOnCell(Mob *user, Cell *cell, Side side) {
+  (void)user;
   (void)side;
+  
   if (!this->CanUse()) return;
   
   cell->GetWorld()->BreakBlock(cell->GetPosition());
+  this->StartCooldown();
+}
+
+void Item::UseOnNothing(Mob *user) {
+  (void)user;
+  if (!this->CanUse()) return;
   this->StartCooldown();
 }
 

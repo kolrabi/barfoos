@@ -589,34 +589,8 @@ Vector3 World::MoveAABB(
   // create vertices that serve as origins for ray check. must be at most
   // one cell size apart for correct collision detection.
   std::vector<Vector3> verts;
-
-  // TODO: automate/optimize generation for a given aabb size
-  // TODO: also cache these
-  verts.push_back(Vector3(-aabb.extents.x, -aabb.extents.y, -aabb.extents.z));
-  verts.push_back(Vector3(-aabb.extents.x, -aabb.extents.y,  aabb.extents.z));
-  verts.push_back(Vector3( aabb.extents.x, -aabb.extents.y, -aabb.extents.z));
-  verts.push_back(Vector3( aabb.extents.x, -aabb.extents.y,  aabb.extents.z));
-
-  verts.push_back(Vector3(-aabb.extents.x, -aabb.extents.y/2, -aabb.extents.z));
-  verts.push_back(Vector3(-aabb.extents.x, -aabb.extents.y/2,  aabb.extents.z));
-  verts.push_back(Vector3( aabb.extents.x, -aabb.extents.y/2, -aabb.extents.z));
-  verts.push_back(Vector3( aabb.extents.x, -aabb.extents.y/2,  aabb.extents.z));
-
-  verts.push_back(Vector3(-aabb.extents.x,               0, -aabb.extents.z));
-  verts.push_back(Vector3(-aabb.extents.x,               0,  aabb.extents.z));
-  verts.push_back(Vector3( aabb.extents.x,               0, -aabb.extents.z));
-  verts.push_back(Vector3( aabb.extents.x,               0,  aabb.extents.z));
-
-  verts.push_back(Vector3(-aabb.extents.x,  aabb.extents.y/2, -aabb.extents.z));
-  verts.push_back(Vector3(-aabb.extents.x,  aabb.extents.y/2,  aabb.extents.z));
-  verts.push_back(Vector3( aabb.extents.x,  aabb.extents.y/2, -aabb.extents.z));
-  verts.push_back(Vector3( aabb.extents.x,  aabb.extents.y/2,  aabb.extents.z));
-
-  verts.push_back(Vector3(-aabb.extents.x,  aabb.extents.y, -aabb.extents.z));
-  verts.push_back(Vector3(-aabb.extents.x,  aabb.extents.y,  aabb.extents.z));
-  verts.push_back(Vector3( aabb.extents.x,  aabb.extents.y, -aabb.extents.z));
-  verts.push_back(Vector3( aabb.extents.x,  aabb.extents.y,  aabb.extents.z));
-
+  aabb.GetVertices(verts);
+  
   Vector3 target = targ; 
   while(true) {
     // CastRayX/Z only check nearest neighbouring cell, limit movement to 1.0

@@ -81,6 +81,35 @@ struct AABB {
     if (p.z<center.z-extents.z) return false;
     return true;
   }
+  
+  void GetVertices(std::vector<Vector3> &verts) const {
+    // TODO: automate/optimize generation for a given aabb size
+    // TODO: also cache these
+    verts.push_back(Vector3(-extents.x, -extents.y, -extents.z));
+    verts.push_back(Vector3(-extents.x, -extents.y,  extents.z));
+    verts.push_back(Vector3( extents.x, -extents.y, -extents.z));
+    verts.push_back(Vector3( extents.x, -extents.y,  extents.z));
+
+    verts.push_back(Vector3(-extents.x, -extents.y/2, -extents.z));
+    verts.push_back(Vector3(-extents.x, -extents.y/2,  extents.z));
+    verts.push_back(Vector3( extents.x, -extents.y/2, -extents.z));
+    verts.push_back(Vector3( extents.x, -extents.y/2,  extents.z));
+
+    verts.push_back(Vector3(-extents.x,               0, -extents.z));
+    verts.push_back(Vector3(-extents.x,               0,  extents.z));
+    verts.push_back(Vector3( extents.x,               0, -extents.z));
+    verts.push_back(Vector3( extents.x,               0,  extents.z));
+
+    verts.push_back(Vector3(-extents.x,  extents.y/2, -extents.z));
+    verts.push_back(Vector3(-extents.x,  extents.y/2,  extents.z));
+    verts.push_back(Vector3( extents.x,  extents.y/2, -extents.z));
+    verts.push_back(Vector3( extents.x,  extents.y/2,  extents.z));
+
+    verts.push_back(Vector3(-extents.x,  extents.y, -extents.z));
+    verts.push_back(Vector3(-extents.x,  extents.y,  extents.z));
+    verts.push_back(Vector3( extents.x,  extents.y, -extents.z));
+    verts.push_back(Vector3( extents.x,  extents.y,  extents.z));
+  }
 
   bool Ray(const Vector3 &start, const Vector3 &dir, float &t, Vector3 &p) const {
     if (PointInside(start)) return false;

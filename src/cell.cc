@@ -64,6 +64,10 @@ CellInfo::CellInfo(FILE *f) {
       this->replaceChance = std::atof(tokens[2].c_str());
       this->replace = tokens[3];
     }
+    else if (tokens[0] == "scale") {
+      this->scaleX = std::atof(tokens[1].c_str());
+      this->scaleZ = std::atof(tokens[2].c_str());
+    }
     else if (tokens[0] == "multi") this->flags |= MultiSided;
     else {
       std::cerr << "ignoring '" << tokens[0] << "'" << std::endl;
@@ -377,14 +381,20 @@ Cell::UpdateNeighbours(
   size_t oldvis = this->visibility;
 
   this->visibility = 0;
+  
+  bool oversize = YOfs(0)  > 1.0 || YOfs(1)  > 1.0 || YOfs(2)  > 1.0 || YOfs(3)  > 1.0 ||
+                  YOfsb(0) < 0.0 || YOfsb(1) < 0.0 || YOfsb(2) < 0.0 || YOfsb(3) < 0.0;
 
   // check for transparent neighbours
   for (size_t i =0; i<6; i++) {
-    if (neighbours[i]->IsTransparent()) this->visibility |= 1<<i;
+    if (neighbours[i]->IsTransparent() || oversize) this->visibility |= 1<<i;
     if (this->type == neighbours[i]->type && this->info->flags & CellFlags::Liquid) {
       this->visibility &= ~(1<<i);
     }
   }
+  
+  if (info->scaleX != 1.0) this->visibility |= (1<<Side::Left) | (1<<Side::Right);
+  if (info->scaleZ != 1.0) this->visibility |= (1<<Side::Forward) | (1<<Side::Backward);
 
   if (!this->IsTopFlat())    this->visibility |= 1<<Side::Up;
   if (!this->IsBottomFlat()) this->visibility |= 1<<Side::Down;
@@ -661,15 +671,18 @@ Cell::UpdateVertices() {
     h[0] /= w[0]; h[1] /= w[1]; h[2] /= w[2]; h[3] /= w[3];
   }  
   
-  corners[0] = Vector3(0, YOfsb(0), 0); 
-  corners[1] = Vector3(1, YOfsb(3), 0); 
-  corners[2] = Vector3(0, h[0],  0); 
-  corners[3] = Vector3(1, h[3],  0); 
+  const float &scaleX = info->scaleX;
+  const float &scaleZ = info->scaleZ;
+  
+  corners[0] = Vector3(0.5-0.5*scaleX, YOfsb(0), 0.5-0.5*scaleZ); 
+  corners[1] = Vector3(0.5+0.5*scaleX, YOfsb(3), 0.5-0.5*scaleZ); 
+  corners[2] = Vector3(0.5-0.5*scaleX, h[0],     0.5-0.5*scaleZ); 
+  corners[3] = Vector3(0.5+0.5*scaleX, h[3],     0.5-0.5*scaleZ); 
 
-  corners[4] = Vector3(0, YOfsb(1), 1); 
-  corners[5] = Vector3(1, YOfsb(2), 1); 
-  corners[6] = Vector3(0, h[1],  1);
-  corners[7] = Vector3(1, h[2],  1);
+  corners[4] = Vector3(0.5-0.5*scaleX, YOfsb(1), 0.5+0.5*scaleZ); 
+  corners[5] = Vector3(0.5+0.5*scaleX, YOfsb(2), 0.5+0.5*scaleZ); 
+  corners[6] = Vector3(0.5-0.5*scaleX, h[1],     0.5+0.5*scaleZ);
+  corners[7] = Vector3(0.5+0.5*scaleX, h[2],     0.5+0.5*scaleZ);
 
   verts.clear();
   
