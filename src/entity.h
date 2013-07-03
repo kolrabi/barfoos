@@ -6,6 +6,9 @@
 class Cell;
 class Game;
 class Item;
+class Gfx;
+
+struct IColor;
 
 struct EntityProperties {
   // rendering
@@ -37,6 +40,8 @@ class Entity {
 public:
   Entity(const std::string &visualName);
   virtual ~Entity();
+  
+  static float ThinkInterval;
 
   const AABB &GetAABB() const { return aabb; }
   void SetPosition(const Vector3 &pos) { aabb.center = pos; }
@@ -46,8 +51,10 @@ public:
   
   virtual void Start();
   virtual void Update();
-  virtual void Draw() const;
-  virtual void DrawBoundingBox() const;
+  virtual void Think();
+
+  virtual void Draw(Gfx &gfx) const;
+  virtual void DrawBoundingBox(Gfx &gfx) const;
   
   virtual void AddHealth(int points); 
   virtual void Die();
@@ -72,6 +79,7 @@ protected:
   
   AABB aabb;
   Vector3 smoothPosition;
+  Vector3 lastPos;
   
   Sprite sprite;
     
@@ -79,11 +87,9 @@ protected:
   const EntityProperties *properties;
   
   Cell *lastCell;
+  IVector3 cellPos;
   
-  IColor light;
-
   int health;
-  
 };
 
 #endif

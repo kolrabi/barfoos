@@ -18,6 +18,6 @@ void Particle::Update() {
   if (Game::Instance->GetTime() > this->dieT) this->removable = true;
 }
 
-void Particle::Draw() const {
-  Entity::Draw();
+void Particle::Draw(Gfx &gfx) const {
+  Entity::Draw(gfx);
 }

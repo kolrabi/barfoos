@@ -3,25 +3,11 @@
 #include "world.h"
 #include "gfx.h"
 
-#include <GL/glfw.h>
-#include <cstring>
-
 #include "random.h"
 #include "serializer.h"
+#include "vertex.h"
   
 static std::map<std::string, CellInfo> cellInfos;
-
-CellInfo::CellInfo(const std::string &texture, const IColor &light, uint32_t flags) {
-  this->textures.push_back(loadTexture("cells/"+texture));
-  this->light = light;
-  this->flags = flags;
-}
-
-CellInfo::CellInfo(const std::string &texture, uint32_t flags) {
-  this->textures.push_back(loadTexture("cells/texture/"+texture));
-  this->light = IColor();
-  this->flags = flags;
-}
 
 CellInfo::CellInfo(FILE *f) {
   char line[256];
@@ -65,8 +51,7 @@ CellInfo::CellInfo(FILE *f) {
       this->replace = tokens[3];
     }
     else if (tokens[0] == "scale") {
-      this->scaleX = std::atof(tokens[1].c_str());
-      this->scaleZ = std::atof(tokens[2].c_str());
+      this->scale = Vector3(std::atof(tokens[1].c_str()), std::atof(tokens[2].c_str()), std::atof(tokens[3].c_str()));
     }
     else if (tokens[0] == "multi") this->flags |= MultiSided;
     else {
@@ -284,7 +269,20 @@ Cell::GetHeight(
 ) const {
   x -= (int)x;
   z -= (int)z;
+  
+  return GetHeightClamp(x, z);
+}
 
+float
+Cell::GetHeightClamp(
+  float x,
+  float z
+) const {
+  if (x > 1.0) x = 1.0; 
+  if (x < 0.0) x = 0.0;
+  if (z > 1.0) z = 1.0; 
+  if (z < 0.0) z = 0.0;
+  
   float slopeX;
   float slopeZ;
  
@@ -332,6 +330,19 @@ Cell::GetHeightBottom(
 ) const {
   x -= (int)x;
   z -= (int)z;
+  
+  return GetHeightBottomClamp(x,z);
+}
+
+float
+Cell::GetHeightBottomClamp(
+  float x,
+  float z
+) const {
+  if (x > 1.0) x = 1.0; 
+  if (x < 0.0) x = 0.0;
+  if (z > 1.0) z = 1.0; 
+  if (z < 0.0) z = 0.0;
 
   float slopeX;
   float slopeZ;
@@ -393,8 +404,9 @@ Cell::UpdateNeighbours(
     }
   }
   
-  if (info->scaleX != 1.0) this->visibility |= (1<<Side::Left) | (1<<Side::Right);
-  if (info->scaleZ != 1.0) this->visibility |= (1<<Side::Forward) | (1<<Side::Backward);
+  if (info->scale.x != 1.0) this->visibility |= (1<<Side::Left)    | (1<<Side::Right);
+  if (info->scale.y != 1.0) this->visibility |= (1<<Side::Up)      | (1<<Side::Down);
+  if (info->scale.z != 1.0) this->visibility |= (1<<Side::Forward) | (1<<Side::Backward);
 
   if (!this->IsTopFlat())    this->visibility |= 1<<Side::Up;
   if (!this->IsBottomFlat()) this->visibility |= 1<<Side::Down;
@@ -671,18 +683,19 @@ Cell::UpdateVertices() {
     h[0] /= w[0]; h[1] /= w[1]; h[2] /= w[2]; h[3] /= w[3];
   }  
   
-  const float &scaleX = info->scaleX;
-  const float &scaleZ = info->scaleZ;
+  const float &scaleX = info->scale.x;
+  const float &scaleY = info->scale.y;
+  const float &scaleZ = info->scale.z;
   
-  corners[0] = Vector3(0.5-0.5*scaleX, YOfsb(0), 0.5-0.5*scaleZ); 
-  corners[1] = Vector3(0.5+0.5*scaleX, YOfsb(3), 0.5-0.5*scaleZ); 
-  corners[2] = Vector3(0.5-0.5*scaleX, h[0],     0.5-0.5*scaleZ); 
-  corners[3] = Vector3(0.5+0.5*scaleX, h[3],     0.5-0.5*scaleZ); 
+  corners[0] = Vector3(0.5-0.5*scaleX, 0.5+(YOfsb(0)-0.5)*scaleY, 0.5-0.5*scaleZ); 
+  corners[1] = Vector3(0.5+0.5*scaleX, 0.5+(YOfsb(3)-0.5)*scaleY, 0.5-0.5*scaleZ); 
+  corners[2] = Vector3(0.5-0.5*scaleX, 0.5+(h[0]    -0.5)*scaleY, 0.5-0.5*scaleZ); 
+  corners[3] = Vector3(0.5+0.5*scaleX, 0.5+(h[3]    -0.5)*scaleY, 0.5-0.5*scaleZ); 
 
-  corners[4] = Vector3(0.5-0.5*scaleX, YOfsb(1), 0.5+0.5*scaleZ); 
-  corners[5] = Vector3(0.5+0.5*scaleX, YOfsb(2), 0.5+0.5*scaleZ); 
-  corners[6] = Vector3(0.5-0.5*scaleX, h[1],     0.5+0.5*scaleZ);
-  corners[7] = Vector3(0.5+0.5*scaleX, h[2],     0.5+0.5*scaleZ);
+  corners[4] = Vector3(0.5-0.5*scaleX, 0.5+(YOfsb(1)-0.5)*scaleY, 0.5+0.5*scaleZ); 
+  corners[5] = Vector3(0.5+0.5*scaleX, 0.5+(YOfsb(2)-0.5)*scaleY, 0.5+0.5*scaleZ); 
+  corners[6] = Vector3(0.5-0.5*scaleX, 0.5+(h[1]    -0.5)*scaleY, 0.5+0.5*scaleZ);
+  corners[7] = Vector3(0.5+0.5*scaleX, 0.5+(h[2]    -0.5)*scaleY, 0.5+0.5*scaleZ);
 
   verts.clear();
   
@@ -712,6 +725,18 @@ bool Cell::HasSolidSides() const {
          this->neighbours[(int)Side::Right]->IsSolid() &&
          this->neighbours[(int)Side::Forward]->IsSolid() &&
          this->neighbours[(int)Side::Backward]->IsSolid();
+}
+
+bool Cell::CheckSideSolid(Side side, const Vector3 &org) const {
+  Cell *cell = this->neighbours[(int)side];
+  
+  if (side == Side::Up || side == Side::Down) {
+    return cell->IsSolid();
+  }
+
+  bool solid = cell->IsSolid();
+  bool heightCheck = org.y < (this->pos.y+cell->GetHeightClamp( org.x-(int)org.x + (side==Side::Left?1:0), org.z-(int)org.z) + (side==Side::Backward?1:0));
+  return solid && heightCheck;
 }
 
 bool Cell::IsFeatureBorder() const {

@@ -5,10 +5,6 @@
 #include "game.h"
 #include "gfx.h"
 
-#include <GL/glfw.h>
-
-#include <cstring>
-
 std::vector<std::string> Tokenize(const char *l) {
   std::vector<std::string> tokens;
   
@@ -146,12 +142,12 @@ Item::~Item() {
 bool Item::CanUse() const {
   return (this->durability > 0 || this->properties->durability == 0.0) && 
          this->properties->cooldown >= 0.0 && 
-         this->nextUseT < glfwGetTime();
+         this->nextUseT < Game::Instance->GetTime();
 }
   
 void Item::StartCooldown() {
   this->durability -= this->properties->useDurability;
-  this->nextUseT = glfwGetTime() + this->properties->cooldown;
+  this->nextUseT = Game::Instance->GetTime() + this->properties->cooldown;
 }
 
 void Item::Update() {
@@ -206,33 +202,34 @@ void Item::UseOnNothing(Mob *user) {
   this->StartCooldown();
 }
 
-void Item::Draw(bool left) {
-  glDisable(GL_CULL_FACE);
-  glPushMatrix();
+void Item::Draw(Gfx &gfx, bool left) {
+  gfx.ViewPush();
+  gfx.SetCullFace(false);
+
   
-  glScalef(left ? 1 : -1, 1, 1);
-  glTranslatef(1, -2, 4);
+  gfx.ViewScale(Vector3(left ? 1 : -1, 1, 1));
+  gfx.ViewTranslate(Vector3(1, -2, 4));
   
-  glRotatef(40, 0, 1, 0);
+  gfx.ViewRotate(40, Vector3(0, 1, 0));
 
   // cooldown fraction: 1.0 full cooldown left, 0.0 cooldown over
   float f = (nextUseT - Game::Instance->GetTime())/this->properties->cooldown;
   if (f < 0) f = 0;
 
-  glTranslatef(1,-1,0);
-  glRotatef(f*60-60, 0,0,1);
-  glTranslatef(-1,1,0);
-  glScalef(2,2,2);
-  Gfx::Instance->DrawSprite(this->sprite, Vector3(0,0,0), false);
+  gfx.ViewTranslate(Vector3(1,-1,0));
+  gfx.ViewRotate(f*60-60, Vector3(0,0,1));
+  gfx.ViewTranslate(Vector3(-1,1,0));
+  gfx.ViewScale(Vector3(2,2,2));
+  gfx.DrawSprite(this->sprite, Vector3(0,0,0), false);
 
-  glPopMatrix();
-  glEnable(GL_CULL_FACE);
+  gfx.ViewPop();
+  gfx.SetCullFace(true);
 }
 
-void Item::DrawIcon(const Point &p) const {
-  Gfx::Instance->DrawIcon(this->sprite, p);
+void Item::DrawIcon(Gfx &gfx, const Point &p) const {
+  gfx.DrawIcon(this->sprite, p);
 }
 
-void Item::DrawSprite(const Vector3 &pos) const {
-  Gfx::Instance->DrawSprite(this->sprite, pos);
+void Item::DrawSprite(Gfx &gfx, const Vector3 &pos) const {
+  gfx.DrawSprite(this->sprite, pos);
 }

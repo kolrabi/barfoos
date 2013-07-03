@@ -3,18 +3,19 @@
 
 #include "common.h"
 
+struct IColor;
+
 class Shader final {
 public:
 
   Shader(const std::string &name);
   ~Shader();
 
-  void Uniform(const std::string &name, int value);
-  void Uniform(const std::string &name, float value);
-  void Uniform(const std::string &name, const IColor &value);
-
-  void Bind();
-  static void Unbind();
+  void Uniform(const std::string &name, int value) const;
+  void Uniform(const std::string &name, float value) const;
+  void Uniform(const std::string &name, const IColor &value) const;
+  
+  unsigned int GetProgram() const { return program; }
 
 private:
 

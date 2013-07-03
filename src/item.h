@@ -2,11 +2,13 @@
 #define BARFOOS_ITEM_H
 
 #include "common.h"
+#include "icolor.h"
 
 class World;
 class Mob;
 class Entity;
 class Cell;
+class Gfx;
 
 struct ItemProperties {
   // rendering
@@ -42,21 +44,23 @@ struct ItemProperties {
 void LoadItems();
 const ItemProperties *getItem(const std::string &name);
 
-class Item {
+class Item final {
 public:
 
   Item(const std::string &type);
   virtual ~Item();
 
-  virtual bool CanUse() const;
-  virtual void StartCooldown();
+  bool CanUse() const;
+  void StartCooldown();
   
-  virtual void UseOnEntity(Mob *user, size_t ent);
-  virtual void UseOnCell(Mob *user, Cell *cell, Side side);
-  virtual void UseOnNothing(Mob *user);
-  virtual void Draw(bool left);
-  
-  virtual void Update();
+  void UseOnEntity(Mob *user, size_t ent);
+  void UseOnCell(Mob *user, Cell *cell, Side side);
+  void UseOnNothing(Mob *user);
+  void Draw(Gfx &gfx, bool left);
+  void DrawIcon(Gfx &gfx, const Point &pos) const;
+  void DrawSprite(Gfx &gfx, const Vector3 &pos) const;
+
+  void Update();
 
   float GetRange() const { return this->properties->range; }  
   uint32_t GetEquippableSlots() { return this->properties->equippable; }
@@ -67,17 +71,12 @@ public:
   
   bool IsRemovable() const { return isRemovable; }
   
-  //virtual unsigned int GetIconTexture() const { return this->properties->texture; }
-  
   const ItemProperties *GetProperties() const { return this->properties; }
   virtual std::shared_ptr<Item> Combine(const std::shared_ptr<Item> &other) {
     (void)other;
     return nullptr;
   }
   
-  void DrawIcon(const Point &pos) const;
-  void DrawSprite(const Vector3 &pos) const;
-
 protected:
 
   const ItemProperties *properties;

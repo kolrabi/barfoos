@@ -11,24 +11,28 @@ class Mob;
 class InventoryGui;
 class Gui;
 class Entity;
+class Gfx;
 
 class Game final {
 public:
 
-  Game(const std::string &seed, size_t level = 0);
+  Game(const std::string &seed, size_t level = 0, const Point &screenSize = Point(320, 240));
   ~Game();
   static Game *Instance;
+  
+  bool Init();
 
-  void Render() const;
-  void Update(float t, float deltaT);
+  bool Frame();
+  
+  Gfx *GetGfx() const { return gfx; }
 
   float GetTime() const { return this->lastT; }
   float GetDeltaT() const { return deltaT; }
+  float GetThinkFraction() const;
   
   void OnMouseMove(const Point &pos);
   void OnMouseClick(const Point &pos, int button, bool down);
   void OnMouseDelta(const Point &delta);
-  void OnKey(int key, bool down);
   
   size_t AddEntity(Entity *entity);
   size_t AddPlayer(Player *entity);
@@ -40,6 +44,14 @@ public:
   
 private:
 
+  Gfx *gfx;
+  bool isInit;
+  
+  void Deinit();
+  
+  void Render() const;
+  void Update(float t, float deltaT);
+  
   std::shared_ptr<World> world;
   
   std::map<size_t, Entity*> entities;
@@ -50,11 +62,14 @@ private:
   std::shared_ptr<InventoryGui> inventoryGui;
   std::shared_ptr<Gui> activeGui;
 
+  float startT;
   float lastT;
   float deltaT;
+  float nextThinkT;
   
   std::string seed;
   Random random;
+  size_t level;
   
   bool showInventory;
   

@@ -16,6 +16,8 @@
 #include "game.h"
 #include "gfx.h"
 
+#include "vertex.h"
+
 World::World(const IVector3 &size, int level, Random &rnd) :random(rnd)
 {  
   this->defaultShader = new Shader("default");
@@ -250,7 +252,7 @@ World::UpdateCell(const IVector3 &pos) {
  * Render the entire world.
  */
 void 
-World::Draw() {
+World::Draw(Gfx &gfx) {
   if (dirty) {
     // world has been changed, recreate vertex buffers
     if (this->vbos.size()) {
@@ -311,19 +313,18 @@ World::Draw() {
   glEnableClientState(GL_VERTEX_ARRAY);
   glEnableClientState(GL_COLOR_ARRAY);
   glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-  
-  this->defaultShader->Bind();
+
+  gfx.SetShader(this->defaultShader);
   this->defaultShader->Uniform("u_texture", 0);
   this->defaultShader->Uniform("u_texture2", 1);
   this->defaultShader->Uniform("u_torch", this->torchLight);
-  this->defaultShader->Uniform("u_time", Game::Instance->GetTime());
   
   // draw each vertex buffer 
   auto iter = vertices.begin();
   for (size_t i=0; i<this->vertices.size(); i++, iter++) {
     glBindBuffer       (GL_ARRAY_BUFFER, this->vbos[i]);
     //glBindBuffer       (GL_ARRAY_BUFFER, 0);
-    Gfx::Instance->SetTextureFrame((const Texture *)iter->first);
+    gfx.SetTextureFrame((const Texture *)iter->first);
     glInterleavedArrays(GL_T2F_C4F_N3F_V3F,  sizeof(Vertex), nullptr);
     //glInterleavedArrays(GL_T2F_C4F_N3F_V3F,  sizeof(Vertex), &iter->second[0]);
     glDrawArrays       (GL_TRIANGLES,    0, iter->second.size());
@@ -348,15 +349,16 @@ World::Draw() {
   // render vertices for dynamic cells
   iter = dynvertices.begin();
   for (size_t i=0; i<dynvertices.size(); i++, iter++) {
-    Gfx::Instance->SetTextureFrame((const Texture *)iter->first);
-    Gfx::Instance->DrawTriangles(iter->second);
+    gfx.SetTextureFrame((const Texture *)iter->first);
+    gfx.DrawTriangles(iter->second);
   }
 
-//  Shader::Unbind();
+  gfx.SetShader(nullptr);
 }
 
 void
 World::DrawMap(
+  Gfx &gfx
 ) {
   std::vector<Vertex> verts;
 
@@ -378,7 +380,7 @@ World::DrawMap(
     verts.push_back(Vertex(pos+Vector3(     0,0,size.z), IColor(255,255,255), 0, 1));
     verts.push_back(Vertex(pos,                          IColor(255,255,255), 0, 0));
   }
-  Gfx::Instance->DrawQuads(verts);
+  gfx.DrawQuads(verts);
 }
 
 void 
@@ -426,11 +428,7 @@ World::CastRayX(const Vector3 &org, float dir) {
   size_t x2 = (org.x+dir + 2*(movingRight?0.01f:-0.01f));
   if (x2 == x) return false; // not crossing cell borders
   
-  const Cell &cell = this->GetCell(IVector3(x2,y,z));
-  bool solid = cell.GetInfo().flags & CellFlags::Solid;
-  bool heightCheck = org.y < (y + cell.GetHeight( movingRight?0:0.999f, org.z))/* &&
-                     org.y > (y + cell.GetHeightBottom( movingRight?0:0.999f, org.z)) */;
-  return solid && heightCheck;
+  return this->GetCell(IVector3(x,y,z)).CheckSideSolid(movingRight?Side::Right:Side::Left, org);
 }
 
 /**
@@ -450,12 +448,8 @@ World::CastRayZ(const Vector3 &org, float dir) {
 
   size_t z2 = (org.z + dir + 2*(movingForward>0?0.01f:-0.01f));
   if (z2 == z) return false; // not crossing cell borders
-
-  const Cell &cell = this->GetCell(IVector3(x, y, z2));
-  bool solid = cell.GetInfo().flags & CellFlags::Solid;
-  bool heightCheck = org.y < (y+cell.GetHeight( org.x, movingForward?0:0.999f)) /*&&
-                     org.y > (y+cell.GetHeightBottom( org.x, movingForward?0:0.999f)) */;
-  return solid && heightCheck;
+  
+  return this->GetCell(IVector3(x,y,z)).CheckSideSolid(movingForward?Side::Forward:Side::Backward, org);
 }
 
 /**

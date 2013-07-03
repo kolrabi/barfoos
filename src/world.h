@@ -3,13 +3,14 @@
 
 #include "common.h"
 #include "cell.h"
-#include "util.h"
-#include "feature.h"
+#include "icolor.h"
 
 class Entity;
 class Player;
 class Random;
 class Shader;
+class Gfx;
+class FeatureInstance;
 
 class World final {
 public:
@@ -21,8 +22,8 @@ public:
   
   const IVector3 &GetSize() const { return size; }
 
-  void Draw();
-  void DrawMap();
+  void Draw(Gfx &gfx);
+  void DrawMap(Gfx &gfx);
   void Update(float t);
   
   Cell &GetCell(const IVector3 &pos) const;

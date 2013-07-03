@@ -5,6 +5,7 @@
 
 #include <cstdint>
 #include <cstdlib>
+#include <cstring>
 #include <cmath>
 
 #include <vector>
@@ -21,12 +22,15 @@
 
 #if __cplusplus < 201103L
 #define final
+#define override
 #endif
 
 #include "vector3.h"
 #include "space.h"
 
 #include "ivector3.h"
+
+struct IColor;
 
 //                 x  x  x  x
 //   8  0          x  x  x  x
@@ -165,110 +169,6 @@ static inline std::ostream & operator<< (std::ostream &out, const AABB &aabb) {
   return out;
 }
 
-struct IColor {
-  int16_t r,g,b;
-  
-  IColor() : r(0), g(0), b(0) {}
-  IColor(int r, int g, int b) : r(r), g(g), b(b) {}
- 
-  IColor Saturate(int max = 255) const {
-    IColor c(*this);
-    if (c.r < 0) c.r = 0; 
-    if (c.r > max) c.r = max;
-    if (c.g < 0) c.g = 0; 
-    if (c.g > max) c.g = max;
-    if (c.b < 0) c.b = 0; 
-    if (c.b > max) c.b = max;
-    return c;
-  }
-
-  bool IsBlack() const {
-    IColor c = Saturate(); 
-    return c.r == 0 && c.g == 0 && c.b == 0;
-  }
-
-  inline IColor Max(const IColor &o) const {
-    return IColor( r > o.r ? r : o.r,
-                   g > o.g ? g : o.g,
-                   b > o.b ? b : o.b );
-  }
-
-  IColor operator-(int n) const {
-    return IColor( r < n ? 0 : r-n, 
-                   g < n ? 0 : g-n, 
-                   b < n ? 0 : b-n );
-  }
-  
-  IColor operator/(int n) const {
-    return IColor( r/n, g/n, b/n); 
-  }
-  
-  IColor operator*(int n) const {
-    return IColor( r*n, g*n, b*n); 
-  }
-  
-  IColor operator*(float f) const {
-    return IColor( r*f, g*f, b*f); 
-  }
-  
-  IColor operator+(const IColor &o) const {
-    return IColor( r+o.r, g+o.g, b+o.b );
-  }
-  
-  bool operator==(const IColor &o) const { 
-    return r==o.r && g==o.g && b==o.b;
-  }
-
-  bool operator>=(const IColor &o) const { 
-    return r>=o.r || g>=o.g || b>=o.b;
-  }
-
-  bool operator>(const IColor &o) const { 
-    return r>o.r || g>o.g || b>o.b;
-  }
-  
-  bool operator!=(const IColor &o) const { 
-    return !(r==o.r && g==o.g && b==o.b);
-  }
-
-  IColor Gamma(float gamma, int max=255) const {
-    return IColor( std::pow(r/(float)max, gamma)*max,
-                   std::pow(g/(float)max, gamma)*max,
-                   std::pow(b/(float)max, gamma)*max );
-  }
-};
-
-static inline std::ostream & operator<< (std::ostream &out, const IColor &c) {
-  out << "{ " << c.r << " " << c.g << " " << c.b << " }";
-  return out;
-}
-
-// GL_T2F_C4F_N3F_V3F
-struct Vertex {
-  float uv[2];
-  float rgb[4];
-  float n[3];
-  float xyz[3];
-
-  Vertex(const Vector3 &v, const IColor &c, float uu, float vv) {
-    xyz[0] = v.x; xyz[1] = v.y; xyz[2] = v.z;
-    rgb[0] = c.r/255.0; rgb[1] = c.g/255.0; rgb[2] = c.b/255.0; rgb[3] = 1.0;
-    uv[0] = uu; uv[1] = vv;
-    n[0] = n[1] = n[2] = 0;
-  }
-  
-  Vertex(const Vector3 &v, const IColor &c, float uu, float vv, const Vector3 &norm) {
-    xyz[0] = v.x; xyz[1] = v.y; xyz[2] = v.z;
-    rgb[0] = c.r/255.0; rgb[1] = c.g/255.0; rgb[2] = c.b/255.0; rgb[3] = 1.0;
-    uv[0] = uu; uv[1] = vv;
-    
-    Vector3 nn = norm.Normalize();
-    n[0] = nn.x;
-    n[1] = nn.y;
-    n[2] = nn.z;
-  }
-};
-
 struct Animation {
   size_t firstFrame;
   size_t frameCount;
@@ -372,7 +272,6 @@ static inline std::ostream & operator<< (std::ostream &out, const Rect &r) {
   out << "{ " << r.pos << ":" << r.size << " }";
   return out;
 }
-
 
 template<class T> 
 class temp_ptr {

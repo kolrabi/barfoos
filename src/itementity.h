@@ -13,7 +13,8 @@ public:
   ItemEntity(const std::shared_ptr<Item> &item);
   virtual ~ItemEntity();
 
-  virtual void Draw() const override;
+  virtual void Draw(Gfx &gfx) const override;
+  
   virtual void OnUse(Entity &other) override;
 
 protected:

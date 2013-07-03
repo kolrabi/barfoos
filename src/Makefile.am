@@ -49,6 +49,7 @@ barfoos_SOURCES=\
   common.h ivector3.h space.h vector3.h \
   random.h util.h \
   serializer.cc serializer.h \
+  input.cc input.h \
   $(RESFILE)
 
 ## Packaging ------------------------------------------------------

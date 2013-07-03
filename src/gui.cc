@@ -1,6 +1,7 @@
 #include "gui.h"
 #include "util.h"
 #include "gfx.h"
+#include "game.h"
 
 Gui::Gui() {
   this->gravN = true;
@@ -23,7 +24,7 @@ Gui::Update(float t) {
     c->Update(t);
   }
 
-  const Point &vsize = Gfx::Instance->GetVirtualScreenSize();
+  const Point &vsize = Game::Instance->GetGfx()->GetVirtualScreenSize();
   
   if (gravE) {
     int oldRight = rect.pos.x + rect.size.x;
@@ -47,9 +48,9 @@ Gui::Update(float t) {
 }
 
 void 
-Gui::Draw(const Point &parentPos) {
+Gui::Draw(Gfx &gfx, const Point &parentPos) {
   for (auto c : children) {
-    c->Draw(parentPos+rect.pos);
+    c->Draw(gfx, parentPos+rect.pos);
   }
 }
 
@@ -102,6 +103,6 @@ Gui::SetGravity(bool gravN, bool gravE, bool gravS, bool gravW) {
   this->gravS = gravS;
   this->gravW = gravW;
 
-  const Point &vsize = Gfx::Instance->GetVirtualScreenSize();
+  const Point &vsize = Game::Instance->GetGfx()->GetVirtualScreenSize();
   bottomRight = vsize - (rect.pos + rect.size);
 }

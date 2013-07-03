@@ -5,8 +5,7 @@
 #include "random.h"
 #include "mob.h"
 #include "game.h"
-
-#include <cstring>
+#include "vertex.h"
 
 static std::map<std::string, Feature> allFeatures;
 

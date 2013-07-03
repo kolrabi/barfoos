@@ -1,7 +1,9 @@
 #include "itementity.h"
 #include "item.h"
 
-#include <GL/glfw.h>
+#include "game.h"
+#include "gfx.h"
+#include "world.h"
 
 ItemEntity::ItemEntity(const std::shared_ptr<Item> &item) : 
   Mob("item"),
@@ -11,11 +13,13 @@ ItemEntity::ItemEntity(const std::shared_ptr<Item> &item) :
 ItemEntity::~ItemEntity() {
 }
 
-void ItemEntity::Draw() const {
-  //Entity::Draw();
+void ItemEntity::Draw(Gfx &gfx) const {
+  // Entity::Draw();
   
-  glColor3ub(light.r, light.g, light.b);
-  this->item->DrawSprite(this->aabb.center);
+  IColor light = Game::Instance->GetWorld()->GetLight(this->cellPos);
+  gfx.SetColor(light);
+  
+  this->item->DrawSprite(gfx, this->aabb.center);
 }
 
 void ItemEntity::OnUse(Entity &other) {

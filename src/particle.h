@@ -1,5 +1,5 @@
-#ifndef BARFOOS_ITEMENTITY_H
-#define BARFOOS_ITEMENTITY_H
+#ifndef BARFOOS_PARTICLE_H
+#define BARFOOS_PARTICLE_H
 
 #include "common.h"
 
@@ -14,7 +14,8 @@ public:
   virtual ~Particle();
 
   virtual void Update() override;
-  virtual void Draw() const override;
+  
+  virtual void Draw(Gfx &gfx) const override;
   
 protected:
 

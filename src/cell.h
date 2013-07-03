@@ -2,44 +2,103 @@
 #define BARFOOS_CELL_H
 
 #include "common.h"
-#include "util.h"
+#include "icolor.h"
 
 class World;
 class Random;
 class Serializer;
+struct Vertex;
 
+/** Optional flags of a cell. */
 enum CellFlags {
+  /** Enable collision detection. */
   Solid       = (1<<0),
+  
+  /** Pass light through and always draw adjacent cells sides. */
   Transparent = (1<<1),
+  
+  /** Don't put cell in static vertex buffer, it's vertices will change. */
   Dynamic     = (1<<2),
+  
+  /** Don't bother rendering this cell. */
   DoNotRender = (1<<3),
+  
+  /** Cell behaves like a liquid and flows, detail is amount of liquid in cell. @TODO higher friction than air. */
   Liquid      = (1<<4),
+  
+  /** If liquid, make the cell flow slower. @TODO More friction for mobs inside. */
   Viscous     = (1<<5),
+  
+  /** Use a different part of the texture for each side. 
+    * Texture must contain eight parts, one for each side from left to right:
+    * Left, Right, Back, Front, Top, Bottom, and 2 unused.
+    */    
   MultiSided  = (1<<6),
+  
+  /** Apply a turbulence effect on the texture coordinates of the cell. */
   UVTurb      = (1<<7),
+  
+  /** Make the top surface wave. */
   Waving      = (1<<8),
 };
 
+/** Information about a cell shared by cells of same type. */
 struct CellInfo {
+  /** An array of textures to randomly choose from on cell creation. */
   std::vector<const Texture *> textures;
-  IColor light;
-  uint32_t flags;
   
+  /** Light emission from this kind of cell. 
+    * Default: Black, no light is emitted. 
+    */
+  IColor light;
+  
+  /** Default flags for cell. @see CellFlags.
+    * Default: Nonsolid, nontransparent, render.
+    */
+  uint32_t flags = 0;
+  
+  /** Light attenuation factor of light passing through this cell. 
+    * This is only used for transparent cells. Nontransparent cells 
+    * always have a factor of 0.
+    * Default: 85%.
+    */
   float lightFactor = 0.85;
+  
+  /** Light reduction value. This value is subtracted from all components of light passing through. 
+    * Default: 0, don't reduce light.
+    */
   int lightFade = 0;
 
+  /** Name of cell type with which to replace this cell under certain conditions. 
+    * Default: "", don't replace.
+    */
   std::string replace;
-  size_t detailBelowReplace = 0;
+  
+  /** If nonzero, the chance per tick to replace this cell. 
+    * Default: 0.0, don't replace.
+    */
   float replaceChance = 0.0;
-  float scaleX = 1.0, scaleZ = 1.0;
+  
+  /** If nonzero, replace this cell when cell detail goes below this value. 
+    * Default: 0, don't replace.
+    */
+  size_t detailBelowReplace = 0;
+  
+  /** Rendering scale of this cell. Has no effect on collision detection. 
+    * Default: [1,1,1], don't change size.
+    */
+  Vector3 scale = Vector3(1,1,1);
 
-  CellInfo():flags(0) {}
-  CellInfo(const std::string &texture, const IColor &light, uint32_t flags = Solid);
-  CellInfo(const std::string &texture, uint32_t flags = Solid);
+/*  
+  size_t noclipSidesIn = 0;     // default: never allow moving in from any side when solid
+  size_t noclipSidesOut = ~0;   // default: always allow moving out to any side when solid
+*/
 
+  CellInfo() {}
   CellInfo(FILE *f);
 };
 
+/** A cell in the world. */
 class Cell {
 public:
 
@@ -63,6 +122,8 @@ public:
 
   float GetHeight(float x, float z) const;
   float GetHeightBottom(float x, float z) const;
+  float GetHeightClamp(float x, float z) const;
+  float GetHeightBottomClamp(float x, float z) const;
 
   Cell &SetTexture(const Texture *tex, bool multi = false);
   const Texture *GetTexture() const;
@@ -98,6 +159,7 @@ public:
   bool IsFeatureBorder() const;
   
   bool HasSolidSides() const;
+  bool CheckSideSolid(Side side, const Vector3 &org) const;
   
   void SetDirty() { dirty = 1; }
   bool IsDirty() const { return dirty; }

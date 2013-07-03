@@ -1,11 +1,7 @@
-#include "gfx.h"
 #include "game.h"
 
 #include <png.h>
 #include <zlib.h>
-
-#include "GLee.h"
-#include <GL/glfw.h>
 
 float Wave(float x, float z, float t, float a, float o) {
   return o + a * cos( ((x+z+t)*0.4 )*0.1) * cos( ((x-z  )*0.6+t*0.3) * 0.5) * 0.5;
@@ -14,7 +10,7 @@ float Wave(float x, float z, float t, float a, float o) {
 static std::string credits() {
   std::string str;
 
-  str += " GLFW - An OpenGL framework Version 2.7.8";
+  str += " GLFW - An OpenGL framework Version 3.0.2";
   str += "\n"
          "   Copyright (c) 2002-2006 Marcus Geelnard\n"
          "   Copyright (c) 2006-2010 Camilla Berglund\n";
@@ -37,42 +33,11 @@ int main() {
   std::cerr << credits() << std::endl;
   std::setlocale(LC_ALL, "en_US.utf8");
 
-  // Initialize graphics or die
-  new Gfx(Point(1920, 0), Point(320, 240), false);
-  if (!Gfx::Instance->Init()) return -1;
-  
-  // Create new game
   new Game("seed", 0);
-  
-  float lastT = Gfx::Instance->GetTime();
-//size_t frame = 0;
-  while (Gfx::Instance->Swap()) {
-    // render game
-    Game::Instance->Render();
-/*
-    const Point &ssize = Gfx::Instance->GetScreenSize();
-    uint8_t *data = new uint8_t[ssize.x*ssize.y*3];
-    glReadPixels(0,0, ssize.x, ssize.y, GL_RGB, GL_UNSIGNED_BYTE, data);
-    std::stringstream str;
-    str << "screen" << frame << ".png";
-    std::cerr << str.str() << std::endl;
-    if (frame > 500) {
-    saveImage(str.str(), ssize.x, ssize.y, data);
-    }
-    delete [] data;
-    frame++;
+  if (!Game::Instance->Init()) return -1;
 
-    float t = lastT+0.1;
-*/
-    // update game (at most 0.1s at a time)
-    float t = Gfx::Instance->GetTime();
-    while(t - lastT > 0.1) {
-      lastT += 0.1;
-      Game::Instance->Update(lastT, t - lastT);
-    }
-    Game::Instance->Update(t, t - lastT);
-    lastT = t;
-  }
+  while(Game::Instance->Frame()) 
+    ;
 
   return 0;
 }

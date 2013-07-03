@@ -8,9 +8,9 @@
 #include "gui.h"
 #include "game.h"
 #include "gfx.h"
-
-#include <GL/glfw.h>
-#include <cmath>
+#include "vertex.h"
+#include "item.h"
+#include "input.h"
 
 static float eyeHeight = 0.7f;
 
@@ -37,18 +37,18 @@ Player::~Player() {
 }
 
 void
-Player::View() const {
+Player::View(Gfx &gfx) const {
   Vector3 fwd   = (GetAngles()).EulerToVector();
   Vector3 right = (GetAngles()+Vector3(3.14159/2, 0, 0)).EulerToVector();
   Vector3 bob = Vector3(0,sin(bobPhase*3.14159*4)*0.05, 0) * bobAmplitude + right * cos(bobPhase*3.14159*2)*0.05 * bobAmplitude;
 
   Vector3 pos = smoothPosition + Vector3(0,eyeHeight,0)+bob;
   
-  Gfx::Instance->View3D(pos, fwd);
+  gfx.View3D(pos, fwd);
 }
 
 void
-Player::MapView() const {
+Player::MapView(Gfx &gfx) const {
   if (headCell) {
     Game::Instance->GetWorld()->AddFeatureSeen(headCell->GetFeatureID());
   }
@@ -56,7 +56,7 @@ Player::MapView() const {
   Vector3 fwd = this->GetAngles().EulerToVector();
   Vector3 pos = this->smoothPosition + Vector3(0,16,0);
   
-  Gfx::Instance->View3D(pos, Vector3(0,-1,0), -32.0, fwd);
+  gfx.View3D(pos, Vector3(0,-1,0), -32.0, fwd);
 }
 
 void 
@@ -140,7 +140,8 @@ void Player::UpdateSelection() {
   this->selectionRange = dist;
 }
 
-void Player::Draw() const {
+void Player::Draw(Gfx &gfx) const {
+  (void)gfx;
 }
 
 void
@@ -148,18 +149,13 @@ Player::UpdateInput(
 ) {
   float deltaT = Game::Instance->GetDeltaT();
   
-  if (glfwGetKey('R')) Die();
-  if (glfwGetKey('E') && this->selectedEntity != ~0UL) {
+  if (Input::Instance->IsKeyActive(InputKey::DebugDie)) Die();
+  if (Input::Instance->IsKeyDown(InputKey::Use) && this->selectedEntity != ~0UL) {
     temp_ptr<Entity> entity(Game::Instance->GetEntity(this->selectedEntity));
     if (entity) entity->OnUse(*this);
   }
 
-  if (glfwGetKey(GLFW_KEY_LEFT))  angles.x -= deltaT;
-  if (glfwGetKey(GLFW_KEY_RIGHT)) angles.x += deltaT;
-  if (glfwGetKey(GLFW_KEY_DOWN))  angles.y -= deltaT;
-  if (glfwGetKey(GLFW_KEY_UP))    angles.y += deltaT;
-  
-  sneak = glfwGetKey(GLFW_KEY_LSHIFT);
+  sneak = Input::Instance->IsKeyActive(InputKey::Sneak);
 
   if (angles.y > 3.1/2) angles.y = 3.1/2;
   if (angles.y < -3.1/2) angles.y = -3.1/2;
@@ -170,10 +166,10 @@ Player::UpdateInput(
 
   move = Vector3();
   
-  if (glfwGetKey('D')) move = move + right * speed;
-  if (glfwGetKey('A')) move = move - right * speed;
-  if (glfwGetKey('W')) move = move + fwd * speed;
-  if (glfwGetKey('S')) move = move - fwd * speed;
+  if (Input::Instance->IsKeyActive(InputKey::Right))     move = move + right * speed;
+  if (Input::Instance->IsKeyActive(InputKey::Left))      move = move - right * speed;
+  if (Input::Instance->IsKeyActive(InputKey::Forward))   move = move + fwd * speed;
+  if (Input::Instance->IsKeyActive(InputKey::Backward))  move = move - fwd * speed;
 
   if (move.GetMag() > 1.5) {
     bobAmplitude += deltaT*4;
@@ -195,41 +191,36 @@ Player::UpdateInput(
     // TODO: play step sound
   }
   
-  if ((onGround || inWater || noclip) && glfwGetKey(' ')) wantJump = true;
+  if ((onGround || inWater || noclip) && Input::Instance->IsKeyActive(InputKey::Jump)) wantJump = true;
 }
 
 void 
-Player::DrawWeapons() const {
+Player::DrawWeapons(Gfx &gfx) const {
   Vector3 fwd(0,0,1);
   Vector3 right(1,0,0);
   Vector3 bob = Vector3(0,sin(bobPhase*3.14159*4)*0.05, 0) * bobAmplitude + right * cos(bobPhase*3.14159*2)*0.05 * bobAmplitude;
 
   Vector3 pos = Vector3(0,0,-1)+bob;
-  Vector3 tpos = pos + fwd;
   
-  glMatrixMode(GL_MODELVIEW);
-  glLoadIdentity();
-  gluLookAt(pos.x, pos.y, pos.z, tpos.x, tpos.y, tpos.z, 0,1,0);
+  gfx.View3D(pos, fwd);
 
-  IColor l = light+GetTorchLight();
-  glColor3f(l.r/255.0, l.g/255.0, l.b/255.0);
+  IColor l = Game::Instance->GetWorld()->GetLight(cellPos)+GetTorchLight();
+  gfx.SetColor(l);
 
   if (this->inventory[(size_t)InventorySlot::RightHand]) {
-    this->inventory[(size_t)InventorySlot::RightHand]->Draw(false);
+    this->inventory[(size_t)InventorySlot::RightHand]->Draw(gfx, false);
   }
   if (this->inventory[(size_t)InventorySlot::LeftHand]) {
-    this->inventory[(size_t)InventorySlot::LeftHand]->Draw(true);
+    this->inventory[(size_t)InventorySlot::LeftHand]->Draw(gfx, true);
   }
 }
 
 void 
-Player::DrawGUI() const {
-  Gfx::Instance->ViewGUI();
-
-  const Point &vsize = Gfx::Instance->GetVirtualScreenSize();
+Player::DrawGUI(Gfx &gfx) const {
+  const Point &vsize = gfx.GetVirtualScreenSize();
   Sprite sprite;
   sprite.texture = crosshairTex;
-  Gfx::Instance->DrawIcon(sprite, Point(vsize.x/2, vsize.y/2));
+  gfx.DrawIcon(sprite, Point(vsize.x/2, vsize.y/2));
 
   std::stringstream str;
   str << smoothPosition << std::endl;
@@ -238,14 +229,14 @@ Player::DrawGUI() const {
   str << (this->selectedEntity) << std::endl;
   str << (this->selectionRange) << std::endl;
   RenderString rs(str.str());
-  rs.Draw(0,0);
+  rs.Draw(gfx, 0,0);
 }
 
 void
 Player::OnMouseClick(const Point &pos, int button, bool down) {
   (void)pos;
-  if (button == GLFW_MOUSE_BUTTON_LEFT) this->itemActiveLeft = down;
-  if (button == GLFW_MOUSE_BUTTON_RIGHT) this->itemActiveRight = down;
+  if (button == 0) this->itemActiveLeft = down;
+  if (button == 1) this->itemActiveRight = down;
 }
 
 void

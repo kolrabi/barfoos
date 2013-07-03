@@ -2,19 +2,19 @@
 #define BARFOOS_INVENTORY_GUI_H
 
 #include "common.h"
-
 #include "gui.h"
 
 class Entity;
 class InventoryGui;
 class Item;
+class Gfx;
 
 class InventorySlotGui : public Gui {
 public: 
   InventorySlotGui(InventoryGui *parent, size_t entityId, InventorySlot slot);
   virtual ~InventorySlotGui();
 
-  virtual void Draw(const Point &parentPos);  
+  virtual void Draw(Gfx &gfx, const Point &parentPos);  
   virtual void OnMouseClick(const Point &pos, int button, bool down);
 
 private:
@@ -36,7 +36,7 @@ public:
   virtual void OnMouseClick(const Point &pos, int button, bool down);
   virtual void OnHide();
 
-  virtual void Draw(const Point &parentPos);  
+  virtual void Draw(Gfx &gfx, const Point &parentPos);  
   
   void SetForward(const Vector3 &forward) { this->forward = forward; }
 

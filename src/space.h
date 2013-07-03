@@ -1,6 +1,8 @@
 #ifndef BARFOOS_SPACE_H
 #define BARFOOS_SPACE_H
 
+// ====================================================================
+
 enum Axis {
   X = (1<<0),
   Y = (1<<1),
@@ -15,6 +17,8 @@ static inline std::ostream & operator<< (std::ostream &out, Axis a) {
   if (a & Axis::Z) out << "Z";
   return out;
 }
+
+// ====================================================================
 
 enum Corner {
   CornerX = 1,
@@ -31,6 +35,8 @@ enum Corner {
   Corner111 = CornerX | CornerY | CornerZ,
 };
 
+// ====================================================================
+
 enum class Side {
   Right = 0,
   Left  = 1,
@@ -40,6 +46,7 @@ enum class Side {
   Backward = 5,
   InvalidSide = -1
 };
+
 static inline std::ostream & operator<< (std::ostream &out, Side side) {
   switch(side) {
     case Side::Right:    out << "+X"; break;

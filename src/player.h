@@ -3,7 +3,8 @@
 
 #include "common.h"
 #include "mob.h"
-#include "item.h"
+
+class Gfx;
 
 class Player : public Mob {
 public:
@@ -11,14 +12,14 @@ public:
   Player();
   virtual ~Player();
 
-  virtual void Update();
-  virtual void Draw() const;
+  virtual void Update() override;
+  virtual void Draw(Gfx &gfx) const override;
   
-  void View() const;
-  void MapView() const;
+  void View(Gfx &gfx) const;
+  void MapView(Gfx &gfx) const;
   
-  void DrawWeapons() const;
-  void DrawGUI() const;
+  void DrawWeapons(Gfx &gfx) const;
+  void DrawGUI(Gfx &gfx) const;
   
   void OnMouseClick(const Point &pos, int button, bool down);
   void OnMouseDelta(const Point &delta);

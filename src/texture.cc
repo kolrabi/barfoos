@@ -1,7 +1,6 @@
 #include "util.h"
 
 #include "GLee.h"
-#include <GL/glfw.h>
 #include <png.h>
 #include <map>
 

@@ -30,28 +30,14 @@ Mob::~Mob() {
 void 
 Mob::Update() {
   Entity::Update();
+
+  float deltaT = Game::Instance->GetDeltaT();
   
-  std::shared_ptr<World> world = Game::Instance->GetWorld();
-  
-  if (this->properties->moveInterval != 0) {
-    if (Game::Instance->GetTime() > nextMoveT) {
-      nextMoveT += this->properties->moveInterval;
-      moveTarget = aabb.center + (Vector3::Rand()-Vector3(0.5,0.5,0.5)) * 4.0;
-      validMoveTarget = true;
-    }
-    
-    Vector3 tmove = (moveTarget - aabb.center).Horiz();
-    if (tmove.GetMag() < 0.1) validMoveTarget = false;
-    if (validMoveTarget) move = tmove.Normalize() * this->properties->maxSpeed;
-  }
- 
-  float speed = move.GetMag();
-  if (speed > this->properties->maxSpeed) move = move * (this->properties->maxSpeed/speed);
   velocity.x = std::abs(move.x) > std::abs(velocity.x) ? move.x : velocity.x;
   velocity.z = std::abs(move.z) > std::abs(velocity.z) ? move.z : velocity.z;
   
-  float gravity = 3*9.81*Game::Instance->GetDeltaT();
-  float friction = 1.0 / (1.0+Game::Instance->GetDeltaT() * 10);
+  float gravity = 3*9.81*deltaT;
+  float friction = 1.0 / (1.0+deltaT * 10);
 
   if (noclip) {
     if (wantJump) {
@@ -82,19 +68,20 @@ Mob::Update() {
   velocity.z = velocity.z * friction;
 
   // move
+  std::shared_ptr<World> world = Game::Instance->GetWorld();
   uint8_t axis, axis2;
   bool movingDown = velocity.y <= 0;
 
   if (noclip) {
-    aabb.center = aabb.center + velocity * Game::Instance->GetDeltaT();
+    aabb.center = aabb.center + velocity * deltaT;
   } else if (movingDown) {
     // when moving down and pushing use step height
     Vector3 step(0, move.GetMag()!=0 ? this->properties->stepHeight : 0, 0);
-    Vector3 org = aabb.center + velocity.Horiz() * Game::Instance->GetDeltaT();
+    Vector3 org = aabb.center + velocity.Horiz() * deltaT;
     
     aabb.center = world->MoveAABB(aabb, aabb.center + step, axis2);
-    aabb.center = world->MoveAABB(aabb, aabb.center + velocity.Horiz()*Game::Instance->GetDeltaT(), axis);
-    aabb.center = world->MoveAABB(aabb, aabb.center - step*1.25 + velocity.Vert()*Game::Instance->GetDeltaT(), axis2);
+    aabb.center = world->MoveAABB(aabb, aabb.center + velocity.Horiz()*deltaT, axis);
+    aabb.center = world->MoveAABB(aabb, aabb.center - step*1.25 + velocity.Vert()*deltaT, axis2);
     org.y = aabb.center.y;
     axis |= axis2;
     aabb.center = world->MoveAABB(aabb, org, axis2);
@@ -102,7 +89,7 @@ Mob::Update() {
     if (!axis2 & Axis::Y) aabb.center = aabb.center + step*0.25;
   } else if (!movingDown) {
     onGround = false;
-    aabb.center = world->MoveAABB(aabb, aabb.center + velocity*Game::Instance->GetDeltaT(), axis);
+    aabb.center = world->MoveAABB(aabb, aabb.center + velocity*deltaT, axis);
   }
 
   // jump out of water
@@ -110,6 +97,38 @@ Mob::Update() {
     wantJump = true;
   }
 
+  // fall damage  
+  if (axis & Axis::Y) {
+    if (velocity.y < -15) {
+      AddHealth((velocity.y+15)/5);
+    }
+    velocity.y = 0;
+    onGround |= movingDown;
+  }
+}
+
+void
+Mob::Think() {  
+  Entity::Think();
+  
+  // clip move speed
+  float speed = move.GetMag();
+  if (speed > this->properties->maxSpeed) move = move * (this->properties->maxSpeed/speed);
+
+  // walk around a bit
+  if (this->properties->moveInterval != 0) {
+    if (Game::Instance->GetTime() > nextMoveT) {
+      nextMoveT += this->properties->moveInterval;
+      moveTarget = aabb.center + (Vector3::Rand()-Vector3(0.5,0.5,0.5)) * 4.0;
+      validMoveTarget = true;
+    }
+    
+    Vector3 tmove = (moveTarget - aabb.center).Horiz();
+    if (tmove.GetMag() < 0.1) validMoveTarget = false;
+    if (validMoveTarget) move = tmove.Normalize() * this->properties->maxSpeed;
+  }
+ 
+  std::shared_ptr<World> world = Game::Instance->GetWorld();
   IVector3 footPos(aabb.center.x, aabb.center.y - aabb.extents.y + this->properties->stepHeight, aabb.center.z);
   footCell = &world->GetCell(footPos);
 
@@ -124,16 +143,6 @@ Mob::Update() {
 
   underWater = headCell->GetInfo().flags & CellFlags::Liquid;
   if (!noclip) this->SetInLiquid(footCell->GetInfo().flags & CellFlags::Liquid);
-  
-  if (axis & Axis::Y) {
-    if (velocity.y < -15) {
-      AddHealth((velocity.y+15)/5);
-      std::cerr << velocity.y << std::endl;
-      this->smoothPosition.y = aabb.center.y;
-    }
-    velocity.y = 0;
-    onGround |= movingDown;
-  }
 }
 
 void

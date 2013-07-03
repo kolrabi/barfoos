@@ -7,8 +7,8 @@
 /* Define to 1 if you have the `GL' library (-lGL). */
 /* #undef HAVE_LIBGL */
 
-/* Define to 1 if you have the `glfw' library (-lglfw). */
-#define HAVE_LIBGLFW 1
+/* Define to 1 if you have the `glfw3' library (-lglfw3). */
+#define HAVE_LIBGLFW3 1
 
 /* Define to 1 if you have the `GLU' library (-lGLU). */
 /* #undef HAVE_LIBGLU */

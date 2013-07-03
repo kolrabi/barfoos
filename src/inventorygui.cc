@@ -5,6 +5,7 @@
 #include "itementity.h"
 #include "game.h"
 #include "gfx.h"
+#include "icolor.h"
 
 InventoryGui::InventoryGui(size_t entityId) 
 : entityId(entityId) {
@@ -48,11 +49,11 @@ void InventoryGui::Update(float t) {
   Gui::Update(t);
 }
 
-void InventoryGui::Draw(const Point &parentPos) {
-  Gui::Draw(parentPos);
+void InventoryGui::Draw(Gfx &gfx, const Point &parentPos) {
+  Gui::Draw(gfx, parentPos);
   
   if (dragItem != nullptr) {
-    dragItem->DrawIcon(mousePos);
+    dragItem->DrawIcon(gfx, mousePos);
   }
 }
 
@@ -137,14 +138,14 @@ void InventorySlotGui::OnMouseClick(const Point &pos, int button, bool down) {
 }
 
 void 
-InventorySlotGui::Draw(const Point &parentPos) {
+InventorySlotGui::Draw(Gfx &gfx, const Point &parentPos) {
   const Texture *tex = slotTex;
   Sprite sprite;
   sprite.texture = tex;
 
   Point p = rect.pos+parentPos+Point(16,16);
   
-  Gfx::Instance->DrawIcon(sprite, p);
+  gfx.DrawIcon(sprite, p);
 
   temp_ptr<Entity> entity(Game::Instance->GetEntity(this->entityId));
   if (!entity) return;
@@ -152,6 +153,6 @@ InventorySlotGui::Draw(const Point &parentPos) {
   std::shared_ptr<Item> item = entity->GetInventory(slot);
   
   if (item != nullptr)
-    item->DrawIcon(p);
+    item->DrawIcon(gfx, p);
 }
 

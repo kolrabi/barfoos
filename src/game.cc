@@ -1,6 +1,4 @@
-#include <GL/glfw.h>
 #include "gfx.h"
-
 #include "game.h"
 #include "world.h"
 #include "player.h"
@@ -8,13 +6,34 @@
 #include "feature.h"
 #include "random.h"
 #include "inventorygui.h"
+#include "random.h"
+#include "item.h"
+#include "input.h"
 
 Game *Game::Instance = nullptr;
 
-Game::Game(const std::string &seed, size_t level) : seed(seed), random(seed, level) {
+Game::Game(const std::string &seed, size_t level, const Point &screenSize) 
+: gfx(new Gfx(Point(1920, 32), screenSize, false)),
+  seed(seed), 
+  random(seed, level),
+  level(level)  {
+ 
   delete Game::Instance;
   Game::Instance = this;
+  
+  this->isInit = false;
+}
 
+Game::~Game() {
+  if (isInit) this->Deinit();
+  Game::Instance = nullptr;
+  delete gfx;
+}
+
+bool 
+Game::Init() {
+  if (!this->gfx->Init()) return false;
+  
   LoadCells();
   LoadFeatures();
   LoadEntities();
@@ -24,69 +43,73 @@ Game::Game(const std::string &seed, size_t level) : seed(seed), random(seed, lev
   this->showInventory = false;
   this->lastT = 0;
   this->deltaT = 0;
+  this->nextThinkT = 0;
 
   this->BuildWorld(level);
+
+  this->startT = this->gfx->GetTime();
+
+  this->isInit = true;
+  return true;
 }
 
-Game::~Game() {
+void Game::Deinit() {
   for (auto entity : this->entities) {
     delete entity.second;
   }
-  Game::Instance = nullptr;
+}
+
+bool Game::Frame() {
+  if (!this->gfx->Swap()) return false;
+  
+  // render game
+  this->Render();
+  
+  // update game (at most 0.1s at a time)
+  float t = this->gfx->GetTime() - this->startT;
+  while(t - this->lastT > 0.1) {
+    this->lastT += 0.1;
+    this->Update(lastT, 0.1);
+    Input::Instance->Update();
+  }
+  this->Update(t, t - this->lastT);
+  this->lastT = t;
+  
+  return true;
 }
 
 void
 Game::Render() const {
-  glClearColor(0.3,0.3,0.2, 1.0);
-  glClear(GL_DEPTH_BUFFER_BIT|GL_COLOR_BUFFER_BIT);
-  Gfx::Instance->Viewport(Rect());
+  this->gfx->ClearColor(IColor(30, 30, 20));
+  this->gfx->ClearDepth(1.0);
+  this->gfx->Viewport(Rect());
 
   // draw world first
-  if (glfwGetKey('Q')) {
-    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-  } else {
-    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-  }
-  glFogi(GL_FOG_MODE, GL_EXP2);
-  glFogf(GL_FOG_DENSITY, 0.051f);
+  this->gfx->SetFog(0.051, 0, IColor(20,20,20));
   
-  player->View();
-  world->Draw();
+  player->View(*this->gfx);
+  world->Draw(*this->gfx);
   
   // draw all entities
   for (auto entity : this->entities) {
-    entity.second->Draw();
+    entity.second->Draw(*this->gfx);
   }
   
-  glClear(GL_DEPTH_BUFFER_BIT);
-  player->DrawWeapons();
-/*
-  // next draw mini map
-  const Point &ssize = Gfx::Instance->GetScreenSize();
-  if (glfwGetKey('M')) {
-    Gfx::Instance->Viewport(Rect(Point(ssize.x/2 - ssize.y/2, 0), Point(ssize.y, ssize.y)));
-  } else {
-    Gfx::Instance->Viewport(Rect(Point(ssize.x - ssize.x/8, ssize.y - ssize.x/8), Point(ssize.x/8, ssize.x/8)));
-  }
-  glClear(GL_DEPTH_BUFFER_BIT|GL_COLOR_BUFFER_BIT);
+  this->gfx->ClearDepth(1.0);
+  player->DrawWeapons(*this->gfx);
 
-//  glDisable(GL_FOG);
-  glFogi(GL_FOG_MODE, GL_LINEAR);
-  player->MapView();
-  world->DrawMap();
-//  glEnable(GL_FOG);
-
-  Gfx::Instance->Viewport(Rect());
-*/
-  // next draw debug stuff
-  //glDisable(GL_DEPTH_TEST);
-  glColor3ub(255,255,0);
-  player->DrawGUI();
+  // next draw gui stuff
+  this->gfx->ViewGUI();
   
   if (this->activeGui) {
-    Gfx::Instance->ViewGUI();
-    this->activeGui->Draw(Point());
+    this->activeGui->Draw(*this->gfx, Point());
   }
+  player->DrawGUI(*this->gfx);
+}
+
+float Game::GetThinkFraction() const {
+  float lastThinkT = this->nextThinkT - Entity::ThinkInterval;
+  return (this->lastT - lastThinkT) / Entity::ThinkInterval;
 }
 
 void 
@@ -96,29 +119,30 @@ Game::Update(float t, float deltaT) {
   
   world->Update(t);
 
+  /*
   if (glfwGetKey(GLFW_KEY_TAB)) {
     if (!this->showInventory) {
       if (this->activeGui) {
         this->activeGui->OnHide();
-        Gfx::Instance->DecGuiCount();
+        this->gfx->DecGuiCount();
       }
       this->activeGui = this->inventoryGui;
       this->inventoryGui->SetForward(this->player->GetAngles().EulerToVector());
       this->activeGui->OnShow();
-      Gfx::Instance->IncGuiCount();
+      this->gfx->IncGuiCount();
     }
     this->showInventory = true;
   } else {
     if (this->showInventory) {
       if (this->activeGui) {
         this->activeGui->OnHide();
-        Gfx::Instance->DecGuiCount();
+        this->gfx->DecGuiCount();
       }
       this->activeGui = nullptr;
     }
     this->showInventory = false;
   }
-
+*/
   if (this->activeGui) this->activeGui->Update(t);
   
   // handle collision between entities
@@ -135,6 +159,13 @@ Game::Update(float t, float deltaT) {
   // update all entities
   for (auto entity : this->entities) {
     if (entity.second) entity.second->Update();
+  }
+  
+  while(nextThinkT < t) {
+    nextThinkT += Entity::ThinkInterval;
+    for (auto entity : this->entities) {
+      if (entity.second) entity.second->Think();
+    }
   }
 
   // remove removable entities
@@ -183,11 +214,6 @@ void Game::OnMouseClick(const Point &pos, int button, bool down) {
 
 void Game::OnMouseDelta(const Point &delta) {
   this->player->OnMouseDelta(delta);
-}
-
-void Game::OnKey(int key, bool down) {
-  if (down && key == GLFW_KEY_F12) {
-  }
 }
 
 /**

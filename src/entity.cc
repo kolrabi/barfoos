@@ -1,5 +1,4 @@
-#include <GL/glfw.h>
-#include <cstring>
+#include <GLFW/glfw3.h>
 
 #include "entity.h"
 #include "world.h"
@@ -10,6 +9,9 @@
 #include "random.h"
 #include "game.h"
 #include "gfx.h"
+#include "input.h"
+
+float Entity::ThinkInterval = 0.2f;
 
 static std::map<std::string, EntityProperties> allEntities;
 EntityProperties defaultEntity;
@@ -142,9 +144,21 @@ Entity::Start() {
 
 void 
 Entity::Update() {
-  this->sprite.Update(Game::Instance->GetDeltaT());
+  float deltaT = Game::Instance->GetDeltaT();
   
-  IVector3 cellPos(aabb.center.x, aabb.center.y, aabb.center.z);
+  this->sprite.Update(deltaT);
+  
+  if (deltaT > 1.0/30.0) {
+    this->smoothPosition = aabb.center;
+  } else {
+    this->smoothPosition = this->smoothPosition + (aabb.center - this->smoothPosition) * Game::Instance->GetDeltaT() * 30.0f;
+  }
+}
+  
+void 
+Entity::Think() {
+  this->cellPos = IVector3(aabb.center.x, aabb.center.y, aabb.center.z);
+  
   Cell *cell = &Game::Instance->GetWorld()->GetCell(cellPos);
   if (cell != this->lastCell) {
     if (this->lastCell && this->properties->cellLeave != "") {
@@ -165,32 +179,31 @@ Entity::Update() {
     }
   }
   
-  this->light = Game::Instance->GetWorld()->GetLight(cellPos).Saturate();
-  
-  this->smoothPosition = this->smoothPosition + (aabb.center - this->smoothPosition) * Game::Instance->GetDeltaT() * 10.0f;
+  this->lastPos = aabb.center;
 }
 
 void
-Entity::Draw() const {
-  glColor3ub(light.r, light.g, light.b);
-  Gfx::Instance->DrawSprite(this->sprite, this->aabb.center);
+Entity::Draw(Gfx &gfx) const {
+  IColor light = Game::Instance->GetWorld()->GetLight(this->cellPos);
+  gfx.SetColor(light);
+  gfx.DrawSprite(this->sprite, this->aabb.center);
   
-  if (glfwGetKey(GLFW_KEY_F2)) {
-    glColor4f(0.25,0.25,0.25,0.25);
-    this->DrawBoundingBox();
+  if (Input::Instance->IsKeyActive(InputKey::DebugEntityAABB)) {
+    std::cerr << "aabb" << std::endl;
+    this->DrawBoundingBox(gfx);
   }
 }
 
 void
-Entity::DrawBoundingBox() const {
+Entity::DrawBoundingBox(Gfx &gfx) const {
   //glBlendFunc(GL_ONE, GL_ONE);
   
-  glDepthMask(GL_FALSE);
+  //glDepthMask(GL_FALSE);
     
-  Gfx::Instance->SetTextureFrame(Gfx::Instance->GetNoiseTexture());
-  Gfx::Instance->DrawAABB(this->aabb);
+  gfx.SetTextureFrame(gfx.GetNoiseTexture());
+  gfx.DrawAABB(this->aabb);
   
-  glDepthMask(GL_TRUE);
+  //glDepthMask(GL_TRUE);
   //glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
 }
 

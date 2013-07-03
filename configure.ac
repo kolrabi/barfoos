@@ -34,7 +34,7 @@ else
   AC_CHECK_LIB(GLU, main)
 fi
 
-AC_CHECK_LIB(glfw, main)
+AC_CHECK_LIB(glfw3, main)
 AC_CHECK_LIB(z, main)
 AC_CHECK_LIB(png, main)
 

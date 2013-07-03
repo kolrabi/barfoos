@@ -2,16 +2,22 @@
 #define BARFOOS_GFX_H
 
 #include "common.h"
+#include "icolor.h"
+
+struct Vertex;
+class GLFWwindow;
+class Shader;
 
 class Gfx final {
 public:
 
   Gfx(const Point &pos, const Point &size, bool fullscreen);
   ~Gfx();
-  static std::unique_ptr<Gfx> Instance;
   
   bool Init();
   void Deinit();
+  
+  float GetTime() const;
   
   const Point &GetScreenSize()        const { return screenSize; }
   const Point &GetVirtualScreenSize() const { return virtualScreenSize; }
@@ -20,15 +26,28 @@ public:
   void IncGuiCount();
   void DecGuiCount();
   
+  void ClearColor(const IColor &color) const;
+  void ClearDepth(float depth) const;
   bool Swap();
-  float GetTime() const;
 
   void Viewport(const Rect &view);
   void View3D(const Vector3 &pos, const Vector3 &forward, float fovY = 60.0, const Vector3 &up = Vector3(0,1,0)) const;
   void ViewGUI() const;
   
-  const Texture *GetNoiseTexture() const { return noiseTex; }
+  void ViewPush() const;
+  void ViewPop() const;
+  void ViewTranslate(const Vector3 &p) const;
+  void ViewScale(const Vector3 &p) const;
+  void ViewRotate(float angle, const Vector3 &p) const;
+  
+  void SetDepthTest(bool on) const;
+  void SetCullFace(bool on) const;
+  void SetShader(const Shader *shader) const;
   void SetTextureFrame(const Texture *texture, size_t stage = 0, size_t currentFrame = 0, size_t frameCount = 1) const;
+  void SetFog(float e, float l, const IColor &color);
+  
+  const Texture *GetNoiseTexture() const { return noiseTex; }
+  void SetColor(const IColor &color) const;
 
   void DrawTriangles(const std::vector<Vertex> &vertices) const;
   void DrawQuads(const std::vector<Vertex> &vertices) const;
@@ -40,6 +59,8 @@ public:
   
 private:
 
+  GLFWwindow *window;
+  
   bool isInit;
   float startTime;
 
@@ -67,6 +88,10 @@ private:
   const Texture *noiseTex;
   std::vector<Vertex> cubeVerts;
   std::vector<Vertex> quadVerts;
+  
+  float fogExp2 = 0;
+  float fogLin  = 0;
+  IColor fogColor;
 };
 
 const Texture *noiseTexture(const Point &size, const Vector3 &scale = Vector3(1,1,1), const Vector3 &offset = Vector3());
