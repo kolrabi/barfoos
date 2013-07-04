@@ -14,6 +14,10 @@ struct Vector3 {
   Vector3 operator -(const Vector3 &o) const {
     return Vector3(x-o.x, y-o.y, z-o.z);
   }
+
+  Vector3 operator -() const {
+    return Vector3(-x, -y, -z);
+  }
   
   Vector3 operator *(const float f) const {
     return Vector3(x*f, y*f, z*f);
@@ -44,7 +48,7 @@ struct Vector3 {
   }
   
   Vector3 Cross(const Vector3 o) const {
-    return Vector3( z * o.y - y * o.z, x * o.z - z * o.x, y * o.x - x * o.y);
+    return Vector3( o.z * y - o.y * z, o.x * z - o.z * x, o.y * x - o.x * y);
   }
 
   float Dot(const Vector3 o) const {

@@ -2,6 +2,7 @@
 #include "util.h"
 #include "world.h"
 #include "gfx.h"
+#include "game.h"
 
 #include "random.h"
 #include "serializer.h"
@@ -134,16 +135,27 @@ Cell::Draw(std::vector<Vertex> &verts) const {
   }
 }
 
+void 
+Cell::DrawHighlight(std::vector<Vertex> &verts) const {
+  for (const Vertex &v : this->verts) {
+    Vertex vv(v);
+    vv.xyz[0] = (vv.xyz[0] - this->pos.x - 0.5) * 1.1 + this->pos.x + 0.5;
+    vv.xyz[1] = (vv.xyz[1] - this->pos.y - 0.5) * 1.1 + this->pos.y + 0.5; 
+    vv.xyz[2] = (vv.xyz[2] - this->pos.z - 0.5) * 1.1 + this->pos.z + 0.5;
+    verts.push_back(vv);
+  }
+}
+
 void
 Cell::Update(
-  float t,
-  Random &random
+  Game &game
 ) {
   if (!world) return;
+  
+  float t = game.GetTime();
+  float deltaT = game.GetDeltaT();
 
-  (void)random;
-    
-  smoothDetail = smoothDetail + (detail - smoothDetail) * world->GetDeltaT()*10;
+  smoothDetail = smoothDetail + (detail - smoothDetail) * deltaT*10;
   
   if (GetInfo().flags & CellFlags::Waving) {
     float h = 0.8;
@@ -197,7 +209,7 @@ Cell::Update(
   UpdateNeighbours();
 }
 
-void Cell::Tick(Random &random) {
+void Cell::Tick(Game &game) {
   this->tickPhase = (this->tickPhase + 1) % this->tickInterval;
   if (this->tickPhase) return;
 
@@ -207,7 +219,7 @@ void Cell::Tick(Random &random) {
     
     if ((!Flow(Side::Down) && detail > 1)) {
       Side sides[4] = { Side::Left, Side::Right, Side::Forward, Side::Backward };
-      int n = random.Integer(4);
+      int n = game.GetRandom().Integer(4);
       for (int i=0; i<4; i++) {
         if (Flow(sides[(n+i)%4])) {
           break;
@@ -769,4 +781,33 @@ AABB Cell::GetAABB() const {
   aabb.center = Vector3(pos) + Vector3(0.5,0.5,0.5);
   aabb.extents = Vector3(0.5,0.5,0.5);
   return aabb;
+}
+
+bool 
+Cell::Ray(const Vector3 &start, const Vector3 &dir, float &t, Vector3 &p) const {
+  bool hit = false;
+  float tt = INFINITY;
+  
+  for (size_t i=0; i<verts.size(); i+=3) {
+    Vector3 tri[3] = {
+      Vector3(verts[i+0].xyz[0], verts[i+0].xyz[1], verts[i+0].xyz[2]),
+      Vector3(verts[i+1].xyz[0], verts[i+1].xyz[1], verts[i+1].xyz[2]),
+      Vector3(verts[i+2].xyz[0], verts[i+2].xyz[1], verts[i+2].xyz[2])
+    };
+    
+    float ttt;
+    Vector3 pp;
+    
+    if (TriangleRay(tri, start, dir, ttt, pp)) {
+      hit = true;
+      if (ttt < tt) tt = ttt;
+    }
+  }
+  
+  if (hit) {
+    t = tt;
+    p = start + dir * t;
+  }
+  
+  return hit;
 }

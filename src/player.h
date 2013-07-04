@@ -4,7 +4,7 @@
 #include "common.h"
 #include "mob.h"
 
-class Gfx;
+struct InputEvent;
 
 class Player : public Mob {
 public:
@@ -12,7 +12,7 @@ public:
   Player();
   virtual ~Player();
 
-  virtual void Update() override;
+  virtual void Update(Game &game) override;
   virtual void Draw(Gfx &gfx) const override;
   
   void View(Gfx &gfx) const;
@@ -21,15 +21,12 @@ public:
   void DrawWeapons(Gfx &gfx) const;
   void DrawGUI(Gfx &gfx) const;
   
-  void OnMouseClick(const Point &pos, int button, bool down);
-  void OnMouseDelta(const Point &delta);
-
-  const IColor GetTorchLight() const;
+  void HandleEvent(const InputEvent &event);
 
 private:
 
-  void UpdateInput();
-  void UpdateSelection();
+  void UpdateInput(Game &game);
+  void UpdateSelection(Game &game);
 
   float bobPhase;
   float bobAmplitude;
@@ -38,6 +35,8 @@ private:
   Cell *selectedCell;
   Side selectedCellSide;
   float selectionRange;
+
+  IColor torchLight;
   
   bool itemActiveLeft, itemActiveRight;
   

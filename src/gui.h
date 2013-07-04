@@ -4,6 +4,8 @@
 #include "common.h"
 
 class Gfx;
+class Game;
+struct InputEvent;
 
 class Gui {
 public:
@@ -11,9 +13,8 @@ public:
   Gui();
   virtual ~Gui();
 
-  virtual void Update(float t);
-  virtual void OnMouseMove(const Point &point);
-  virtual void OnMouseClick(const Point &pos, int button, bool down);
+  virtual void Update(Game &game);
+  virtual void HandleEvent(const InputEvent &event);
   virtual void OnHide() {}
   virtual void OnShow() {}
 
@@ -31,12 +32,10 @@ protected:
   Rect rect;
   Point bottomRight;
 
-  float lastT;
-  float deltaT;
-
   std::vector<Gui*> children;
 
   bool gravN, gravE, gravS, gravW;
+  bool updateGravity;
 };
 
 #endif

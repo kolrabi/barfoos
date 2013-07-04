@@ -134,30 +134,31 @@ Item::Item(const std::string &type) {
   this->isEquipped = false;
   this->isRemovable = false;
   this->durability = this->properties->durability;
+  this->cooldownFrac = 0;
 }
 
 Item::~Item() {
 }
 
-bool Item::CanUse() const {
+bool Item::CanUse(Game &game) const {
   return (this->durability > 0 || this->properties->durability == 0.0) && 
          this->properties->cooldown >= 0.0 && 
-         this->nextUseT < Game::Instance->GetTime();
+         this->nextUseT < game.GetTime();
 }
   
-void Item::StartCooldown() {
+void Item::StartCooldown(Game &game) {
   this->durability -= this->properties->useDurability;
-  this->nextUseT = Game::Instance->GetTime() + this->properties->cooldown;
+  this->nextUseT = game.GetTime() + this->properties->cooldown;
 }
 
-void Item::Update() {
+void Item::Update(Game &game) {
   // reduce durability while equipped  
   if (this->isEquipped) { 
     this->sprite.currentAnimation = this->properties->equipAnim;
-    this->durability -= this->properties->equipDurability * Game::Instance->GetDeltaT();
+    this->durability -= this->properties->equipDurability * game.GetDeltaT();
   }
 
-  this->sprite.Update(Game::Instance->GetDeltaT());
+  this->sprite.Update(game.GetDeltaT());
   
   // when broken, replace or remove
   if (this->durability <= 0 && this->properties->durability != 0.0) {
@@ -171,53 +172,50 @@ void Item::Update() {
       this->isRemovable = true;
     }
   }
+  
+  // cooldown fraction: 1.0 full cooldown left, 0.0 cooldown over
+  cooldownFrac = (nextUseT - game.GetTime())/this->properties->cooldown;
+  if (cooldownFrac < 0) cooldownFrac = 0;
 }
 
-void Item::UseOnEntity(Mob *user, size_t id) {
-  (void)user;
+void Item::UseOnEntity(Game &game, Mob &user, size_t id) {
+  if (!this->CanUse(game)) return;
   
-  if (!this->CanUse()) return;
-  
-  temp_ptr<Entity> entity(Game::Instance->GetEntity(id));
+  temp_ptr<Entity> entity(game.GetEntity(id));
   if (!entity) return;
   
-  entity->AddHealth(-this->properties->damage);
+  entity->AddHealth(game, HealthInfo(-this->properties->damage, HealthType::Melee, user.GetId()));
   
-  this->StartCooldown();
+  this->StartCooldown(game);
 }
 
-void Item::UseOnCell(Mob *user, Cell *cell, Side side) {
+void Item::UseOnCell(Game &game, Mob &user, Cell *cell, Side side) {
   (void)user;
   (void)side;
   
-  if (!this->CanUse()) return;
+  if (!this->CanUse(game)) return;
   
-  cell->GetWorld()->BreakBlock(cell->GetPosition());
-  this->StartCooldown();
+  cell->GetWorld()->BreakBlock(game, cell->GetPosition());
+  this->StartCooldown(game);
 }
 
-void Item::UseOnNothing(Mob *user) {
+void Item::UseOnNothing(Game &game, Mob &user) {
   (void)user;
-  if (!this->CanUse()) return;
-  this->StartCooldown();
+  if (!this->CanUse(game)) return;
+  this->StartCooldown(game);
 }
 
 void Item::Draw(Gfx &gfx, bool left) {
   gfx.ViewPush();
   gfx.SetCullFace(false);
 
-  
   gfx.ViewScale(Vector3(left ? 1 : -1, 1, 1));
   gfx.ViewTranslate(Vector3(1, -2, 4));
   
   gfx.ViewRotate(40, Vector3(0, 1, 0));
 
-  // cooldown fraction: 1.0 full cooldown left, 0.0 cooldown over
-  float f = (nextUseT - Game::Instance->GetTime())/this->properties->cooldown;
-  if (f < 0) f = 0;
-
   gfx.ViewTranslate(Vector3(1,-1,0));
-  gfx.ViewRotate(f*60-60, Vector3(0,0,1));
+  gfx.ViewRotate(cooldownFrac*60-60, Vector3(0,0,1));
   gfx.ViewTranslate(Vector3(-1,1,0));
   gfx.ViewScale(Vector3(2,2,2));
   gfx.DrawSprite(this->sprite, Vector3(0,0,0), false);

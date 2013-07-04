@@ -6,9 +6,10 @@
 #include "game.h"
 #include "gfx.h"
 #include "icolor.h"
+#include "input.h"
 
-InventoryGui::InventoryGui(size_t entityId) 
-: entityId(entityId) {
+InventoryGui::InventoryGui(Game &game, Entity &entity) 
+: entity(entity) {
 
   //                 x  x  x  x
   //   8  0          x  x  x  x
@@ -17,9 +18,10 @@ InventoryGui::InventoryGui(size_t entityId)
   //      3          x  x  x  x
   //                 x  x  x  x
 
+  Gfx &gfx = *game.GetGfx();
   Point slotDist(36, 36);
-  Point topLeft  = alignTopLeftScreen(Point(32,32), 16);
-  Point topRight = alignTopRightScreen(Point(32,32), 16);
+  Point topLeft  = gfx.AlignTopLeftScreen(Point(32,32), 16);
+  Point topRight = gfx.AlignTopRightScreen(Point(32,32), 16);
 
   AddSlotGui(topLeft+Point(slotDist.x*0, slotDist.y*0), InventorySlot::Amulet);
   AddSlotGui(topLeft+Point(slotDist.x*1, slotDist.y*0), InventorySlot::Helmet);
@@ -31,22 +33,33 @@ InventoryGui::InventoryGui(size_t entityId)
   AddSlotGui(topLeft+Point(slotDist.x*2, slotDist.y*2), InventorySlot::RightHand);
   AddSlotGui(topLeft+Point(slotDist.x*1, slotDist.y*3), InventorySlot::Boots);
 
-  temp_ptr<Entity> entity(Game::Instance->GetEntity(entityId));
-  
-  for (size_t i=(size_t)InventorySlot::Backpack; i<entity->GetInventorySize(); i++) {
+  for (size_t i=(size_t)InventorySlot::Backpack; i<entity.GetInventorySize(); i++) {
     int x = i%4-3;
     int y = (i-(size_t)InventorySlot::Backpack)/4;
     AddSlotGui(topRight+Point(slotDist.x*x, slotDist.y*y), (InventorySlot)i)->SetGravity(true, true, false, false);
   }
   
   this->dragItem = nullptr;
+  this->dropItem = false;
 }
 
 InventoryGui::~InventoryGui() {
 }
 
-void InventoryGui::Update(float t) {
-  Gui::Update(t);
+void InventoryGui::Update(Game &game) {
+  Gui::Update(game);
+
+  if (this->dropItem && this->dragItem) {
+    // drop item into world
+    Mob *itemEntity = new ItemEntity(dragItem);
+  
+    itemEntity->SetPosition(entity.GetAABB().center + this->forward);
+    itemEntity->AddVelocity((this->forward + Vector3(0,1,0))*10);
+    game.AddEntity(itemEntity);
+    
+    this->dragItem = nullptr;
+  }
+  this->dropItem = false;
 }
 
 void InventoryGui::Draw(Gfx &gfx, const Point &parentPos) {
@@ -57,35 +70,20 @@ void InventoryGui::Draw(Gfx &gfx, const Point &parentPos) {
   }
 }
 
-void InventoryGui::OnMouseMove(const Point &pos) {
-  Gui::OnMouseMove(pos);
-  mousePos = pos;
-}
-
-void InventoryGui::OnMouseClick(const Point &pos, int button, bool down) {
-  Gui::OnMouseClick(pos, button, down);
+void InventoryGui::HandleEvent(const InputEvent &event) {
+  Gui::HandleEvent(event);
   
-  temp_ptr<Entity> entity = Game::Instance->GetEntity(entityId);
-  
-  if (down == false) {
-    if (dragItem) {
-      if (entity) {
-        // drop item into world
-        Mob *itemEntity = new ItemEntity(dragItem);
-      
-        itemEntity->SetPosition(entity->GetAABB().center + this->forward);
-        itemEntity->AddVelocity(this->forward * 10);
-      
-        Game::Instance->AddEntity(itemEntity);
-      }
-      
-      this->dragItem = nullptr;
+  if (event.type == InputEventType::MouseMove) {
+    mousePos = event.p;
+  } else if (event.type == InputEventType::Key && event.key == InputKey::MouseLeft) {
+    if (event.down == false && this->dragItem) {
+      this->dropItem = true;
     }
   }
 }
 
 Gui *InventoryGui::AddSlotGui(const Point &p, InventorySlot slot) {
-  Gui *gui = new InventorySlotGui(this, entityId, slot);
+  Gui *gui = new InventorySlotGui(this, entity, slot);
   gui->SetPosition(p - Point(16,16));
   gui->SetSize(Point(32,32));
   this->children.push_back(gui);
@@ -94,9 +92,7 @@ Gui *InventoryGui::AddSlotGui(const Point &p, InventorySlot slot) {
 
 void InventoryGui::OnHide() {
   if (dragItem) {
-    temp_ptr<Entity> entity = Game::Instance->GetEntity(entityId);
-    entity->AddToInventory(dragItem);
-    
+    entity.AddToInventory(dragItem);
     this->dragItem = nullptr;
   }
 }
@@ -104,34 +100,34 @@ void InventoryGui::OnHide() {
 // -----------------------------------------------------------------------
 
 InventorySlotGui::InventorySlotGui(
-  InventoryGui *parent, size_t entityId, InventorySlot slot) {
+  InventoryGui *parent, Entity &entity, InventorySlot slot
+) : entity(entity) {
   this->parent = parent;
-  this->entityId = entityId;
   this->slot = slot;
   this->slotTex = loadTexture("gui/slot");
+  this->hover = false;
 }
 
 InventorySlotGui::~InventorySlotGui() {
 }
   
-void InventorySlotGui::OnMouseClick(const Point &pos, int button, bool down) {
-  (void)pos;
-  (void)button;
+void InventorySlotGui::HandleEvent(const InputEvent &event) {
+  this->hover = this->IsOver(event.p);
+
+  if (event.type != InputEventType::Key || event.key != InputKey::MouseLeft) return;
+  if (!this->IsOver(event.p)) return;
   
-  temp_ptr<Entity> entity(Game::Instance->GetEntity(this->entityId));
-  if (!entity) return;
-  
-  if (down) {
-    std::shared_ptr<Item> item(entity->GetInventory(slot));
+  if (event.down) {
+    std::shared_ptr<Item> item(entity.GetInventory(slot));
     if (item) {
       parent->dragItem = item;
-      entity->Equip(nullptr, slot);
+      entity.Equip(nullptr, slot);
     }
   } else {
     std::shared_ptr<Item> item(parent->dragItem);
     if (!item) return;
-    if (!entity->AddToInventory(item, slot)) {
-      entity->AddToInventory(item);
+    if (!entity.AddToInventory(item, slot)) {
+      entity.AddToInventory(item);
     }
     parent->dragItem = nullptr;
   }
@@ -144,13 +140,11 @@ InventorySlotGui::Draw(Gfx &gfx, const Point &parentPos) {
   sprite.texture = tex;
 
   Point p = rect.pos+parentPos+Point(16,16);
+  if (this->hover) p = p - Point(2,2);
   
   gfx.DrawIcon(sprite, p);
 
-  temp_ptr<Entity> entity(Game::Instance->GetEntity(this->entityId));
-  if (!entity) return;
-  
-  std::shared_ptr<Item> item = entity->GetInventory(slot);
+  std::shared_ptr<Item> item = entity.GetInventory(slot);
   
   if (item != nullptr)
     item->DrawIcon(gfx, p);

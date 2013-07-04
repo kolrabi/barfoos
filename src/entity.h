@@ -2,13 +2,12 @@
 #define BARFOOS_ENTITY_H
 
 #include "common.h"
+#include "icolor.h"
 
 class Cell;
 class Game;
 class Item;
 class Gfx;
-
-struct IColor;
 
 struct EntityProperties {
   // rendering
@@ -34,6 +33,28 @@ struct EntityProperties {
   EntityProperties(FILE *f);
 };
 
+enum class HealthType {
+  Unspecified = 0,
+  Heal,
+  Fire,
+  Lava,
+  Falling,
+  Explosion,
+  Melee,
+  Ranged,
+  Vampiric
+};
+
+struct HealthInfo {
+  int amount = 0;
+  HealthType type = HealthType::Unspecified;
+  size_t dealerId = ~0UL;
+  
+  HealthInfo() {}
+  HealthInfo(int amount, HealthType type = HealthType::Unspecified, size_t dealerId = ~0UL) 
+    : amount(amount), type(type), dealerId(dealerId) { }
+};
+
 void LoadEntities();
 const EntityProperties *getEntity(const std::string &name);
 
@@ -50,17 +71,17 @@ public:
     smoothPosition = aabb.center = Vector3(pos) + Vector3(0.5,0.5,0.5); 
   }
   
-  virtual void Start();
-  virtual void Update();
-  virtual void Think();
+  virtual void Start(Game &game, size_t id);
+  virtual void Update(Game &game);
+  virtual void Think(Game &game);
 
   virtual void Draw(Gfx &gfx) const;
   virtual void DrawBoundingBox(Gfx &gfx) const;
   
-  virtual void AddHealth(int points); 
-  virtual void Die();
-  virtual void OnCollide(Entity &other) { (void)other; }
-  virtual void OnUse(Entity &other) { (void)other; }
+  virtual void AddHealth(Game &game, const HealthInfo &info); 
+  virtual void Die(Game &game, const HealthInfo &info);
+  virtual void OnCollide(Game &game, Entity &other) { (void)game; (void)other; }
+  virtual void OnUse(Game &game, Entity &other) { (void)game; (void)other; }
   
   bool IsRemovable() const { return removable; }
   bool AddToInventory(const std::shared_ptr<Item> &item);
@@ -74,8 +95,11 @@ public:
   void Equip(const std::shared_ptr<Item> &item, InventorySlot slot);
   const EntityProperties *GetProperties() const { return properties; }
   
+  size_t GetId() const { return id; }
+  
 protected:
 
+  size_t id;
   bool removable;
   
   AABB aabb;
@@ -83,12 +107,14 @@ protected:
   Vector3 lastPos;
   
   Sprite sprite;
+  bool drawAABB;
     
   std::vector<std::shared_ptr<Item>> inventory;
   const EntityProperties *properties;
   
   Cell *lastCell;
   IVector3 cellPos;
+  IColor cellLight;
   
   int health;
 };

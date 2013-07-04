@@ -7,7 +7,6 @@
 #include <cmath>
 
 Mob::Mob(const std::string &propertyName) : Entity(propertyName) {
-  this->sprite.t = Game::Instance->GetWorld()->GetRandom().Float01();
   this->onGround = false;
   this->wantJump = false;
   this->lastJumpT = 0;
@@ -28,10 +27,16 @@ Mob::~Mob() {
 }
 
 void 
-Mob::Update() {
-  Entity::Update();
+Mob::Start(Game &game, size_t id) {
+  Entity::Start(game, id);
+  this->sprite.t = game.GetRandom().Float01();
+}
 
-  float deltaT = Game::Instance->GetDeltaT();
+void 
+Mob::Update(Game &game) {
+  Entity::Update(game);
+
+  float deltaT = game.GetDeltaT();
   
   velocity.x = std::abs(move.x) > std::abs(velocity.x) ? move.x : velocity.x;
   velocity.z = std::abs(move.z) > std::abs(velocity.z) ? move.z : velocity.z;
@@ -57,9 +62,9 @@ Mob::Update() {
   } else {
     velocity.y -= gravity;
     if (wantJump && onGround) {
-      if (Game::Instance->GetTime() - lastJumpT > 0.5) {
+      if (game.GetTime() - lastJumpT > 0.5) {
         velocity.y = 8;
-        lastJumpT = Game::Instance->GetTime();
+        lastJumpT = game.GetTime();
       }
     }
     wantJump = false;
@@ -68,7 +73,7 @@ Mob::Update() {
   velocity.z = velocity.z * friction;
 
   // move
-  std::shared_ptr<World> world = Game::Instance->GetWorld();
+  std::shared_ptr<World> world = game.GetWorld();
   uint8_t axis, axis2;
   bool movingDown = velocity.y <= 0;
 
@@ -93,14 +98,14 @@ Mob::Update() {
   }
 
   // jump out of water
-  if (axis & Axis::Horizontal && (inWater || validMoveTarget) && move.GetMag() != 0) {
+  if (axis & Axis::Horizontal && (inWater || validMoveTarget) && move.GetMag() != 0 && !noclip) {
     wantJump = true;
   }
 
   // fall damage  
   if (axis & Axis::Y) {
     if (velocity.y < -15) {
-      AddHealth((velocity.y+15)/5);
+      AddHealth(game, HealthInfo( (velocity.y+15)/5, HealthType::Falling, this->id));
     }
     velocity.y = 0;
     onGround |= movingDown;
@@ -108,8 +113,8 @@ Mob::Update() {
 }
 
 void
-Mob::Think() {  
-  Entity::Think();
+Mob::Think(Game &game) {  
+  Entity::Think(game);
   
   // clip move speed
   float speed = move.GetMag();
@@ -117,7 +122,7 @@ Mob::Think() {
 
   // walk around a bit
   if (this->properties->moveInterval != 0) {
-    if (Game::Instance->GetTime() > nextMoveT) {
+    if (game.GetTime() > nextMoveT) {
       nextMoveT += this->properties->moveInterval;
       moveTarget = aabb.center + (Vector3::Rand()-Vector3(0.5,0.5,0.5)) * 4.0;
       validMoveTarget = true;
@@ -128,7 +133,7 @@ Mob::Think() {
     if (validMoveTarget) move = tmove.Normalize() * this->properties->maxSpeed;
   }
  
-  std::shared_ptr<World> world = Game::Instance->GetWorld();
+  std::shared_ptr<World> world = game.GetWorld();
   IVector3 footPos(aabb.center.x, aabb.center.y - aabb.extents.y + this->properties->stepHeight, aabb.center.z);
   footCell = &world->GetCell(footPos);
 
@@ -157,19 +162,24 @@ Mob::SetInLiquid(bool inLiquid) {
 }
 
 void
-Mob::Die() {
+Mob::Die(Game &game, const HealthInfo &info) {
+  // Entity::Die(game);
+  (void)info;
+  (void)game;
+  
+  // just respawn
   health = this->properties->maxHealth;
   SetPosition(spawnPos);
 }
 
 void
-Mob::OnCollide(Entity &other) {
+Mob::OnCollide(Game &game, Entity &other) {
   Vector3 d = this->GetAABB().center - other.GetAABB().center;
   Vector3 f = d * (this->properties->mass * other.GetProperties()->mass / (1+d.GetSquareMag()));
-  this->ApplyForce(f);
+  this->ApplyForce(game, f);
 }
 
 void
-Mob::ApplyForce(const Vector3 &f) {
-  velocity = velocity + f * (Game::Instance->GetDeltaT() / this->properties->mass); 
+Mob::ApplyForce(Game &game, const Vector3 &f) {
+  velocity = velocity + f * (game.GetDeltaT() / this->properties->mass); 
 }

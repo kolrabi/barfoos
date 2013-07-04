@@ -9,6 +9,7 @@ class Mob;
 class Entity;
 class Cell;
 class Gfx;
+class Game;
 
 struct ItemProperties {
   // rendering
@@ -50,17 +51,17 @@ public:
   Item(const std::string &type);
   virtual ~Item();
 
-  bool CanUse() const;
-  void StartCooldown();
+  bool CanUse(Game &game) const;
+  void StartCooldown(Game &game);
   
-  void UseOnEntity(Mob *user, size_t ent);
-  void UseOnCell(Mob *user, Cell *cell, Side side);
-  void UseOnNothing(Mob *user);
+  void UseOnEntity(Game &game, Mob &user, size_t ent);
+  void UseOnCell(Game &game, Mob &user, Cell *cell, Side side);
+  void UseOnNothing(Game &game, Mob &user);
   void Draw(Gfx &gfx, bool left);
   void DrawIcon(Gfx &gfx, const Point &pos) const;
   void DrawSprite(Gfx &gfx, const Vector3 &pos) const;
 
-  void Update();
+  void Update(Game &game);
 
   float GetRange() const { return this->properties->range; }  
   uint32_t GetEquippableSlots() { return this->properties->equippable; }
@@ -86,6 +87,7 @@ protected:
 
   // rendering
   Sprite sprite;
+  float cooldownFrac;
 
   // gameplay
   float durability;

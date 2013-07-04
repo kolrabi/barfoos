@@ -17,13 +17,14 @@ public:
   void SetSpawnPos(const Vector3 &p) { this->spawnPos = p; }
   const Vector3 &GetAngles() const { return angles; }
 
-  virtual void Update() override;
-  virtual void Think() override;
+  virtual void Start(Game &game, size_t id) override;
+  virtual void Update(Game &game) override;
+  virtual void Think(Game &game) override;
   
-  virtual void Die() override;
-  virtual void OnCollide(Entity &other) override;
+  virtual void Die(Game &game, const HealthInfo &info) override;
+  virtual void OnCollide(Game &game, Entity &other) override;
   
-  void ApplyForce(const Vector3 &f);
+  void ApplyForce(Game &game, const Vector3 &f);
   void AddVelocity(const Vector3 &v) { velocity = velocity + v; }
 
 protected:

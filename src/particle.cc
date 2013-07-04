@@ -11,11 +11,11 @@ Particle::Particle() :
 Particle::~Particle() {
 }
 
-void Particle::Update() {
-  Mob::Update();
+void Particle::Update(Game &game) {
+  Mob::Update(game);
   
-  if (this->dieT == 0.0) this->dieT = Game::Instance->GetTime() + 2 + Game::Instance->GetWorld()->GetRandom().Float();
-  if (Game::Instance->GetTime() > this->dieT) this->removable = true;
+  if (this->dieT == 0.0) this->dieT = game.GetTime() + 2 + game.GetWorld()->GetRandom().Float();
+  if (game.GetTime() > this->dieT) this->removable = true;
 }
 
 void Particle::Draw(Gfx &gfx) const {

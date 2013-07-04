@@ -8,6 +8,40 @@
 #include "shader.h"
 #include "input.h"
 
+static InputKey MapMouseButton(int b) {
+  InputKey key;
+  
+  switch(b) {
+    case GLFW_MOUSE_BUTTON_LEFT:  key = InputKey::MouseLeft; break;
+    case GLFW_MOUSE_BUTTON_RIGHT: key = InputKey::MouseRight; break;
+    default:                      key = InputKey::Invalid;
+  }
+  return key;
+}
+
+static InputKey MapKey(int k) {
+  InputKey key;
+  
+  switch(k) {
+    case 'W':                 key = InputKey::Forward;         break;
+    case 'S':                 key = InputKey::Backward;        break;
+    case 'A':                 key = InputKey::Left;            break;
+    case 'D':                 key = InputKey::Right;           break;
+    case ' ':                 key = InputKey::Jump;            break;
+    case GLFW_KEY_LEFT_SHIFT: key = InputKey::Sneak;           break;
+    case 'E':                 key = InputKey::Use;             break;
+    case GLFW_KEY_TAB:        key = InputKey::Inventory;       break;
+    case GLFW_KEY_ESCAPE:     key = InputKey::Escape;          break;
+    
+    case GLFW_KEY_F1:         key = InputKey::DebugDie;        break;
+    case GLFW_KEY_F2:         key = InputKey::DebugEntityAABB; break;
+    case GLFW_KEY_F3:         key = InputKey::DebugWireframe;  break;
+    case GLFW_KEY_F4:         key = InputKey::DebugNoclip;     break;
+    default:                  key = InputKey::Invalid;
+  }
+  return key;
+}
+
 Gfx::Gfx(const Point &pos, const Point &size, bool fullscreen) 
   : isInit(false),
     startTime(glfwGetTime()),
@@ -62,7 +96,7 @@ Gfx::~Gfx() {
 }
 
 bool 
-Gfx::Init() {
+Gfx::Init(Game &game) {
   // Set up glfw
   if (!glfwInit()) {
     std::cerr << "Could not initialize GLFW\n";
@@ -82,33 +116,108 @@ Gfx::Init() {
     
   glfwMakeContextCurrent(this->window);
   
-  glfwSetWindowUserPointer(this->window, this);
+  glfwSetWindowUserPointer(this->window, &game);
   
-  this->OnResize(this->screenSize);
+  if (this->screenSize.x <= 640) {
+    this->virtualScreenSize.x = this->screenSize.x;
+    this->virtualScreenSize.y = this->screenSize.y;
+  } else {
+    this->virtualScreenSize.x = this->screenSize.x/2;
+    this->virtualScreenSize.y = this->screenSize.y/2;
+  }
   this->Viewport(Rect(Point(), this->screenSize));
+  
+  // Setup event handlers ----------------------------------------------
 
-  new Input();
-  
-  // Setup event handlers
+  // Window resize
   glfwSetWindowSizeCallback( this->window, [](GLFWwindow *window, int w, int h) { 
-    Gfx *gfx = (Gfx*)glfwGetWindowUserPointer(window);
-    gfx->OnResize(Point(w, h));   
+    Game &game = *(Game*)glfwGetWindowUserPointer(window);
+    Gfx  *gfx  = game.GetGfx();
+    
+    Point size(w,h);
+    
+    // update (virtual) screen size
+    gfx->screenSize = size;
+    if (gfx->screenSize.x <= 640) {
+      gfx->virtualScreenSize.x = gfx->screenSize.x;
+      gfx->virtualScreenSize.y = gfx->screenSize.y;
+    } else {
+      gfx->virtualScreenSize.x = gfx->screenSize.x/2;
+      gfx->virtualScreenSize.y = gfx->screenSize.y/2;
+    }
+    
+    game.GetInput()->HandleEvent(InputEvent(InputEventType::ScreenResize, size));
   } );
   
+  // Mouse cursor movement
   glfwSetCursorPosCallback(  this->window, [](GLFWwindow *window, double x, double y) { 
-    Gfx *gfx = (Gfx*)glfwGetWindowUserPointer(window);
-    gfx->OnMouseMove(Point(x,y)); 
+    Game *game = (Game*)glfwGetWindowUserPointer(window);
+    Gfx  *gfx  = game->GetGfx();
+    
+    if (gfx->guiActiveCount || !gfx->mouseGrab) {
+      // map to virtual screen size
+      Point mousePos(
+        (x / gfx->screenSize.x) * gfx->virtualScreenSize.x,
+        (y / gfx->screenSize.y) * gfx->virtualScreenSize.y
+      );
+      
+      // save for later
+      gfx->mousePos = mousePos;
+    
+      // send absolute coordinats
+      game->GetInput()->HandleEvent(InputEvent(InputEventType::MouseMove, mousePos)); 
+    } else if (gfx->mouseGrab) {
+      // get distance from center
+      Point mouseDelta(
+        x - gfx->screenSize.x/2,
+        y - gfx->screenSize.y/2
+      );
+      
+      // send relative coordinates
+      game->GetInput()->HandleEvent(InputEvent(InputEventType::MouseDelta, mouseDelta)); 
+      
+      // reset cursor to center
+      glfwSetCursorPos(gfx->window, gfx->screenSize.x/2, gfx->screenSize.y/2);
+    }
   } );
   
+  // Mouse buttons
   glfwSetMouseButtonCallback(this->window, [](GLFWwindow *window, int b, int e, int) { 
-    Gfx *gfx = (Gfx*)glfwGetWindowUserPointer(window);
-    gfx->OnMouseButton(b, e);
+    Game *game = (Game*)glfwGetWindowUserPointer(window);
+    Gfx  *gfx  = game->GetGfx();
+    
+    bool down = (e != GLFW_RELEASE);
+    InputKey key = MapMouseButton(b);
+  
+    if (!gfx->mouseGrab && down && b == GLFW_MOUSE_BUTTON_LEFT) {
+      // grab mouse on click
+      if (!gfx->guiActiveCount) {
+        glfwSetCursorPos(gfx->window, gfx->screenSize.x/2, gfx->screenSize.y/2);
+        glfwSetInputMode(gfx->window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+      } else {
+        game->GetInput()->HandleEvent(InputEvent(InputEventType::Key, gfx->mousePos, key, down));
+      }
+      gfx->mouseGrab = true;
+    } else {
+      // if already grabbed
+      game->GetInput()->HandleEvent(InputEvent(InputEventType::Key, gfx->mousePos, key, down));
+    }
   } );
   
   glfwSetKeyCallback(        this->window, [](GLFWwindow *window, int k, int, int e, int) { 
-    Gfx *gfx = (Gfx*)glfwGetWindowUserPointer(window);
-    gfx->OnKey(k, e == GLFW_PRESS);
-    Input::Instance->HandleKeyEvent(k, e != GLFW_RELEASE);
+    Game *game = (Game*)glfwGetWindowUserPointer(window);
+    Gfx  *gfx  = game->GetGfx();
+    
+    bool down = e != GLFW_RELEASE;
+    InputKey key = MapKey(k);
+  
+    if (gfx->mouseGrab && down && key == InputKey::Escape) {
+      // ungrab mouse on escape
+      glfwSetInputMode(gfx->window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+      gfx->mouseGrab = false;
+    } else {
+      game->GetInput()->HandleEvent(InputEvent(InputEventType::Key, gfx->mousePos, key, down));
+    }
   } );
   
   //
@@ -192,25 +301,22 @@ Gfx::ClearDepth(float depth) const {
   glClear(GL_DEPTH_BUFFER_BIT);
 }
 
-bool
-Gfx::Swap() {
-  glfwSwapBuffers(this->window);
+void 
+Gfx::Update(Game &game) {
   glfwPollEvents();
-  glViewport(0, 0, this->screenSize.x, this->screenSize.y);
-  
-  if (mouseGrab && !guiActiveCount && (mouseDelta.x || mouseDelta.y)) {
-    glfwSetCursorPos(this->window, screenSize.x/2, screenSize.y/2);
-    if (Game::Instance) Game::Instance->OnMouseDelta(mouseDelta);
-  }
-  mouseDelta = Point();
-
   updateTextures();
-  
-  if (Input::Instance->IsKeyActive(InputKey::DebugWireframe)) {
+
+  if (game.GetInput()->IsKeyActive(InputKey::DebugWireframe)) {
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
   } else {
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
   }
+}
+
+bool
+Gfx::Swap() {
+  glfwSwapBuffers(this->window);
+  glViewport(0, 0, this->screenSize.x, this->screenSize.y);
   
   return !glfwWindowShouldClose(this->window);
 }
@@ -448,73 +554,25 @@ void Gfx::DrawIcon(const Sprite &sprite, const Point &center, const Point &size)
   glPopMatrix();
 }
 
-void 
-Gfx::OnResize(const Point &size) {
-  // update screen size
-  this->screenSize = size;
-  if (size.x <= 640) {
-    this->virtualScreenSize.x = size.x;
-    this->virtualScreenSize.y = size.y;
-  } else {
-    this->virtualScreenSize.x = size.x/2;
-    this->virtualScreenSize.y = size.y/2;
-  }
-}
-
-void 
-Gfx::OnMouseMove(const Point &pos) {
-  if (guiActiveCount) {
-    //mouseDelta = Point();
-    mousePos.x = (pos.x / (float)screenSize.x)*virtualScreenSize.x;
-    mousePos.y = (pos.y / (float)screenSize.y)*virtualScreenSize.y;
-    
-    if (Game::Instance) Game::Instance->OnMouseMove(mousePos);
-  } else if (mouseGrab) {
-    mouseDelta.x = pos.x-screenSize.x/2;
-    mouseDelta.y = pos.y-screenSize.y/2;
-  }
-}
-
-void 
-Gfx::OnMouseButton(int button, int event) {
-  bool down = event == GLFW_PRESS;
-  
-  if (!mouseGrab && down && button == GLFW_MOUSE_BUTTON_LEFT) {
-    if (!guiActiveCount) {
-      glfwSetCursorPos(this->window, screenSize.x/2, screenSize.y/2);
-      glfwSetInputMode(this->window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
-    }
-    mouseGrab = true;
-  } else {
-    if (Game::Instance) Game::Instance->OnMouseClick(mousePos, button, down);
-  }
-}
-
-void 
-Gfx::OnKey(int key, int event) {
-  bool down = event == GLFW_PRESS;
-  
-  if (mouseGrab && down && key == GLFW_KEY_ESCAPE) {
-    glfwSetInputMode(this->window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-    mouseGrab = false;
-  }
-}
-
-Point alignBottomLeftScreen(const Point &size, int padding) {
-  const Point &ssize(Game::Instance->GetGfx()->GetVirtualScreenSize());
+Point 
+Gfx::AlignBottomLeftScreen(const Point &size, int padding) {
+  const Point &ssize(this->GetVirtualScreenSize());
   return Point( padding + size.x/2, ssize.y - padding - size.y/2 );
 }
 
-Point alignBottomRightScreen(const Point &size, int padding) {
-  const Point &ssize(Game::Instance->GetGfx()->GetVirtualScreenSize());
+Point 
+Gfx::AlignBottomRightScreen(const Point &size, int padding) {
+  const Point &ssize(this->GetVirtualScreenSize());
   return Point( ssize.x - padding - size.x/2, ssize.y - padding - size.y/2 );
 }
 
-Point alignTopLeftScreen(const Point &size, int padding) {
+Point 
+Gfx::AlignTopLeftScreen(const Point &size, int padding) {
   return Point( padding + size.x/2, padding + size.y/2 );
 }
 
-Point alignTopRightScreen(const Point &size, int padding) {
-  const Point &ssize(Game::Instance->GetGfx()->GetVirtualScreenSize());
+Point 
+Gfx::AlignTopRightScreen(const Point &size, int padding) {
+  const Point &ssize(this->GetVirtualScreenSize());
   return Point( ssize.x - padding - size.x/2, padding + size.y/2 );
 }

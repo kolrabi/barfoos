@@ -9,6 +9,7 @@ class Feature;
 class Template;
 class World;
 class Random;
+class Game;
 
 struct FeatureConnection {
   // where can be put a connection to another feature
@@ -92,7 +93,7 @@ public:
   const IVector3 GetSize() const; 
   float GetProbability(const World *world, const IVector3 &pos) const;
   FeatureInstance BuildFeature(World *world, const IVector3 &pos, int dir, int dist, size_t id, const FeatureConnection *conn) const;
-  void SpawnEntities(World *world, const IVector3 &pos) const;
+  void SpawnEntities(Game &game, const IVector3 &pos) const;
   
   const std::vector<FeatureConnection> &GetConnections() const { return conns; }
 

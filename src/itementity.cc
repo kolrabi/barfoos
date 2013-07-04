@@ -16,13 +16,13 @@ ItemEntity::~ItemEntity() {
 void ItemEntity::Draw(Gfx &gfx) const {
   // Entity::Draw();
   
-  IColor light = Game::Instance->GetWorld()->GetLight(this->cellPos);
-  gfx.SetColor(light);
+  gfx.SetColor(this->cellLight);
   
   this->item->DrawSprite(gfx, this->aabb.center);
 }
 
-void ItemEntity::OnUse(Entity &other) {
+void ItemEntity::OnUse(Game &game, Entity &other) {
+  (void)game;
   if (!this->removable && other.AddToInventory(this->item)) {
     this->removable = true;
   }

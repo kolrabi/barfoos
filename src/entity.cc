@@ -116,8 +116,10 @@ Entity::~Entity() {
 }
 
 void
-Entity::Start() {
-  std::shared_ptr<World> world = Game::Instance->GetWorld();
+Entity::Start(Game &game, size_t id) {
+  std::shared_ptr<World> world = game.GetWorld();
+  
+  this->id = id;
   
   // fill inventory with random crap
   for (auto item : this->properties->items) {
@@ -145,36 +147,40 @@ Entity::Start() {
 }
 
 void 
-Entity::Update() {
-  float deltaT = Game::Instance->GetDeltaT();
+Entity::Update(Game &game) {
+  float deltaT = game.GetDeltaT();
   
   this->sprite.Update(deltaT);
   
   if (deltaT > 1.0/30.0) {
     this->smoothPosition = aabb.center;
   } else {
-    this->smoothPosition = this->smoothPosition + (aabb.center - this->smoothPosition) * Game::Instance->GetDeltaT() * 30.0f;
+    this->smoothPosition = this->smoothPosition + (aabb.center - this->smoothPosition) * game.GetDeltaT() * 30.0f;
   }
+  if (this->lastCell) {
+    this->cellLight = game.GetWorld()->GetLight(this->lastCell->GetPosition());
+  }
+  this->drawAABB = game.GetInput()->IsKeyActive(InputKey::DebugEntityAABB);
 }
   
 void 
-Entity::Think() {
+Entity::Think(Game &game) {
   this->cellPos = IVector3(aabb.center.x, aabb.center.y, aabb.center.z);
   
-  Cell *cell = &Game::Instance->GetWorld()->GetCell(cellPos);
+  Cell *cell = &game.GetWorld()->GetCell(cellPos);
   if (cell != this->lastCell) {
     if (this->lastCell && this->properties->cellLeave != "") {
-      Game::Instance->GetWorld()->SetCell(this->lastCell->GetPosition(), Cell(this->properties->cellLeave));
+      game.GetWorld()->SetCell(this->lastCell->GetPosition(), Cell(this->properties->cellLeave));
     }
     if (this->properties->cellEnter != "") {
-      Game::Instance->GetWorld()->SetCell(cellPos, Cell(this->properties->cellEnter));
+      game.GetWorld()->SetCell(cellPos, Cell(this->properties->cellEnter));
     }
     this->lastCell = cell;
   }
   
   for (size_t i=0; i<this->inventory.size(); i++) {
     if (this->inventory[i]) {
-      this->inventory[i]->Update();
+      this->inventory[i]->Update(game);
       if (this->inventory[i]->IsRemovable()) {
         this->inventory[i] = nullptr;
       }
@@ -186,11 +192,10 @@ Entity::Think() {
 
 void
 Entity::Draw(Gfx &gfx) const {
-  IColor light = Game::Instance->GetWorld()->GetLight(this->cellPos);
-  gfx.SetColor(light);
+  gfx.SetColor(this->cellLight);
   gfx.DrawSprite(this->sprite, this->aabb.center);
   
-  if (Input::Instance->IsKeyActive(InputKey::DebugEntityAABB)) {
+  if (this->drawAABB) {
     this->DrawBoundingBox(gfx);
   }
 }
@@ -209,22 +214,27 @@ Entity::DrawBoundingBox(Gfx &gfx) const {
 }
 
 void
-Entity::AddHealth(int points) {
-  if (health == 0 || this->properties->maxHealth == 0) return;
+Entity::AddHealth(Game &game, const HealthInfo &info) {
+  // don't change health of dead or immortal entities
+  if (this->health == 0 || this->properties->maxHealth == 0) return;
   
-  health += points;
-  if (health <= 0) {
-    health = 0;
-    Die();
+  this->health += info.amount;
+  if (this->health <= 0) {
+    this->health = 0;
+    this->Die(game, info);
   }
 }
 
 void
-Entity::Die() {
+Entity::Die(Game &game, const HealthInfo &info) {
+  // TODO: use info (like, displaying a message)
+  (void)info;
+  
+  // TODO: play death animation (if any) and set this->removable afte it finished
   this->removable = true;
   
   if (this->lastCell && this->properties->cellLeave != "") {
-    Game::Instance->GetWorld()->SetCell(this->lastCell->GetPosition(), Cell(this->properties->cellLeave));
+    game.GetWorld()->SetCell(this->lastCell->GetPosition(), Cell(this->properties->cellLeave));
   }
   
   // drop inventory
@@ -232,7 +242,7 @@ Entity::Die() {
     if (item) {
       Entity *entity = new ItemEntity(item);
       entity->SetPosition(this->aabb.center);
-      Game::Instance->AddEntity(entity);
+      game.AddEntity(entity);
     }
   }
 }

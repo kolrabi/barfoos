@@ -8,19 +8,22 @@ class Entity;
 class InventoryGui;
 class Item;
 class Gfx;
+struct InputEvent;
 
 class InventorySlotGui : public Gui {
 public: 
-  InventorySlotGui(InventoryGui *parent, size_t entityId, InventorySlot slot);
+  InventorySlotGui(InventoryGui *parent, Entity &entity, InventorySlot slot);
   virtual ~InventorySlotGui();
 
-  virtual void Draw(Gfx &gfx, const Point &parentPos);  
-  virtual void OnMouseClick(const Point &pos, int button, bool down);
+  virtual void Draw(Gfx &gfx, const Point &parentPos) override;
+  virtual void HandleEvent(const InputEvent &event) override;
 
 private:
+
   InventoryGui *parent;
-  size_t entityId;
+  Entity &entity;
   InventorySlot slot;
+  bool hover;
 
   const Texture *slotTex;
 };
@@ -28,15 +31,14 @@ private:
 class InventoryGui : public Gui {
 public:
   
-  InventoryGui(size_t entityId);
+  InventoryGui(Game &game, Entity &entity);
   virtual ~InventoryGui();
 
-  virtual void Update(float t);
-  virtual void OnMouseMove(const Point &point);
-  virtual void OnMouseClick(const Point &pos, int button, bool down);
+  virtual void Update(Game &game) override;
+  virtual void HandleEvent(const InputEvent &event) override;
   virtual void OnHide();
 
-  virtual void Draw(Gfx &gfx, const Point &parentPos);  
+  virtual void Draw(Gfx &gfx, const Point &parentPos) override;  
   
   void SetForward(const Vector3 &forward) { this->forward = forward; }
 
@@ -44,9 +46,11 @@ public:
 
 protected:
 
-  size_t entityId;
+  Entity &entity;
   Point mousePos;
   Vector3 forward;
+  
+  bool dropItem;
 
 private:
 

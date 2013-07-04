@@ -5,8 +5,10 @@
 #include "icolor.h"
 
 struct Vertex;
+struct InputEvent;
 class GLFWwindow;
 class Shader;
+class Game;
 
 class Gfx final {
 public:
@@ -14,10 +16,11 @@ public:
   Gfx(const Point &pos, const Point &size, bool fullscreen);
   ~Gfx();
   
-  bool Init();
+  bool Init(Game &game);
   void Deinit();
   
   float GetTime() const;
+  void Update(Game &game);
   
   const Point &GetScreenSize()        const { return screenSize; }
   const Point &GetVirtualScreenSize() const { return virtualScreenSize; }
@@ -56,6 +59,11 @@ public:
   void DrawAABB(const AABB &aabb) const;
   void DrawSprite(const Sprite &sprite, const Vector3 &pos, bool billboard = true) const;
   void DrawIcon(const Sprite &sprite, const Point &pos, const Point &size = Point(32, 32)) const;
+
+  Point AlignBottomLeftScreen(const Point &size, int padding = 0);
+  Point AlignBottomRightScreen(const Point &size, int padding = 0);
+  Point AlignTopLeftScreen(const Point &size, int padding = 0);
+  Point AlignTopRightScreen(const Point &size, int padding = 0);
   
 private:
 
@@ -73,13 +81,7 @@ private:
 
   // input
   Point mousePos;
-  Point mouseDelta;
   bool mouseGrab;
-  
-  void OnResize(const Point &size);
-  void OnMouseMove(const Point &pos);
-  void OnMouseButton(int button, int event);
-  void OnKey(int key, int event);
   
   // gui
   size_t guiActiveCount;
@@ -99,11 +101,6 @@ const Texture *loadTexture(const std::string &name, const Texture * tex = nullpt
 void updateTextures();
 
 void drawIcon(const Point &center, const Point &size, unsigned int tex, float u=0, float uw=1);  
-
-Point alignBottomLeftScreen(const Point &size, int padding = 0);
-Point alignBottomRightScreen(const Point &size, int padding = 0);
-Point alignTopLeftScreen(const Point &size, int padding = 0);
-Point alignTopRightScreen(const Point &size, int padding = 0);
 
 #endif
 

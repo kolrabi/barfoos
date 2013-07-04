@@ -33,11 +33,16 @@ int main() {
   std::cerr << credits() << std::endl;
   std::setlocale(LC_ALL, "en_US.utf8");
 
-  new Game("seed", 0);
-  if (!Game::Instance->Init()) return -1;
+  Game *game = new Game("seed", 0);
+  if (!game->Init()) {
+    delete game;
+    return -1;
+  }
 
-  while(Game::Instance->Frame()) 
+  while(game->Frame()) 
     ;
+    
+  delete game;
 
   return 0;
 }

@@ -15,7 +15,7 @@ public:
 
   virtual void Draw(Gfx &gfx) const override;
   
-  virtual void OnUse(Entity &other) override;
+  virtual void OnUse(Game &game, Entity &other) override;
 
 protected:
 

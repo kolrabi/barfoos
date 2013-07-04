@@ -13,7 +13,7 @@ public:
   Particle();
   virtual ~Particle();
 
-  virtual void Update() override;
+  virtual void Update(Game &game) override;
   
   virtual void Draw(Gfx &gfx) const override;
   

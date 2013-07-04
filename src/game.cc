@@ -10,29 +10,29 @@
 #include "item.h"
 #include "input.h"
 
-Game *Game::Instance = nullptr;
-
 Game::Game(const std::string &seed, size_t level, const Point &screenSize) 
-: gfx(new Gfx(Point(1920, 32), screenSize, false)),
+: input(new Input()), 
+  gfx(new Gfx(Point(1920, 32), screenSize, false)),
   seed(seed), 
   random(seed, level),
   level(level)  {
  
-  delete Game::Instance;
-  Game::Instance = this;
-  
+  this->handlerId = this->input->AddHandler( [this](const InputEvent &event){ this->HandleEvent(event); } );
   this->isInit = false;
 }
 
 Game::~Game() {
   if (isInit) this->Deinit();
-  Game::Instance = nullptr;
+  
+  this->input->RemoveHandler(this->handlerId);
+  
   delete gfx;
+  delete input;
 }
 
 bool 
 Game::Init() {
-  if (!this->gfx->Init()) return false;
+  if (!this->gfx->Init(*this)) return false;
   
   LoadCells();
   LoadFeatures();
@@ -70,11 +70,12 @@ bool Game::Frame() {
   while(t - this->lastT > 0.1) {
     this->lastT += 0.1;
     this->Update(lastT, 0.1);
-    Input::Instance->Update();
+    this->input->Update();
   }
   this->Update(t, t - this->lastT);
   this->lastT = t;
   
+  this->gfx->Update(*this);
   return true;
 }
 
@@ -117,9 +118,9 @@ Game::Update(float t, float deltaT) {
   this->lastT = t;
   this->deltaT = deltaT;
   
-  world->Update(t);
+  world->Update(*this);
 
-  if (Input::Instance->IsKeyActive(InputKey::Inventory)) {
+  if (this->input->IsKeyActive(InputKey::Inventory)) {
     if (!this->showInventory) {
       if (this->activeGui) {
         this->activeGui->OnHide();
@@ -141,7 +142,7 @@ Game::Update(float t, float deltaT) {
     }
     this->showInventory = false;
   }
-  if (this->activeGui) this->activeGui->Update(t);
+  if (this->activeGui) this->activeGui->Update(*this);
   
   // handle collision between entities
   for (auto entity1 : this->entities) {
@@ -150,21 +151,21 @@ Game::Update(float t, float deltaT) {
       if (entity1.second->GetProperties()->nocollide) continue;
       if (entity2.second->GetProperties()->nocollide) continue;
       if (entity1.second->GetAABB().Overlap(entity2.second->GetAABB())) {
-        entity1.second->OnCollide(*entity2.second);
-        entity2.second->OnCollide(*entity1.second);
+        entity1.second->OnCollide(*this, *entity2.second);
+        entity2.second->OnCollide(*this, *entity1.second);
       }
     }
   }
 
   // update all entities
   for (auto entity : this->entities) {
-    if (entity.second) entity.second->Update();
+    if (entity.second) entity.second->Update(*this);
   }
   
   while(nextThinkT < t) {
     nextThinkT += Entity::ThinkInterval;
     for (auto entity : this->entities) {
-      if (entity.second) entity.second->Think();
+      if (entity.second) entity.second->Think(*this);
     }
   }
 
@@ -184,36 +185,24 @@ void
 Game::BuildWorld(size_t level) { 
   random.Seed(seed, level); 
   this->world = std::shared_ptr<World>(new World(IVector3(64, 64, 64), level, random));
-  this->world->Build();
+  this->world->Build(*this);
 
   Player *player = new Player();
   player->SetPosition(IVector3(32,32,32));
   player->SetSpawnPos(IVector3(32,32,32));
-  size_t playerId = this->AddPlayer(player);
+  this->AddPlayer(player);
 
   Entity *ent = new Entity("box");
   ent->SetPosition(IVector3(32,28,34));
   this->AddEntity(ent);
-  
-  this->inventoryGui = std::shared_ptr<InventoryGui>(new InventoryGui(playerId));
 }
 
-void Game::OnMouseMove(const Point &pos) {
+void Game::HandleEvent(const InputEvent &event) {
   if (this->activeGui) {
-    this->activeGui->OnMouseMove(pos);
-  }
-}
-
-void Game::OnMouseClick(const Point &pos, int button, bool down) {
-  if (this->activeGui) {
-    this->activeGui->OnMouseClick(pos, button, down);
+    this->activeGui->HandleEvent(event);
   } else {
-    this->player->OnMouseClick(pos, button, down);
+    this->player->HandleEvent(event);
   }
-}
-
-void Game::OnMouseDelta(const Point &delta) {
-  this->player->OnMouseDelta(delta);
 }
 
 /**
@@ -224,7 +213,7 @@ size_t
 Game::AddEntity(Entity *entity) {
   size_t entityId = GetNextEntityId();
   this->entities[entityId] = entity;
-  entity->Start();
+  entity->Start(*this, entityId);
   return entityId;
 }
 
@@ -236,6 +225,7 @@ Game::AddEntity(Entity *entity) {
 size_t
 Game::AddPlayer(Player *player) {
   this->player = player;
+  this->inventoryGui = std::shared_ptr<InventoryGui>(new InventoryGui(*this, *player));
   return this->AddEntity(player);
 }
 

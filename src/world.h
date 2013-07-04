@@ -11,6 +11,7 @@ class Random;
 class Shader;
 class Gfx;
 class FeatureInstance;
+class Game;
 
 class World final {
 public:
@@ -18,13 +19,13 @@ public:
   World(const IVector3 &size, int level, Random &random);
   ~World();
   
-  void Build();
+  void Build(Game &game);
   
   const IVector3 &GetSize() const { return size; }
 
   void Draw(Gfx &gfx);
   void DrawMap(Gfx &gfx);
-  void Update(float t);
+  void Update(Game &game);
   
   Cell &GetCell(const IVector3 &pos) const;
   Cell &SetCell(const IVector3 &pos, const Cell &cell, bool ignoreLock = false);
@@ -50,13 +51,11 @@ public:
 
   int GetLevel() const { return level; }
   bool IsDefault(const IVector3 &pos);
-
-  float GetDeltaT() const { return deltaT; }
   
   Random &GetRandom() { return random; }
 
   void AddFeatureSeen(size_t f);
-  void BreakBlock(const IVector3 &pos);
+  void BreakBlock(Game &game, const IVector3 &pos);
   
   void SetTorchLight(const IColor &color) { this->torchLight = color; }
 
@@ -81,8 +80,6 @@ private:
   std::vector<bool> defaultMask;
 
   std::vector<size_t> dynamicCells;
-  float lastT;
-  float deltaT;
   float nextTickT;
   float tickInterval;
 

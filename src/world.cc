@@ -21,7 +21,7 @@
 World::World(const IVector3 &size, int level, Random &rnd) :random(rnd)
 {  
   this->defaultShader = new Shader("default");
-  this->ambientLight = IColor(16,16,32);
+  this->ambientLight = IColor(32,32,64);
   this->checkOverwrite = false;
   this->size = size;
   this->dirty = true;
@@ -34,7 +34,6 @@ World::World(const IVector3 &size, int level, Random &rnd) :random(rnd)
   
   std::cerr << this->cellCount << " cells, " << (sizeof(Cell)*this->cellCount) << std::endl;
     
-  this->lastT = 0;
   this->tickInterval = 0.05;
   this->nextTickT = 0;
 }
@@ -44,7 +43,7 @@ World::~World() {
 }
 
 void
-World::Build() {
+World::Build(Game &game) {
   // build features -------------------------------------------
   
   // some basic parameters for this world
@@ -194,7 +193,7 @@ World::Build() {
   }
 
   for (auto instance : instances) {
-    instance.feature->SpawnEntities(this, instance.pos);
+    instance.feature->SpawnEntities(game, instance.pos);
   }
 
   this->Dump();
@@ -385,28 +384,20 @@ World::DrawMap(
 
 void 
 World::Update(
-  float t
+  Game &game
 ) {
-  if (lastT == 0) {
-    lastT = t;
-    nextTickT = t;
-  }
-  deltaT = t - lastT;
-
   // update all dynamic cells
   for (size_t i : this->dynamicCells) {
-    this->cells[i].Update(t, random);
+    this->cells[i].Update(game);
   }
 
   // tick world
-  while (tickInterval != 0.0 && t > nextTickT) {
+  while (tickInterval != 0.0 && game.GetTime() > nextTickT) {
     for (size_t i : this->dynamicCells) {
-      this->cells[i].Tick(random);
+      this->cells[i].Tick(game);
     }
     nextTickT += tickInterval;
   }
-
-  lastT = t;
 }
 
 /**
@@ -742,8 +733,12 @@ World::CastRayCell(const Vector3 &org, const Vector3 &dir, float &distance, Side
 
   while (IsValidCellPosition(IVector3(x,y,z))) {
     currentCell = &this->GetCell(IVector3(x,y,z));
-    if ((currentCell->GetInfo().flags & CellFlags::Solid)) {
-      distance = t;
+    
+    float tt;
+    Vector3 p;
+    
+    if (currentCell->IsSolid() && currentCell->Ray(org, dir, tt, p)) {
+      distance = tt;
       return *currentCell;
     }
 
@@ -822,7 +817,7 @@ World::AddFeatureSeen(size_t f) {
 }
 
 void
-World::BreakBlock(const IVector3 &pos) {
+World::BreakBlock(Game &game, const IVector3 &pos) {
   AABB aabb = this->SetCell(pos, Cell("air")).GetAABB();
   for (size_t i=0; i<16; i++) {
     Mob *particle = new Particle();
@@ -830,6 +825,6 @@ World::BreakBlock(const IVector3 &pos) {
     Vector3 p = Vector3(random.Float()*s.x, random.Float()*s.y, random.Float()*s.z) + aabb.center;
     particle->SetPosition(p);
     particle->AddVelocity(Vector3(random.Float(), random.Float(), random.Float()*10));
-    Game::Instance->AddEntity(particle);
+    game.AddEntity(particle);
   }
 }

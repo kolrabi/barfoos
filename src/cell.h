@@ -7,6 +7,8 @@
 class World;
 class Random;
 class Serializer;
+class Game;
+
 struct Vertex;
 
 /** Optional flags of a cell. */
@@ -105,9 +107,11 @@ public:
   Cell(const std::string &type = "default");
   virtual ~Cell();
 
-  virtual void Update(float t, Random &random);
-  virtual void Draw(std::vector<Vertex> &vertices) const;
+  virtual void Update(Game &game);
   virtual bool UpdateNeighbours();
+  
+  virtual void Draw(std::vector<Vertex> &vertices) const;
+  virtual void DrawHighlight(std::vector<Vertex> &vertices) const;
   
   const std::string &GetType() const;
   const CellInfo &GetInfo() const;
@@ -167,7 +171,9 @@ public:
   AABB GetAABB() const;
 
   void UpdateVertices();
-  void Tick(Random &random);
+  void Tick(Game &game);
+  
+  bool Ray(const Vector3 &start, const Vector3 &dir, float &t, Vector3 &p) const;
   
 protected:
 

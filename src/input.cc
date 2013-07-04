@@ -1,16 +1,10 @@
-#include <GLFW/glfw3.h>
-
 #include "input.h"
 
-Input *Input::Instance = nullptr;
-
 Input::Input() {
-  delete Input::Instance;
-  Input::Instance = this;
+  nextHandlerId = 0;
 }
 
 Input::~Input() {
-  Input::Instance = nullptr;
 }
 
 void 
@@ -19,35 +13,26 @@ Input::Update() {
 }
 
 void 
-Input::HandleKeyEvent(
-  int k,
-  bool down
-) {  
-  InputKey key;
-  
-  switch(k) {
-    case 'W':                 key = InputKey::Forward;         break;
-    case 'S':                 key = InputKey::Backward;        break;
-    case 'A':                 key = InputKey::Left;            break;
-    case 'D':                 key = InputKey::Right;           break;
-    case ' ':                 key = InputKey::Jump;            break;
-    case GLFW_KEY_LEFT_SHIFT: key = InputKey::Sneak;           break;
-    case 'E':                 key = InputKey::Use;             break;
-    case GLFW_KEY_TAB:        key = InputKey::Inventory;       break;
-    case GLFW_KEY_ESCAPE:     key = InputKey::Escape;          break;
-    
-    case GLFW_KEY_F1:         key = InputKey::DebugDie;        break;
-    case GLFW_KEY_F2:         key = InputKey::DebugEntityAABB; break;
-    case GLFW_KEY_F3:         key = InputKey::DebugWireframe;  break;
-    default:                  return;
+Input::HandleEvent(const InputEvent &event) {
+  if (event.type == InputEventType::Key) {
+    this->activeKeys[event.key] = event.down;
   }
-  SetKey(key, down);
+  
+  for (auto &fn : this->handlers) {
+    fn.handler(event);
+  }
 }
-
-void
-Input::SetKey(
-  InputKey key,
-  bool down
-) {
-  activeKeys[key] = down;
+  
+size_t 
+Input::AddHandler(std::function<void(const InputEvent &)> handler) {
+  this->handlers.push_back(Handler(handler, nextHandlerId));
+  
+  return nextHandlerId++;
+}
+  
+void 
+Input::RemoveHandler(size_t id) {
+  auto iter = std::find(this->handlers.begin(), this->handlers.end(), id);
+  if (iter != this->handlers.end())
+    this->handlers.erase(iter);
 }

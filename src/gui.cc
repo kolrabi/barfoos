@@ -2,29 +2,32 @@
 #include "util.h"
 #include "gfx.h"
 #include "game.h"
+#include "input.h"
 
 Gui::Gui() {
   this->gravN = true;
   this->gravE = false;
   this->gravS = false;
   this->gravW = true;
-
-  this->lastT = 0.0;
+  
+  this->updateGravity = true;
 }
 
 Gui::~Gui() {
 }
 
 void 
-Gui::Update(float t) {
-  if (lastT == 0) lastT = t;
-  this->deltaT = lastT - t;
-
+Gui::Update(Game &game) {
   for (auto c : children) {
-    c->Update(t);
+    c->Update(game);
   }
 
-  const Point &vsize = Game::Instance->GetGfx()->GetVirtualScreenSize();
+  const Point &vsize = game.GetGfx()->GetVirtualScreenSize();
+
+  if (this->updateGravity) {
+    bottomRight = vsize - (rect.pos + rect.size);
+    this->updateGravity = false;
+  }
   
   if (gravE) {
     int oldRight = rect.pos.x + rect.size.x;
@@ -55,17 +58,12 @@ Gui::Draw(Gfx &gfx, const Point &parentPos) {
 }
 
 void
-Gui::OnMouseMove(const Point &point) {
+Gui::HandleEvent(const InputEvent &event) {
   for (auto c : children) {
-    c->OnMouseMove(point - c->rect.pos);
+    InputEvent event2(event);
+    event2.p = event.p - c->rect.pos;
+    c->HandleEvent(event2);
   }
-}
-
-void 
-Gui::OnMouseClick(const Point &pos, int button, bool down) {
-  Gui *child = GetChildAt(pos);
-  if (child) 
-    child->OnMouseClick(pos - child->rect.pos, button, down);
 }
 
 bool Gui::IsOver(const Point &p) const { 
@@ -103,6 +101,5 @@ Gui::SetGravity(bool gravN, bool gravE, bool gravS, bool gravW) {
   this->gravS = gravS;
   this->gravW = gravW;
 
-  const Point &vsize = Game::Instance->GetGfx()->GetVirtualScreenSize();
-  bottomRight = vsize - (rect.pos + rect.size);
+  this->updateGravity = true;
 }

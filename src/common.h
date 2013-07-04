@@ -303,5 +303,32 @@ private:
   bool moved;
 };
 
+static inline bool 
+TriangleRay(const Vector3 *tri, const Vector3 &start, const Vector3 &dir, float &t, Vector3 &p) {
+  Vector3 e1 = tri[1] - tri[0];
+  Vector3 e2 = tri[2] - tri[0];
+  
+  Vector3 h = dir.Cross(e2);
+  float a = e1.Dot(h);
+  
+  if (a < 0.00001) return false;
+  
+  float f = 1.0/a;
+  
+  Vector3 s = start-tri[0];
+  float u = f * (s.Dot(h));
+  if (u < 0.0 || u > 1.0) return false;
+  
+  Vector3 q = s.Cross(e1);
+  float v = f * (dir.Normalize().Dot(q));
+  if (v < 0.0 || v > 1.0) return false;
+  
+  float tt = f * e2.Dot(q);
+  if (tt < 0.00001) return false;
+  
+  t = tt;
+  p = start + dir * t;
+  return true;
+}
 #endif
 

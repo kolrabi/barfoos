@@ -223,7 +223,8 @@ void Feature::ReplaceChars(const FeatureReplacement &r, std::vector<char> &chars
   }
 }
 
-void Feature::SpawnEntities(World *world, const IVector3 &pos) const {
+void Feature::SpawnEntities(Game &game, const IVector3 &pos) const {
+  std::shared_ptr<World> world = game.GetWorld();
   for (const FeatureSpawn &spawn : spawns) {
     if (world->GetRandom().Chance(spawn.probability)) {
       Entity *entity = nullptr;
@@ -255,7 +256,7 @@ void Feature::SpawnEntities(World *world, const IVector3 &pos) const {
       
       entity->SetPosition(spawnPos);
       
-      Game::Instance->AddEntity(entity);
+      game.AddEntity(entity);
     }
   }
 }

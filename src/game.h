@@ -12,40 +12,45 @@ class InventoryGui;
 class Gui;
 class Entity;
 class Gfx;
+class Input;
+struct InputEvent;
 
 class Game final {
 public:
 
   Game(const std::string &seed, size_t level = 0, const Point &screenSize = Point(320, 240));
   ~Game();
-  static Game *Instance;
   
   bool Init();
 
   bool Frame();
   
   Gfx *GetGfx() const { return gfx; }
+  Input *GetInput() const { return input; }
+  Random &GetRandom() { return random; }
 
   float GetTime() const { return this->lastT; }
   float GetDeltaT() const { return deltaT; }
   float GetThinkFraction() const;
   
-  void OnMouseMove(const Point &pos);
-  void OnMouseClick(const Point &pos, int button, bool down);
-  void OnMouseDelta(const Point &delta);
-  
+  void HandleEvent(const InputEvent &event);
+
   size_t AddEntity(Entity *entity);
   size_t AddPlayer(Player *entity);
   void RemoveEntity(size_t entity);
   bool CheckEntities(const IVector3 &pos);
   std::vector<size_t> FindEntities(const AABB &aabb);
   temp_ptr<Entity> GetEntity(size_t id);
+  
   std::shared_ptr<World> GetWorld() { return this->world; }
   
 private:
 
+  Input *input;
   Gfx *gfx;
   bool isInit;
+  
+  size_t handlerId;
   
   void Deinit();
   

@@ -49,10 +49,6 @@ Player::View(Gfx &gfx) const {
 
 void
 Player::MapView(Gfx &gfx) const {
-  if (headCell) {
-    Game::Instance->GetWorld()->AddFeatureSeen(headCell->GetFeatureID());
-  }
-
   Vector3 fwd = this->GetAngles().EulerToVector();
   Vector3 pos = this->smoothPosition + Vector3(0,16,0);
   
@@ -60,36 +56,54 @@ Player::MapView(Gfx &gfx) const {
 }
 
 void 
-Player::Update() {
-  Mob::Update();
+Player::Update(Game &game) {
+  Mob::Update(game);
 
-  UpdateInput();
-  UpdateSelection();
+  UpdateInput(game);
+  UpdateSelection(game);
 
+  float t = game.GetTime();
+  IColor torch;
+  for (auto item : this->inventory) {
+    if (!item || !item->IsEquipped()) continue;
+    
+    float f = 1.0;
+    if (item->GetProperties()->flicker) {
+      f = simplexNoise(Vector3(t*3, 0, 0)) * simplexNoise(Vector3(t*2, -t, 0));
+      f = f * 0.4 + 0.5;
+    }
+    torch = torch + item->GetProperties()->light * f;
+  }  
+  this->torchLight = torch;
+  
   if (itemActiveLeft && this->inventory[(size_t)InventorySlot::RightHand]) {
     if (this->inventory[(size_t)InventorySlot::RightHand]->GetRange() < this->selectionRange) {
-      this->inventory[(int)InventorySlot::RightHand]->UseOnNothing(this);
+      this->inventory[(int)InventorySlot::RightHand]->UseOnNothing(game, *this);
     } else if (this->selectedCell) {
-      this->inventory[(int)InventorySlot::RightHand]->UseOnCell(this, this->selectedCell, this->selectedCellSide);
+      this->inventory[(int)InventorySlot::RightHand]->UseOnCell(game, *this, this->selectedCell, this->selectedCellSide);
     } else if (this->selectedEntity != ~0UL) {
-      this->inventory[(int)InventorySlot::RightHand]->UseOnEntity(this, this->selectedEntity);
+      this->inventory[(int)InventorySlot::RightHand]->UseOnEntity(game, *this, this->selectedEntity);
     }
   }
   
   if (itemActiveRight && this->inventory[(size_t)InventorySlot::LeftHand]) {
     if (this->inventory[(size_t)InventorySlot::LeftHand]->GetRange() < this->selectionRange) {
-      this->inventory[(int)InventorySlot::LeftHand]->UseOnNothing(this);
+      this->inventory[(int)InventorySlot::LeftHand]->UseOnNothing(game, *this);
     } else if (this->selectedCell) {
-      this->inventory[(int)InventorySlot::LeftHand]->UseOnCell(this, this->selectedCell, this->selectedCellSide);
+      this->inventory[(int)InventorySlot::LeftHand]->UseOnCell(game, *this, this->selectedCell, this->selectedCellSide);
     } else if (this->selectedEntity != ~0UL) {
-      this->inventory[(int)InventorySlot::LeftHand]->UseOnEntity(this, this->selectedEntity);
+      this->inventory[(int)InventorySlot::LeftHand]->UseOnEntity(game, *this, this->selectedEntity);
     }
   }
   
-  Game::Instance->GetWorld()->SetTorchLight(this->GetTorchLight());
+  game.GetWorld()->SetTorchLight(this->torchLight);
+  if (headCell) {
+    game.GetWorld()->AddFeatureSeen(headCell->GetFeatureID());
+  }
 }
 
-void Player::UpdateSelection() {
+void Player::UpdateSelection(Game &game) {
+  // TODO: get from equipped items
   static const float range = 10.0;
   
   // update selection
@@ -101,7 +115,7 @@ void Player::UpdateSelection() {
   AABB aabbRange;
   aabbRange.center = pos;
   aabbRange.extents = Vector3(range,range,range); 
-  auto entitiesInRange = Game::Instance->FindEntities(aabbRange);
+  auto entitiesInRange = game.FindEntities(aabbRange);
 
   float hitDist = range;
   Vector3 hitPos;
@@ -111,7 +125,7 @@ void Player::UpdateSelection() {
   
   // check entities in range  
   for (auto id : entitiesInRange) {
-    temp_ptr<Entity> entity = Game::Instance->GetEntity(id);
+    temp_ptr<Entity> entity = game.GetEntity(id);
     if (!entity || entity == this) continue;
     if (entity->GetProperties()->nohit) continue;
 
@@ -124,7 +138,7 @@ void Player::UpdateSelection() {
   }
   
   // check cells
-  Cell &cell = Game::Instance->GetWorld()->CastRayCell(pos, dir, hitDist, this->selectedCellSide);
+  Cell &cell = game.GetWorld()->CastRayCell(pos, dir, hitDist, this->selectedCellSide);
   if (hitDist < dist) {
     dist = hitDist;
     this->selectedCell = &cell;
@@ -136,20 +150,31 @@ void Player::UpdateSelection() {
 
 void Player::Draw(Gfx &gfx) const {
   (void)gfx;
+
+  if (this->selectedCell) {
+    std::vector<Vertex> verts;
+    this->selectedCell->DrawHighlight(verts);
+    gfx.SetTextureFrame(gfx.GetNoiseTexture());
+    gfx.DrawTriangles(verts);
+  }
 }
 
 void
 Player::UpdateInput(
+  Game &game
 ) {
-  float deltaT = Game::Instance->GetDeltaT();
+  float deltaT = game.GetDeltaT();
   
-  if (Input::Instance->IsKeyActive(InputKey::DebugDie)) Die();
-  if (Input::Instance->IsKeyDown(InputKey::Use) && this->selectedEntity != ~0UL) {
-    temp_ptr<Entity> entity(Game::Instance->GetEntity(this->selectedEntity));
-    if (entity) entity->OnUse(*this);
+  Input *input = game.GetInput();
+  
+  if (input->IsKeyActive(InputKey::DebugDie)) Die(game, HealthInfo());
+  
+  if (input->IsKeyDown(InputKey::Use) && this->selectedEntity != ~0UL) {
+    temp_ptr<Entity> entity(game.GetEntity(this->selectedEntity));
+    if (entity) entity->OnUse(game, *this);
   }
 
-  sneak = Input::Instance->IsKeyActive(InputKey::Sneak);
+  sneak = input->IsKeyActive(InputKey::Sneak);
 
   if (angles.y > 3.1/2) angles.y = 3.1/2;
   if (angles.y < -3.1/2) angles.y = -3.1/2;
@@ -160,10 +185,10 @@ Player::UpdateInput(
 
   move = Vector3();
   
-  if (Input::Instance->IsKeyActive(InputKey::Right))     move = move + right * speed;
-  if (Input::Instance->IsKeyActive(InputKey::Left))      move = move - right * speed;
-  if (Input::Instance->IsKeyActive(InputKey::Forward))   move = move + fwd * speed;
-  if (Input::Instance->IsKeyActive(InputKey::Backward))  move = move - fwd * speed;
+  if (input->IsKeyActive(InputKey::Right))     move = move + right * speed;
+  if (input->IsKeyActive(InputKey::Left))      move = move - right * speed;
+  if (input->IsKeyActive(InputKey::Forward))   move = move + fwd * speed;
+  if (input->IsKeyActive(InputKey::Backward))  move = move - fwd * speed;
 
   if (move.GetMag() > 1.5) {
     bobAmplitude += deltaT*4;
@@ -185,7 +210,7 @@ Player::UpdateInput(
     // TODO: play step sound
   }
   
-  if ((onGround || inWater || noclip) && Input::Instance->IsKeyActive(InputKey::Jump)) wantJump = true;
+  if ((onGround || inWater || noclip) && input->IsKeyActive(InputKey::Jump)) wantJump = true;
 }
 
 void 
@@ -198,7 +223,7 @@ Player::DrawWeapons(Gfx &gfx) const {
   
   gfx.View3D(pos, fwd);
 
-  IColor l = Game::Instance->GetWorld()->GetLight(cellPos)+GetTorchLight();
+  IColor l = this->cellLight+this->torchLight;
   gfx.SetColor(l);
 
   if (this->inventory[(size_t)InventorySlot::RightHand]) {
@@ -227,33 +252,14 @@ Player::DrawGUI(Gfx &gfx) const {
 }
 
 void
-Player::OnMouseClick(const Point &pos, int button, bool down) {
-  (void)pos;
-  if (button == 0) this->itemActiveLeft = down;
-  if (button == 1) this->itemActiveRight = down;
-}
-
-void
-Player::OnMouseDelta(const Point &delta) {
-  angles.x += delta.x*0.005;
-  angles.y -= delta.y*0.005;
-}
-
-const IColor Player::GetTorchLight() const {
-  IColor torch;
-  float t = Game::Instance->GetTime();
-  
-  for (auto item : this->inventory) {
-    if (!item || !item->IsEquipped()) continue;
-    
-    float f = 1.0;
-    if (item->GetProperties()->flicker) {
-      f = simplexNoise(Vector3(t*3, 0, 0)) * simplexNoise(Vector3(t*2, -t, 0));
-      f = f * 0.4 + 0.5;
-    }
-    torch = torch + item->GetProperties()->light * f;
+Player::HandleEvent(const InputEvent &event) {
+  if (event.type == InputEventType::Key) {
+    if (event.key == InputKey::MouseLeft)  this->itemActiveLeft  = event.down;
+    if (event.key == InputKey::MouseRight) this->itemActiveRight = event.down;
+    if (event.key == InputKey::DebugNoclip && event.down) this->noclip = !this->noclip;
+  } else if (event.type == InputEventType::MouseDelta) {
+    angles.x += event.p.x*0.005;
+    angles.y -= event.p.y*0.005;
   }
-  return torch;
 }
-
 
