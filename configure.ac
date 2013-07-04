@@ -28,12 +28,15 @@ if test x$OS = xWindows_NT; then
   AC_CHECK_LIB(gdi32, main)
   AC_CHECK_LIB(glu32, main)
 else
-  # check for x11 only if no win32 is available
-  AC_CHECK_LIB(X11, [XOpenDisplay], [AC_DEFINE(X11)])
   AC_CHECK_LIB(GL, main)
   AC_CHECK_LIB(GLU, main)
 fi
 
+AC_CHECK_LIB(X11, [XOpenDisplay], [AC_DEFINE(X11)])
+AC_CHECK_LIB(X11, XConvertSelection)
+AC_CHECK_LIB(Xxf86vm, XF86VidModeQueryExtension)
+AC_CHECK_LIB(Xrandr, main)
+AC_CHECK_LIB(Xi, main)
 AC_CHECK_LIB(glfw3, main)
 AC_CHECK_LIB(z, main)
 AC_CHECK_LIB(png, main)

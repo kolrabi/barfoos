@@ -73,6 +73,8 @@ EntityProperties::EntityProperties(FILE *f) {
       this->sprite.height = std::atof(tokens[2].c_str());
     } else if (tokens[0] == "nohit") {
       this->nohit = true;
+    } else if (tokens[0] == "nocollide") {
+      this->nocollide = true;
     } else if (tokens[0] == "inventory") {
       this->items[tokens[2]] = std::atof(tokens[1].c_str());
     } else if (tokens[0] == "cell") {
@@ -189,7 +191,6 @@ Entity::Draw(Gfx &gfx) const {
   gfx.DrawSprite(this->sprite, this->aabb.center);
   
   if (Input::Instance->IsKeyActive(InputKey::DebugEntityAABB)) {
-    std::cerr << "aabb" << std::endl;
     this->DrawBoundingBox(gfx);
   }
 }

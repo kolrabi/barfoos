@@ -119,8 +119,7 @@ Game::Update(float t, float deltaT) {
   
   world->Update(t);
 
-  /*
-  if (glfwGetKey(GLFW_KEY_TAB)) {
+  if (Input::Instance->IsKeyActive(InputKey::Inventory)) {
     if (!this->showInventory) {
       if (this->activeGui) {
         this->activeGui->OnHide();
@@ -142,13 +141,14 @@ Game::Update(float t, float deltaT) {
     }
     this->showInventory = false;
   }
-*/
   if (this->activeGui) this->activeGui->Update(t);
   
   // handle collision between entities
   for (auto entity1 : this->entities) {
     for (auto entity2 : this->entities) {
       if (entity1.first == entity2.first) continue;
+      if (entity1.second->GetProperties()->nocollide) continue;
+      if (entity2.second->GetProperties()->nocollide) continue;
       if (entity1.second->GetAABB().Overlap(entity2.second->GetAABB())) {
         entity1.second->OnCollide(*entity2.second);
         entity2.second->OnCollide(*entity1.second);

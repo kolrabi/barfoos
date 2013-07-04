@@ -51,6 +51,8 @@ private:
 
   std::map<InputKey, bool> activeKeys;
   std::map<InputKey, bool> lastActiveKeys;
+
+  void SetKey(InputKey key, bool down);
 };
 
 #endif

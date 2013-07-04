@@ -419,7 +419,7 @@ void Gfx::DrawSprite(const Sprite &sprite, const Vector3 &pos, bool billboard) c
     glGetFloatv(GL_MODELVIEW_MATRIX, m);
     
     m[0] = 1; m[1] = 0; m[2]  = 0;
-    if (!sprite.vertical) m[4] = 0; m[5] = 1; m[6]  = 0;
+    if (!sprite.vertical) { m[4] = 0; m[5] = 1; m[6]  = 0; }
     m[8] = 0; m[9] = 0; m[10] = 1;
     
     glLoadMatrixf(m);

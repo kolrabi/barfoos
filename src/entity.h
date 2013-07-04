@@ -24,6 +24,7 @@ struct EntityProperties {
   int maxHealth = 5;
   Vector3 extents;
   bool nohit = false;
+  bool nocollide = false;
   
   std::map<std::string, float> items;
   

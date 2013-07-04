@@ -66,30 +66,24 @@ Player::Update() {
   UpdateInput();
   UpdateSelection();
 
-  if (itemActiveLeft && this->inventory[(size_t)InventorySlot::RightHand] &&
-      this->inventory[(size_t)InventorySlot::RightHand]->GetRange() >= this->selectionRange) {
-    if (this->selectedCell) {
+  if (itemActiveLeft && this->inventory[(size_t)InventorySlot::RightHand]) {
+    if (this->inventory[(size_t)InventorySlot::RightHand]->GetRange() < this->selectionRange) {
+      this->inventory[(int)InventorySlot::RightHand]->UseOnNothing(this);
+    } else if (this->selectedCell) {
       this->inventory[(int)InventorySlot::RightHand]->UseOnCell(this, this->selectedCell, this->selectedCellSide);
     } else if (this->selectedEntity != ~0UL) {
       this->inventory[(int)InventorySlot::RightHand]->UseOnEntity(this, this->selectedEntity);
-    } else {
-      this->inventory[(int)InventorySlot::RightHand]->UseOnNothing(this);
     }
-  } else if (itemActiveLeft) {
-    this->inventory[(int)InventorySlot::RightHand]->UseOnNothing(this);
   }
   
-  if (itemActiveRight && this->inventory[(size_t)InventorySlot::LeftHand] &&
-      this->inventory[(size_t)InventorySlot::LeftHand]->GetRange() >= this->selectionRange) {
-    if (this->selectedCell) {
+  if (itemActiveRight && this->inventory[(size_t)InventorySlot::LeftHand]) {
+    if (this->inventory[(size_t)InventorySlot::LeftHand]->GetRange() < this->selectionRange) {
+      this->inventory[(int)InventorySlot::LeftHand]->UseOnNothing(this);
+    } else if (this->selectedCell) {
       this->inventory[(int)InventorySlot::LeftHand]->UseOnCell(this, this->selectedCell, this->selectedCellSide);
     } else if (this->selectedEntity != ~0UL) {
       this->inventory[(int)InventorySlot::LeftHand]->UseOnEntity(this, this->selectedEntity);
-    } else {
-      this->inventory[(int)InventorySlot::LeftHand]->UseOnNothing(this);
     }
-  } else if (itemActiveRight) {
-    this->inventory[(int)InventorySlot::LeftHand]->UseOnNothing(this);
   }
   
   Game::Instance->GetWorld()->SetTorchLight(this->GetTorchLight());

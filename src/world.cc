@@ -353,7 +353,7 @@ World::Draw(Gfx &gfx) {
     gfx.DrawTriangles(iter->second);
   }
 
-  gfx.SetShader(nullptr);
+//  gfx.SetShader(nullptr);
 }
 
 void
