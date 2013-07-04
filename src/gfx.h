@@ -81,6 +81,7 @@ private:
 
   // input
   Point mousePos;
+  Point mouseDelta;
   bool mouseGrab;
   
   // gui

@@ -168,16 +168,10 @@ Gfx::Init(Game &game) {
       game->GetInput()->HandleEvent(InputEvent(InputEventType::MouseMove, mousePos)); 
     } else if (gfx->mouseGrab) {
       // get distance from center
-      Point mouseDelta(
+      gfx->mouseDelta = Point(
         x - gfx->screenSize.x/2,
         y - gfx->screenSize.y/2
       );
-      
-      // send relative coordinates
-      game->GetInput()->HandleEvent(InputEvent(InputEventType::MouseDelta, mouseDelta)); 
-      
-      // reset cursor to center
-      glfwSetCursorPos(gfx->window, gfx->screenSize.x/2, gfx->screenSize.y/2);
     }
   } );
   
@@ -310,6 +304,16 @@ Gfx::Update(Game &game) {
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
   } else {
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+  }
+  
+  if (this->mouseGrab && !this->guiActiveCount) { 
+    // send relative coordinates
+    game.GetInput()->HandleEvent(InputEvent(InputEventType::MouseDelta, mouseDelta)); 
+
+    // reset cursor to center
+    glfwSetCursorPos(this->window, this->screenSize.x/2, this->screenSize.y/2);
+
+    mouseDelta = Point();
   }
 }
 

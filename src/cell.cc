@@ -139,9 +139,9 @@ void
 Cell::DrawHighlight(std::vector<Vertex> &verts) const {
   for (const Vertex &v : this->verts) {
     Vertex vv(v);
-    vv.xyz[0] = (vv.xyz[0] - this->pos.x - 0.5) * 1.1 + this->pos.x + 0.5;
-    vv.xyz[1] = (vv.xyz[1] - this->pos.y - 0.5) * 1.1 + this->pos.y + 0.5; 
-    vv.xyz[2] = (vv.xyz[2] - this->pos.z - 0.5) * 1.1 + this->pos.z + 0.5;
+    vv.xyz[0] = vv.xyz[0] + 0.01 * vv.n[0];
+    vv.xyz[1] = vv.xyz[1] + 0.01 * vv.n[1];
+    vv.xyz[2] = vv.xyz[2] + 0.01 * vv.n[2];
     verts.push_back(vv);
   }
 }
