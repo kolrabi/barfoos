@@ -28,6 +28,7 @@ private:
   void UpdateInput(Game &game);
   void UpdateSelection(Game &game);
 
+  float fps;
   float bobPhase;
   float bobAmplitude;
 

@@ -18,15 +18,15 @@
 
 #include "vertex.h"
 
-World::World(const IVector3 &size, int level, Random &rnd) :random(rnd)
+World::World(const IVector3 &size) 
 {  
   this->defaultShader = new Shader("default");
   this->ambientLight = IColor(32,32,64);
   this->checkOverwrite = false;
+  this->checkOverwriteOK = true;
   this->size = size;
   this->dirty = true;
   this->firstDirty = true;
-  this->level = level;
 
   this->cellCount = size.x * size.y * size.z;
   this->cells = std::vector<Cell>(this->cellCount, Cell("default"));
@@ -47,6 +47,7 @@ World::Build(Game &game) {
   // build features -------------------------------------------
   
   // some basic parameters for this world
+  Random &random = game.GetRandom();
   IVector3 r(random.Integer(), random.Integer(), random.Integer());
   size_t featureCount  = random.Integer(400)+100;             // 100 - 500
   float  useLastChance = 0.1 + random.Float01()*0.8;          // 0.1 - 0.9
@@ -72,22 +73,21 @@ World::Build(Game &game) {
         Vector3 vpos(ppp);
         float f = (simplexNoise(vpos*0.07) * simplexNoise(vpos*(-0.06)) * simplexNoise(vpos*(-0.13)));
         if (f > 0.75) {
-          SetCell(pos, Cell("brick"));
+          this->SetCell(pos, Cell("brick"));
         } else if (f > 0.5) {
-          SetCell(pos, Cell("rock"));
+          this->SetCell(pos, Cell("rock"));
         } else {
-          SetCell(pos, Cell("dirt"));
+          this->SetCell(pos, Cell("dirt"));
         }
       }
-      this->cells[i].SetWorld(this);
-      this->cells[i].SetPosition(pos);
+      this->cells[i].SetWorld(this, pos);
     }
 
     // reinitialize, as it is modified by above SetCell  
     this->defaultMask = std::vector<bool>(this->cellCount, true);
   
     instances.clear();
-    instances.push_back(getFeature("start")->BuildFeature(this, IVector3(32-4, 32-8,32-4), 0, 0, instances.size(), nullptr));
+    instances.push_back(getFeature("start")->BuildFeature(game, *this, IVector3(32-4, 32-8,32-4), 0, 0, instances.size(), nullptr));
     instances.back().prevID = ~0UL;
   
     int loop = 0;
@@ -101,15 +101,15 @@ World::Build(Game &game) {
     
       // select a random connection from the current feature
       const Feature *feature = instance.feature;
-      const FeatureConnection *conn = feature->GetRandomConnection(random);
+      const FeatureConnection *conn = feature->GetRandomConnection(game);
       if (!conn) continue;
 
       // select next feature
-      const Feature *nextFeature = conn->GetRandomFeature(this, instance.pos, random);
+      const Feature *nextFeature = conn->GetRandomFeature(game, instance.pos);
       if (!nextFeature) continue;
     
       // make sure both features can connect
-      const FeatureConnection *revConn = nextFeature->GetRandomConnection(-conn->dir, random);
+      const FeatureConnection *revConn = nextFeature->GetRandomConnection(-conn->dir, game);
       if (!revConn) continue;
 
       // snap both connection points together
@@ -117,10 +117,10 @@ World::Build(Game &game) {
     
       // build the next feature if possible
       this->BeginCheckOverwrite();
-      nextFeature->BuildFeature(this, pos, conn->dir, instance.dist, instances.size(), nullptr);
+      nextFeature->BuildFeature(game, *this, pos, conn->dir, instance.dist, instances.size(), nullptr);
       if (this->FinishCheckOverwrite()) {
-        FeatureInstance nextInstance = nextFeature->BuildFeature(this, pos, conn->dir, instance.dist, instances.size(), revConn);
-        feature->ReplaceChars(this, instance.pos, conn->id, featNum);
+        FeatureInstance nextInstance = nextFeature->BuildFeature(game, *this, pos, conn->dir, instance.dist, instances.size(), revConn);
+        feature->ReplaceChars(game, *this, instance.pos, conn->id, featNum);
 
         // check if we accidentally connected properly to anything else
         for (const FeatureConnection &nextConn : nextInstance.feature->GetConnections()) {
@@ -137,8 +137,8 @@ World::Build(Game &game) {
               if (connPos != nextConnPos) continue;
               
               // do connect replacement of cells
-              inst.feature->ReplaceChars(this, inst.pos, c.id, inst.featureID);
-              nextInstance.feature->ReplaceChars(this, nextInstance.pos, nextConn.id, nextInstance.featureID);
+              inst.feature->ReplaceChars(game, *this, inst.pos, c.id, inst.featureID);
+              nextInstance.feature->ReplaceChars(game, *this, nextInstance.pos, nextConn.id, nextInstance.featureID);
             }
           }
         }
@@ -149,7 +149,7 @@ World::Build(Game &game) {
     } while(instances.size() < featureCount); 
   }
 
-  std::cerr << "built world with " << instances.size() << " features. level " << (level) << std::endl;
+  std::cerr << "built world with " << instances.size() << " features. level " << (game.GetLevel()) << std::endl;
   for (size_t i=0; i<this->cellCount; i++) {
     IVector3 pos = GetCellPos(i);
 
@@ -217,13 +217,18 @@ World::SetCell(const IVector3 &pos, const Cell &cell, bool ignoreLock) {
  
   size_t featId = this->cells[i].GetFeatureID();
   
+  CellInfo info = this->cells[i].GetInfo();
   this->cells[i] = cell;
-  this->cells[i].SetWorld(this);
-  this->cells[i].SetPosition(pos);
+  this->cells[i].SetWorld(this, pos);
   this->cells[i].SetFeatureID(featId);
   this->cells[i].UpdateNeighbours();
 
-  //this->lightDirty = true;
+  // ignore changes between invisible and dynamic cells, static mesh wont change
+  /*
+  this->dirty = !(((info.flags & CellFlags::DoNotRender) && (cell.GetInfo().flags & CellFlags::Dynamic)) ||
+                  ((info.flags & CellFlags::Dynamic) && (cell.GetInfo().flags & CellFlags::DoNotRender)) );
+                  */
+                  
   this->dirty = true;
   return this->cells[i];
 }
@@ -252,7 +257,11 @@ World::UpdateCell(const IVector3 &pos) {
  */
 void 
 World::Draw(Gfx &gfx) {
+  PROFILE();
+  
+  std::cerr << dirty << std::endl;
   if (dirty) {
+    PROFILE();
     // world has been changed, recreate vertex buffers
     if (this->vbos.size()) {
       glDeleteBuffers(this->vbos.size(), &this->vbos[0]);
@@ -321,18 +330,13 @@ World::Draw(Gfx &gfx) {
   // draw each vertex buffer 
   auto iter = vertices.begin();
   for (size_t i=0; i<this->vertices.size(); i++, iter++) {
-    glBindBuffer       (GL_ARRAY_BUFFER, this->vbos[i]);
-    //glBindBuffer       (GL_ARRAY_BUFFER, 0);
-    gfx.SetTextureFrame((const Texture *)iter->first);
-    glInterleavedArrays(GL_T2F_C4F_N3F_V3F,  sizeof(Vertex), nullptr);
-    //glInterleavedArrays(GL_T2F_C4F_N3F_V3F,  sizeof(Vertex), &iter->second[0]);
-    glDrawArrays       (GL_TRIANGLES,    0, iter->second.size());
+    gfx.SetTextureFrame(reinterpret_cast<const Texture *>(iter->first));
+#if 0
+    gfx.DrawTriangles(iter->second);
+#else
+    gfx.DrawTriangles(this->vbos[i], iter->second.size());
+#endif    
   }
-
-  glBindBuffer(GL_ARRAY_BUFFER, 0);
-  glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-  glDisableClientState(GL_COLOR_ARRAY);
-  glDisableClientState(GL_VERTEX_ARRAY);
 
   // get vertices for dynamic cells
   std::map<uintmax_t, std::vector<Vertex>> dynvertices;
@@ -348,17 +352,17 @@ World::Draw(Gfx &gfx) {
   // render vertices for dynamic cells
   iter = dynvertices.begin();
   for (size_t i=0; i<dynvertices.size(); i++, iter++) {
-    gfx.SetTextureFrame((const Texture *)iter->first);
+    gfx.SetTextureFrame(reinterpret_cast<const Texture *>(iter->first));
     gfx.DrawTriangles(iter->second);
   }
-
-//  gfx.SetShader(nullptr);
 }
 
 void
 World::DrawMap(
   Gfx &gfx
 ) {
+  PROFILE();
+  
   std::vector<Vertex> verts;
 
   for (size_t i=0; i<this->instances.size(); i++) {
@@ -386,6 +390,8 @@ void
 World::Update(
   Game &game
 ) {
+  PROFILE();
+  
   // update all dynamic cells
   for (size_t i : this->dynamicCells) {
     this->cells[i].Update(game);
@@ -435,9 +441,9 @@ World::CastRayZ(const Vector3 &org, float dir) {
   bool movingForward = dir > 0;
   size_t x = org.x; // start cell x
   size_t y = org.y; // start cell y
-  size_t z = org.z - (movingForward>0?0.01f:-0.01f); // start cell z
+  size_t z = org.z - (movingForward ? 0.01f : -0.01f); // start cell z
 
-  size_t z2 = (org.z + dir + 2*(movingForward>0?0.01f:-0.01f));
+  size_t z2 = (org.z + dir + 2*(movingForward ? 0.01f : -0.01f));
   if (z2 == z) return false; // not crossing cell borders
   
   return this->GetCell(IVector3(x,y,z)).CheckSideSolid(movingForward?Side::Forward:Side::Backward, org);
@@ -723,7 +729,6 @@ World::CastRayCell(const Vector3 &org, const Vector3 &dir, float &distance, Side
   int dy = dir.y == 0 ? 0 : (dir.y > 0 ? 1 : -1);
   int dz = dir.z == 0 ? 0 : (dir.z > 0 ? 1 : -1);
   Vector3 pos = org;
-  float t = 0.0;
 
   size_t x = pos.x; // start cell x
   size_t y = pos.y; // start cell y
@@ -737,7 +742,7 @@ World::CastRayCell(const Vector3 &org, const Vector3 &dir, float &distance, Side
     float tt;
     Vector3 p;
     
-    if (currentCell->IsSolid() && currentCell->Ray(org, dir, tt, p)) {
+    if (currentCell->IsSolid() && currentCell->Ray(org, dir, tt, p) && tt > 0) {
       distance = tt;
       return *currentCell;
     }
@@ -756,17 +761,14 @@ World::CastRayCell(const Vector3 &org, const Vector3 &dir, float &distance, Side
     if (u < v && u < w) {
       pos = pos + dir * u;
       x += dx;
-      t += u;
       side = dx > 0 ? Side::Left : Side::Right;
     } else if (v < u && v < w) {
       pos = pos + dir * v;
       y += dy;
-      t += v;
       side = dy > 0 ? Side::Down : Side::Up;
     } else if (w < u && w < v) {
       pos = pos + dir * w;
       z += dz;
-      t += w;
       side = dz > 0 ? Side::Backward : Side::Forward;
     } else {
       break;
@@ -819,6 +821,7 @@ World::AddFeatureSeen(size_t f) {
 void
 World::BreakBlock(Game &game, const IVector3 &pos) {
   AABB aabb = this->SetCell(pos, Cell("air")).GetAABB();
+  Random &random = game.GetRandom();
   for (size_t i=0; i<16; i++) {
     Mob *particle = new Particle();
     Vector3 s = aabb.extents - particle->GetAABB().extents;

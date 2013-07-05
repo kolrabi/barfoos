@@ -17,9 +17,8 @@ const Feature *getFeature(const std::string &name) {
   return &allFeatures[name];
 }
 
-Feature::Feature(FILE *f, const std::string &name) {
-  this->name = name;
-  this->group = name;
+Feature::Feature(FILE *f, const std::string &name) 
+: name(name), group(name) {
   this->minLevel = 0;
   this->maxLevel = -1;
   this->maxProbability = 1.0;
@@ -123,13 +122,17 @@ Feature::Feature(FILE *f, const std::string &name) {
         for (size_t x=0; x<size.x; x++) {
           FeatureCharDef &def = defs[line[x]];
           for (size_t y=y0; y<=y1; y++) {
-            cells[x+size.x*(y+size.y*z)] = Cell(def.type);
-            cells[x+size.x*(y+size.y*z)].SetYOffsets(def.top[0],def.top[1],def.top[2],def.top[3]);
-            cells[x+size.x*(y+size.y*z)].SetYOffsetsBottom(def.bot[0],def.bot[1],def.bot[2],def.bot[3]);
-            cells[x+size.x*(y+size.y*z)].SetOrder(def.topRev, def.botRev);
-            cells[x+size.x*(y+size.y*z)].SetLocked(def.lockCell);
-            cells[x+size.x*(y+size.y*z)].SetIgnoreLock(def.ignoreLock);
-            cells[x+size.x*(y+size.y*z)].SetIgnoreWrite(def.ignoreWrite);
+            Cell cell(def.type);
+            
+            cell.SetYOffsets(def.top[0],def.top[1],def.top[2],def.top[3]);
+            cell.SetYOffsetsBottom(def.bot[0],def.bot[1],def.bot[2],def.bot[3]);
+            cell.SetOrder(def.topRev, def.botRev);
+            cell.SetLocked(def.lockCell);
+            cell.SetIgnoreLock(def.ignoreLock);
+            cell.SetIgnoreWrite(def.ignoreWrite);
+            
+            cells[x+size.x*(y+size.y*z)] = cell;
+            
             defaultMask[x+size.x*(y+size.y*z)] = def.onlydefault;
             chars[x+size.x*(y+size.y*z)] = line[x];
           }
@@ -150,13 +153,13 @@ const IVector3 Feature::GetSize() const {
   return size;
 }
 
-float Feature::GetProbability(const World *world, const IVector3 &pos) const {
+float Feature::GetProbability(const Game &game, const IVector3 &pos) const {
   if (this->minY) std::cerr << pos.y << std::endl;
   if (pos.y < this->minY) {
     return 0;
   }
 
-  int level = world->GetLevel();
+  int level = game.GetLevel();
   
   if (level < this->minLevel) return 0;
   if (this->maxLevel < this->minLevel) return this->maxProbability;
@@ -166,23 +169,23 @@ float Feature::GetProbability(const World *world, const IVector3 &pos) const {
   return maxProbability * std::sin(3.14159*levelFrac);
 }
 
-FeatureInstance Feature::BuildFeature(World *world, const IVector3 &pos, int dir, int dist, size_t id, const FeatureConnection *conn) const {
+FeatureInstance Feature::BuildFeature(Game &game, World &world, const IVector3 &pos, int dir, int dist, size_t id, const FeatureConnection *conn) const {
   for (size_t z=0; z<size.z; z++) {
     for (size_t y=0; y<size.y; y++) {
       for (size_t x=0; x<size.x; x++) { 
-        if (defaultMask[x+size.x*(y+size.y*z)] && world->IsChecking()) continue;
-        if (defaultMask[x+size.x*(y+size.y*z)] && !world->IsDefault(pos+IVector3(x,y,z))) continue;
-        world->SetCell(pos+IVector3(x,y,z), cells[x+size.x*(y+size.y*z)]).SetFeatureID(id);
+        if (defaultMask[x+size.x*(y+size.y*z)] && world.IsChecking()) continue;
+        if (defaultMask[x+size.x*(y+size.y*z)] && !world.IsDefault(pos+IVector3(x,y,z))) continue;
+        world.SetCell(pos+IVector3(x,y,z), cells[x+size.x*(y+size.y*z)]).SetFeatureID(id);
       }
     }
   }
   if (conn) {
-    this->ReplaceChars(world, pos, conn->id, id);
+    this->ReplaceChars(game, world, pos, conn->id, id);
   }
   return FeatureInstance(this, pos, dir, dist+1, id);
 }
 
-void Feature::ReplaceChars(World *world, const IVector3 &pos, size_t connId, size_t featureId) const {
+void Feature::ReplaceChars(Game &game, World &world, const IVector3 &pos, size_t connId, size_t featureId) const {
   std::vector<char> repchars = this->chars;
   for (const FeatureReplacement &r : replacements) {
     if (r.conn == connId) {
@@ -204,14 +207,14 @@ void Feature::ReplaceChars(World *world, const IVector3 &pos, size_t connId, siz
         cell.SetYOffsets(def.top[0],def.top[1],def.top[2],def.top[3]);
         cell.SetYOffsetsBottom(def.bot[0],def.bot[1],def.bot[2],def.bot[3]);
         if (def.revRand) {
-          cell.SetOrder(world->GetRandom().Integer(2), world->GetRandom().Integer(2));
+          cell.SetOrder(game.GetRandom().Integer(2), game.GetRandom().Integer(2));
         } else {
           cell.SetOrder(def.topRev, def.botRev);
         }
         cell.SetLocked(def.lockCell);
         cell.SetIgnoreLock(true);
         cell.SetIgnoreWrite(def.ignoreWrite);
-        world->SetCell(pos+IVector3(x,y,z), cell).SetFeatureID(featureId);
+        world.SetCell(pos+IVector3(x,y,z), cell).SetFeatureID(featureId);
       }
     }
   }
@@ -224,9 +227,10 @@ void Feature::ReplaceChars(const FeatureReplacement &r, std::vector<char> &chars
 }
 
 void Feature::SpawnEntities(Game &game, const IVector3 &pos) const {
-  std::shared_ptr<World> world = game.GetWorld();
+  World &world = game.GetWorld();
+  
   for (const FeatureSpawn &spawn : spawns) {
-    if (world->GetRandom().Chance(spawn.probability)) {
+    if (game.GetRandom().Chance(spawn.probability)) {
       Entity *entity = nullptr;
 
       switch(spawn.spawnClass) {
@@ -239,15 +243,15 @@ void Feature::SpawnEntities(Game &game, const IVector3 &pos) const {
       if (spawn.attach) {
         IVector3 cellPos = spawnPos;
         
-        if (world->GetCell(cellPos + IVector3(0,-1,0)).IsSolid() && spawn.attach == -2) {
+        if (world.GetCell(cellPos + IVector3(0,-1,0)).IsSolid() && spawn.attach == -2) {
           spawnPos.y = cellPos.y + entity->GetAABB().extents.y + 0.001;
-        } else if (world->GetCell(cellPos + IVector3(1,0,0)).IsSolid() && spawn.attach == 1) {
+        } else if (world.GetCell(cellPos + IVector3(1,0,0)).IsSolid() && spawn.attach == 1) {
           spawnPos.x = cellPos.x + 1-entity->GetAABB().extents.x - 0.001;
-        } else if (world->GetCell(cellPos + IVector3(-1,0,0)).IsSolid() && spawn.attach == -1) {
+        } else if (world.GetCell(cellPos + IVector3(-1,0,0)).IsSolid() && spawn.attach == -1) {
           spawnPos.x = cellPos.x + entity->GetAABB().extents.x + 0.001;
-        } else if (world->GetCell(cellPos + IVector3(0,0,1)).IsSolid() && spawn.attach == 3) {
+        } else if (world.GetCell(cellPos + IVector3(0,0,1)).IsSolid() && spawn.attach == 3) {
           spawnPos.z = cellPos.z + 1-entity->GetAABB().extents.z - 0.001;
-        } else if (world->GetCell(cellPos + IVector3(0,0,-1)).IsSolid() && spawn.attach == -3) {
+        } else if (world.GetCell(cellPos + IVector3(0,0,-1)).IsSolid() && spawn.attach == -3) {
           spawnPos.z = cellPos.z + entity->GetAABB().extents.z + 0.001;
         } else {
           continue;
@@ -288,8 +292,8 @@ void FeatureConnection::Resolve() {
   }
 } 
 
-const Feature *FeatureConnection::GetRandomFeature(const World *world, const IVector3 &pos, Random &r) const {
-  if (nextFeatures.size() == 0) return nullptr;
+const Feature *FeatureConnection::GetRandomFeature(Game &game, const IVector3 &pos) const {
+  if (nextFeatures.empty()) return nullptr;
   
   struct W {
     const Feature *f;
@@ -302,7 +306,7 @@ const Feature *FeatureConnection::GetRandomFeature(const World *world, const IVe
     const Feature *f = getFeature(fname.first);
     if (!f) continue;
     
-    total += std::abs(f->GetProbability(world, pos+this->pos)*fname.second);
+    total += std::abs(f->GetProbability(game, pos+this->pos)*fname.second);
     W w;
     w.f = f;
     w.w = total;
@@ -314,7 +318,7 @@ const Feature *FeatureConnection::GetRandomFeature(const World *world, const IVe
     return nullptr;
   }
 
-  float select = total * r.Float01();
+  float select = total * game.GetRandom().Float01();
   for (W w : totals) {
     if (select < w.w) {
       return w.f;
@@ -327,23 +331,23 @@ const Feature *FeatureConnection::GetRandomFeature(const World *world, const IVe
 
 const FeatureConnection *
 Feature::GetRandomConnection(
-  Random &r
+  Game &game
 ) const {
   if (conns.size()==0) return nullptr;
-  return &conns[r.Integer(conns.size())];
+  return &conns[game.GetRandom().Integer(conns.size())];
 }
 
 const FeatureConnection *
 Feature::GetRandomConnection(
   int dir, 
-  Random &r
+  Game &game
 ) const {
   std::vector<const FeatureConnection *> cs;
   for (const FeatureConnection &c : conns) {
     if (c.dir == dir) cs.push_back(&c);
   }
   if (cs.size()==0) return nullptr;
-  return cs[r.Integer(cs.size())];
+  return cs[game.GetRandom().Integer(cs.size())];
 }
 
 void

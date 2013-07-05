@@ -16,7 +16,9 @@ class Game;
 class World final {
 public:
 
-  World(const IVector3 &size, int level, Random &random);
+  World(const IVector3 &size);
+  World(const World &world) = delete;
+  World(World &&world) = delete;
   ~World();
   
   void Build(Game &game);
@@ -49,12 +51,9 @@ public:
 
   void Dump();
 
-  int GetLevel() const { return level; }
   bool IsDefault(const IVector3 &pos);
   
-  Random &GetRandom() { return random; }
-
-  void AddFeatureSeen(size_t f);
+  void AddFeatureSeen(size_t f); // TODO: move to separate map class
   void BreakBlock(Game &game, const IVector3 &pos);
   
   void SetTorchLight(const IColor &color) { this->torchLight = color; }
@@ -70,7 +69,6 @@ private:
     return pos.x < size.x  && pos.y < size.y && pos.z < size.z; 
   }
 
-  Random &random;
   IVector3 size;
   bool dirty, firstDirty;
 
@@ -93,7 +91,6 @@ private:
   bool checkOverwrite;
   bool checkOverwriteOK;
 
-  int level;
   std::vector<FeatureInstance> instances;
 
   Shader *defaultShader;

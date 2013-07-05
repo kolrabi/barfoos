@@ -2,22 +2,22 @@
 /* src/config.h.in.  Generated from configure.ac by autoheader.  */
 
 /* Define to 1 if you have the `gdi32' library (-lgdi32). */
-/* #undef HAVE_LIBGDI32 */
+#define HAVE_LIBGDI32 1
 
 /* Define to 1 if you have the `GL' library (-lGL). */
-#define HAVE_LIBGL 1
+/* #undef HAVE_LIBGL */
 
 /* Define to 1 if you have the `glfw3' library (-lglfw3). */
 #define HAVE_LIBGLFW3 1
 
 /* Define to 1 if you have the `GLU' library (-lGLU). */
-#define HAVE_LIBGLU 1
+/* #undef HAVE_LIBGLU */
 
 /* Define to 1 if you have the `glu32' library (-lglu32). */
-/* #undef HAVE_LIBGLU32 */
+#define HAVE_LIBGLU32 1
 
 /* Define to 1 if you have the `opengl32' library (-lopengl32). */
-/* #undef HAVE_LIBOPENGL32 */
+#define HAVE_LIBOPENGL32 1
 
 /* Define to 1 if you have the `png' library (-lpng). */
 #define HAVE_LIBPNG 1
@@ -26,19 +26,19 @@
 #define HAVE_LIBPTHREAD 1
 
 /* Define to 1 if you have the `winmm' library (-lwinmm). */
-/* #undef HAVE_LIBWINMM */
+#define HAVE_LIBWINMM 1
 
 /* Define to 1 if you have the `X11' library (-lX11). */
-#define HAVE_LIBX11 1
+/* #undef HAVE_LIBX11 */
 
 /* Define to 1 if you have the `Xi' library (-lXi). */
-#define HAVE_LIBXI 1
+/* #undef HAVE_LIBXI */
 
 /* Define to 1 if you have the `Xrandr' library (-lXrandr). */
-#define HAVE_LIBXRANDR 1
+/* #undef HAVE_LIBXRANDR */
 
 /* Define to 1 if you have the `Xxf86vm' library (-lXxf86vm). */
-#define HAVE_LIBXXF86VM 1
+/* #undef HAVE_LIBXXF86VM */
 
 /* Define to 1 if you have the `z' library (-lz). */
 #define HAVE_LIBZ 1
@@ -71,7 +71,7 @@
 #define VERSION "0.1"
 
 /* define if compiling for windows */
-/* #undef WIN32 */
+#define WIN32 1
 
 /* define if compiling for X11 */
-#define X11 1
+/* #undef X11 */

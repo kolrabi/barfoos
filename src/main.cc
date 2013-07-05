@@ -43,6 +43,8 @@ int main() {
     ;
     
   delete game;
+  
+  Profile::Dump();
 
   return 0;
 }

@@ -330,5 +330,22 @@ TriangleRay(const Vector3 *tri, const Vector3 &start, const Vector3 &dir, float 
   p = start + dir * t;
   return true;
 }
+
+class Profile {
+public:
+
+  Profile(const char *func, const char *file, int line);
+  ~Profile();
+  
+  static void Dump();
+  
+private:
+  
+  std::string name;
+  unsigned long long startTick;
+};
+
+#define PROFILE() Profile __profile(__PRETTY_FUNCTION__, __FILE__, __LINE__)
+
 #endif
 

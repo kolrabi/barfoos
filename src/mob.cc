@@ -73,7 +73,7 @@ Mob::Update(Game &game) {
   velocity.z = velocity.z * friction;
 
   // move
-  std::shared_ptr<World> world = game.GetWorld();
+  World &world = game.GetWorld();
   uint8_t axis, axis2;
   bool movingDown = velocity.y <= 0;
 
@@ -83,18 +83,20 @@ Mob::Update(Game &game) {
     // when moving down and pushing use step height
     Vector3 step(0, move.GetMag()!=0 ? this->properties->stepHeight : 0, 0);
     Vector3 org = aabb.center + velocity.Horiz() * deltaT;
+    bool downStep = false;
     
-    aabb.center = world->MoveAABB(aabb, aabb.center + step, axis2);
-    aabb.center = world->MoveAABB(aabb, aabb.center + velocity.Horiz()*deltaT, axis);
-    aabb.center = world->MoveAABB(aabb, aabb.center - step*1.25 + velocity.Vert()*deltaT, axis2);
+    aabb.center = world.MoveAABB(aabb, aabb.center + step, axis2);
+    aabb.center = world.MoveAABB(aabb, aabb.center + velocity.Horiz()*deltaT, axis);
+    aabb.center = world.MoveAABB(aabb, aabb.center - step*1.25 + velocity.Vert()*deltaT, axis2);
+    downStep = axis2 & Axis::Y;
     org.y = aabb.center.y;
     axis |= axis2;
-    aabb.center = world->MoveAABB(aabb, org, axis2);
+    aabb.center = world.MoveAABB(aabb, org, axis2);
     axis |= axis2;
-    if (!axis2 & Axis::Y) aabb.center = aabb.center + step*0.25;
+    if (!downStep) aabb.center = aabb.center + step*0.25;
   } else if (!movingDown) {
     onGround = false;
-    aabb.center = world->MoveAABB(aabb, aabb.center + velocity*deltaT, axis);
+    aabb.center = world.MoveAABB(aabb, aabb.center + velocity*deltaT, axis);
   }
 
   // jump out of water
@@ -133,18 +135,18 @@ Mob::Think(Game &game) {
     if (validMoveTarget) move = tmove.Normalize() * this->properties->maxSpeed;
   }
  
-  std::shared_ptr<World> world = game.GetWorld();
+  World &world = game.GetWorld();
   IVector3 footPos(aabb.center.x, aabb.center.y - aabb.extents.y + this->properties->stepHeight, aabb.center.z);
-  footCell = &world->GetCell(footPos);
+  footCell = &world.GetCell(footPos);
 
   if (onGround) {
-    groundCell = &world->GetCell(footPos[Side::Down]);
+    groundCell = &world.GetCell(footPos[Side::Down]);
   } else {
     groundCell = nullptr;
   }
   
   IVector3 headPos(aabb.center.x, aabb.center.y + aabb.extents.y, aabb.center.z);
-  headCell = &world->GetCell(headPos);
+  headCell = &world.GetCell(headPos);
 
   underWater = headCell->GetInfo().flags & CellFlags::Liquid;
   if (!noclip) this->SetInLiquid(footCell->GetInfo().flags & CellFlags::Liquid);

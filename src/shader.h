@@ -14,6 +14,8 @@ public:
   void Uniform(const std::string &name, int value) const;
   void Uniform(const std::string &name, float value) const;
   void Uniform(const std::string &name, const IColor &value) const;
+  void Uniform(const std::string &name, const Vector3 &value) const;
+  void Uniform(const std::string &name, const Matrix4 &value) const;
   
   unsigned int GetProgram() const { return program; }
 

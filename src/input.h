@@ -40,10 +40,10 @@ enum class InputEventType {
 struct InputEvent {
   InputEventType type = InputEventType::Invalid;
   Point p;
-  InputKey key = InputKey::Invalid;
+  InputKey key;
   bool down = false;
   
-  InputEvent(InputEventType type, const Point &p) : type(type), p(p) {}
+  InputEvent(InputEventType type, const Point &p) : type(type), p(p), key(InputKey::Invalid) {}
   InputEvent(InputEventType type, const Point &p, InputKey key, bool down) : type(type), p(p), key(key), down(down) {}
 };
 

@@ -46,6 +46,9 @@ enum CellFlags {
 
 /** Information about a cell shared by cells of same type. */
 struct CellInfo {
+  /** Name of cell type. */
+  std::string type = "default";
+  
   /** An array of textures to randomly choose from on cell creation. */
   std::vector<const Texture *> textures;
   
@@ -97,7 +100,15 @@ struct CellInfo {
 */
 
   CellInfo() {}
-  CellInfo(FILE *f);
+  CellInfo(const std::string &name, FILE *f);
+  
+  bool operator==(const CellInfo &that) const {
+    return this == &that;
+  }
+
+  bool operator!=(const CellInfo &that) const {
+    return this != &that;
+  }
 };
 
 /** A cell in the world. */
@@ -105,10 +116,11 @@ class Cell {
 public:
 
   Cell(const std::string &type = "default");
+  Cell(const Cell &that);
   virtual ~Cell();
-
+  
   virtual void Update(Game &game);
-  virtual bool UpdateNeighbours();
+  virtual void UpdateNeighbours();
   
   virtual void Draw(std::vector<Vertex> &vertices) const;
   virtual void DrawHighlight(std::vector<Vertex> &vertices) const;
@@ -137,10 +149,8 @@ public:
   bool IsTransparent() const;
   bool IsSolid() const;
 
-  void SetWorld(World *world);
+  void SetWorld(World *world, const IVector3 &pos);
   World *GetWorld() const;
-  
-  void SetPosition(const IVector3 &pos);
   IVector3 GetPosition() const;
 
   const IColor &GetLightLevel() const;
@@ -160,13 +170,11 @@ public:
 
   size_t GetFeatureID() const;
   void SetFeatureID(size_t f);
-  bool IsFeatureBorder() const;
   
   bool HasSolidSides() const;
   bool CheckSideSolid(Side side, const Vector3 &org) const;
   
-  void SetDirty() { dirty = 1; }
-  bool IsDirty() const { return dirty; }
+  void SetDirty() { dirty = true; }
   
   AABB GetAABB() const;
 
@@ -177,44 +185,49 @@ public:
   
 protected:
 
-  // generic information
+  static const int OffsetScale = 32;
+
+  // unique information, that will change after assignment from different cell
+  const CellInfo *info;
   World *world;
   IVector3 pos;
-  float smoothDetail;
-  const CellInfo *info;
-  size_t dirty;
-  
-  std::string type;
-  IColor lightLevel, torchLight;
-  uint32_t detail;
-
-  // map generation
-  bool isLocked;    // disallow modification via World::SetCell...
-  bool ignoreLock;  // ..unless this is true
-  bool ignoreWrite; // World::SetCell will only pretend to succeed
-  size_t featureID;
-
-  // rendering  
-  bool reversedTop;
-  bool reversedBottom;
-  bool reversedSides;
-  
-  int8_t topHeights[4], bottomHeights[4];
-  float u[4], v[4];
-  uint8_t visibility;
-  uint8_t visibilityOverride;
-  const Texture *texture;
-  float uscale;
-  Vector3 corners[8];
-  std::vector<Vertex> verts;
+  bool dirty;
   
   size_t tickPhase;
-  size_t tickInterval;
+  IColor lightLevel;
   
+  uint8_t visibility;
+  bool reversedSides;
+  Vector3 corners[8];
+  std::vector<Vertex> verts;
   Cell *neighbours[6];
+  const Texture *texture;
+  float uscale;
+
+  // shared information, that will stay the same after assignment from different cell
+  struct {
+    size_t tickInterval;
+    
+    // map generation
+    bool isLocked;    // disallow modification via World::SetCell...
+    bool ignoreLock;  // ..unless this is true
+    bool ignoreWrite; // World::SetCell will only pretend to succeed
+    size_t featureID;
+
+    // rendering  
+    bool reversedTop;
+    bool reversedBottom;
+    
+    uint8_t visibilityOverride;
+    int8_t topHeights[4], bottomHeights[4];
+    float u[4], v[4];
+
+    uint32_t detail;
+    float smoothDetail;
+  } shared;
   
-  float YOfs(size_t n)  const { return topHeights[n]/32.0; }
-  float YOfsb(size_t n) const { return bottomHeights[n]/32.0; }
+  float YOfs(size_t n)  const { return this->shared.topHeights[n]/(float)OffsetScale; }
+  float YOfsb(size_t n) const { return this->shared.bottomHeights[n]/(float)OffsetScale; }
   
   IColor SideCornerColor(Side side, size_t corner) const;
   void SideColors(Side side, IColor *colors) const;
@@ -240,7 +253,7 @@ inline const CellInfo &Cell::GetInfo() const {
 }
 
 inline const std::string &Cell::GetType() const { 
-  return this->type; 
+  return this->info->type; 
 }
 
 inline uint8_t Cell::GetVisibility() const {
@@ -287,43 +300,43 @@ inline bool Cell::SetLightLevel(const IColor &level, bool force) {
 }
 
 inline bool Cell::IsLocked() const { 
-  return this->isLocked; 
+  return this->shared.isLocked; 
 }
 
 inline void Cell::SetLocked(bool locked) { 
-  this->isLocked = locked; 
+  this->shared.isLocked = locked; 
 }
   
 inline bool Cell::GetIgnoreLock() const { 
-  return this->ignoreLock; 
+  return this->shared.ignoreLock; 
 }
 
 inline void Cell::SetIgnoreLock(bool ignore) { 
-  this->ignoreLock = ignore; 
+  this->shared.ignoreLock = ignore; 
 }
   
 inline bool Cell::GetIgnoreWrite() const { 
-  return this->ignoreWrite; 
+  return this->shared.ignoreWrite; 
 }
 
 inline void Cell::SetIgnoreWrite(bool ignore) { 
-  this->ignoreWrite = ignore; 
+  this->shared.ignoreWrite = ignore; 
 }
 
 inline uint32_t Cell::GetDetail() const { 
-  return this->detail; 
+  return this->shared.detail; 
 }
 
 inline void Cell::SetDetail(uint32_t detail) { 
-  this->detail = detail;
+  this->shared.detail = detail;
 }
 
 inline size_t Cell::GetFeatureID() const { 
-  return this->featureID; 
+  return this->shared.featureID; 
 }
 
 inline void Cell::SetFeatureID(size_t f) { 
-  this->featureID = f;
+  this->shared.featureID = f;
 }
 
 void LoadCells();

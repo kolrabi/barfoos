@@ -23,7 +23,7 @@ struct FeatureConnection {
   FeatureConnection(const IVector3 &pos, int dir, size_t id) 
   : pos(pos), dir(dir), id(id), resolved(false) {}
 
-  const Feature *GetRandomFeature(const World *world, const IVector3 &pos, Random &r) const;
+  const Feature *GetRandomFeature(Game &game, const IVector3 &pos) const;
 
   void Resolve();
   bool resolved;
@@ -31,10 +31,12 @@ struct FeatureConnection {
 
 struct FeatureInstance {
   FeatureInstance(const Feature *feature, IVector3 pos, int dir, int dist, size_t id) 
-  : feature(feature), pos(pos), dir(dir), dist(dist), featureID(id) {
+  : feature(feature), pos(pos), dir(dir), dist(dist), featureID(id), prevID(~0UL) {
   }
   
-  FeatureInstance() :feature(nullptr), dir(0), dist(0) {}
+  FeatureInstance() 
+  : feature(nullptr), dir(0), dist(0), featureID(~0UL), prevID(~0UL) {
+  }
 
   const Feature *feature;
   IVector3 pos;
@@ -91,20 +93,20 @@ public:
   ~Feature();
   
   const IVector3 GetSize() const; 
-  float GetProbability(const World *world, const IVector3 &pos) const;
-  FeatureInstance BuildFeature(World *world, const IVector3 &pos, int dir, int dist, size_t id, const FeatureConnection *conn) const;
+  float GetProbability(const Game &game, const IVector3 &pos) const;
+  FeatureInstance BuildFeature(Game &game, World &world, const IVector3 &pos, int dir, int dist, size_t id, const FeatureConnection *conn) const;
   void SpawnEntities(Game &game, const IVector3 &pos) const;
   
   const std::vector<FeatureConnection> &GetConnections() const { return conns; }
 
-  const FeatureConnection *GetRandomConnection(Random &r) const;
-  const FeatureConnection *GetRandomConnection(int dir, Random &r) const;
+  const FeatureConnection *GetRandomConnection(Game &game) const;
+  const FeatureConnection *GetRandomConnection(int dir, Game &game) const;
   
-  const std::string &GetName() const { return name; }
+  const std::string &GetName()  const { return name;  }
   const std::string &GetGroup() const { return group; }
 
   void ResolveConnections();
-  void ReplaceChars(World *world, const IVector3 &pos, size_t connId, size_t featureId) const;
+  void ReplaceChars(Game &game, World &world, const IVector3 &pos, size_t connId, size_t featureId) const;
 
 protected:
 

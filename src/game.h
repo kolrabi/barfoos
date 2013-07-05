@@ -19,19 +19,25 @@ class Game final {
 public:
 
   Game(const std::string &seed, size_t level = 0, const Point &screenSize = Point(320, 240));
+  Game(const Game &game) = delete;
+  Game(Game &&game) = delete;
   ~Game();
   
   bool Init();
 
   bool Frame();
   
-  Gfx *GetGfx() const { return gfx; }
-  Input *GetInput() const { return input; }
-  Random &GetRandom() { return random; }
+  Gfx    *GetGfx()    const { return gfx;           }
+  Input  *GetInput()  const { return input;         }
+  World  &GetWorld()  const { return *this->world;  }
+  Random &GetRandom()       { return random;        }
 
-  float GetTime() const { return this->lastT; }
-  float GetDeltaT() const { return deltaT; }
-  float GetThinkFraction() const;
+  float   GetTime()   const { return this->lastT;   }
+  float   GetDeltaT() const { return this->deltaT;  }
+  float   GetFPS()    const { return this->fps;     }
+  float   GetThinkFraction() const; // TODO: move to entity
+
+  int     GetLevel()  const { return level;         }
   
   void HandleEvent(const InputEvent &event);
 
@@ -41,8 +47,6 @@ public:
   bool CheckEntities(const IVector3 &pos);
   std::vector<size_t> FindEntities(const AABB &aabb);
   temp_ptr<Entity> GetEntity(size_t id);
-  
-  std::shared_ptr<World> GetWorld() { return this->world; }
   
 private:
 
@@ -58,6 +62,7 @@ private:
   void Update(float t, float deltaT);
   
   std::shared_ptr<World> world;
+  int level;
   
   std::map<size_t, Entity*> entities;
   Player *player;
@@ -71,14 +76,17 @@ private:
   float lastT;
   float deltaT;
   float nextThinkT;
+  size_t frame;
+  float lastFPST;
+  
+  float fps;
   
   std::string seed;
   Random random;
-  size_t level;
   
   bool showInventory;
   
-  void BuildWorld(size_t level);
+  void BuildWorld();
 };
 
 #endif

@@ -110,6 +110,8 @@ Entity::Entity(const std::string &type) {
   
   this->health = properties->maxHealth;
   this->lastCell = nullptr;
+  this->id = ~0UL;
+  this->drawAABB = false;
 }
 
 Entity::~Entity() {
@@ -117,13 +119,13 @@ Entity::~Entity() {
 
 void
 Entity::Start(Game &game, size_t id) {
-  std::shared_ptr<World> world = game.GetWorld();
+  World &world = game.GetWorld();
   
   this->id = id;
   
   // fill inventory with random crap
   for (auto item : this->properties->items) {
-    if (world->GetRandom().Chance(item.second)) {
+    if (game.GetRandom().Chance(item.second)) {
       this->AddToInventory(std::shared_ptr<Item>(new Item(item.first)));
     }
   }
@@ -140,7 +142,7 @@ Entity::Start(Game &game, size_t id) {
   verts.push_back(Vector3( aabb.extents.x,  aabb.extents.y,  aabb.extents.z));
 
   for (Vector3 v : verts) {
-    if (world->IsPointSolid(aabb.center + v)) {
+    if (world.IsPointSolid(aabb.center + v)) {
       aabb.center = aabb.center - v;
     }
   }
@@ -158,7 +160,7 @@ Entity::Update(Game &game) {
     this->smoothPosition = this->smoothPosition + (aabb.center - this->smoothPosition) * game.GetDeltaT() * 30.0f;
   }
   if (this->lastCell) {
-    this->cellLight = game.GetWorld()->GetLight(this->lastCell->GetPosition());
+    this->cellLight = game.GetWorld().GetLight(this->lastCell->GetPosition());
   }
   this->drawAABB = game.GetInput()->IsKeyActive(InputKey::DebugEntityAABB);
 }
@@ -167,13 +169,14 @@ void
 Entity::Think(Game &game) {
   this->cellPos = IVector3(aabb.center.x, aabb.center.y, aabb.center.z);
   
-  Cell *cell = &game.GetWorld()->GetCell(cellPos);
+  World &world = game.GetWorld();
+  Cell *cell = &world.GetCell(cellPos);
   if (cell != this->lastCell) {
     if (this->lastCell && this->properties->cellLeave != "") {
-      game.GetWorld()->SetCell(this->lastCell->GetPosition(), Cell(this->properties->cellLeave));
+      world.SetCell(this->lastCell->GetPosition(), Cell(this->properties->cellLeave));
     }
     if (this->properties->cellEnter != "") {
-      game.GetWorld()->SetCell(cellPos, Cell(this->properties->cellEnter));
+      world.SetCell(cellPos, Cell(this->properties->cellEnter));
     }
     this->lastCell = cell;
   }
@@ -234,7 +237,7 @@ Entity::Die(Game &game, const HealthInfo &info) {
   this->removable = true;
   
   if (this->lastCell && this->properties->cellLeave != "") {
-    game.GetWorld()->SetCell(this->lastCell->GetPosition(), Cell(this->properties->cellLeave));
+    game.GetWorld().SetCell(this->lastCell->GetPosition(), Cell(this->properties->cellLeave));
   }
   
   // drop inventory

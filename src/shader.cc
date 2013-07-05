@@ -72,3 +72,18 @@ Shader::Uniform(const std::string &name, const IColor &value) const {
   glUniform3fv(loc, 1, rgb);
 }
 
+void 
+Shader::Uniform(const std::string &name, const Vector3 &value) const {
+  glUseProgramObjectARB(program);
+  int loc = glGetUniformLocationARB(program, name.c_str());
+  float xyz[3] = { value.x, value.y, value.z };
+  glUniform3fv(loc, 1, xyz);
+}
+  
+void 
+Shader::Uniform(const std::string &name, const Matrix4 &value) const {
+  glUseProgramObjectARB(program);
+  int loc = glGetUniformLocationARB(program, name.c_str());
+  glUniformMatrix4fv(loc, 1, false, value.m);
+}
+

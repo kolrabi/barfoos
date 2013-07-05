@@ -7,6 +7,8 @@ class Serializer {
 public:
 
   Serializer(const char *magic, size_t magiclen=4);
+  Serializer(const Serializer &) = delete;
+  Serializer(Serializer &&) = delete;
   ~Serializer();
 
   Serializer &operator << (const uint8_t &);

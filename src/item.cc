@@ -70,7 +70,7 @@ ItemProperties::ItemProperties(FILE *f) {
       this->sprite.height = std::atof(tokens[2].c_str());
     } else if (tokens[0] == "damage") {
       this->damage = std::atof(tokens[1].c_str());
-    } else if (tokens[0] == "armor") {
+    } else if (tokens[0] == "armorpoints") {
       this->armor = std::atof(tokens[1].c_str());
     } else if (tokens[0] == "cooldown") {
       this->cooldown = std::atof(tokens[1].c_str());

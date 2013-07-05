@@ -50,6 +50,7 @@ barfoos_SOURCES=\
   random.h util.h \
   serializer.cc serializer.h \
   input.cc input.h \
+  profile.cc \
   $(RESFILE)
 
 ## Packaging ------------------------------------------------------

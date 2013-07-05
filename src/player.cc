@@ -19,9 +19,13 @@ Player::Player() : Mob("player") {
 
   bobPhase = 0;
   bobAmplitude = 0;
+  fps = 0;
   
   noclip = false;
   this->selectedCell = nullptr;
+  this->selectedCellSide = Side::Forward;
+  this->selectionRange = 0;
+  this->selectedEntity = ~0UL;
 
   this->Equip(std::make_shared<Item>(Item("sword")), InventorySlot::RightHand);
   this->Equip(std::make_shared<Item>(Item("torch")), InventorySlot::LeftHand);
@@ -58,6 +62,8 @@ Player::MapView(Gfx &gfx) const {
 void 
 Player::Update(Game &game) {
   Mob::Update(game);
+  
+  this->fps = game.GetFPS();
 
   UpdateInput(game);
   UpdateSelection(game);
@@ -96,9 +102,9 @@ Player::Update(Game &game) {
     }
   }
   
-  game.GetWorld()->SetTorchLight(this->torchLight);
+  game.GetWorld().SetTorchLight(this->torchLight);
   if (headCell) {
-    game.GetWorld()->AddFeatureSeen(headCell->GetFeatureID());
+    game.GetWorld().AddFeatureSeen(headCell->GetFeatureID());
   }
 }
 
@@ -138,7 +144,7 @@ void Player::UpdateSelection(Game &game) {
   }
   
   // check cells
-  Cell &cell = game.GetWorld()->CastRayCell(pos, dir, hitDist, this->selectedCellSide);
+  Cell &cell = game.GetWorld().CastRayCell(pos, dir, hitDist, this->selectedCellSide);
   if (hitDist < dist) {
     dist = hitDist;
     this->selectedCell = &cell;
@@ -242,6 +248,7 @@ Player::DrawGUI(Gfx &gfx) const {
   gfx.DrawIcon(sprite, Point(vsize.x/2, vsize.y/2));
 
   std::stringstream str;
+  str << fps << std::endl;
   str << smoothPosition << std::endl;
   str << (this->selectedCell?this->selectedCell->GetType():"(null)") << std::endl;
   str << (this->headCell?this->headCell->GetFeatureID():~0UL) << std::endl;

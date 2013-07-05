@@ -13,10 +13,22 @@
 Game::Game(const std::string &seed, size_t level, const Point &screenSize) 
 : input(new Input()), 
   gfx(new Gfx(Point(1920, 32), screenSize, false)),
+  level(level),
   seed(seed), 
-  random(seed, level),
-  level(level)  {
- 
+  random(seed, level)
+  {
+
+  this->player = nullptr;
+  this->nextEntityId = 0;
+  this->startT = 0.0;
+  this->lastT = 0.0;
+  this->deltaT = 0.0;
+  this->nextThinkT = 0.0;
+  this->frame = 0;
+  this->lastFPST = 0;
+  this->fps = 0;
+  this->showInventory = false;
+  
   this->handlerId = this->input->AddHandler( [this](const InputEvent &event){ this->HandleEvent(event); } );
   this->isInit = false;
 }
@@ -44,8 +56,11 @@ Game::Init() {
   this->lastT = 0;
   this->deltaT = 0;
   this->nextThinkT = 0;
+  this->frame = 0;
+  this->lastFPST = 0;
+  this->fps = 0;
 
-  this->BuildWorld(level);
+  this->BuildWorld();
 
   this->startT = this->gfx->GetTime();
 
@@ -60,6 +75,8 @@ void Game::Deinit() {
 }
 
 bool Game::Frame() {
+  PROFILE();
+  
   if (!this->gfx->Swap()) return false;
   
   // render game
@@ -76,11 +93,20 @@ bool Game::Frame() {
   this->lastT = t;
   
   this->gfx->Update(*this);
+  
+  this->frame ++;
+  if (t - this->lastFPST >= 1.0) {
+    this->fps = this->frame / (t-this->lastFPST);
+    this->frame = 0;
+    this->lastFPST += 1.0;
+  }
   return true;
 }
 
 void
 Game::Render() const {
+  PROFILE();
+  
   this->gfx->ClearColor(IColor(30, 30, 20));
   this->gfx->ClearDepth(1.0);
   this->gfx->Viewport(Rect());
@@ -115,6 +141,8 @@ float Game::GetThinkFraction() const {
 
 void 
 Game::Update(float t, float deltaT) {
+  PROFILE();
+  
   this->lastT = t;
   this->deltaT = deltaT;
   
@@ -182,9 +210,11 @@ Game::Update(float t, float deltaT) {
 }
 
 void 
-Game::BuildWorld(size_t level) { 
-  random.Seed(seed, level); 
-  this->world = std::shared_ptr<World>(new World(IVector3(64, 64, 64), level, random));
+Game::BuildWorld() { 
+  PROFILE();
+
+  random.Seed(seed, level+1); 
+  this->world = std::shared_ptr<World>(new World(IVector3(64, 64, 64)));
   this->world->Build(*this);
 
   Player *player = new Player();

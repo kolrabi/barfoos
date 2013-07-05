@@ -14,7 +14,7 @@ Particle::~Particle() {
 void Particle::Update(Game &game) {
   Mob::Update(game);
   
-  if (this->dieT == 0.0) this->dieT = game.GetTime() + 2 + game.GetWorld()->GetRandom().Float();
+  if (this->dieT == 0.0) this->dieT = game.GetTime() + 2 + game.GetRandom().Float();
   if (game.GetTime() > this->dieT) this->removable = true;
 }
 

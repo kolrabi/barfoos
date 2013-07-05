@@ -51,6 +51,10 @@ Gfx::Gfx(const Point &pos, const Point &size, bool fullscreen)
     mouseGrab(false),
     guiActiveCount(0)
 {
+  this->window = nullptr;
+  this->noiseTex = nullptr;
+  this->activeShader = nullptr;
+  
   // unit cube vertices
   this->cubeVerts.push_back(Vertex(Vector3(-1, 1, -1), IColor(255,255,255), 0,0, Vector3( 0, 0,-1)));
   this->cubeVerts.push_back(Vertex(Vector3( 1, 1, -1), IColor(255,255,255), 1,0, Vector3( 0, 0,-1)));
@@ -131,7 +135,7 @@ Gfx::Init(Game &game) {
 
   // Window resize
   glfwSetWindowSizeCallback( this->window, [](GLFWwindow *window, int w, int h) { 
-    Game &game = *(Game*)glfwGetWindowUserPointer(window);
+    Game &game = *reinterpret_cast<Game*>(glfwGetWindowUserPointer(window));
     Gfx  *gfx  = game.GetGfx();
     
     Point size(w,h);
@@ -151,8 +155,8 @@ Gfx::Init(Game &game) {
   
   // Mouse cursor movement
   glfwSetCursorPosCallback(  this->window, [](GLFWwindow *window, double x, double y) { 
-    Game *game = (Game*)glfwGetWindowUserPointer(window);
-    Gfx  *gfx  = game->GetGfx();
+    Game &game = *reinterpret_cast<Game*>(glfwGetWindowUserPointer(window));
+    Gfx  *gfx  = game.GetGfx();
     
     if (gfx->guiActiveCount || !gfx->mouseGrab) {
       // map to virtual screen size
@@ -165,20 +169,22 @@ Gfx::Init(Game &game) {
       gfx->mousePos = mousePos;
     
       // send absolute coordinats
-      game->GetInput()->HandleEvent(InputEvent(InputEventType::MouseMove, mousePos)); 
+      game.GetInput()->HandleEvent(InputEvent(InputEventType::MouseMove, mousePos)); 
     } else if (gfx->mouseGrab) {
       // get distance from center
-      gfx->mouseDelta = Point(
+      gfx->mouseDelta = gfx->mouseDelta + Point(
         x - gfx->screenSize.x/2,
         y - gfx->screenSize.y/2
       );
+      // reset cursor to center
+      glfwSetCursorPos(gfx->window, gfx->screenSize.x/2, gfx->screenSize.y/2);
     }
   } );
   
   // Mouse buttons
   glfwSetMouseButtonCallback(this->window, [](GLFWwindow *window, int b, int e, int) { 
-    Game *game = (Game*)glfwGetWindowUserPointer(window);
-    Gfx  *gfx  = game->GetGfx();
+    Game &game = *reinterpret_cast<Game*>(glfwGetWindowUserPointer(window));
+    Gfx  *gfx  = game.GetGfx();
     
     bool down = (e != GLFW_RELEASE);
     InputKey key = MapMouseButton(b);
@@ -189,18 +195,18 @@ Gfx::Init(Game &game) {
         glfwSetCursorPos(gfx->window, gfx->screenSize.x/2, gfx->screenSize.y/2);
         glfwSetInputMode(gfx->window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
       } else {
-        game->GetInput()->HandleEvent(InputEvent(InputEventType::Key, gfx->mousePos, key, down));
+        game.GetInput()->HandleEvent(InputEvent(InputEventType::Key, gfx->mousePos, key, down));
       }
       gfx->mouseGrab = true;
     } else {
       // if already grabbed
-      game->GetInput()->HandleEvent(InputEvent(InputEventType::Key, gfx->mousePos, key, down));
+      game.GetInput()->HandleEvent(InputEvent(InputEventType::Key, gfx->mousePos, key, down));
     }
   } );
   
   glfwSetKeyCallback(        this->window, [](GLFWwindow *window, int k, int, int e, int) { 
-    Game *game = (Game*)glfwGetWindowUserPointer(window);
-    Gfx  *gfx  = game->GetGfx();
+    Game &game = *reinterpret_cast<Game*>(glfwGetWindowUserPointer(window));
+    Gfx  *gfx  = game.GetGfx();
     
     bool down = e != GLFW_RELEASE;
     InputKey key = MapKey(k);
@@ -210,19 +216,19 @@ Gfx::Init(Game &game) {
       glfwSetInputMode(gfx->window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
       gfx->mouseGrab = false;
     } else {
-      game->GetInput()->HandleEvent(InputEvent(InputEventType::Key, gfx->mousePos, key, down));
+      game.GetInput()->HandleEvent(InputEvent(InputEventType::Key, gfx->mousePos, key, down));
     }
   } );
   
   //
-  glfwSwapInterval(1);
+  //glfwSwapInterval(1);
 
   // We'd like extensions with that
   GLeeInit();
   
   // Basic GL settings
   glCullFace(GL_BACK);
-  //glEnable(GL_CULL_FACE);
+  glEnable(GL_CULL_FACE);
   
   glEnable(GL_ALPHA_TEST);
   glAlphaFunc(GL_GREATER, 0);
@@ -230,8 +236,8 @@ Gfx::Init(Game &game) {
   glEnable(GL_TEXTURE_2D);
   glEnable(GL_SCISSOR_TEST);
   
-  //glEnable(GL_DEPTH_TEST);
-  //glEnable(GL_BLEND);
+  glEnable(GL_DEPTH_TEST);
+  glEnable(GL_BLEND);
   glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
 
   // Colors look nicer unclamped
@@ -239,8 +245,6 @@ Gfx::Init(Game &game) {
     glClampColorARB(GL_CLAMP_VERTEX_COLOR_ARB, GL_FALSE);
     glClampColorARB(GL_CLAMP_FRAGMENT_COLOR_ARB, GL_FALSE);
   }
-
-  glHint(GL_FOG_HINT, GL_NICEST);
 
   this->noiseTex = noiseTexture(Point(256,256), Vector3(32,32,32));
   SetTextureFrame(this->noiseTex, 1);
@@ -310,9 +314,6 @@ Gfx::Update(Game &game) {
     // send relative coordinates
     game.GetInput()->HandleEvent(InputEvent(InputEventType::MouseDelta, mouseDelta)); 
 
-    // reset cursor to center
-    glfwSetCursorPos(this->window, this->screenSize.x/2, this->screenSize.y/2);
-
     mouseDelta = Point();
   }
 }
@@ -337,63 +338,62 @@ void Gfx::Viewport(const Rect &view) {
   }
 }
 
-void Gfx::View3D(const Vector3 &pos, const Vector3 &forward, float fovY, const Vector3 &up) const {
-  glMatrixMode(GL_PROJECTION);
-  glLoadIdentity();
-  
+void Gfx::View3D(const Vector3 &pos, const Vector3 &forward, float fovY, const Vector3 &up) {
   float aspect = (float)this->viewportSize.x / (float)this->viewportSize.y;
+  
   if (fovY > 0.0) {
-    gluPerspective(fovY, aspect, 0.0015f, 64.0f);
+    this->proj = Matrix4::Perspective(fovY, aspect, 0.0015f, 64.0f);
   } else {
-    glOrtho(fovY*aspect, -fovY*aspect, fovY, -fovY, 0.0015f, 64.0f);
+    this->proj = Matrix4::Ortho(fovY*aspect, -fovY*aspect, fovY, -fovY, 0.0015f, 64.0f);
   }
   
-  Vector3 tpos = pos + forward;
+  this->modelView = Matrix4::LookFrom(pos, forward, up);
   
-  glMatrixMode(GL_MODELVIEW);
-  glLoadIdentity();
-  gluLookAt(pos.x, pos.y, pos.z, tpos.x, tpos.y, tpos.z, up.x, up.y, up.z);
   glEnable(GL_DEPTH_TEST);
 }
 
-void Gfx::ViewGUI() const {
-  glMatrixMode(GL_PROJECTION);
-  glLoadIdentity();
-  
-  glMatrixMode(GL_MODELVIEW);
-  glLoadIdentity();
-  
-  glScalef(2.0/this->screenSize.x, -2.0/this->screenSize.y, 1);
-  glTranslatef(-this->screenSize.x/2,-this->screenSize.y/2, 0);
+void Gfx::ViewGUI() {
+  this->proj = Matrix4();
+
+  this->modelView = 
+    Matrix4::Scale(    Vector3(2.0/this->screenSize.x, -2.0/this->screenSize.y, 1)) *
+    Matrix4::Translate(Vector3( -this->screenSize.x/2, -this->screenSize.y/2,   0));
+    
   if (this->screenSize.x > 640) {
-    glScalef(2,2,1);
+    this->modelView = this->modelView * Matrix4::Scale(Vector3(2,2,1));
   }
+  
   glDisable(GL_DEPTH_TEST);
 }
 
-void Gfx::ViewPush() const {
-  glMatrixMode(GL_MODELVIEW);
-  glPushMatrix();
+void Gfx::ViewPush() {
+  this->projStack.push_back(this->proj);
+  this->viewStack.push_back(this->modelView);
+  this->textureStack.push_back(this->textureMatrix);
 }
 
-void Gfx::ViewPop() const {
-  glMatrixMode(GL_MODELVIEW);
-  glPopMatrix();
+void Gfx::ViewPop() {
+  if (projStack.empty()) return;
+  
+  this->proj = this->projStack.back();
+  this->modelView = this->viewStack.back();
+  this->textureMatrix = this->textureStack.back();
+  
+  this->projStack.pop_back();
+  this->viewStack.pop_back();
+  this->textureStack.pop_back();
 }
 
-void Gfx::ViewTranslate(const Vector3 &p) const {
-  glMatrixMode(GL_MODELVIEW);
-  glTranslatef(p.x, p.y, p.z);
+void Gfx::ViewTranslate(const Vector3 &p) {
+  this->modelView = this->modelView * Matrix4::Translate(p);
 }
 
-void Gfx::ViewScale(const Vector3 &p) const {
-  glMatrixMode(GL_MODELVIEW);
-  glScalef(p.x, p.y, p.z);
+void Gfx::ViewScale(const Vector3 &p) {
+  this->modelView = this->modelView * Matrix4::Scale(p);
 }
 
-void Gfx::ViewRotate(float angle, const Vector3 &p) const {
-  glMatrixMode(GL_MODELVIEW);
-  glRotatef(angle, p.x, p.y, p.z);
+void Gfx::ViewRotate(float angle, const Vector3 &p)  {
+  this->modelView = this->modelView * Matrix4::Rotate(angle, p);
 }
 
 void Gfx::SetDepthTest(bool on) const {
@@ -412,17 +412,14 @@ void Gfx::SetCullFace(bool on) const {
   }
 }
 
-void Gfx::SetShader(const Shader *shader) const {
+void Gfx::SetShader(const Shader *shader) {
+  this->activeShader = shader;
   if (!shader) {
     glUseProgramObjectARB(0);
     return;
   }
 
   glUseProgramObjectARB(shader->GetProgram());
-  shader->Uniform("u_fogExp2",  this->fogExp2);
-  shader->Uniform("u_fogLin",   this->fogLin);
-  shader->Uniform("u_fogColor", this->fogColor);
-  shader->Uniform("u_time",     this->GetTime());
 }
 
 void 
@@ -430,50 +427,62 @@ Gfx::SetFog(float e, float l, const IColor &color) {
   this->fogExp2 = e;
   this->fogLin = l;
   this->fogColor = color;
-/*
-  // Light fog for the right mood
-  float c[4] = { color.r/255.0, color.b/255.0, 0,1 };
-  glEnable(GL_FOG);
-  glFogfv(GL_FOG_COLOR, black);
-  glFogf(GL_FOG_START, 0);
-  glFogf(GL_FOG_END, 64);
-  
-  glFogi(GL_FOG_MODE, GL_EXP2);
-  glFogf(GL_FOG_DENSITY, e);
-  */
 }
 
-
 void 
-Gfx::SetTextureFrame(const Texture *texture, size_t stage, size_t currentFrame, size_t frameCount) const {
+Gfx::SetTextureFrame(const Texture *texture, size_t stage, size_t currentFrame, size_t frameCount) {
   glActiveTexture(GL_TEXTURE0 + stage);
-  glEnable(GL_TEXTURE_2D);
-  
-  glMatrixMode(GL_TEXTURE);
-  glLoadIdentity();
-  
-  if (frameCount > 1) {
-    glScalef(1.0/frameCount, 1, 1);
-    glTranslatef(currentFrame, 0, 0);
-  }
-  
-  glMatrixMode(GL_MODELVIEW);
-  
   if (texture) {
     glBindTexture(GL_TEXTURE_2D, texture->handle);
-    //std::cerr << "binding " << texture->handle << std::endl;
+    glEnable(GL_TEXTURE_2D);
   } else {
     glBindTexture(GL_TEXTURE_2D, 0);
+    glDisable(GL_TEXTURE_2D);
+    return;
+  }
+  
+  this->textureMatrix = Matrix4();
+  
+  if (frameCount > 1) {
+    this->textureMatrix = 
+      Matrix4::Scale(Vector3(1.0/frameCount, 1, 1)) *
+      Matrix4::Translate(Vector3(currentFrame, 0, 0));
   }
 }
 
 void
-Gfx::SetColor(const IColor &color) const {
-  glColor3f(color.r/255.0, color.g/255.0, color.b/255.0);
+Gfx::SetColor(const IColor &color) {
+  this->color = color;
+}
+
+void 
+Gfx::SetUniforms() const {
+  if (!this->activeShader) return;
+  
+  this->activeShader->Uniform("u_fogExp2",  this->fogExp2);
+  this->activeShader->Uniform("u_fogLin",   this->fogLin);
+  this->activeShader->Uniform("u_fogColor", this->fogColor);
+  this->activeShader->Uniform("u_time",     this->GetTime());
+  this->activeShader->Uniform("u_color",    this->color);
+
+  this->activeShader->Uniform("u_matProjection",    this->proj);
+  this->activeShader->Uniform("u_matModelView",     this->modelView);
+  this->activeShader->Uniform("u_matTexture",       this->textureMatrix);
+  
+  glMatrixMode(GL_TEXTURE);
+  glLoadMatrixf(textureMatrix.m);
+  
+  glMatrixMode(GL_PROJECTION);
+  glLoadMatrixf(proj.m);
+
+  glMatrixMode(GL_MODELVIEW);
+  glLoadMatrixf(modelView.m);
 }
 
 void 
 Gfx::DrawTriangles(const std::vector<Vertex> &vertices) const {
+  this->SetUniforms();
+  
   glEnableClientState(GL_VERTEX_ARRAY);
   glEnableClientState(GL_COLOR_ARRAY);
   glEnableClientState(GL_TEXTURE_COORD_ARRAY);
@@ -489,6 +498,8 @@ Gfx::DrawTriangles(const std::vector<Vertex> &vertices) const {
 
 void 
 Gfx::DrawQuads(const std::vector<Vertex> &vertices) const {
+  this->SetUniforms();
+  
   glEnableClientState(GL_VERTEX_ARRAY);
   glEnableClientState(GL_COLOR_ARRAY);
   glEnableClientState(GL_TEXTURE_COORD_ARRAY);
@@ -502,37 +513,75 @@ Gfx::DrawQuads(const std::vector<Vertex> &vertices) const {
   glDisableClientState(GL_VERTEX_ARRAY);
 }
 
+void 
+Gfx::DrawTriangles(unsigned int vbo, size_t vertexCount) const {
+  this->SetUniforms();
+  
+  glEnableClientState(GL_VERTEX_ARRAY);
+  glEnableClientState(GL_COLOR_ARRAY);
+  glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+
+  glBindBuffer       (GL_ARRAY_BUFFER, vbo);
+  glInterleavedArrays(GL_T2F_C4F_N3F_V3F,  sizeof(Vertex), nullptr);
+  glDrawArrays       (GL_TRIANGLES,    0, vertexCount);
+  glBindBuffer(GL_ARRAY_BUFFER, 0);
+  
+  glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+  glDisableClientState(GL_COLOR_ARRAY);
+  glDisableClientState(GL_VERTEX_ARRAY);
+}
+
+void 
+Gfx::DrawQuads(unsigned int vbo, size_t vertexCount) const {
+  this->SetUniforms();
+  
+  glEnableClientState(GL_VERTEX_ARRAY);
+  glEnableClientState(GL_COLOR_ARRAY);
+  glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+
+  glBindBuffer       (GL_ARRAY_BUFFER, vbo);
+  glInterleavedArrays(GL_T2F_C4F_N3F_V3F,  sizeof(Vertex), nullptr);
+  glDrawArrays       (GL_QUADS,    0, vertexCount);
+  glBindBuffer(GL_ARRAY_BUFFER, 0);
+  
+  glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+  glDisableClientState(GL_COLOR_ARRAY);
+  glDisableClientState(GL_VERTEX_ARRAY);
+}
+
 void Gfx::DrawUnitCube() const {
   this->DrawQuads(this->cubeVerts);
 }    
 
-void Gfx::DrawAABB(const AABB &aabb) const {
-  glMatrixMode(GL_MODELVIEW);
-  glPushMatrix();
-  
-  glTranslatef(aabb.center.x, aabb.center.y, aabb.center.z);
-  glScalef(aabb.extents.x, aabb.extents.y, aabb.extents.z);
-  
+void Gfx::DrawAABB(const AABB &aabb) {
+  this->ViewPush();
+  this->ViewTranslate(aabb.center);
+  this->ViewScale(aabb.extents);
   this->DrawUnitCube();
-  
-  glPopMatrix();
+  this->ViewPop();
 }
 
-void Gfx::DrawSprite(const Sprite &sprite, const Vector3 &pos, bool billboard) const {
+void Gfx::DrawSprite(const Sprite &sprite, const Vector3 &pos, bool billboard) {
   this->SetTextureFrame(sprite.texture, 0, sprite.currentFrame, sprite.totalFrames);
 
   this->ViewPush();
   this->ViewTranslate(pos);
 
   if (billboard) {
-    float m[16];
-    glGetFloatv(GL_MODELVIEW_MATRIX, m);
+    this->modelView(0,0) = 1; 
+    this->modelView(0,1) = 0;
+    this->modelView(0,2) = 0;
+
+    if (!sprite.vertical) {
+      this->modelView(1,0) = 0; 
+      this->modelView(1,1) = 1;
+      this->modelView(1,2) = 0;
+    }
     
-    m[0] = 1; m[1] = 0; m[2]  = 0;
-    if (!sprite.vertical) { m[4] = 0; m[5] = 1; m[6]  = 0; }
-    m[8] = 0; m[9] = 0; m[10] = 1;
+    this->modelView(2,0) = 0; 
+    this->modelView(2,1) = 0;
+    this->modelView(2,2) = 1;
     
-    glLoadMatrixf(m);
     this->ViewTranslate(Vector3(sprite.offsetX, sprite.offsetY, 0));
   }
   
@@ -543,19 +592,14 @@ void Gfx::DrawSprite(const Sprite &sprite, const Vector3 &pos, bool billboard) c
   this->ViewPop();
 }
 
-void Gfx::DrawIcon(const Sprite &sprite, const Point &center, const Point &size) const {
+void Gfx::DrawIcon(const Sprite &sprite, const Point &center, const Point &size) {
   this->SetTextureFrame(sprite.texture, 0, sprite.currentFrame, sprite.totalFrames);
 
-  glMatrixMode(GL_MODELVIEW);
-  glPushMatrix();
-  
-  glTranslatef(center.x, center.y, 0);
-  glTranslatef(sprite.offsetX*size.x, sprite.offsetY*size.y, 0);
-  glScalef((sprite.width*size.x)/2, -(sprite.height*size.y)/2, 1);
- 
+  this->ViewPush();
+  this->ViewTranslate(Vector3(center.x + sprite.offsetX*size.x, center.y + sprite.offsetY*size.y, 0));
+  this->ViewScale    (Vector3((sprite.width*size.x)/2, -(sprite.height*size.y)/2, 1));
   this->DrawQuads(this->quadVerts);
-
-  glPopMatrix();
+  this->ViewPop();
 }
 
 Point 
