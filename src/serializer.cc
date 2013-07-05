@@ -55,6 +55,7 @@ bool Serializer::WriteToFile(const std::string &fileName) {
     return false;
   }
   
+  fclose(f);
   return true;
 }
 

@@ -52,11 +52,13 @@ std::string loadAssetAsString(const std::string &name) {
   char *text = new char[size + 1];
   if (fread(text, size, 1, f) != 1) {
     delete[]text;
+    fclose(f);
     return "";
   }
   text[size] = 0;
   std::string str = text;
   delete[]text;
+  fclose(f);
   return str;
 }
 
