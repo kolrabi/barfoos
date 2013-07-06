@@ -213,7 +213,7 @@ void
 Game::BuildWorld() { 
   PROFILE();
 
-  random.Seed(seed, level+1); 
+  random.Seed(seed, level+2); 
   this->world = std::shared_ptr<World>(new World(IVector3(64, 64, 64)));
   this->world->Build(*this);
 

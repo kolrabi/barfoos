@@ -1,3 +1,5 @@
+#include <GLFW/glfw3.h>
+
 #include "game.h"
 
 #include <png.h>
@@ -32,10 +34,17 @@ static std::string credits() {
 int main() {
   std::cerr << credits() << std::endl;
   std::setlocale(LC_ALL, "en_US.utf8");
+  
+  // Set up glfw
+  if (!glfwInit()) {
+    std::cerr << "Could not initialize GLFW\n";
+    return -1;
+  }
 
   Game *game = new Game("seed", 0);
   if (!game->Init()) {
     delete game;
+    glfwTerminate();
     return -1;
   }
 
@@ -43,6 +52,8 @@ int main() {
     ;
     
   delete game;
+  
+  glfwTerminate();
   
   Profile::Dump();
 

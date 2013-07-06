@@ -54,6 +54,7 @@ Gfx::Gfx(const Point &pos, const Point &size, bool fullscreen)
   this->window = nullptr;
   this->noiseTex = nullptr;
   this->activeShader = nullptr;
+  this->activeTextureStage = 0;
   
   // unit cube vertices
   this->cubeVerts.push_back(Vertex(Vector3(-1, 1, -1), IColor(255,255,255), 0,0, Vector3( 0, 0,-1)));
@@ -101,12 +102,6 @@ Gfx::~Gfx() {
 
 bool 
 Gfx::Init(Game &game) {
-  // Set up glfw
-  if (!glfwInit()) {
-    std::cerr << "Could not initialize GLFW\n";
-    return false;
-  }
-
   // Create window
   this->window = glfwCreateWindow(screenSize.x, screenSize.y, "foobar", NULL, NULL);
   if (!this->window) {
@@ -261,7 +256,6 @@ Gfx::Deinit() {
   glfwSetKeyCallback(        this->window, nullptr);
   
   glfwDestroyWindow(this->window);
-  glfwTerminate();
 }
 
 float 
@@ -431,15 +425,23 @@ Gfx::SetFog(float e, float l, const IColor &color) {
 
 void 
 Gfx::SetTextureFrame(const Texture *texture, size_t stage, size_t currentFrame, size_t frameCount) {
-  glActiveTexture(GL_TEXTURE0 + stage);
-  if (texture) {
-    glBindTexture(GL_TEXTURE_2D, texture->handle);
-    glEnable(GL_TEXTURE_2D);
-  } else {
-    glBindTexture(GL_TEXTURE_2D, 0);
-    glDisable(GL_TEXTURE_2D);
-    return;
+  if (stage != this->activeTextureStage) {
+    glActiveTexture(GL_TEXTURE0 + stage);
+    this->activeTextureStage = stage;
   }
+
+  if (this->activeTextures[stage] != texture) {
+    if (texture) {
+      glBindTexture(GL_TEXTURE_2D, texture->handle);
+      glEnable(GL_TEXTURE_2D);
+    } else {
+      glBindTexture(GL_TEXTURE_2D, 0);
+      glDisable(GL_TEXTURE_2D);
+    }
+    this->activeTextures[stage] = texture;
+  }
+  
+  if (!texture) return;
   
   this->textureMatrix = Matrix4();
   

@@ -94,6 +94,8 @@ private:
   const Texture *noiseTex;
   std::vector<Vertex> cubeVerts;
   std::vector<Vertex> quadVerts;
+
+  // render state
   const Shader *activeShader;
   Matrix4 proj;
   Matrix4 modelView;
@@ -102,6 +104,8 @@ private:
   std::vector<Matrix4> viewStack;
   std::vector<Matrix4> textureStack;
   IColor color;
+  std::map<size_t, const Texture *> activeTextures;
+  size_t activeTextureStage;
   
   float fogExp2 = 0;
   float fogLin  = 0;

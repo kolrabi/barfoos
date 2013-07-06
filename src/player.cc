@@ -265,8 +265,8 @@ Player::HandleEvent(const InputEvent &event) {
     if (event.key == InputKey::MouseRight) this->itemActiveRight = event.down;
     if (event.key == InputKey::DebugNoclip && event.down) this->noclip = !this->noclip;
   } else if (event.type == InputEventType::MouseDelta) {
-    angles.x += event.p.x*0.005;
-    angles.y -= event.p.y*0.005;
+    angles.x += event.p.x*0.0005;
+    angles.y -= event.p.y*0.0005;
   }
 }
 

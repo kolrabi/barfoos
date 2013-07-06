@@ -259,7 +259,6 @@ void
 World::Draw(Gfx &gfx) {
   PROFILE();
   
-  std::cerr << dirty << std::endl;
   if (dirty) {
     PROFILE();
     // world has been changed, recreate vertex buffers
@@ -317,10 +316,6 @@ World::Draw(Gfx &gfx) {
 
     dirty = false;
   }
-
-  glEnableClientState(GL_VERTEX_ARRAY);
-  glEnableClientState(GL_COLOR_ARRAY);
-  glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
   gfx.SetShader(this->defaultShader);
   this->defaultShader->Uniform("u_texture", 0);
