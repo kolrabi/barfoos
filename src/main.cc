@@ -40,17 +40,23 @@ int main() {
     std::cerr << "Could not initialize GLFW\n";
     return -1;
   }
+  std::cerr << "GLFW initialized" << std::endl;
 
   Game *game = new Game("seed", 0);
+  std::cerr << "Game created" << std::endl;
   if (!game->Init()) {
+    std::cerr << "could not initialize game" << std::endl;
     delete game;
     glfwTerminate();
     return -1;
   }
 
+  std::cerr << "game initialized, entering mainloop" << std::endl;
   while(game->Frame()) 
     ;
     
+  std::cerr << "shutting down" << std::endl;
+  
   delete game;
   
   glfwTerminate();

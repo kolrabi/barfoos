@@ -48,7 +48,7 @@ Player::View(Gfx &gfx) const {
 
   Vector3 pos = smoothPosition + Vector3(0,eyeHeight,0)+bob;
   
-  gfx.View3D(pos, fwd);
+  gfx.GetView().Look(pos, fwd);
 }
 
 void
@@ -56,7 +56,7 @@ Player::MapView(Gfx &gfx) const {
   Vector3 fwd = this->GetAngles().EulerToVector();
   Vector3 pos = this->smoothPosition + Vector3(0,16,0);
   
-  gfx.View3D(pos, Vector3(0,-1,0), -32.0, fwd);
+  gfx.GetView().Look(pos, Vector3(0,-1,0), -32.0, fwd);
 }
 
 void 
@@ -227,7 +227,7 @@ Player::DrawWeapons(Gfx &gfx) const {
 
   Vector3 pos = Vector3(0,0,-1)+bob;
   
-  gfx.View3D(pos, fwd);
+  gfx.GetView().Look(pos, fwd);
 
   IColor l = this->cellLight+this->torchLight;
   gfx.SetColor(l);
@@ -265,8 +265,8 @@ Player::HandleEvent(const InputEvent &event) {
     if (event.key == InputKey::MouseRight) this->itemActiveRight = event.down;
     if (event.key == InputKey::DebugNoclip && event.down) this->noclip = !this->noclip;
   } else if (event.type == InputEventType::MouseDelta) {
-    angles.x += event.p.x*0.0005;
-    angles.y -= event.p.y*0.0005;
+    angles.x += event.p.x*0.005;
+    angles.y -= event.p.y*0.005;
   }
 }
 

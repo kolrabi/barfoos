@@ -224,6 +224,8 @@ protected:
 
     uint32_t detail;
     float smoothDetail;
+    
+    uint32_t nextDetail;
   } shared;
   
   float YOfs(size_t n)  const { return this->shared.topHeights[n]/(float)OffsetScale; }

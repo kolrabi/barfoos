@@ -9,6 +9,36 @@ struct InputEvent;
 class GLFWwindow;
 class Shader;
 class Game;
+class Gfx;
+
+class GfxView final {
+public:
+
+  void Look(const Vector3 &pos, const Vector3 &forward, float fovY = 60.0, const Vector3 &up = Vector3(0,1,0));
+  void GUI();
+  
+  void Push();
+  void Pop();
+  void Translate(const Vector3 &p);
+  void Scale(const Vector3 &p);
+  void Rotate(float angle, const Vector3 &p);
+  
+private:
+
+  Matrix4 proj;
+  Matrix4 modelView;
+  Matrix4 textureMatrix;
+  std::vector<Matrix4> projStack;
+  std::vector<Matrix4> viewStack;
+  std::vector<Matrix4> textureStack;
+
+  friend class Gfx;
+  
+  Gfx &gfx;
+  GfxView(Gfx &gfx) : gfx(gfx) {}
+  
+  void SetUniforms(const Shader *shader) const;
+};
 
 class Gfx final {
 public:
@@ -25,6 +55,7 @@ public:
   const Point &GetScreenSize()        const { return screenSize; }
   const Point &GetVirtualScreenSize() const { return virtualScreenSize; }
   const Point &GetMousePos()          const { return mousePos; }
+  GfxView     &GetView()                    { return view; }
   
   void IncGuiCount();
   void DecGuiCount();
@@ -33,19 +64,6 @@ public:
   void ClearDepth(float depth) const;
   bool Swap();
 
-  void Viewport(const Rect &view);
-  void View3D(const Vector3 &pos, const Vector3 &forward, float fovY = 60.0, const Vector3 &up = Vector3(0,1,0));
-  void ViewGUI();
-  
-  void ViewPush();
-  void ViewPop();
-  void ViewTranslate(const Vector3 &p);
-  void ViewScale(const Vector3 &p);
-  void ViewRotate(float angle, const Vector3 &p);
-  
-  void SetDepthTest(bool on) const;
-  void SetCullFace(bool on) const;
-  
   void SetShader(const Shader *shader);
   void SetTextureFrame(const Texture *texture, size_t stage = 0, size_t currentFrame = 0, size_t frameCount = 1);
   void SetFog(float e, float l, const IColor &color);
@@ -53,12 +71,14 @@ public:
   
   const Texture *GetNoiseTexture() const { return noiseTex; }
 
-  void DrawTriangles(const std::vector<Vertex> &vertices) const;
-  void DrawQuads(const std::vector<Vertex> &vertices) const;
-  void DrawTriangles(unsigned int vbo, size_t vertexCount) const;
-  void DrawQuads(unsigned int vbo, size_t vertexCount) const;
+  void Viewport(const Rect &view);
   
-  void DrawUnitCube() const;
+  void DrawTriangles(const std::vector<Vertex> &vertices);
+  void DrawQuads(const std::vector<Vertex> &vertices);
+  void DrawTriangles(unsigned int vbo, size_t first, size_t vertexCount);
+  void DrawQuads(unsigned int vbo, size_t first, size_t vertexCount);
+  
+  void DrawUnitCube();
   void DrawAABB(const AABB &aabb);
   void DrawSprite(const Sprite &sprite, const Vector3 &pos, bool billboard = true);
   void DrawIcon(const Sprite &sprite, const Point &pos, const Point &size = Point(32, 32));
@@ -70,6 +90,8 @@ public:
   
 private:
 
+  friend class GfxView;
+  
   GLFWwindow *window;
   
   bool isInit;
@@ -97,28 +119,23 @@ private:
 
   // render state
   const Shader *activeShader;
-  Matrix4 proj;
-  Matrix4 modelView;
-  Matrix4 textureMatrix;
-  std::vector<Matrix4> projStack;
-  std::vector<Matrix4> viewStack;
-  std::vector<Matrix4> textureStack;
+  GfxView view;
   IColor color;
   std::map<size_t, const Texture *> activeTextures;
   size_t activeTextureStage;
+  const Vertex *activeVertexPointer;
   
-  float fogExp2 = 0;
-  float fogLin  = 0;
+  float fogExp2;
+  float fogLin;
   IColor fogColor;
   
   void SetUniforms() const;
+  void BindVertexPointer(const Vertex *ptr);
 };
 
 const Texture *noiseTexture(const Point &size, const Vector3 &scale = Vector3(1,1,1), const Vector3 &offset = Vector3());
 const Texture *loadTexture(const std::string &name, const Texture * tex = nullptr);
 void updateTextures();
-
-void drawIcon(const Point &center, const Point &size, unsigned int tex, float u=0, float uw=1);  
 
 #endif
 

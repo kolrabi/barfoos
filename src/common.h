@@ -4,6 +4,7 @@
 #include <config.h>
 
 #include <cstdint>
+#include <cinttypes>
 #include <cstdlib>
 #include <cstring>
 #include <cmath>
@@ -23,11 +24,15 @@
 #if __cplusplus < 201103L
 #define final
 #define override
+
+#ifndef PRIu64
+#define PRIu64 "I64u"
+#endif
+
 #endif
 
 #include "vector3.h"
 #include "space.h"
-
 #include "ivector3.h"
 
 struct IColor;
@@ -39,6 +44,7 @@ struct IColor;
 //      3          x  x  x  x
 //                 x  x  x  x
 
+/** Enum to identify inventory slots. */
 enum class InventorySlot {
   Helmet     =  0, 
   Armor      =  1, 
@@ -62,20 +68,31 @@ enum class InventorySlot {
   // ...
 };
 
-
+/** An axis aligned bounding box. */
 struct AABB {
+  /** Center of the box. */
   Vector3 center;
+  
+  /** Half the size of the box. */
   Vector3 extents;
 
+  /** Test if another AABB overlaps the box. 
+   * @param o AABB to check against.
+   * @return true if @a this and @a o overlap.
+   */
   bool Overlap(const AABB &o) const {
     return std::abs(center.x - o.center.x) <= (extents.x + o.extents.x) &&
            std::abs(center.y - o.center.y) <= (extents.y + o.extents.y) &&
            std::abs(center.z - o.center.z) <= (extents.z + o.extents.z);
   }
 
+  /** Get the minimum vector of the box. */
   inline Vector3 Min() const { return center - extents; }
+  
+  /** Get the maximum vector of the box. */
   inline Vector3 Max() const { return center + extents; }
 
+  /** Check if a point is inside the box. */
   bool PointInside(const Vector3 &p) const {
     if (p.x>center.x+extents.x) return false;
     if (p.y>center.y+extents.y) return false;
@@ -86,9 +103,13 @@ struct AABB {
     return true;
   }
   
+  /** Generate corner vertices for the box.
+    * Also generates vertices for the sides.
+    * @param[out] verts Where to store the vertices.
+    * @TODO automate/optimize generation for a given aabb size
+    * @TODO also cache these
+    */
   void GetVertices(std::vector<Vector3> &verts) const {
-    // TODO: automate/optimize generation for a given aabb size
-    // TODO: also cache these
     verts.push_back(Vector3(-extents.x, -extents.y, -extents.z));
     verts.push_back(Vector3(-extents.x, -extents.y,  extents.z));
     verts.push_back(Vector3( extents.x, -extents.y, -extents.z));
@@ -115,6 +136,13 @@ struct AABB {
     verts.push_back(Vector3( extents.x,  extents.y,  extents.z));
   }
 
+  /** Do a raycast against the box.
+    * @param[in] start Start point of the ray.
+    * @param[in] dir Normalized direction of the ray.
+    * @param[out] t The distance of the hit if any.
+    * @param[out] p The position of the hit if any.
+    * @return true if ray hits the box.
+    */
   bool Ray(const Vector3 &start, const Vector3 &dir, float &t, Vector3 &p) const {
     if (PointInside(start)) return false;
 
@@ -165,21 +193,30 @@ struct AABB {
 };
 
 static inline std::ostream & operator<< (std::ostream &out, const AABB &aabb) {
-  out << "{ " << aabb.center << " +/- " << aabb.extents << " }";
+  out << "{" << aabb.center << " +/- " << aabb.extents << "}";
   return out;
 }
 
+/** Animation information. */
 struct Animation {
+  /** Frame index where the animation begins. */
   size_t firstFrame;
+
+  /** Total number of frames in the animation. */
   size_t frameCount;
+  
+  /** Frames per second. */
   float fps;
   
   Animation(size_t firstFrame, size_t frameCount, float fps) : firstFrame(firstFrame), frameCount(frameCount), fps(fps) {}
 };
 
-
+/** A 2d point. */
 struct Point {
+  /** X coordinate. */
   int x;
+  
+  /** Y coordinate. */
   int y;
 
   Point() : x(0), y(0) {}  
@@ -195,34 +232,63 @@ struct Point {
 };
 
 static inline std::ostream & operator<< (std::ostream &out, const Point &p) {
-  out << "{ " << p.x << ":" << p.y << " }";
+  out << "{" << p.x << ":" << p.y << "}";
   return out;
 }
 
+/** A texture. */
 struct Texture {
   Texture();
   Texture(Texture &&);
   ~Texture();
   
+  /** OpenGL Handle of the texture. */
   unsigned int handle;
+  
+  /** Size of the texture. */
   Point size;
 };
 
+/** A sprite. */
 struct Sprite {
+  /** Texture to use when drawing the sprite. */
   const Texture *texture = nullptr;
+  
+  /** Sprite width. */
   float width = 1.0;
+  
+  /** Sprite height. */
   float height = 1.0;
+  
+  /** Horizontal offset used when drawing. */
   float offsetX = 0.0;
+  
+  /** Vertical offset used when drawing. */
   float offsetY = 0.0;
+  
+  /** Is this to be drawn as a vertical billboard? */
   bool vertical = false;
   
-  size_t currentFrame = 0;
+  /** Total number of frames in texture. */
   size_t totalFrames = 1;
   
+  /** Current animation frame. */
+  size_t currentFrame = 0;
+  
+  /** Current animation time. */
   float t = 0;
+  
+  /** Active animation index. */
   size_t currentAnimation = 0;
+  
+  /** All animations. */
   std::vector<Animation> animations;
   
+  /** Update the sprite.
+    * Advances animation time and frame. Resets animation to 0 when
+    * last frame of animation reached.
+    * @param deltaT Amount by which to advance the sprite.
+    */
   void Update(float deltaT) {
     if (this->animations.size() > 0) {
       const Animation &anim = this->animations[currentAnimation];
@@ -238,17 +304,31 @@ struct Sprite {
   
 };
 
+/** A 2d rectangle. */
 struct Rect {
-  Point pos, size;
+  /** Top left corner of rectangle. */
+  Point pos;
+  
+  /** Size of rectangle. */
+  Point size;
   
   Rect() {} 
   Rect(const Point &pos, const Point &size) : pos(pos), size(size) {}
 
+  /** Check if a point is inside the rectangle. 
+    * @param p Point to test.
+    * @return true if @a p is inside the rectangle.
+    */
   bool IsInside(const Point &p) const {    
     return p.x >= pos.x && p.x < pos.x+size.x &&
            p.y >= pos.y && p.y < pos.y+size.y;
   }
 
+  /** Adjust rectangle so that it encloses a point.
+    * Won't change the rectangle if point already lies inside.
+    * @param o Point to use.
+    * @return The updated rectangle.
+    */
   Rect &operator +=(const Point &o) {
     if (o.x < pos.x) {
       size.x += pos.x-o.x;
@@ -303,6 +383,14 @@ private:
   bool moved;
 };
 
+/** Raycast against a triangle.
+  * @param[in] tri The three points of the triangle.
+  * @param[in] start The ray start point.
+  * @param[in] dir The normalized ray direction.
+  * @param[out] t The time of hit if any.
+  * @param[out] p The position of hit if any.
+  * @return true if ray hit the triangle.
+  */
 static inline bool 
 TriangleRay(const Vector3 *tri, const Vector3 &start, const Vector3 &dir, float &t, Vector3 &p) {
   Vector3 e1 = tri[1] - tri[0];
@@ -331,6 +419,7 @@ TriangleRay(const Vector3 *tri, const Vector3 &start, const Vector3 &dir, float 
   return true;
 }
 
+/** Simple profiling class. */
 class Profile {
 public:
 

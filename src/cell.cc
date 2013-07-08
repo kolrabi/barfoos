@@ -15,31 +15,20 @@ CellInfo::CellInfo(const std::string &name, FILE *f) : type(name) {
   this->flags = 0;
   
   while(fgets(line, 256, f) && !feof(f)) {
-    std::vector<std::string> tokens;
-    char *p = line;
-    char *q;
-    do {
-      q = strchr(p, ' ');
-      if (!q) q = strchr(p, '\r');
-      if (!q) q = strchr(p, '\n');
-      if (q) *q = 0;
-      tokens.push_back(p);
-      if (q) { p = q+1; }
-    } while(q);
+    std::vector<std::string> tokens = Tokenize(line);
     if (tokens.size() == 0) continue;
-
+    
+    for (auto &c:tokens[0]) c = ::tolower(c);
+    
     if (tokens[0] == "tex") {
-      // TODO: check
       this->textures.push_back(loadTexture("cells/texture/"+tokens[1]));
     } else if (tokens[0] == "light") {
-      // TODO: check
       this->light = IColor(std::atoi(tokens[1].c_str()), std::atoi(tokens[2].c_str()), std::atoi(tokens[3].c_str()));
     } else if (tokens[0] == "lightfactor") {
       this->lightFactor = std::atof(tokens[1].c_str());
     } else if (tokens[0] == "lightfade") {
       this->lightFade = std::atoi(tokens[1].c_str());
-    } 
-    else if (tokens[0] == "uvturb") this->flags |= UVTurb | Dynamic;
+    } else if (tokens[0] == "uvturb") this->flags |= UVTurb | Dynamic;
     else if (tokens[0] == "wave") this->flags |= Waving | Dynamic;
     else if (tokens[0] == "solid") this->flags |= Solid;
     else if (tokens[0] == "dynamic") this->flags |= Dynamic;
@@ -50,11 +39,9 @@ CellInfo::CellInfo(const std::string &name, FILE *f) : type(name) {
       this->detailBelowReplace = std::atoi(tokens[1].c_str());
       this->replaceChance = std::atof(tokens[2].c_str());
       this->replace = tokens[3];
-    }
-    else if (tokens[0] == "scale") {
+    } else if (tokens[0] == "scale") {
       this->scale = Vector3(std::atof(tokens[1].c_str()), std::atof(tokens[2].c_str()), std::atof(tokens[3].c_str()));
-    }
-    else if (tokens[0] == "multi") this->flags |= MultiSided;
+    } else if (tokens[0] == "multi") this->flags |= MultiSided;
     else {
       std::cerr << "ignoring '" << tokens[0] << "'" << std::endl;
     }
@@ -106,8 +93,10 @@ Cell::Cell(const std::string &type)
 
   if (info->flags & CellFlags::Liquid) {
     this->shared.smoothDetail = this->shared.detail = 15;
+    this->shared.nextDetail = 15;
   } else {
     this->shared.smoothDetail = this->shared.detail = 0;
+    this->shared.nextDetail = 0;
   }
   
   // unique information
@@ -187,11 +176,13 @@ void
 Cell::Update(
   Game &game
 ) {
+  (void)game;
   if (!world) return;
   
-  float deltaT = game.GetDeltaT();
+  //float deltaT = game.GetDeltaT();
 
-  this->shared.smoothDetail = this->shared.smoothDetail + (this->shared.detail - this->shared.smoothDetail) * deltaT*10;
+  this->shared.detail = this->shared.nextDetail;
+  this->shared.smoothDetail = this->shared.smoothDetail + 0.05*(this->shared.detail - this->shared.smoothDetail);
   
   /* TODO: move to updateverts and only change y based on x and z
   float t = game.GetTime();
@@ -314,17 +305,17 @@ Cell::Flow(Side side) {
     if ((cell->shared.detail >= this->shared.detail && side != Side::Down) || cell->shared.detail >= 16) return false;
   }
   
-  this->shared.detail -= 1;
+  this->shared.nextDetail -= 1;
   
   if (cell->info != this->info) {
     // replace target cell if not already of this type
     this->world->SetCell(this->pos[side], Cell(info->type));
-    cell->shared.detail = 1;
+    cell->shared.nextDetail = 1;
     cell->shared.smoothDetail = 1;
     cell->UpdateVertices();
   } else {
     // otherwise just increase liquid
-    cell->shared.detail++;
+    cell->shared.nextDetail++;
   }
 
   // if this cell lost all its liquid replace by air
@@ -849,7 +840,7 @@ Serializer &operator << (Serializer &ser, const Cell &cell) {
 void Cell::SetWorld(World *world, const IVector3 &pos) { 
   this->world = world; 
   
-  this->tickPhase = pos.y % this->shared.tickInterval;
+  //this->tickPhase = pos.y % this->shared.tickInterval;
   // this->tickPhase = this->world->GetRandom().Integer(this->shared.tickInterval);
   // this->reversedSides = this->world->GetRandom().Integer(2);
   this->dirty = true;

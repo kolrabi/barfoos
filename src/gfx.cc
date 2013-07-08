@@ -49,12 +49,16 @@ Gfx::Gfx(const Point &pos, const Point &size, bool fullscreen)
     screenSize(size),
     isFullscreen(fullscreen),
     mouseGrab(false),
-    guiActiveCount(0)
+    guiActiveCount(0),
+    view(*this)
 {
   this->window = nullptr;
   this->noiseTex = nullptr;
   this->activeShader = nullptr;
   this->activeTextureStage = 0;
+  this->activeVertexPointer = nullptr;
+  
+  this->fogLin = 0.05;
   
   // unit cube vertices
   this->cubeVerts.push_back(Vertex(Vector3(-1, 1, -1), IColor(255,255,255), 0,0, Vector3( 0, 0,-1)));
@@ -102,6 +106,8 @@ Gfx::~Gfx() {
 
 bool 
 Gfx::Init(Game &game) {
+  std::cerr << "initializing gfx" << std::endl;
+
   // Create window
   this->window = glfwCreateWindow(screenSize.x, screenSize.y, "foobar", NULL, NULL);
   if (!this->window) {
@@ -225,15 +231,15 @@ Gfx::Init(Game &game) {
   glCullFace(GL_BACK);
   glEnable(GL_CULL_FACE);
   
-  glEnable(GL_ALPHA_TEST);
-  glAlphaFunc(GL_GREATER, 0);
+  //glEnable(GL_ALPHA_TEST);
+  //glAlphaFunc(GL_GREATER, 0);
   
   glEnable(GL_TEXTURE_2D);
   glEnable(GL_SCISSOR_TEST);
   
   glEnable(GL_DEPTH_TEST);
-  glEnable(GL_BLEND);
-  glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+  //glEnable(GL_BLEND);
+  //glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
 
   // Colors look nicer unclamped
   if (GLEE_ARB_color_buffer_float) {
@@ -243,7 +249,13 @@ Gfx::Init(Game &game) {
 
   this->noiseTex = noiseTexture(Point(256,256), Vector3(32,32,32));
   SetTextureFrame(this->noiseTex, 1);
+
+  glEnableClientState(GL_VERTEX_ARRAY);
+  glEnableClientState(GL_COLOR_ARRAY);
+  glEnableClientState(GL_TEXTURE_COORD_ARRAY);
   
+  this->BindVertexPointer(&this->quadVerts[0]);
+    
   isInit = true;
   return true;
 }
@@ -332,80 +344,6 @@ void Gfx::Viewport(const Rect &view) {
   }
 }
 
-void Gfx::View3D(const Vector3 &pos, const Vector3 &forward, float fovY, const Vector3 &up) {
-  float aspect = (float)this->viewportSize.x / (float)this->viewportSize.y;
-  
-  if (fovY > 0.0) {
-    this->proj = Matrix4::Perspective(fovY, aspect, 0.0015f, 64.0f);
-  } else {
-    this->proj = Matrix4::Ortho(fovY*aspect, -fovY*aspect, fovY, -fovY, 0.0015f, 64.0f);
-  }
-  
-  this->modelView = Matrix4::LookFrom(pos, forward, up);
-  
-  glEnable(GL_DEPTH_TEST);
-}
-
-void Gfx::ViewGUI() {
-  this->proj = Matrix4();
-
-  this->modelView = 
-    Matrix4::Scale(    Vector3(2.0/this->screenSize.x, -2.0/this->screenSize.y, 1)) *
-    Matrix4::Translate(Vector3( -this->screenSize.x/2, -this->screenSize.y/2,   0));
-    
-  if (this->screenSize.x > 640) {
-    this->modelView = this->modelView * Matrix4::Scale(Vector3(2,2,1));
-  }
-  
-  glDisable(GL_DEPTH_TEST);
-}
-
-void Gfx::ViewPush() {
-  this->projStack.push_back(this->proj);
-  this->viewStack.push_back(this->modelView);
-  this->textureStack.push_back(this->textureMatrix);
-}
-
-void Gfx::ViewPop() {
-  if (projStack.empty()) return;
-  
-  this->proj = this->projStack.back();
-  this->modelView = this->viewStack.back();
-  this->textureMatrix = this->textureStack.back();
-  
-  this->projStack.pop_back();
-  this->viewStack.pop_back();
-  this->textureStack.pop_back();
-}
-
-void Gfx::ViewTranslate(const Vector3 &p) {
-  this->modelView = this->modelView * Matrix4::Translate(p);
-}
-
-void Gfx::ViewScale(const Vector3 &p) {
-  this->modelView = this->modelView * Matrix4::Scale(p);
-}
-
-void Gfx::ViewRotate(float angle, const Vector3 &p)  {
-  this->modelView = this->modelView * Matrix4::Rotate(angle, p);
-}
-
-void Gfx::SetDepthTest(bool on) const {
-  if (on) {
-    //glEnable(GL_DEPTH_TEST);
-  } else {
-    glDisable(GL_DEPTH_TEST);
-  }
-}
-
-void Gfx::SetCullFace(bool on) const {
-  if (on) {
-//    glEnable(GL_CULL_FACE);
-  } else {
-    glDisable(GL_CULL_FACE);
-  }
-}
-
 void Gfx::SetShader(const Shader *shader) {
   this->activeShader = shader;
   if (!shader) {
@@ -443,10 +381,10 @@ Gfx::SetTextureFrame(const Texture *texture, size_t stage, size_t currentFrame, 
   
   if (!texture) return;
   
-  this->textureMatrix = Matrix4();
+  this->view.textureMatrix = Matrix4();
   
   if (frameCount > 1) {
-    this->textureMatrix = 
+    this->view.textureMatrix = 
       Matrix4::Scale(Vector3(1.0/frameCount, 1, 1)) *
       Matrix4::Translate(Vector3(currentFrame, 0, 0));
   }
@@ -461,147 +399,107 @@ void
 Gfx::SetUniforms() const {
   if (!this->activeShader) return;
   
+  this->view.SetUniforms(this->activeShader);
+  
   this->activeShader->Uniform("u_fogExp2",  this->fogExp2);
   this->activeShader->Uniform("u_fogLin",   this->fogLin);
   this->activeShader->Uniform("u_fogColor", this->fogColor);
   this->activeShader->Uniform("u_time",     this->GetTime());
   this->activeShader->Uniform("u_color",    this->color);
+}
 
-  this->activeShader->Uniform("u_matProjection",    this->proj);
-  this->activeShader->Uniform("u_matModelView",     this->modelView);
-  this->activeShader->Uniform("u_matTexture",       this->textureMatrix);
+void
+Gfx::BindVertexPointer(const Vertex *ptr) {
+  //if (ptr == this->activeVertexPointer) return;
   
-  glMatrixMode(GL_TEXTURE);
-  glLoadMatrixf(textureMatrix.m);
-  
-  glMatrixMode(GL_PROJECTION);
-  glLoadMatrixf(proj.m);
-
-  glMatrixMode(GL_MODELVIEW);
-  glLoadMatrixf(modelView.m);
+  glInterleavedArrays(GL_T2F_C4F_N3F_V3F,  sizeof(Vertex), ptr);
+  this->activeVertexPointer = ptr;
 }
 
 void 
-Gfx::DrawTriangles(const std::vector<Vertex> &vertices) const {
+Gfx::DrawTriangles(const std::vector<Vertex> &vertices) {
   this->SetUniforms();
-  
-  glEnableClientState(GL_VERTEX_ARRAY);
-  glEnableClientState(GL_COLOR_ARRAY);
-  glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-  
-  glInterleavedArrays(GL_T2F_C4F_N3F_V3F, sizeof(Vertex), &vertices[0]);
-
+  this->BindVertexPointer(&vertices[0]);
   glDrawArrays(GL_TRIANGLES, 0, vertices.size());
-
-  glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-  glDisableClientState(GL_COLOR_ARRAY);
-  glDisableClientState(GL_VERTEX_ARRAY);
 }
 
 void 
-Gfx::DrawQuads(const std::vector<Vertex> &vertices) const {
+Gfx::DrawQuads(const std::vector<Vertex> &vertices) {
   this->SetUniforms();
-  
-  glEnableClientState(GL_VERTEX_ARRAY);
-  glEnableClientState(GL_COLOR_ARRAY);
-  glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-  
-  glInterleavedArrays(GL_T2F_C4F_N3F_V3F, sizeof(Vertex), &vertices[0]);
-
+  this->BindVertexPointer(&vertices[0]);
   glDrawArrays(GL_QUADS, 0, vertices.size());
-
-  glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-  glDisableClientState(GL_COLOR_ARRAY);
-  glDisableClientState(GL_VERTEX_ARRAY);
 }
 
 void 
-Gfx::DrawTriangles(unsigned int vbo, size_t vertexCount) const {
+Gfx::DrawTriangles(unsigned int vbo, size_t first, size_t vertexCount) {
   this->SetUniforms();
-  
-  glEnableClientState(GL_VERTEX_ARRAY);
-  glEnableClientState(GL_COLOR_ARRAY);
-  glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
-  glBindBuffer       (GL_ARRAY_BUFFER, vbo);
-  glInterleavedArrays(GL_T2F_C4F_N3F_V3F,  sizeof(Vertex), nullptr);
-  glDrawArrays       (GL_TRIANGLES,    0, vertexCount);
+  glBindBuffer(GL_ARRAY_BUFFER, vbo);
+  this->BindVertexPointer(nullptr);
+  glDrawArrays(GL_TRIANGLES,    first, vertexCount);
   glBindBuffer(GL_ARRAY_BUFFER, 0);
-  
-  glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-  glDisableClientState(GL_COLOR_ARRAY);
-  glDisableClientState(GL_VERTEX_ARRAY);
 }
 
 void 
-Gfx::DrawQuads(unsigned int vbo, size_t vertexCount) const {
+Gfx::DrawQuads(unsigned int vbo, size_t first, size_t vertexCount) {
   this->SetUniforms();
-  
-  glEnableClientState(GL_VERTEX_ARRAY);
-  glEnableClientState(GL_COLOR_ARRAY);
-  glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-
-  glBindBuffer       (GL_ARRAY_BUFFER, vbo);
-  glInterleavedArrays(GL_T2F_C4F_N3F_V3F,  sizeof(Vertex), nullptr);
-  glDrawArrays       (GL_QUADS,    0, vertexCount);
+  glBindBuffer(GL_ARRAY_BUFFER, vbo);
+  this->BindVertexPointer(nullptr);
+  glDrawArrays(GL_QUADS,        first, vertexCount);
   glBindBuffer(GL_ARRAY_BUFFER, 0);
-  
-  glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-  glDisableClientState(GL_COLOR_ARRAY);
-  glDisableClientState(GL_VERTEX_ARRAY);
 }
 
-void Gfx::DrawUnitCube() const {
+void Gfx::DrawUnitCube() {
   this->DrawQuads(this->cubeVerts);
 }    
 
 void Gfx::DrawAABB(const AABB &aabb) {
-  this->ViewPush();
-  this->ViewTranslate(aabb.center);
-  this->ViewScale(aabb.extents);
+  this->view.Push();
+  this->view.Translate(aabb.center);
+  this->view.Scale(aabb.extents);
   this->DrawUnitCube();
-  this->ViewPop();
+  this->view.Pop();
 }
 
 void Gfx::DrawSprite(const Sprite &sprite, const Vector3 &pos, bool billboard) {
   this->SetTextureFrame(sprite.texture, 0, sprite.currentFrame, sprite.totalFrames);
 
-  this->ViewPush();
-  this->ViewTranslate(pos);
+  this->view.Push();
+  this->view.Translate(pos);
 
   if (billboard) {
-    this->modelView(0,0) = 1; 
-    this->modelView(0,1) = 0;
-    this->modelView(0,2) = 0;
+    this->view.modelView(0,0) = 1; 
+    this->view.modelView(0,1) = 0;
+    this->view.modelView(0,2) = 0;
 
     if (!sprite.vertical) {
-      this->modelView(1,0) = 0; 
-      this->modelView(1,1) = 1;
-      this->modelView(1,2) = 0;
+      this->view.modelView(1,0) = 0; 
+      this->view.modelView(1,1) = 1;
+      this->view.modelView(1,2) = 0;
     }
     
-    this->modelView(2,0) = 0; 
-    this->modelView(2,1) = 0;
-    this->modelView(2,2) = 1;
+    this->view.modelView(2,0) = 0; 
+    this->view.modelView(2,1) = 0;
+    this->view.modelView(2,2) = 1;
     
-    this->ViewTranslate(Vector3(sprite.offsetX, sprite.offsetY, 0));
+    this->view.Translate(Vector3(sprite.offsetX, sprite.offsetY, 0));
   }
   
-  this->ViewScale(Vector3(sprite.width/2, sprite.height/2, 1));
+  this->view.Scale(Vector3(sprite.width/2, sprite.height/2, 1));
  
   this->DrawQuads(this->quadVerts);
 
-  this->ViewPop();
+  this->view.Pop();
 }
 
 void Gfx::DrawIcon(const Sprite &sprite, const Point &center, const Point &size) {
   this->SetTextureFrame(sprite.texture, 0, sprite.currentFrame, sprite.totalFrames);
 
-  this->ViewPush();
-  this->ViewTranslate(Vector3(center.x + sprite.offsetX*size.x, center.y + sprite.offsetY*size.y, 0));
-  this->ViewScale    (Vector3((sprite.width*size.x)/2, -(sprite.height*size.y)/2, 1));
+  this->view.Push();
+  this->view.Translate(Vector3(center.x + sprite.offsetX*size.x, center.y + sprite.offsetY*size.y, 0));
+  this->view.Scale    (Vector3((sprite.width*size.x)/2, -(sprite.height*size.y)/2, 1));
   this->DrawQuads(this->quadVerts);
-  this->ViewPop();
+  this->view.Pop();
 }
 
 Point 
@@ -625,4 +523,70 @@ Point
 Gfx::AlignTopRightScreen(const Point &size, int padding) {
   const Point &ssize(this->GetVirtualScreenSize());
   return Point( ssize.x - padding - size.x/2, padding + size.y/2 );
+}
+
+
+// TODO: move to different file
+
+void GfxView::Look(const Vector3 &pos, const Vector3 &forward, float fovY, const Vector3 &up) {
+  float aspect = (float)gfx.viewportSize.x / (float)gfx.viewportSize.y;
+  
+  if (fovY > 0.0) {
+    this->proj = Matrix4::Perspective(fovY, aspect, 0.0015f, 64.0f);
+  } else {
+    this->proj = Matrix4::Ortho(fovY*aspect, -fovY*aspect, fovY, -fovY, 0.0015f, 64.0f);
+  }
+  
+  this->modelView = Matrix4::LookFrom(pos, forward, up);
+  glEnable(GL_DEPTH_TEST);
+}
+
+void GfxView::GUI() {
+  this->proj = Matrix4();
+
+  this->modelView = 
+    Matrix4::Scale(    Vector3(2.0/gfx.screenSize.x, -2.0/gfx.screenSize.y, 1)) *
+    Matrix4::Translate(Vector3( -gfx.screenSize.x/2, -gfx.screenSize.y/2,   0));
+    
+  if (gfx.screenSize.x > 640) {
+    this->modelView = this->modelView * Matrix4::Scale(Vector3(2,2,1));
+  }
+  glDisable(GL_DEPTH_TEST);
+}
+
+void GfxView::Push() {
+  this->projStack.push_back(this->proj);
+  this->viewStack.push_back(this->modelView);
+  this->textureStack.push_back(this->textureMatrix);
+}
+
+void GfxView::Pop() {
+  if (projStack.empty()) return;
+  
+  this->proj = this->projStack.back();
+  this->modelView = this->viewStack.back();
+  this->textureMatrix = this->textureStack.back();
+  
+  this->projStack.pop_back();
+  this->viewStack.pop_back();
+  this->textureStack.pop_back();
+}
+
+void GfxView::Translate(const Vector3 &p) {
+  this->modelView = this->modelView * Matrix4::Translate(p);
+}
+
+void GfxView::Scale(const Vector3 &p) {
+  this->modelView = this->modelView * Matrix4::Scale(p);
+}
+
+void GfxView::Rotate(float angle, const Vector3 &p)  {
+  this->modelView = this->modelView * Matrix4::Rotate(angle, p);
+}
+
+void GfxView::SetUniforms(const Shader *shader) const {
+  shader->Uniform("u_matProjection",    this->proj);
+  shader->Uniform("u_matModelView",     this->modelView);
+  shader->Uniform("u_matTexture",       this->textureMatrix);
+  shader->Uniform("u_matNormal",        this->modelView.Mat3().Inverse());
 }

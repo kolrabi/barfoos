@@ -21,10 +21,10 @@ void RenderString::Draw(Gfx &gfx, float x, float y) {
   }
   
   gfx.SetTextureFrame(this->texture);
-  gfx.ViewPush();
-  gfx.ViewTranslate(Vector3(x,y,0));
+  gfx.GetView().Push();
+  gfx.GetView().Translate(Vector3(x,y,0));
   gfx.DrawQuads(vertices);
-  gfx.ViewPop();
+  gfx.GetView().Pop();
 }
 
 void RenderString::DrawChar(float x, float y, wchar_t c) {

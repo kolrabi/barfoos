@@ -34,12 +34,13 @@ World::World(const IVector3 &size)
   
   std::cerr << this->cellCount << " cells, " << (sizeof(Cell)*this->cellCount) << std::endl;
     
-  this->tickInterval = 0.05;
+  this->tickInterval = 0.01;
   this->nextTickT = 0;
+  glGenBuffers(1, &this->vbo);
 }
 
 World::~World() {
-  if (this->vbos.size()) glDeleteBuffersARB(this->vbos.size(), &this->vbos[0]);
+  if (this->vbo) glDeleteBuffersARB(1, &this->vbo);
 }
 
 void
@@ -262,14 +263,11 @@ World::Draw(Gfx &gfx) {
   if (dirty) {
     PROFILE();
     // world has been changed, recreate vertex buffers
-    if (this->vbos.size()) {
-      glDeleteBuffers(this->vbos.size(), &this->vbos[0]);
-      this->vbos.clear();
-    }
 
     this->defaultCell = Cell("default");
 
-    this->vertices = std::map<uintmax_t, std::vector<Vertex>>();
+    //this->vertices = std::map<uintmax_t, std::vector<Vertex>>();
+    this->allVerts.clear();
     this->dynamicCells.clear();
 
     if (firstDirty) {
@@ -278,6 +276,8 @@ World::Draw(Gfx &gfx) {
       }
       firstDirty = false;
     }
+
+    std::map<const Texture *, std::vector<Vertex>> vertices;
 
     for (size_t i=0; i<this->cellCount; i++) {
       Cell &cell = this->cells[i];
@@ -295,24 +295,26 @@ World::Draw(Gfx &gfx) {
       cell.UpdateVertices();
 
       // group vertex buffers by texture
+      
       const Texture *tex = cell.GetTexture();
-      uintmax_t texint = (uintmax_t)tex;
-      if (this->vertices.find(texint) == this->vertices.end()) 
-        this->vertices[texint] = std::vector<Vertex>();
- 
-      cell.Draw(this->vertices[texint]);
+      cell.Draw(vertices[tex]);
     }
+    
+    size_t index = 0;
+    this->allVerts.clear();
+    for (auto &iter : vertices) {
+      this->vertexStarts[iter.first] = index;
+      this->vertexCounts[iter.first] = iter.second.size();
+      index += iter.second.size();
 
-    // one vertex buffer for each texture
-    this->vbos.resize(vertices.size());
-    glGenBuffers(this->vbos.size(), &this->vbos[0]);
+      for (auto &v : iter.second) {
+        this->allVerts.push_back(v);
+      }
+    }
 
     // set vertex buffer data
-    auto iter = vertices.begin();
-    for (size_t i=0; i<this->vertices.size(); i++, iter++) {
-      glBindBuffer(GL_ARRAY_BUFFER, this->vbos[i]);
-      glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex)*(iter->second.size()), &iter->second[0], GL_STATIC_DRAW);
-    }
+    glBindBuffer(GL_ARRAY_BUFFER, this->vbo);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex)*(this->allVerts.size()), &this->allVerts[0], GL_STATIC_DRAW);
 
     dirty = false;
   }
@@ -322,15 +324,9 @@ World::Draw(Gfx &gfx) {
   this->defaultShader->Uniform("u_texture2", 1);
   this->defaultShader->Uniform("u_torch", this->torchLight);
   
-  // draw each vertex buffer 
-  auto iter = vertices.begin();
-  for (size_t i=0; i<this->vertices.size(); i++, iter++) {
-    gfx.SetTextureFrame(reinterpret_cast<const Texture *>(iter->first));
-#if 0
-    gfx.DrawTriangles(iter->second);
-#else
-    gfx.DrawTriangles(this->vbos[i], iter->second.size());
-#endif    
+  for (auto &s : this->vertexStarts) {
+    gfx.SetTextureFrame(s.first);
+    gfx.DrawTriangles(this->vbo, s.second, this->vertexCounts[s.first]);
   }
 
   // get vertices for dynamic cells
@@ -345,7 +341,7 @@ World::Draw(Gfx &gfx) {
   }
 
   // render vertices for dynamic cells
-  iter = dynvertices.begin();
+  auto iter = dynvertices.begin();
   for (size_t i=0; i<dynvertices.size(); i++, iter++) {
     gfx.SetTextureFrame(reinterpret_cast<const Texture *>(iter->first));
     gfx.DrawTriangles(iter->second);

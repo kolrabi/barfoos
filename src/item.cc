@@ -206,22 +206,20 @@ void Item::UseOnNothing(Game &game, Mob &user) {
 }
 
 void Item::Draw(Gfx &gfx, bool left) {
-  gfx.ViewPush();
-  gfx.SetCullFace(false);
+  gfx.GetView().Push();
 
-  gfx.ViewScale(Vector3(left ? 1 : -1, 1, 1));
-  gfx.ViewTranslate(Vector3(1, -2, 4));
+  gfx.GetView().Scale(Vector3(left ? 1 : -1, 1, 1));
+  gfx.GetView().Translate(Vector3(1, -2, 4));
   
-  gfx.ViewRotate(40, Vector3(0, 1, 0));
+  gfx.GetView().Rotate(40, Vector3(0, 1, 0));
 
-  gfx.ViewTranslate(Vector3(1,-1,0));
-  gfx.ViewRotate(cooldownFrac*60-60, Vector3(0,0,1));
-  gfx.ViewTranslate(Vector3(-1,1,0));
-  gfx.ViewScale(Vector3(2,2,2));
+  gfx.GetView().Translate(Vector3(1,-1,0));
+  gfx.GetView().Rotate(cooldownFrac*60-60, Vector3(0,0,1));
+  gfx.GetView().Translate(Vector3(-1,1,0));
+  gfx.GetView().Scale(Vector3(2,2,2));
   gfx.DrawSprite(this->sprite, Vector3(0,0,0), false);
 
-  gfx.ViewPop();
-  gfx.SetCullFace(true);
+  gfx.GetView().Pop();
 }
 
 void Item::DrawIcon(Gfx &gfx, const Point &p) const {

@@ -1,56 +1,54 @@
-#include <time.h>
 #include "common.h"
+
+#ifdef WIN32
+#include <windows.h>
+#else
+#include <time.h>
+#endif
 
 struct ProfileFunc {
   std::string name;
-  unsigned long long calls = 0;
-  unsigned long long totalTicks = 0;
-  unsigned long long ticksPerCall = 0;
+  uint64_t calls = 0;
+  uint64_t totalTicks = 0;
+  uint64_t ticksPerCall = 0;
 };
 
 static std::map<std::string, ProfileFunc> funcs;
-/*
-#if defined(__i386) || defined(__i386__)
+static std::vector<std::string> funcStack;
 
-static __inline__ unsigned long long rdtsc()
-{
-    unsigned long long int x;
-    asm volatile (".byte 0x0f, 0x31" : "=A" (x));
-    return x;
-}
-
-#elif defined(__amd64) || defined(__x86_64__)
-
-static __inline__ unsigned long long rdtsc() {
-  unsigned long long a, d;
-  asm volatile ("rdtsc" : "=a" (a), "=d" (d));
-  return (d<<32) | a;
-}
-
-#endif
-*/
-
-
-static inline unsigned long long measure() {
+static inline uint64_t measure() {
+#ifdef WIN32
+  LARGE_INTEGER li;
+  QueryPerformanceCounter(&li);
+  return li.QuadPart;
+#else
   timespec t;
   clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &t);
   return t.tv_sec * 1000000000 + t.tv_nsec;
+#endif
 }
 
 Profile::Profile(const char *func, const char *file, int line) {
-  std::stringstream str;
-  str << file << ":" << line << " " << func;
-  this->name = str.str();
+  char tmp[512];
+  if (funcStack.empty()) {
+    snprintf(tmp, sizeof(tmp), "%10s %4d %-42s", file, line, func);
+    this->name = tmp;
+  } else {
+    snprintf(tmp, sizeof(tmp), "%10s %4d %-40s", file, line, func);
+    this->name = funcStack.back() + " / \n  " + tmp;
+  }
+  funcStack.push_back(this->name);
   this->startTick = measure();
 }
 
 Profile::~Profile() {
-  unsigned long long ticks = measure();
+  uint64_t ticks = measure();
   ProfileFunc &func = funcs[this->name];
   func.name = this->name;
   func.calls ++;
   func.totalTicks += ticks - this->startTick;
   func.ticksPerCall = func.totalTicks / func.calls;
+  funcStack.pop_back();
 }
 
 void 
@@ -63,6 +61,8 @@ Profile::Dump() {
   std::sort(sortedFuncs.begin(), sortedFuncs.end(), [](const ProfileFunc &a, const ProfileFunc &b){return a.ticksPerCall < b.ticksPerCall;});
 
   for (auto f : sortedFuncs) {
-    std::cerr << f.name << ": " << f.calls << " calls, " << f.totalTicks << " ticks, " << f.ticksPerCall << " ticks/call" << std::endl;
+    char tmp[512];
+    snprintf(tmp, sizeof(tmp), "%s %10" PRIu64 " c, %10" PRIu64 " t, %10" PRIu64 " t/c", f.name.c_str(), f.calls, f.totalTicks, f.ticksPerCall);
+    std::cerr << tmp << std::endl << std::endl;
   }
 }

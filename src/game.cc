@@ -44,6 +44,7 @@ Game::~Game() {
 
 bool 
 Game::Init() {
+  std::cerr << "initializing game" << std::endl;
   if (!this->gfx->Init(*this)) return false;
   
   LoadCells();
@@ -112,7 +113,7 @@ Game::Render() const {
   this->gfx->Viewport(Rect());
 
   // draw world first
-  this->gfx->SetFog(0.051, 0, IColor(20,20,20));
+  this->gfx->SetFog(0.051, 0.05, IColor(20,20,20));
   
   player->View(*this->gfx);
   world->Draw(*this->gfx);
@@ -126,7 +127,7 @@ Game::Render() const {
   player->DrawWeapons(*this->gfx);
 
   // next draw gui stuff
-  this->gfx->ViewGUI();
+  this->gfx->GetView().GUI();
   
   if (this->activeGui) {
     this->activeGui->Draw(*this->gfx, Point());

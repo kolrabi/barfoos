@@ -1,5 +1,4 @@
 
-#include <cmath>
 static constexpr float pi = std::atan(1)*4;
 
 struct Vector3 {
@@ -151,6 +150,96 @@ struct Matrix4 {
       return Vector3(w[0], w[1], w[2]);
     }
   }
+  
+  Matrix4 Mat3() const {
+    Matrix4 t(*this);
+    t(3,0) = 0;
+    t(3,1) = 0;
+    t(3,2) = 0;
+    t(0,3) = 0;
+    t(1,3) = 0;
+    t(2,3) = 0;
+    t(3,3) = 1;
+    return t;
+  }
+  
+  Matrix4 Transpose() const {
+    const Matrix4 &a = *this;
+    Matrix4 t;
+    for (int i=0; i<4; i++) {
+      for (int j=0; j<4; j++) {
+        t(i,j) = a(j,i);
+      }
+    }
+    return t;
+  }
+  
+  Matrix4 Inverse() const {
+    const Matrix4 &m = *this;
+    
+    // Inverse = adjoint / det. (See linear algebra texts.)
+
+    // pre-compute 2x2 dets for last two rows when computing
+    // cofactors of first two rows.
+    float d12 = (m(2,0) * m(3,1) - m(3,0) * m(2,1));
+    float d13 = (m(2,0) * m(3,2) - m(3,0) * m(2,2));
+    float d23 = (m(2,1) * m(3,2) - m(3,1) * m(2,2));
+    float d24 = (m(2,1) * m(3,3) - m(3,1) * m(2,3));
+    float d34 = (m(2,2) * m(3,3) - m(3,2) * m(2,3));
+    float d41 = (m(2,3) * m(3,0) - m(3,3) * m(2,0));
+
+    Matrix4 t;
+    t(0,0) =  (m(1,1) * d34 - m(1,2) * d24 + m(1,3) * d23);
+    t(0,1) = -(m(1,0) * d34 + m(1,2) * d41 + m(1,3) * d13);
+    t(0,2) =  (m(1,0) * d24 + m(1,1) * d41 + m(1,3) * d12);
+    t(0,3) = -(m(1,0) * d23 - m(1,1) * d13 + m(1,2) * d12);
+
+    // Compute determinant as early as possible using these cofactors.
+    float  det = m(0,0) * t(0,0) + m(0,1) * t(0,1) + m(0,2) * t(0,2) + m(0,3) * t(0,3);
+
+    // Run singularity test.
+    if (det == 0.0) {
+      return Matrix4();
+    }
+
+    float  invDet = 1.0f / det;
+
+    // Compute rest of inverse.
+    t(0,0) *= invDet;
+    t(0,1) *= invDet;
+    t(0,2) *= invDet;
+    t(0,3) *= invDet;
+
+    t(1,0) = -(m(0,1) * d34 - m(0,2) * d24 + m(0,3) * d23) * invDet;
+    t(1,1) =  (m(0,0) * d34 + m(0,2) * d41 + m(0,3) * d13) * invDet;
+    t(1,2) = -(m(0,0) * d24 + m(0,1) * d41 + m(0,3) * d12) * invDet;
+    t(1,3) =  (m(0,0) * d23 - m(0,1) * d13 + m(0,2) * d12) * invDet;
+
+    // Pre-compute 2x2 dets for first two rows when computing cofactors
+    // of last two rows.
+    d12 = m(0,0) * m(1,1) - m(1,0) * m(0,1);
+    d13 = m(0,0) * m(1,2) - m(1,0) * m(0,2);
+    d23 = m(0,1) * m(1,2) - m(1,1) * m(0,2);
+    d24 = m(0,1) * m(1,3) - m(1,1) * m(0,3);
+    d34 = m(0,2) * m(1,3) - m(1,2) * m(0,3);
+    d41 = m(0,3) * m(1,0) - m(1,3) * m(0,0);
+
+    t(2,0) =  (m(3,1) * d34 - m(3,2) * d24 + m(3,3) * d23) * invDet;
+    t(2,1) = -(m(3,0) * d34 + m(3,2) * d41 + m(3,3) * d13) * invDet;
+    t(2,2) =  (m(3,0) * d24 + m(3,1) * d41 + m(3,3) * d12) * invDet;
+    t(2,3) = -(m(3,0) * d23 - m(3,1) * d13 + m(3,2) * d12) * invDet;
+    
+    t(3,0) = -(m(2,1) * d34 - m(2,2) * d24 + m(2,3) * d23) * invDet;
+    t(3,1) =  (m(2,0) * d34 + m(2,2) * d41 + m(2,3) * d13) * invDet;
+    t(3,2) = -(m(2,0) * d24 + m(2,1) * d41 + m(2,3) * d12) * invDet;
+    t(3,3) =  (m(2,0) * d23 - m(2,1) * d13 + m(2,2) * d12) * invDet;
+
+    return t;
+  }
+  
+  Matrix4 ModelViewToNormal() const {
+    return Inverse().Transpose();
+  };
   
   static Matrix4 Perspective(float fovy, float aspect, float znear, float zfar) {
     Matrix4 t;

@@ -173,15 +173,25 @@ const Texture *loadTexture(const std::string &name, const Texture * tex = nullpt
 
 void updateTextures() {
   time_t lastMod = lastUpdate;
+  if (time(nullptr) - lastMod < 2) return;
+  
+  std::cerr << "updating textures" << std::endl;
+
+  bool updated = false;
   for (auto &t : textures) {
     if (t.first[0] == '*') continue;
     time_t mtime = getFileChangeTime(t.first+".png"); 
     if (mtime > lastUpdate) {
       const Texture *res = loadTexture(t.first, t.second.get());
       if (res && mtime > lastMod) lastMod = mtime;
+      updated = true;
     }
   }
-  lastUpdate = lastMod;
+  if (updated) {
+    lastUpdate = lastMod;
+  } else {
+    lastUpdate = time(nullptr);
+  }
 }
 
 const Texture * 
