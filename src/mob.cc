@@ -38,18 +38,31 @@ Mob::Update(Game &game) {
 
   float deltaT = game.GetDeltaT();
   
-  velocity.x = std::abs(move.x) > std::abs(velocity.x) ? move.x : velocity.x;
-  velocity.z = std::abs(move.z) > std::abs(velocity.z) ? move.z : velocity.z;
-  
-  float gravity = 3*9.81*deltaT;
-  float friction = 1.0 / (1.0+deltaT * 10);
+  // clip move speed
+  float speed = move.GetMag();
+  float maxSpeed = this->properties->maxSpeed * this->GetMoveModifier();
+  if (speed > maxSpeed) move = move * (maxSpeed/speed);
 
+  float gravity = 3 * 9.81 * deltaT;
+  float footFriction = 1.0 / (this->footCell ? this->footCell->GetInfo().speedModifier : 1.0);
+  float groundFriction = this->groundCell ? this->groundCell->GetInfo().friction : 0.1;
+  float friction = 1.0 / (1.0+deltaT * 10 * footFriction * groundFriction);
+
+  float tvx = std::abs(move.x) > std::abs(velocity.x) ? move.x : velocity.x;
+  float tvz = std::abs(move.z) > std::abs(velocity.z) ? move.z : velocity.z;
+  
+  velocity.x += (tvx-velocity.x) * groundFriction * deltaT * 10;
+  velocity.z += (tvz-velocity.z) * groundFriction * deltaT * 10;
+  
   if (noclip) {
     if (wantJump) {
       velocity.y = 3;
       wantJump = false;
     } else if (sneak) {
       velocity.y = -3;
+      sneak = false;
+    } else {
+      velocity.y = 0;
     }
   } else if (inWater) { 
     if (wantJump) {
@@ -100,7 +113,7 @@ Mob::Update(Game &game) {
   }
 
   // jump out of water
-  if (axis & Axis::Horizontal && (inWater || validMoveTarget) && move.GetMag() != 0 && !noclip) {
+  if (axis & Axis::Horizontal && (inWater || validMoveTarget) && move.GetMag() != 0 && !noclip && !sneak) {
     wantJump = true;
   }
 
@@ -118,15 +131,11 @@ void
 Mob::Think(Game &game) {  
   Entity::Think(game);
   
-  // clip move speed
-  float speed = move.GetMag();
-  if (speed > this->properties->maxSpeed) move = move * (this->properties->maxSpeed/speed);
-
   // walk around a bit
   if (this->properties->moveInterval != 0) {
     if (game.GetTime() > nextMoveT) {
       nextMoveT += this->properties->moveInterval;
-      moveTarget = aabb.center + (Vector3::Rand()-Vector3(0.5,0.5,0.5)) * 4.0;
+      moveTarget = aabb.center + (Vector3(game.GetRandom().Float(), game.GetRandom().Float(), game.GetRandom().Float())) * 4.0;
       validMoveTarget = true;
     }
     
@@ -184,4 +193,12 @@ Mob::OnCollide(Game &game, Entity &other) {
 void
 Mob::ApplyForce(Game &game, const Vector3 &f) {
   velocity = velocity + f * (game.GetDeltaT() / this->properties->mass); 
+}
+
+float
+Mob::GetMoveModifier() const {
+  float mod = 1.0;
+  if (sneak) mod *= 0.5;
+  if (this->footCell) mod *= this->footCell->GetInfo().speedModifier;
+  return mod;
 }

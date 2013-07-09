@@ -5,6 +5,8 @@
 #include "mob.h"
 
 struct InputEvent;
+class RenderString;
+class Shader;
 
 class Player : public Mob {
 public:
@@ -23,10 +25,23 @@ public:
   
   void HandleEvent(const InputEvent &event);
 
+  void AddMessage(const std::string &text);
+
 private:
 
   void UpdateInput(Game &game);
   void UpdateSelection(Game &game);
+
+  struct Message {
+    RenderString *text;
+    float messageTime;
+
+    Message(const std::string &text);
+    ~Message();
+  };
+
+  std::list<Message*> messages;
+  float messageY, messageVY;
 
   float fps;
   float bobPhase;
@@ -42,6 +57,8 @@ private:
   bool itemActiveLeft, itemActiveRight;
   
   const Texture *crosshairTex;
+  std::unique_ptr<Shader> defaultShader;
+  std::unique_ptr<Shader> guiShader;
 };
 
 

@@ -238,8 +238,8 @@ Gfx::Init(Game &game) {
   glEnable(GL_SCISSOR_TEST);
   
   glEnable(GL_DEPTH_TEST);
-  //glEnable(GL_BLEND);
-  //glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+  glEnable(GL_BLEND);
+  glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
 
   // Colors look nicer unclamped
   if (GLEE_ARB_color_buffer_float) {
@@ -391,8 +391,9 @@ Gfx::SetTextureFrame(const Texture *texture, size_t stage, size_t currentFrame, 
 }
 
 void
-Gfx::SetColor(const IColor &color) {
+Gfx::SetColor(const IColor &color, float alpha) {
   this->color = color;
+  this->alpha = alpha;
 }
 
 void 
@@ -405,7 +406,7 @@ Gfx::SetUniforms() const {
   this->activeShader->Uniform("u_fogLin",   this->fogLin);
   this->activeShader->Uniform("u_fogColor", this->fogColor);
   this->activeShader->Uniform("u_time",     this->GetTime());
-  this->activeShader->Uniform("u_color",    this->color);
+  this->activeShader->Uniform("u_color",    this->color, this->alpha);
 }
 
 void

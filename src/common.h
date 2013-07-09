@@ -31,6 +31,8 @@
 
 #endif
 
+#define self (*this)
+
 #include "vector3.h"
 #include "space.h"
 #include "ivector3.h"

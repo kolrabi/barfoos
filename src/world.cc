@@ -18,7 +18,7 @@
 
 #include "vertex.h"
 
-World::World(const IVector3 &size) 
+World::World(Game &game, const IVector3 &size) : game(game)
 {  
   this->defaultShader = new Shader("default");
   this->ambientLight = IColor(32,32,64);
@@ -283,14 +283,14 @@ World::Draw(Gfx &gfx) {
       Cell &cell = this->cells[i];
       const CellInfo &info = cell.GetInfo();
 
+      // don't bother with invisible cells 
+      if (info.flags & CellFlags::DoNotRender || !cell.GetVisibility()) continue;
+
       // don't add dynamic cells to static vertex buffer
       if (info.flags & CellFlags::Dynamic) {
         dynamicCells.push_back(i);
         continue;
       }
-     
-      // don't bother with invisible cells 
-      if (info.flags & CellFlags::DoNotRender || !cell.GetVisibility()) continue;
 
       cell.UpdateVertices();
 

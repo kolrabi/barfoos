@@ -48,6 +48,8 @@ void RenderString::DrawString() {
 
   this->vertices = std::vector<Vertex>(); 
   this->dirty = false;
+
+  if (this->text == "") return;
   
   const char *p = this->text.c_str();
   size_t max = this->text.length();

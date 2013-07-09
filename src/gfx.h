@@ -67,7 +67,7 @@ public:
   void SetShader(const Shader *shader);
   void SetTextureFrame(const Texture *texture, size_t stage = 0, size_t currentFrame = 0, size_t frameCount = 1);
   void SetFog(float e, float l, const IColor &color);
-  void SetColor(const IColor &color);
+  void SetColor(const IColor &color, float alpha = 1.0);
   
   const Texture *GetNoiseTexture() const { return noiseTex; }
 
@@ -121,6 +121,7 @@ private:
   const Shader *activeShader;
   GfxView view;
   IColor color;
+  float alpha;
   std::map<size_t, const Texture *> activeTextures;
   size_t activeTextureStage;
   const Vertex *activeVertexPointer;

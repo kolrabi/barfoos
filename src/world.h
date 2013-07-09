@@ -7,7 +7,6 @@
 
 class Entity;
 class Player;
-class Random;
 class Shader;
 class Gfx;
 class FeatureInstance;
@@ -16,7 +15,7 @@ class Game;
 class World final {
 public:
 
-  World(const IVector3 &size);
+  World(Game &game, const IVector3 &size);
   World(const World &world) = delete;
   World(World &&world) = delete;
   ~World();
@@ -24,6 +23,7 @@ public:
   void Build(Game &game);
   
   const IVector3 &GetSize() const { return size; }
+  Game &GetGame() { return game; }
 
   void Draw(Gfx &gfx);
   void DrawMap(Gfx &gfx);
@@ -57,6 +57,7 @@ public:
   void BreakBlock(Game &game, const IVector3 &pos);
   
   void SetTorchLight(const IColor &color) { this->torchLight = color; }
+  void SetDirty() { this->dirty = true; }
 
 private:
 
@@ -68,7 +69,8 @@ private:
   bool IsValidCellPosition(const IVector3 &pos) const { 
     return pos.x < size.x  && pos.y < size.y && pos.z < size.z; 
   }
-
+ 
+  Game &game;
   IVector3 size;
   bool dirty, firstDirty;
 

@@ -48,6 +48,7 @@ protected:
   Cell *headCell, *footCell, *groundCell;
 
   void SetInLiquid(bool inLiquid);
+  float GetMoveModifier() const;
 };
 
 

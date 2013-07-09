@@ -11,6 +11,7 @@
 #include "vertex.h"
 #include "item.h"
 #include "input.h"
+#include "shader.h"
 
 static float eyeHeight = 0.7f;
 
@@ -27,6 +28,9 @@ Player::Player() : Mob("player") {
   this->selectionRange = 0;
   this->selectedEntity = ~0UL;
 
+  this->messageY = 0;
+  this->messageVY = 0;
+
   this->Equip(std::make_shared<Item>(Item("sword")), InventorySlot::RightHand);
   this->Equip(std::make_shared<Item>(Item("torch")), InventorySlot::LeftHand);
   this->AddToInventory(std::make_shared<Item>(Item("torch")));
@@ -35,6 +39,8 @@ Player::Player() : Mob("player") {
   this->itemActiveRight = false;
 
   this->crosshairTex = loadTexture("gui/crosshair");
+  this->defaultShader = std::unique_ptr<Shader>(new Shader("default"));
+  this->guiShader = std::unique_ptr<Shader>(new Shader("gui"));
 }
 
 Player::~Player() {
@@ -106,6 +112,25 @@ Player::Update(Game &game) {
   if (headCell) {
     game.GetWorld().AddFeatureSeen(headCell->GetFeatureID());
   }
+
+  auto iter = this->messages.begin();
+  while(iter!=this->messages.end()) {
+    (*iter)->messageTime -= game.GetDeltaT();
+    if ((*iter)->messageTime <= 0) {
+      delete *iter;
+      iter = this->messages.erase(iter);
+      this->messageY += 16;
+    } else {
+      iter++;
+    }
+  }
+
+  messageY += messageVY * game.GetDeltaT();
+  messageVY -= game.GetDeltaT() * 100;
+  if (messageY < 0) {
+    messageY = 0;
+    messageVY = 0;
+  }
 }
 
 void Player::UpdateSelection(Game &game) {
@@ -155,7 +180,7 @@ void Player::UpdateSelection(Game &game) {
 }
 
 void Player::Draw(Gfx &gfx) const {
-  (void)gfx;
+  gfx.SetShader(this->defaultShader.get());
 
   if (this->selectedCell) {
     std::vector<Vertex> verts;
@@ -182,12 +207,12 @@ Player::UpdateInput(
 
   sneak = input->IsKeyActive(InputKey::Sneak);
 
-  if (angles.y > 3.1/2) angles.y = 3.1/2;
+  if (angles.y >  3.1/2) angles.y =  3.1/2;
   if (angles.y < -3.1/2) angles.y = -3.1/2;
 
   Vector3 fwd( Vector3(angles.x, 0, 0).EulerToVector() );
   Vector3 right( Vector3(angles.x+3.14159/2, 0, 0).EulerToVector() );
-  float speed = sneak?this->properties->maxSpeed*0.5:this->properties->maxSpeed;
+  float speed = this->properties->maxSpeed * this->GetMoveModifier();
 
   move = Vector3();
   
@@ -208,11 +233,13 @@ Player::UpdateInput(
   }
 
   float lastPhase = bobPhase;
-  bobPhase += deltaT*move.GetMag()/4;
+  bobPhase += (deltaT * this->GetMoveModifier()) * move.GetMag()/4;
   if (bobPhase >= 1.0) {
     bobPhase -= 1.0;
     // TODO: play step sound
+    this->AddMessage("step");
   } else if (bobPhase >= 0.5 && lastPhase < 0.5) {
+    this->AddMessage("step");
     // TODO: play step sound
   }
   
@@ -221,6 +248,8 @@ Player::UpdateInput(
 
 void 
 Player::DrawWeapons(Gfx &gfx) const {
+  gfx.SetShader(this->defaultShader.get());
+  
   Vector3 fwd(0,0,1);
   Vector3 right(1,0,0);
   Vector3 bob = Vector3(0,sin(bobPhase*3.14159*4)*0.05, 0) * bobAmplitude + right * cos(bobPhase*3.14159*2)*0.05 * bobAmplitude;
@@ -242,20 +271,21 @@ Player::DrawWeapons(Gfx &gfx) const {
 
 void 
 Player::DrawGUI(Gfx &gfx) const {
+  gfx.SetShader(this->guiShader.get());
+  
   const Point &vsize = gfx.GetVirtualScreenSize();
   Sprite sprite;
   sprite.texture = crosshairTex;
   gfx.DrawIcon(sprite, Point(vsize.x/2, vsize.y/2));
 
-  std::stringstream str;
-  str << fps << std::endl;
-  str << smoothPosition << std::endl;
-  str << (this->selectedCell?this->selectedCell->GetType():"(null)") << std::endl;
-  str << (this->headCell?this->headCell->GetFeatureID():~0UL) << std::endl;
-  str << (this->selectedEntity) << std::endl;
-  str << (this->selectionRange) << std::endl;
-  RenderString rs(str.str());
-  rs.Draw(gfx, 0,0);
+  float y = this->messageY;
+  for (auto &msg : this->messages) {
+    float a = msg->messageTime * 4;
+    if (a > 1.0) a = 1.0;
+    gfx.SetColor(IColor(255,255,255), a);
+    msg->text->Draw(gfx, 0, y);
+    y += 16;
+  }
 }
 
 void
@@ -268,5 +298,21 @@ Player::HandleEvent(const InputEvent &event) {
     angles.x += event.p.x*0.005;
     angles.y -= event.p.y*0.005;
   }
+}
+
+void 
+Player::AddMessage(const std::string &text) {
+  Message *msg = new Message(text);
+  msg->messageTime = 5;
+  this->messages.push_back(msg);
+}
+
+
+Player::Message::Message(const std::string &txt) {
+  this->text = new RenderString(txt);
+}
+
+Player::Message::~Message() {
+  delete text;
 }
 

@@ -3,5 +3,5 @@ dynamic
 transparent
 liquid
 uvturb
-#wave
-
+wave
+speed 0.5

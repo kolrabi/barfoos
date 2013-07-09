@@ -66,9 +66,17 @@ struct Vector3 {
   Vector3 Vert() const {
     return Vector3(0, y, 0);
   }
+  /*
+  static Vector3 Rand01(Random &random) {
+    return Vector3(random.Float01(), random.Float01(), random.Float01());
+  }
   
-  static Vector3 Rand() {
-    return Vector3(rand()/(float)RAND_MAX, rand()/(float)RAND_MAX, rand()/(float)RAND_MAX);
+  static Vector3 Rand(Random &random) {
+    return Vector3(random.Float(), random.Float(), random.Float());
+  }
+  */
+  static Vector3 Normal(const Vector3 &a, const Vector3 &b, const Vector3 &c) {
+    return (b-a).Cross(c-a).Normalize();
   }
   
   Vector3 XYZ() const { return *this; }

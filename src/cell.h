@@ -25,10 +25,10 @@ enum CellFlags {
   /** Don't bother rendering this cell. */
   DoNotRender = (1<<3),
   
-  /** Cell behaves like a liquid and flows, detail is amount of liquid in cell. @TODO higher friction than air. */
+  /** Cell behaves like a liquid and flows, detail is amount of liquid in cell. */
   Liquid      = (1<<4),
   
-  /** If liquid, make the cell flow slower. @TODO More friction for mobs inside. */
+  /** If liquid, make the cell flow slower. */
   Viscous     = (1<<5),
   
   /** Use a different part of the texture for each side. 
@@ -93,6 +93,9 @@ struct CellInfo {
     * Default: [1,1,1], don't change size.
     */
   Vector3 scale = Vector3(1,1,1);
+  
+  float speedModifier = 1.0;
+  float friction = 1.0;
 
 /*  
   size_t noclipSidesIn = 0;     // default: never allow moving in from any side when solid
@@ -148,6 +151,7 @@ public:
   bool IsBottomFlat() const;
   bool IsTransparent() const;
   bool IsSolid() const;
+  bool IsLiquid() const;
 
   void SetWorld(World *world, const IVector3 &pos);
   World *GetWorld() const;
@@ -182,10 +186,11 @@ public:
   void Tick(Game &game);
   
   bool Ray(const Vector3 &start, const Vector3 &dir, float &t, Vector3 &p) const;
+  Cell &operator[](Side side);
   
 protected:
 
-  static const int OffsetScale = 32;
+  static const int OffsetScale = 127;
 
   // unique information, that will change after assignment from different cell
   const CellInfo *info;
@@ -195,6 +200,7 @@ protected:
   
   size_t tickPhase;
   IColor lightLevel;
+  float lastT;
   
   uint8_t visibility;
   bool reversedSides;
@@ -289,6 +295,10 @@ inline bool Cell::IsSolid() const {
   return this->info->flags & CellFlags::Solid;
 }
 
+inline bool Cell::IsLiquid() const {
+  return this->info->flags & CellFlags::Liquid;
+}
+
 inline const IColor &Cell::GetLightLevel() const { 
   return this->lightLevel; 
 }
@@ -339,6 +349,10 @@ inline size_t Cell::GetFeatureID() const {
 
 inline void Cell::SetFeatureID(size_t f) { 
   this->shared.featureID = f;
+}
+
+inline Cell &Cell::operator[](Side side) {
+  return *this->neighbours[(int)side];
 }
 
 void LoadCells();

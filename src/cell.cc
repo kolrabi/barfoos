@@ -35,6 +35,8 @@ CellInfo::CellInfo(const std::string &name, FILE *f) : type(name) {
     else if (tokens[0] == "liquid") this->flags |= Liquid;
     else if (tokens[0] == "norender") this->flags |= DoNotRender;
     else if (tokens[0] == "transparent") this->flags |= Transparent;
+    else if (tokens[0] == "speed") this->speedModifier = std::atof(tokens[1].c_str());
+    else if (tokens[0] == "friction") this->friction = std::atof(tokens[1].c_str());
     else if (tokens[0] == "detailbelowreplace") {
       this->detailBelowReplace = std::atoi(tokens[1].c_str());
       this->replaceChance = std::atof(tokens[2].c_str());
@@ -91,12 +93,12 @@ Cell::Cell(const std::string &type)
   this->shared.u[0] = 0;  this->shared.u[1] = 0;  this->shared.u[2] = 0;  this->shared.u[3] = 0;
   this->shared.v[0] = 0;  this->shared.v[1] = 0;  this->shared.v[2] = 0;  this->shared.v[3] = 0;
 
-  if (info->flags & CellFlags::Liquid) {
+  if (this->IsLiquid()) {
     this->shared.smoothDetail = this->shared.detail = 15;
-    this->shared.nextDetail = 15;
+    this->shared.detail = 15;
   } else {
     this->shared.smoothDetail = this->shared.detail = 0;
-    this->shared.nextDetail = 0;
+    this->shared.detail = 0;
   }
   
   // unique information
@@ -111,13 +113,6 @@ Cell::Cell(const std::string &type)
 
   this->texture = nullptr;
   this->uscale = 1.0;
-
-  // TODO: move to setworld, use proper random
-  if (info->textures.size() == 0) {
-    this->SetTexture(0, info->flags & MultiSided);
-  } else {
-    this->SetTexture(info->textures[rand()%info->textures.size()], info->flags & MultiSided);
-  }
   
   this->dirty = true;
 }
@@ -134,16 +129,9 @@ Cell::Cell(const Cell &that)
   for (size_t i=0; i<6; i++)
     this->neighbours[i] = nullptr;
 
-  this->texture = nullptr;
-  this->uscale = 1.0;
+  this->texture = that.texture;
+  this->uscale = that.uscale;
 
-  // TODO: move to setworld, use proper random
-  if (info->textures.size() == 0) {
-    this->SetTexture(0, info->flags & MultiSided);
-  } else {
-    this->SetTexture(info->textures[rand()%info->textures.size()], info->flags & MultiSided);
-  }
-  
   this->dirty = true;
 }
 
@@ -176,48 +164,30 @@ void
 Cell::Update(
   Game &game
 ) {
-  (void)game;
-  if (!world) return;
-  
-  //float deltaT = game.GetDeltaT();
+  if (!world) return; 
+ 
+  float deltaT = game.GetDeltaT();
+  this->lastT = game.GetTime();
 
-  this->shared.detail = this->shared.nextDetail;
-  this->shared.smoothDetail = this->shared.smoothDetail + 0.05*(this->shared.detail - this->shared.smoothDetail);
-  
-  /* TODO: move to updateverts and only change y based on x and z
-  float t = game.GetTime();
-  if (GetInfo().flags & CellFlags::Waving) {
-    float h = 0.8;
-    if (info->flags & CellFlags::Liquid) h = 0.8*smoothDetail/16.0;
-    if (h>1) h = 1;
-    if (GetInfo().flags & CellFlags::Viscous) {
-      SetYOffsets(
-        Wave(this->pos.x,   this->pos.z,   t, 0.1, h),
-        Wave(this->pos.x,   this->pos.z+1, t, 0.1, h),
-        Wave(this->pos.x+1, this->pos.z+1, t, 0.1, h),
-        Wave(this->pos.x+1, this->pos.z,   t, 0.1, h)
-      );
-    } else {
-      SetYOffsets(
-        Wave((this->pos.x)*2,   this->pos.z,   t*5, 0.1, h),
-        Wave((this->pos.x)*2,   this->pos.z+1, t*5, 0.1, h),
-        Wave((this->pos.x+1)*2, this->pos.z+1, t*5, 0.1, h),
-        Wave((this->pos.x+1)*2, this->pos.z,   t*5, 0.1, h)
-      );
-    }
+  this->shared.smoothDetail = this->shared.smoothDetail + (this->shared.detail - this->shared.smoothDetail) * deltaT * 2;
+
+  // if this cell lost all its liquid replace by air
+  if (this->IsLiquid() && this->shared.smoothDetail < 0.1) {
+    this->world->SetCell(this->pos, Cell("air"));
+    // "this" is now the new air cell
   }
-  */
 
-  if (info->flags & CellFlags::Liquid) {
+  if (this->IsLiquid()) {
     float h = this->shared.smoothDetail/16.0;
-    if (neighbours[(int)Side::Up]->info == info && neighbours[(int)Side::Down]->info == info) {
+
+    if (self[Side::Up].info == info && self[Side::Down].info == info) {
       // liquid and top and bottom cells are the same as this one
       this->SetYOffsets(1,1,1,1); 
       this->SetYOffsetsBottom(0,0,0,0);
-    } else if (neighbours[(int)Side::Up]->info == info && neighbours[(int)Side::Down]->info != info) {
-      // liquid and liquid above and nothing solid below
-      this->SetYOffsetsBottom(1-h,1-h,1-h,1-h);
+    } else if (self[Side::Up].info == info && self[Side::Down].info != info) {
+      // liquid and liquid above and nothing liquid below
       this->SetYOffsets(1,1,1,1);
+      this->SetYOffsetsBottom(1-h,1-h,1-h,1-h);
     } else {
       // no liquid above
       this->SetYOffsetsBottom(0,0,0,0);
@@ -225,31 +195,18 @@ Cell::Update(
     }
   }
   
-  /* TODO: better algorithm
-  if (GetInfo().flags & CellFlags::UVTurb) {
-  
-#define U(xx,zz) (sin((2*zz*3.14159)+t*0.5)*0.25)
-#define V(xx,zz) (cos((2*xx*3.14159)+t*0.5)*0.25)
-
-    u[0] = U(0,0); v[0] = V(0,0);
-    u[1] = U(0,1); v[1] = V(0,1);
-    u[2] = U(1,1); v[2] = V(1,1);
-    u[3] = U(1,0); v[3] = V(1,0);
-  }
-  */
-  
   UpdateNeighbours();
 }
 
 void Cell::Tick(Game &game) {
   this->tickPhase = (this->tickPhase + 1) % this->shared.tickInterval;
-  if (this->tickPhase) return;
+  //if (this->tickPhase) return;
 
   if (this->neighbours[0] == nullptr) return;
   
   // TODO: make it pressure, flowrate based, maybe?
-  if (this->info->flags & CellFlags::Liquid) {
-    if (this->neighbours[(int)Side::Up]->info == this->info && this->shared.detail < 16) return;
+  if ((this->info->flags & CellFlags::Liquid) && this->shared.detail > 0) {
+    if (self[Side::Up].info == self.info && self.shared.detail < 16) return;
     
     // if we can't flow down and have more than 1 unit of liquid
     if (!this->Flow(Side::Down) && this->shared.detail > 1) {
@@ -305,23 +262,20 @@ Cell::Flow(Side side) {
     if ((cell->shared.detail >= this->shared.detail && side != Side::Down) || cell->shared.detail >= 16) return false;
   }
   
-  this->shared.nextDetail -= 1;
+
+  if (this->shared.detail > 16) std::cerr << this->shared.detail << " ";
+  this->shared.detail -= 1;
+  if (this->shared.detail > 16) std::cerr << this->shared.detail << std::endl;
   
   if (cell->info != this->info) {
     // replace target cell if not already of this type
     this->world->SetCell(this->pos[side], Cell(info->type));
-    cell->shared.nextDetail = 1;
+    cell->shared.detail = 1;
     cell->shared.smoothDetail = 1;
     cell->UpdateVertices();
   } else {
     // otherwise just increase liquid
-    cell->shared.nextDetail++;
-  }
-
-  // if this cell lost all its liquid replace by air
-  if (!this->shared.detail) {
-    this->world->SetCell(this->pos, Cell("air"));
-    // "this" is now the new air cell
+    cell->shared.detail++;
   }
 
   UpdateNeighbours();
@@ -628,15 +582,14 @@ Cell::SideVerts(Side side, std::vector<Vertex> &verts, bool reverse) const {
   int tile = 0;
   int inv = 0;
   int r, s, t;
-  Vector3 norm;
   
   switch(side) {
-    case Side::Right:    norm = Vector3( 1,0,0); r = Corner100; s = CornerY; t = CornerZ; uvec.z = uscale; break;
-    case Side::Left:     norm = Vector3(-1,0,0); r = Corner000; s = CornerY; t = CornerZ; uvec.z = uscale; inv = CornerZ; tile = 1; break;
-    case Side::Forward:  norm = Vector3(0,0, 1); r = Corner001; s = CornerY; t = CornerX; uvec.x = uscale; inv = CornerX; tile = 2; break;
-    case Side::Backward: norm = Vector3(0,0,-1); r = Corner000; s = CornerY; t = CornerX; uvec.x = uscale; tile = 3; break;
-    case Side::Up:       norm = Vector3(0, 1,0); r = Corner010; s = CornerZ; t = CornerX; uvec.x = uscale; vvec = Vector3(0,0,1); tile = 4; break;
-    case Side::Down:     norm = Vector3(0,-1,0); r = Corner000; s = CornerZ; t = CornerX; uvec.x = uscale; vvec = Vector3(0,0,1); inv = CornerZ; tile = 5; break;
+    case Side::Right:    r = Corner100; s = CornerY; t = CornerZ; uvec.z = uscale; break;
+    case Side::Left:     r = Corner000; s = CornerY; t = CornerZ; uvec.z = uscale; inv = CornerZ; tile = 1; break;
+    case Side::Forward:  r = Corner001; s = CornerY; t = CornerX; uvec.x = uscale; inv = CornerX; tile = 2; break;
+    case Side::Backward: r = Corner000; s = CornerY; t = CornerX; uvec.x = uscale; tile = 3; break;
+    case Side::Up:       r = Corner010; s = CornerZ; t = CornerX; uvec.x = uscale; vvec = Vector3(0,0,1); tile = 4; break;
+    case Side::Down:     r = Corner000; s = CornerZ; t = CornerX; uvec.x = uscale; vvec = Vector3(0,0,1); inv = CornerZ; tile = 5; break;
     default: return;
   }
   
@@ -675,29 +628,45 @@ Cell::SideVerts(Side side, std::vector<Vertex> &verts, bool reverse) const {
     pos[3].Dot(vvec) + this->shared.v[3] 
   };
 
+  if (GetInfo().flags & CellFlags::UVTurb) {
+    float t = this->lastT * 3;
+    if (GetInfo().flags & CellFlags::Viscous) {
+      t *= 0.5;
+    }
+    for (int i=0; i<4; i++) {
+      Vector3 p(pos[i] + this->pos);
+      u[i] = p.x + p.y + cos(p.z + t + p.y) * 0.3;
+      v[i] = p.z - p.y + cos(p.x + t - p.y) * 0.3;
+    }
+  }
+  
   IColor colors[4];
   SideColors(side, colors);
 
   if (reverse) {
     if (drawA) {
+      Vector3 norm = Vector3::Normal(pos[0], pos[1], pos[3]);
       verts.push_back(Vertex(pos[0]+this->pos, colors[0], u[0], v[0], norm));
       verts.push_back(Vertex(pos[1]+this->pos, colors[1], u[1], v[1], norm));
       verts.push_back(Vertex(pos[3]+this->pos, colors[3], u[3], v[3], norm));
     }
 
     if (drawB) {
+      Vector3 norm = Vector3::Normal(pos[1], pos[2], pos[3]);
       verts.push_back(Vertex(pos[1]+this->pos, colors[1], u[1], v[1], norm));
       verts.push_back(Vertex(pos[2]+this->pos, colors[2], u[2], v[2], norm));
       verts.push_back(Vertex(pos[3]+this->pos, colors[3], u[3], v[3], norm));
     }
   } else {
     if (drawA) {
+      Vector3 norm = Vector3::Normal(pos[0], pos[1], pos[2]);
       verts.push_back(Vertex(pos[0]+this->pos, colors[0], u[0], v[0], norm));
       verts.push_back(Vertex(pos[1]+this->pos, colors[1], u[1], v[1], norm));
       verts.push_back(Vertex(pos[2]+this->pos, colors[2], u[2], v[2], norm));
     }
 
     if (drawB) {
+      Vector3 norm = Vector3::Normal(pos[0], pos[2], pos[3]);
       verts.push_back(Vertex(pos[0]+this->pos, colors[0], u[0], v[0], norm));
       verts.push_back(Vertex(pos[2]+this->pos, colors[2], u[2], v[2], norm));
       verts.push_back(Vertex(pos[3]+this->pos, colors[3], u[3], v[3], norm));
@@ -780,6 +749,23 @@ Cell::UpdateVertices() {
     h[0] /= w[0]; h[1] /= w[1]; h[2] /= w[2]; h[3] /= w[3];
   }  
   
+  if (GetInfo().flags & CellFlags::Waving) {
+    // Z ^
+    //   | 1---2
+    //   | | / |
+    //   | 0---3
+    //   +------> X
+
+    float t = this->lastT * 3;
+    if (GetInfo().flags & CellFlags::Viscous) {
+      t *= 0.5;
+    }
+    h[0] += Wave(this->pos.x,   this->pos.z,   t, 0.1);
+    h[1] += Wave(this->pos.x,   this->pos.z+1, t, 0.1);
+    h[2] += Wave(this->pos.x+1, this->pos.z+1, t, 0.1);
+    h[3] += Wave(this->pos.x+1, this->pos.z,   t, 0.1);
+  }
+  
   const float &scaleX = info->scale.x;
   const float &scaleY = info->scale.y;
   const float &scaleZ = info->scale.z;
@@ -839,6 +825,13 @@ Serializer &operator << (Serializer &ser, const Cell &cell) {
 
 void Cell::SetWorld(World *world, const IVector3 &pos) { 
   this->world = world; 
+  
+  if (info->textures.size() == 0) {
+    this->SetTexture(0, info->flags & MultiSided);
+  } else {
+    this->SetTexture(info->textures[world->GetGame().GetRandom().Integer(info->textures.size())], info->flags & MultiSided);
+  }
+
   
   //this->tickPhase = pos.y % this->shared.tickInterval;
   // this->tickPhase = this->world->GetRandom().Integer(this->shared.tickInterval);

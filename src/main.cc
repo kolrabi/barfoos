@@ -5,8 +5,9 @@
 #include <png.h>
 #include <zlib.h>
 
-float Wave(float x, float z, float t, float a, float o) {
-  return o + a * cos( ((x+z+t)*0.4 )*0.1) * cos( ((x-z  )*0.6+t*0.3) * 0.5) * 0.5;
+float Wave(float x, float z, float t, float a) {
+  return a * cos( ((x+z)*0.4+t*0.4) )
+           * cos( ((x-z)*0.6+t*0.7) );
 }
 
 static std::string credits() {
