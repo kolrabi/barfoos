@@ -3,7 +3,7 @@ dynamic
 transparent
 liquid
 uvturb
-#wave
+wave
 light 512 256 64
 detailbelowreplace 2 0.0001 air
 speed 0.2

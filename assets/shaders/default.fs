@@ -23,9 +23,10 @@ void main() {
   vec4 light = v_color + u_torch * torchIntensity;
   
   float fogDepth = dist;
-  float fogIntensity = pow(max(0.0, u_fogLin * fogDepth), 2);
+  float fogIntensity = 1.0 - 1.0 / (1.0 + fogDepth*u_fogLin*10);
+  //float fogIntensity = pow(max(0.0, u_fogLin * fogDepth), 1.0);
   
-  vec4 color = mix(t0 * light, u_fogColor, min(1.0, fogIntensity));
+  vec4 color = mix(t0 * light, mix(v_color, u_fogColor, min(1.0, fogIntensity)), min(1.0, fogIntensity));
  
   gl_FragColor = color;
 }
