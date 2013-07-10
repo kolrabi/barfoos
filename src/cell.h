@@ -8,6 +8,7 @@ class World;
 class Random;
 class Serializer;
 class Game;
+class Mob;
 
 struct Vertex;
 
@@ -42,6 +43,10 @@ enum CellFlags {
   
   /** Make the top surface wave. */
   Waving      = (1<<8),
+  
+  DoubleSided = (1<<9),
+  Pickable    = (1<<10),
+  OnUseReplace = (1<<11),
 };
 
 /** Information about a cell shared by cells of same type. */
@@ -97,10 +102,14 @@ struct CellInfo {
   float speedModifier = 1.0;
   float friction = 1.0;
 
-/*  
-  size_t noclipSidesIn = 0;     // default: never allow moving in from any side when solid
-  size_t noclipSidesOut = ~0;   // default: always allow moving out to any side when solid
-*/
+  size_t showSides = 0;
+  size_t hideSides = 0;
+  size_t clipSidesIn = 0;  // default: don't clip movement into cell from all sides when solid
+  size_t clipSidesOut = 0; // default: don't clip movement out of cell to all sides when solid
+  
+  size_t onUseCascade = 0;
+  
+  float useDelay = 0.0;
 
   CellInfo() {}
   CellInfo(const std::string &name, FILE *f);
@@ -120,9 +129,12 @@ public:
 
   Cell(const std::string &type = "default");
   Cell(const Cell &that);
-  virtual ~Cell();
+  ~Cell();
   
-  virtual void Update(Game &game);
+  void Update(Game &game);
+  
+  void OnUse(Game &game, Mob &user);
+  
   virtual void UpdateNeighbours();
   
   virtual void Draw(std::vector<Vertex> &vertices) const;
@@ -156,7 +168,7 @@ public:
   void SetWorld(World *world, const IVector3 &pos);
   World *GetWorld() const;
   IVector3 GetPosition() const;
-
+  
   const IColor &GetLightLevel() const;
   bool SetLightLevel(const IColor &level, bool force=false);
   
@@ -209,6 +221,8 @@ protected:
   Cell *neighbours[6];
   const Texture *texture;
   float uscale;
+  
+  float lastUseT;
 
   // shared information, that will stay the same after assignment from different cell
   struct {

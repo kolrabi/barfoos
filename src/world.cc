@@ -322,7 +322,8 @@ World::Draw(Gfx &gfx) {
   gfx.SetShader(this->defaultShader);
   this->defaultShader->Uniform("u_texture", 0);
   this->defaultShader->Uniform("u_texture2", 1);
-  this->defaultShader->Uniform("u_torch", this->torchLight);
+  
+  gfx.SetTorchLight(this->torchLight);
   
   for (auto &s : this->vertexStarts) {
     gfx.SetTextureFrame(s.first);
@@ -416,7 +417,7 @@ World::CastRayX(const Vector3 &org, float dir) {
   size_t x2 = (org.x+dir + 2*(movingRight?0.01f:-0.01f));
   if (x2 == x) return false; // not crossing cell borders
   
-  return this->GetCell(IVector3(x,y,z)).CheckSideSolid(movingRight?Side::Right:Side::Left, org);
+  return this->GetCell(IVector3(x,y,z)).CheckSideSolid(movingRight ? Side::Right : Side::Left, org);
 }
 
 /**
@@ -502,7 +503,8 @@ World::IsPointSolid(const Vector3 &org) {
   size_t z = org.z; // start cell z
   
   const Cell &cell = this->GetCell(IVector3(x,y,z));
-  return cell.IsSolid() && (org.y - y) >= cell.GetHeightBottom(org.x, org.z) && (org.y - y) <= cell.GetHeight(org.x, org.z);
+  bool heightCheck = (org.y - y) >= cell.GetHeightBottom(org.x, org.z) && (org.y - y) <= cell.GetHeight(org.x, org.z);
+  return cell.IsSolid() && heightCheck;
 }
 
 /**
@@ -587,7 +589,7 @@ Vector3 World::MoveAABB(
     
     // try to move along the x axis
     for (const Vector3 &v : verts) {
-      if (IsPointSolid(center + v + Vector3(d.x + (d.x>0?0.01:-0.01), 0, 0))) {
+      if (CastRayX(center + v, d.x) || IsPointSolid(center + v + Vector3(d.x + (d.x>0?0.01:-0.01), 0, 0))) {
         float newX = d.x;
         if (d.x > 0) {
           newX = ((int)center.x + 1) - aabb.extents.x - 0.01f;
@@ -607,7 +609,7 @@ Vector3 World::MoveAABB(
     
     // try to move along the z axis
     for (const Vector3 &v : verts) {
-      if (IsPointSolid(center + v + Vector3(0, 0, d.z + (d.z>0?0.01:-0.01)))) {
+      if (CastRayZ(center + v, d.z) || IsPointSolid(center + v + Vector3(0, 0, d.z + (d.z>0?0.01:-0.01)))) {
         float newZ = d.z;
         if (d.z > 0) {
           newZ = ((int)center.z + 1) - aabb.extents.z - 0.01f;
@@ -710,12 +712,13 @@ World::Dump() {
  * @param dir Ray direction
  * @param[out] distance Distance along the ray to the surface of the cell
  * @param[out] side Side of the cell that was hit
+ * @param[in] flags Flags a cell can have to be chosen for hit.
  * @return The hit cell.
  * @note This will always return a cell. Outside the world or on the boundaries
  *       it will be the default cell, which has no world or position value.
  */
 Cell &
-World::CastRayCell(const Vector3 &org, const Vector3 &dir, float &distance, Side &side) {
+World::CastRayCell(const Vector3 &org, const Vector3 &dir, float &distance, Side &side, size_t flags) {
   int dx = dir.x == 0 ? 0 : (dir.x > 0 ? 1 : -1);
   int dy = dir.y == 0 ? 0 : (dir.y > 0 ? 1 : -1);
   int dz = dir.z == 0 ? 0 : (dir.z > 0 ? 1 : -1);
@@ -733,7 +736,7 @@ World::CastRayCell(const Vector3 &org, const Vector3 &dir, float &distance, Side
     float tt;
     Vector3 p;
     
-    if (currentCell->IsSolid() && currentCell->Ray(org, dir, tt, p) && tt > 0) {
+    if ((currentCell->GetInfo().flags & flags) && currentCell->Ray(org, dir, tt, p) && tt > 0) {
       distance = tt;
       return *currentCell;
     }

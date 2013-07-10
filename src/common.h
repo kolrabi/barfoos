@@ -33,8 +33,8 @@
 
 #define self (*this)
 
-#include "vector3.h"
 #include "space.h"
+#include "vector3.h"
 #include "ivector3.h"
 
 struct IColor;
@@ -103,6 +103,23 @@ struct AABB {
     if (p.y<center.y-extents.y) return false;
     if (p.z<center.z-extents.z) return false;
     return true;
+  }
+  
+  AABB Grow(float amount) const {
+    AABB aabb(*this);
+    aabb.extents.x += amount;
+    aabb.extents.y += amount;
+    aabb.extents.z += amount;
+    return aabb;
+  }
+  
+  AABB Combine(const AABB &o) const {
+    Vector3 min = Min().Min(o.Min());
+    Vector3 max = Max().Max(o.Max());
+    AABB aabb;
+    aabb.center = (min+max) * 0.5;
+    aabb.extents = max - aabb.center;
+    return aabb;
   }
   
   /** Generate corner vertices for the box.

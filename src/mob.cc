@@ -94,6 +94,8 @@ Mob::Update(Game &game) {
     aabb.center = aabb.center + velocity * deltaT;
   } else if (movingDown) {
     // when moving down and pushing use step height
+    Vector3 oldCenter = aabb.center;
+    
     Vector3 step(0, move.GetMag()!=0 ? this->properties->stepHeight : 0, 0);
     Vector3 org = aabb.center + velocity.Horiz() * deltaT;
     bool downStep = false;
@@ -107,9 +109,16 @@ Mob::Update(Game &game) {
     aabb.center = world.MoveAABB(aabb, org, axis2);
     axis |= axis2;
     if (!downStep) aabb.center = aabb.center + step*0.25;
-  } else if (!movingDown) {
+    
+    Vector3 newCenter = aabb.center;
+    aabb.center = oldCenter;
+    aabb.center = game.MoveAABB(aabb, newCenter, axis2);
+    axis |= axis2;
+  } else {
     onGround = false;
-    aabb.center = world.MoveAABB(aabb, aabb.center + velocity*deltaT, axis);
+    Vector3 newCenter = world.MoveAABB(aabb, aabb.center + velocity*deltaT, axis);
+    aabb.center = game.MoveAABB(aabb, newCenter, axis2);
+    axis |= axis2;
   }
 
   // jump out of water
@@ -185,6 +194,7 @@ Mob::Die(Game &game, const HealthInfo &info) {
 
 void
 Mob::OnCollide(Game &game, Entity &other) {
+  if (this->IsSolid()) return;
   Vector3 d = this->GetAABB().center - other.GetAABB().center;
   Vector3 f = d * (this->properties->mass * other.GetProperties()->mass / (1+d.GetSquareMag()));
   this->ApplyForce(game, f);

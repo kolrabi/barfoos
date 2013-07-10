@@ -4,6 +4,5 @@ transparent
 liquid
 uvturb
 wave
-light 512 256 64
-detailbelowreplace 2 0.0001 air
+light 400 300 64
 speed 0.2

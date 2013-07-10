@@ -3,6 +3,7 @@
 #include "world.h"
 #include "gfx.h"
 #include "game.h"
+#include "mob.h"
 
 #include "random.h"
 #include "serializer.h"
@@ -24,23 +25,37 @@ CellInfo::CellInfo(const std::string &name, FILE *f) : type(name) {
       this->textures.push_back(loadTexture("cells/texture/"+tokens[1]));
     } else if (tokens[0] == "light") {
       this->light = IColor(std::atoi(tokens[1].c_str()), std::atoi(tokens[2].c_str()), std::atoi(tokens[3].c_str()));
-    } else if (tokens[0] == "lightfactor") {
-      this->lightFactor = std::atof(tokens[1].c_str());
-    } else if (tokens[0] == "lightfade") {
-      this->lightFade = std::atoi(tokens[1].c_str());
-    } else if (tokens[0] == "uvturb") this->flags |= UVTurb | Dynamic;
-    else if (tokens[0] == "wave") this->flags |= Waving | Dynamic;
-    else if (tokens[0] == "solid") this->flags |= Solid;
-    else if (tokens[0] == "dynamic") this->flags |= Dynamic;
-    else if (tokens[0] == "liquid") this->flags |= Liquid;
-    else if (tokens[0] == "norender") this->flags |= DoNotRender;
-    else if (tokens[0] == "transparent") this->flags |= Transparent;
-    else if (tokens[0] == "speed") this->speedModifier = std::atof(tokens[1].c_str());
-    else if (tokens[0] == "friction") this->friction = std::atof(tokens[1].c_str());
+    } 
+    else if (tokens[0] == "lightfactor")  this->lightFactor = std::atof(tokens[1].c_str());
+    else if (tokens[0] == "lightfade")    this->lightFade   = std::atoi(tokens[1].c_str());
+    
+    else if (tokens[0] == "uvturb")       this->flags |= UVTurb | Dynamic;
+    else if (tokens[0] == "wave")         this->flags |= Waving | Dynamic;
+    else if (tokens[0] == "solid")      { this->flags |= Solid  | Pickable; this->clipSidesIn = ~0; }
+    else if (tokens[0] == "dynamic")      this->flags |= Dynamic;
+    else if (tokens[0] == "liquid")       this->flags |= Liquid;
+    else if (tokens[0] == "norender")     this->flags |= DoNotRender;
+    else if (tokens[0] == "transparent")  this->flags |= Transparent;
+    else if (tokens[0] == "doublesided")  this->flags |= DoubleSided;
+    else if (tokens[0] == "pickable")     this->flags |= Pickable; 
+    else if (tokens[0] == "onusereplace") this->flags |= OnUseReplace;
+    
+    else if (tokens[0] == "speed")        this->speedModifier = std::atof(tokens[1].c_str());
+    else if (tokens[0] == "friction")     this->friction      = std::atof(tokens[1].c_str());
+    
+    else if (tokens[0] == "showsides")    this->showSides     = ParseSidesMask(tokens[1]);
+    else if (tokens[0] == "hidesides")    this->hideSides     = ParseSidesMask(tokens[1]);
+    else if (tokens[0] == "clipsidesin")  this->clipSidesIn   = ParseSidesMask(tokens[1]);
+    else if (tokens[0] == "clipsidesout") this->clipSidesOut  = ParseSidesMask(tokens[1]);
+    
+    else if (tokens[0] == "onusecascade") this->onUseCascade  = ParseSidesMask(tokens[1]);
+    else if (tokens[0] == "usedelay")     this->useDelay      = std::atof(tokens[1].c_str());
+    
+    else if (tokens[0] == "replace")      this->replace = tokens[1];
+    
     else if (tokens[0] == "detailbelowreplace") {
       this->detailBelowReplace = std::atoi(tokens[1].c_str());
       this->replaceChance = std::atof(tokens[2].c_str());
-      this->replace = tokens[3];
     } else if (tokens[0] == "scale") {
       this->scale = Vector3(std::atof(tokens[1].c_str()), std::atof(tokens[2].c_str()), std::atof(tokens[3].c_str()));
     } else if (tokens[0] == "multi") this->flags |= MultiSided;
@@ -114,6 +129,8 @@ Cell::Cell(const std::string &type)
   this->texture = nullptr;
   this->uscale = 1.0;
   
+  this->lastUseT = 0;
+  
   this->dirty = true;
 }
 
@@ -131,6 +148,8 @@ Cell::Cell(const Cell &that)
 
   this->texture = that.texture;
   this->uscale = that.uscale;
+  
+  this->lastUseT = 0;
 
   this->dirty = true;
 }
@@ -156,6 +175,11 @@ Cell::DrawHighlight(std::vector<Vertex> &verts) const {
     vv.xyz[0] = vv.xyz[0] + 0.01 * vv.n[0];
     vv.xyz[1] = vv.xyz[1] + 0.01 * vv.n[1];
     vv.xyz[2] = vv.xyz[2] + 0.01 * vv.n[2];
+    vv.uv[0] /= uscale;
+    vv.rgb[0] = 1.0;
+    vv.rgb[1] = 1.0;
+    vv.rgb[2] = 1.0;
+    vv.rgb[3] = 1.0;
     verts.push_back(vv);
   }
 }
@@ -196,6 +220,22 @@ Cell::Update(
   }
   
   UpdateNeighbours();
+}
+
+void Cell::OnUse(Game &game, Mob &user) {
+  if (game.GetTime() - this->lastUseT < this->info->useDelay) return;
+
+  this->lastUseT = game.GetTime();
+  
+  if (info->onUseCascade) {
+    for (int i=0; i<6; i++) {
+      if (this->info->onUseCascade & (1<<i)) this->neighbours[i]->OnUse(game, user);
+    }
+  }
+  
+  if (info->flags & CellFlags::OnUseReplace) {
+    this->world->SetCell(GetPosition(), Cell(info->replace)).lastUseT = game.GetTime();
+  }
 }
 
 void Cell::Tick(Game &game) {
@@ -262,10 +302,7 @@ Cell::Flow(Side side) {
     if ((cell->shared.detail >= this->shared.detail && side != Side::Down) || cell->shared.detail >= 16) return false;
   }
   
-
-  if (this->shared.detail > 16) std::cerr << this->shared.detail << " ";
   this->shared.detail -= 1;
-  if (this->shared.detail > 16) std::cerr << this->shared.detail << std::endl;
   
   if (cell->info != this->info) {
     // replace target cell if not already of this type
@@ -428,7 +465,7 @@ Cell::UpdateNeighbours(
     Cell &cell = *this->neighbours[i];
     
     // show sides to transparent cells
-    if (cell.IsTransparent()) {
+    if (cell.IsTransparent() || cell.info->scale != Vector3(1,1,1)) {
       this->visibility |= 1<<i;
     }
     
@@ -451,6 +488,9 @@ Cell::UpdateNeighbours(
 
   // override
   this->visibility |= this->shared.visibilityOverride;
+  
+  this->visibility |= this->info->showSides;
+  this->visibility &= ~(this->info->hideSides);
 
   // only transparent cells can be lit
   IColor color;
@@ -642,6 +682,7 @@ Cell::SideVerts(Side side, std::vector<Vertex> &verts, bool reverse) const {
   
   IColor colors[4];
   SideColors(side, colors);
+  bool doubleSided = info->flags & CellFlags::DoubleSided;
 
   if (reverse) {
     if (drawA) {
@@ -649,6 +690,12 @@ Cell::SideVerts(Side side, std::vector<Vertex> &verts, bool reverse) const {
       verts.push_back(Vertex(pos[0]+this->pos, colors[0], u[0], v[0], norm));
       verts.push_back(Vertex(pos[1]+this->pos, colors[1], u[1], v[1], norm));
       verts.push_back(Vertex(pos[3]+this->pos, colors[3], u[3], v[3], norm));
+      
+      if (doubleSided) {
+        verts.push_back(Vertex(pos[3]+this->pos, colors[3], u[3], v[3], -norm));
+        verts.push_back(Vertex(pos[1]+this->pos, colors[1], u[1], v[1], -norm));
+        verts.push_back(Vertex(pos[0]+this->pos, colors[0], u[0], v[0], -norm));
+      }
     }
 
     if (drawB) {
@@ -656,6 +703,12 @@ Cell::SideVerts(Side side, std::vector<Vertex> &verts, bool reverse) const {
       verts.push_back(Vertex(pos[1]+this->pos, colors[1], u[1], v[1], norm));
       verts.push_back(Vertex(pos[2]+this->pos, colors[2], u[2], v[2], norm));
       verts.push_back(Vertex(pos[3]+this->pos, colors[3], u[3], v[3], norm));
+      
+      if (doubleSided) {
+        verts.push_back(Vertex(pos[3]+this->pos, colors[3], u[3], v[3], -norm));
+        verts.push_back(Vertex(pos[2]+this->pos, colors[2], u[2], v[2], -norm));
+        verts.push_back(Vertex(pos[1]+this->pos, colors[1], u[1], v[1], -norm));
+      }
     }
   } else {
     if (drawA) {
@@ -663,6 +716,12 @@ Cell::SideVerts(Side side, std::vector<Vertex> &verts, bool reverse) const {
       verts.push_back(Vertex(pos[0]+this->pos, colors[0], u[0], v[0], norm));
       verts.push_back(Vertex(pos[1]+this->pos, colors[1], u[1], v[1], norm));
       verts.push_back(Vertex(pos[2]+this->pos, colors[2], u[2], v[2], norm));
+      
+      if (doubleSided) {
+        verts.push_back(Vertex(pos[2]+this->pos, colors[2], u[2], v[2], -norm));
+        verts.push_back(Vertex(pos[1]+this->pos, colors[1], u[1], v[1], -norm));
+        verts.push_back(Vertex(pos[0]+this->pos, colors[0], u[0], v[0], -norm));
+      }
     }
 
     if (drawB) {
@@ -670,6 +729,12 @@ Cell::SideVerts(Side side, std::vector<Vertex> &verts, bool reverse) const {
       verts.push_back(Vertex(pos[0]+this->pos, colors[0], u[0], v[0], norm));
       verts.push_back(Vertex(pos[2]+this->pos, colors[2], u[2], v[2], norm));
       verts.push_back(Vertex(pos[3]+this->pos, colors[3], u[3], v[3], norm));
+      
+      if (doubleSided) {
+        verts.push_back(Vertex(pos[3]+this->pos, colors[3], u[3], v[3], -norm));
+        verts.push_back(Vertex(pos[2]+this->pos, colors[2], u[2], v[2], -norm));
+        verts.push_back(Vertex(pos[0]+this->pos, colors[0], u[0], v[0], -norm));
+      }
     }
   }
 }
@@ -800,14 +865,19 @@ bool Cell::HasSolidSides() const {
 
 bool Cell::CheckSideSolid(Side side, const Vector3 &org) const {
   Cell *cell = this->neighbours[(int)side];
+
+  // check for clipping movement into cell from opposite side
+  bool clipIn  = (cell->info->clipSidesIn  & (int)(1<<(-side)));
+  
+  // check for clipping movement out the cell
+  bool clipOut = (this->info->clipSidesOut & (1<<side));
   
   if (side == Side::Up || side == Side::Down) {
-    return cell->IsSolid();
+    return (clipIn || clipOut);
   }
 
-  bool solid = cell->IsSolid();
   bool heightCheck = org.y < (this->pos.y+cell->GetHeightClamp( org.x-(int)org.x + (side==Side::Left?1:0), org.z-(int)org.z) + (side==Side::Backward?1:0));
-  return solid && heightCheck;
+  return (clipIn && heightCheck) || clipOut;
 }
 
 Serializer &operator << (Serializer &ser, const Cell &cell) {

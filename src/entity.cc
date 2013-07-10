@@ -75,6 +75,10 @@ EntityProperties::EntityProperties(FILE *f) {
       this->nohit = true;
     } else if (tokens[0] == "nocollide") {
       this->nocollide = true;
+    } else if (tokens[0] == "solid") {
+      this->isSolid = true;
+    } else if (tokens[0] == "box") {
+      this->isBox = true;
     } else if (tokens[0] == "inventory") {
       this->items[tokens[2]] = std::atof(tokens[1].c_str());
     } else if (tokens[0] == "cell") {
@@ -141,11 +145,27 @@ Entity::Start(Game &game, size_t id) {
   verts.push_back(Vector3(-aabb.extents.x,  aabb.extents.y,  aabb.extents.z));
   verts.push_back(Vector3( aabb.extents.x,  aabb.extents.y,  aabb.extents.z));
 
+  size_t sides = 0;
   for (Vector3 v : verts) {
     if (world.IsPointSolid(aabb.center + v)) {
-      aabb.center = aabb.center - v;
+      if (v.x < 0) sides |= (size_t)Side::Left;
+      if (v.x > 0) sides |= (size_t)Side::Right;
+      if (v.y < 0) sides |= (size_t)Side::Down;
+      if (v.y > 0) sides |= (size_t)Side::Up;
+      if (v.z < 0) sides |= (size_t)Side::Backward;
+      if (v.z > 0) sides |= (size_t)Side::Forward;
     }
   }
+  Vector3 offset;
+  for (int i=0; i<6; i++) {
+    if (sides & (1<<i)) {
+      Vector3 d((Side)i);
+      std::cerr << d << " " << " " << aabb.extents << std::endl;
+      offset = offset - d * d.Dot(aabb.extents);
+    }
+  }
+  std::cerr << offset << " " << sides << std::endl;
+  aabb.center = aabb.center + offset;
 }
 
 void 
@@ -159,27 +179,6 @@ Entity::Update(Game &game) {
   } else {
     this->smoothPosition = this->smoothPosition + (aabb.center - this->smoothPosition) * game.GetDeltaT() * 30.0f;
   }
-  if (this->lastCell) {
-    this->cellLight = game.GetWorld().GetLight(this->lastCell->GetPosition());
-  }
-  this->drawAABB = game.GetInput()->IsKeyActive(InputKey::DebugEntityAABB);
-}
-  
-void 
-Entity::Think(Game &game) {
-  this->cellPos = IVector3(aabb.center.x, aabb.center.y, aabb.center.z);
-  
-  World &world = game.GetWorld();
-  Cell *cell = &world.GetCell(cellPos);
-  if (cell != this->lastCell) {
-    if (this->lastCell && this->properties->cellLeave != "") {
-      world.SetCell(this->lastCell->GetPosition(), Cell(this->properties->cellLeave));
-    }
-    if (this->properties->cellEnter != "") {
-      world.SetCell(cellPos, Cell(this->properties->cellEnter));
-    }
-    this->lastCell = cell;
-  }
   
   for (size_t i=0; i<this->inventory.size(); i++) {
     if (this->inventory[i]) {
@@ -191,12 +190,42 @@ Entity::Think(Game &game) {
   }
   
   this->lastPos = aabb.center;
+  this->cellPos = IVector3(aabb.center.x, aabb.center.y, aabb.center.z);
+  
+  World &world = game.GetWorld();
+  Cell *cell = &world.GetCell(cellPos);
+  if (cell != this->lastCell) {
+    if (this->lastCell && this->properties->cellLeave != "") {
+      world.SetCell(this->lastCell->GetPosition(), Cell(this->properties->cellLeave));
+    }
+    if (this->properties->cellEnter != "") {
+      world.SetCell(cellPos, Cell(this->properties->cellEnter));
+    }
+    
+    this->lastCell = cell;
+  }
+  
+  if (cell) {
+    this->cellLight = world.GetLight(cell->GetPosition());
+  }
+  
+  this->drawAABB = game.GetInput()->IsKeyActive(InputKey::DebugEntityAABB);
+}
+  
+void 
+Entity::Think(Game &game) {
+  (void)game;
 }
 
 void
 Entity::Draw(Gfx &gfx) const {
-  gfx.SetColor(this->cellLight);
-  gfx.DrawSprite(this->sprite, this->aabb.center);
+  gfx.SetColor(this->cellLight, 1.0);
+  if (this->properties->isBox) {
+    gfx.SetTextureFrame(this->properties->sprite.texture,0,0,8);
+    gfx.DrawAABB(this->aabb);
+  } else {
+    gfx.DrawSprite(this->sprite, this->aabb.center);
+  }
   
   if (this->drawAABB) {
     this->DrawBoundingBox(gfx);

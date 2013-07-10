@@ -68,6 +68,8 @@ public:
   void SetTextureFrame(const Texture *texture, size_t stage = 0, size_t currentFrame = 0, size_t frameCount = 1);
   void SetFog(float e, float l, const IColor &color);
   void SetColor(const IColor &color, float alpha = 1.0);
+  void SetBackfaceCulling(bool cull);
+  void SetTorchLight(const IColor &color) { this->torchLight = color; }
   
   const Texture *GetNoiseTexture() const { return noiseTex; }
 
@@ -129,6 +131,7 @@ private:
   float fogExp2;
   float fogLin;
   IColor fogColor;
+  IColor torchLight;
   
   void SetUniforms() const;
   void BindVertexPointer(const Vertex *ptr);

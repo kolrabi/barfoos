@@ -214,7 +214,7 @@ void
 Game::BuildWorld() { 
   PROFILE();
 
-  random.Seed(seed, level+2); 
+  random.Seed(seed, level); 
   this->world = std::shared_ptr<World>(new World(*this, IVector3(64, 64, 64)));
   this->world->Build(*this);
 
@@ -222,10 +222,10 @@ Game::BuildWorld() {
   player->SetPosition(IVector3(32,32,32));
   player->SetSpawnPos(IVector3(32,32,32));
   this->AddPlayer(player);
-
-  Entity *ent = new Entity("box");
-  ent->SetPosition(IVector3(32,28,34));
-  this->AddEntity(ent);
+  
+  Entity *entity = new Entity("box");
+  entity->SetPosition(IVector3(32,24,32));
+  this->AddEntity(entity);
 }
 
 void Game::HandleEvent(const InputEvent &event) {
@@ -300,6 +300,19 @@ Game::FindEntities(const AABB &aabb) {
   return entities;
 }
 
+std::vector<size_t> 
+Game::FindSolidEntities(const AABB &aabb) {
+  std::vector<size_t> entities;
+  
+  for (auto entity : this->entities) {
+    if (entity.second->IsSolid() && aabb.Overlap(entity.second->GetAABB())) {
+      entities.push_back(entity.first);
+    }
+  } 
+  
+  return entities;
+}
+
 /**
  * Check if a cell is free of entities.
  * @param pos Cell position to check
@@ -327,3 +340,96 @@ Game::GetEntity(size_t entityId) {
   return temp_ptr<Entity>(iter->second);
 }
 
+Vector3 Game::MoveAABB(
+  const AABB &aabb, 
+  const Vector3 &targ,
+  uint8_t &axis
+) {
+  axis = 0;
+  
+  Vector3 center = aabb.center;
+  Vector3 dist = targ-aabb.center;
+
+  // are we moving at all?
+  if (dist.GetSquareMag() == 0.0f) return center;
+
+  // collect all entities in range
+  AABB targAABB(aabb);
+  targAABB.center = targ;
+  
+  AABB bounds = aabb.Combine(targAABB).Grow(0.1);
+  std::vector<size_t> entities = FindSolidEntities(bounds);
+  if (entities.empty()) return targ;
+  
+  // create vertices that serve as origins for ray check. must be at most
+  // one cell size apart for correct collision detection.
+  std::vector<Vector3> verts;
+  aabb.GetVertices(verts);
+  
+  Vector3 dd( dist.x>0 ? 1.0 : -1.0, dist.y>0 ? 1.0 : -1.0, dist.z>0 ? 1.0 : -1.0 );
+  
+  // try to move along the x axis
+  if (dist.x) {
+  for (const Vector3 &v : verts) {
+    for (size_t eid : entities) {
+      temp_ptr<Entity> ent = GetEntity(eid);
+      if (!ent) continue;
+      
+      float t = INFINITY;
+      Vector3 p;
+      
+      if (ent->GetAABB().Ray(center + v, Vector3(dd.x,0,0), t, p) && t < std::abs(dist.x)+0.001 && t >= 0) {
+        dist.x = t - dd.x * 0.001;
+        axis |= Axis::X;
+      }
+    }
+  }
+  }
+  
+  // update center to new position
+  center.x += dist.x;
+
+  // try to move along the z axis
+  if (dist.z) {
+  for (const Vector3 &v : verts) {
+    for (size_t eid : entities) {
+      temp_ptr<Entity> ent = GetEntity(eid);
+      if (!ent) continue;
+      
+      float t = INFINITY;
+      Vector3 p;
+      
+      if (ent->GetAABB().Ray(center + v, Vector3(0,0,dd.z), t, p) && t < std::abs(dist.z)+0.001 && t >= 0) {
+        dist.z = t - dd.z * 0.001;
+        axis |= Axis::Z;
+      }
+    }
+  }
+  }
+  
+  // update center to new position
+  center.z += dist.z;
+
+  // try to move along the y axis
+  if (dist.y) {
+  for (const Vector3 &v : verts) {
+    for (size_t eid : entities) {
+      temp_ptr<Entity> ent = GetEntity(eid);
+      if (!ent) continue;
+      
+      float t = INFINITY;
+      Vector3 p;
+      
+      if (ent->GetAABB().Ray(center + v, Vector3(0,dd.y,0), t, p) && t < std::abs(dist.y)+0.001 && t >= 0) {
+        dist.y = t - dd.y * 0.001;
+        axis |= Axis::Y;
+      }
+    }
+  }
+  }
+  
+  // update center to new position
+  center.y += dist.y;
+  
+  return center;
+}

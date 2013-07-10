@@ -1,0 +1,20 @@
+tex           gate
+
+Dynamic
+Transparent
+DoubleSided
+Pickable
+OnUseReplace
+Multi
+
+HideSides     .ludfb
+ShowSides     r.....
+Scale         0.8 1.0 0.99
+
+ClipSidesIn   r.....
+ClipSidesOut  r.....
+
+OnUseCascade  ..ud..
+UseDelay      0.2
+
+Replace       door.right.open

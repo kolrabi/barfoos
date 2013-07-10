@@ -46,7 +46,10 @@ public:
   void RemoveEntity(size_t entity);
   bool CheckEntities(const IVector3 &pos);
   std::vector<size_t> FindEntities(const AABB &aabb);
+  std::vector<size_t> FindSolidEntities(const AABB &aabb);
   temp_ptr<Entity> GetEntity(size_t id);
+
+  Vector3 MoveAABB(const AABB &aabb, const Vector3 &dir, uint8_t &axis);
   
 private:
 

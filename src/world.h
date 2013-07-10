@@ -39,7 +39,7 @@ public:
   float CastRayYUp(const Vector3 &org);
   float CastRayYDown(const Vector3 &org);
 
-  Cell &CastRayCell(const Vector3 &org, const Vector3 &dir, float &distance, Side &side);
+  Cell &CastRayCell(const Vector3 &org, const Vector3 &dir, float &distance, Side &side, size_t flags = CellFlags::Pickable);
   bool IsPointSolid(const Vector3 &org);
   bool IsAABBSolid(const AABB &aabb);
 
@@ -57,6 +57,7 @@ public:
   void BreakBlock(Game &game, const IVector3 &pos);
   
   void SetTorchLight(const IColor &color) { this->torchLight = color; }
+  const IColor &GetTorchLight() const { return this->torchLight; }
   void SetDirty() { this->dirty = true; }
 
 private:

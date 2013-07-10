@@ -227,8 +227,6 @@ void Feature::ReplaceChars(const FeatureReplacement &r, std::vector<char> &chars
 }
 
 void Feature::SpawnEntities(Game &game, const IVector3 &pos) const {
-  World &world = game.GetWorld();
-  
   for (const FeatureSpawn &spawn : spawns) {
     if (game.GetRandom().Chance(spawn.probability)) {
       Entity *entity = nullptr;
@@ -243,18 +241,18 @@ void Feature::SpawnEntities(Game &game, const IVector3 &pos) const {
       if (spawn.attach) {
         IVector3 cellPos = spawnPos;
         
-        if (world.GetCell(cellPos + IVector3(0,-1,0)).IsSolid() && spawn.attach == -2) {
+        if (spawn.attach == -2) {
           spawnPos.y = cellPos.y + entity->GetAABB().extents.y + 0.001;
-        } else if (world.GetCell(cellPos + IVector3(1,0,0)).IsSolid() && spawn.attach == 1) {
+        } else if (spawn.attach == 2) {
+          spawnPos.y = cellPos.y + 1-entity->GetAABB().extents.y - 0.001;
+        } else if (spawn.attach == 1) {
           spawnPos.x = cellPos.x + 1-entity->GetAABB().extents.x - 0.001;
-        } else if (world.GetCell(cellPos + IVector3(-1,0,0)).IsSolid() && spawn.attach == -1) {
+        } else if (spawn.attach == -1) {
           spawnPos.x = cellPos.x + entity->GetAABB().extents.x + 0.001;
-        } else if (world.GetCell(cellPos + IVector3(0,0,1)).IsSolid() && spawn.attach == 3) {
+        } else if (spawn.attach == 3) {
           spawnPos.z = cellPos.z + 1-entity->GetAABB().extents.z - 0.001;
-        } else if (world.GetCell(cellPos + IVector3(0,0,-1)).IsSolid() && spawn.attach == -3) {
+        } else if (spawn.attach == -3) {
           spawnPos.z = cellPos.z + entity->GetAABB().extents.z + 0.001;
-        } else {
-          continue;
         }
       }
       

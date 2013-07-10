@@ -207,7 +207,7 @@ void Item::UseOnNothing(Game &game, Mob &user) {
 
 void Item::Draw(Gfx &gfx, bool left) {
   gfx.GetView().Push();
-
+  gfx.SetBackfaceCulling(false);
   gfx.GetView().Scale(Vector3(left ? 1 : -1, 1, 1));
   gfx.GetView().Translate(Vector3(1, -2, 4));
   
@@ -218,7 +218,7 @@ void Item::Draw(Gfx &gfx, bool left) {
   gfx.GetView().Translate(Vector3(-1,1,0));
   gfx.GetView().Scale(Vector3(2,2,2));
   gfx.DrawSprite(this->sprite, Vector3(0,0,0), false);
-
+  gfx.SetBackfaceCulling(true);
   gfx.GetView().Pop();
 }
 

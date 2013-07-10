@@ -185,7 +185,8 @@ void Player::Draw(Gfx &gfx) const {
   if (this->selectedCell) {
     std::vector<Vertex> verts;
     this->selectedCell->DrawHighlight(verts);
-    gfx.SetTextureFrame(gfx.GetNoiseTexture());
+    gfx.SetTextureFrame(loadTexture("cells/texture/select"));
+    gfx.SetColor(IColor(255,255,255), 0.5);
     gfx.DrawTriangles(verts);
   }
 }
@@ -203,6 +204,8 @@ Player::UpdateInput(
   if (input->IsKeyDown(InputKey::Use) && this->selectedEntity != ~0UL) {
     temp_ptr<Entity> entity(game.GetEntity(this->selectedEntity));
     if (entity) entity->OnUse(game, *this);
+  } else if (input->IsKeyDown(InputKey::Use) && this->selectedCell) {
+    this->selectedCell->OnUse(game, *this);
   }
 
   sneak = input->IsKeyActive(InputKey::Sneak);
@@ -295,8 +298,13 @@ Player::HandleEvent(const InputEvent &event) {
     if (event.key == InputKey::MouseRight) this->itemActiveRight = event.down;
     if (event.key == InputKey::DebugNoclip && event.down) this->noclip = !this->noclip;
   } else if (event.type == InputEventType::MouseDelta) {
+#if WIN32
+    angles.x += event.p.x*0.005;
+    angles.y -= event.p.y*0.005;
+#else
     angles.x += event.p.x*0.0005;
     angles.y -= event.p.y*0.0005;
+#endif
   }
 }
 

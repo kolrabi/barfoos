@@ -12,6 +12,7 @@ class Gfx;
 struct EntityProperties {
   // rendering
   Sprite sprite;
+  bool isBox = false;
   
   // movement
   float stepHeight = 0.5f;
@@ -24,6 +25,7 @@ struct EntityProperties {
   Vector3 extents;
   bool nohit = false;
   bool nocollide = false;
+  bool isSolid = false;
   
   std::map<std::string, float> items;
   
@@ -84,6 +86,7 @@ public:
   virtual void OnUse(Game &game, Entity &other) { (void)game; (void)other; }
   
   bool IsRemovable() const { return removable; }
+  
   bool AddToInventory(const std::shared_ptr<Item> &item);
   bool AddToInventory(const std::shared_ptr<Item> &item, InventorySlot slot);
 
@@ -96,6 +99,7 @@ public:
   const EntityProperties *GetProperties() const { return properties; }
   
   size_t GetId() const { return id; }
+  bool IsSolid() const { return properties->isSolid; }
   
 protected:
 

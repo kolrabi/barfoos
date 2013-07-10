@@ -3,8 +3,8 @@ uniform vec4 u_torch;
 uniform float u_time;
 
 uniform vec4 u_fogColor;
+uniform vec4 u_color;
 uniform float u_fogLin;
-uniform float u_fogExp2;
 
 varying vec4 v_pos;
 varying vec2 v_tex;
@@ -19,14 +19,15 @@ void main() {
   vec3 eyeDir = -normalize(v_pos.xyz);
   
   float dist = length(pos);
-  float torchIntensity = max(0.0, dot(v_norm, eyeDir) - dist*0.1);
-  vec4 light = v_color + u_torch * torchIntensity;
+  float torchIntensity = abs(dot(v_norm, eyeDir)) - dist*0.1;
+  vec4 torch = vec4(u_torch.rgb * torchIntensity, 1.0);
+  vec4 light = (u_color * v_color) + torch;
   
   float fogDepth = dist;
-  float fogIntensity = 1.0 - 1.0 / (1.0 + fogDepth*u_fogLin*10);
-  //float fogIntensity = pow(max(0.0, u_fogLin * fogDepth), 1.0);
+  //float fogIntensity = 1.0 - 1.0 / (1.0 + fogDepth*u_fogLin*10);
+  float fogIntensity = pow(max(0.0, u_fogLin * fogDepth), 1.0);
   
-  vec4 color = mix(t0 * light, mix(v_color, u_fogColor, min(1.0, fogIntensity)), min(1.0, fogIntensity));
+  vec4 color = mix(t0 * pow(light, vec4(2.2)), u_fogColor, min(1.0, fogIntensity));
  
   gl_FragColor = color;
 }

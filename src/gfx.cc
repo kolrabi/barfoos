@@ -61,36 +61,36 @@ Gfx::Gfx(const Point &pos, const Point &size, bool fullscreen)
   this->fogLin = 0.05;
   
   // unit cube vertices
-  this->cubeVerts.push_back(Vertex(Vector3(-1, 1, -1), IColor(255,255,255), 0,0, Vector3( 0, 0,-1)));
-  this->cubeVerts.push_back(Vertex(Vector3( 1, 1, -1), IColor(255,255,255), 1,0, Vector3( 0, 0,-1)));
-  this->cubeVerts.push_back(Vertex(Vector3( 1,-1, -1), IColor(255,255,255), 1,1, Vector3( 0, 0,-1)));
-  this->cubeVerts.push_back(Vertex(Vector3(-1,-1, -1), IColor(255,255,255), 0,1, Vector3( 0, 0,-1)));
-
-  this->cubeVerts.push_back(Vertex(Vector3(-1,-1,  1), IColor(255,255,255), 0,1, Vector3( 0, 0, 1)));
-  this->cubeVerts.push_back(Vertex(Vector3( 1,-1,  1), IColor(255,255,255), 1,1, Vector3( 0, 0, 1)));
-  this->cubeVerts.push_back(Vertex(Vector3( 1, 1,  1), IColor(255,255,255), 1,0, Vector3( 0, 0, 1)));
-  this->cubeVerts.push_back(Vertex(Vector3(-1, 1,  1), IColor(255,255,255), 0,0, Vector3( 0, 0, 1)));
-
-  this->cubeVerts.push_back(Vertex(Vector3(-1, 1,  1), IColor(255,255,255), 0,1, Vector3( 0, 1, 0)));
-  this->cubeVerts.push_back(Vertex(Vector3( 1, 1,  1), IColor(255,255,255), 1,1, Vector3( 0, 1, 0)));
-  this->cubeVerts.push_back(Vertex(Vector3( 1, 1, -1), IColor(255,255,255), 1,0, Vector3( 0, 1, 0)));
-  this->cubeVerts.push_back(Vertex(Vector3(-1, 1, -1), IColor(255,255,255), 0,0, Vector3( 0, 1, 0)));
-
-  this->cubeVerts.push_back(Vertex(Vector3(-1,-1, -1), IColor(255,255,255), 0,0, Vector3( 0,-1, 0)));
-  this->cubeVerts.push_back(Vertex(Vector3( 1,-1, -1), IColor(255,255,255), 1,0, Vector3( 0,-1, 0)));
-  this->cubeVerts.push_back(Vertex(Vector3( 1,-1,  1), IColor(255,255,255), 1,1, Vector3( 0,-1, 0)));
-  this->cubeVerts.push_back(Vertex(Vector3(-1,-1,  1), IColor(255,255,255), 0,1, Vector3( 0,-1, 0)));
-
-  this->cubeVerts.push_back(Vertex(Vector3(-1, 1, -1), IColor(255,255,255), 0,0, Vector3(-1, 0, 0)));
-  this->cubeVerts.push_back(Vertex(Vector3(-1, 1,  1), IColor(255,255,255), 1,0, Vector3(-1, 0, 0)));
-  this->cubeVerts.push_back(Vertex(Vector3(-1,-1,  1), IColor(255,255,255), 1,1, Vector3(-1, 0, 0)));
-  this->cubeVerts.push_back(Vertex(Vector3(-1,-1, -1), IColor(255,255,255), 0,1, Vector3(-1, 0, 0)));
-
-  this->cubeVerts.push_back(Vertex(Vector3( 1,-1, -1), IColor(255,255,255), 0,1, Vector3( 1, 0, 0)));
-  this->cubeVerts.push_back(Vertex(Vector3( 1,-1,  1), IColor(255,255,255), 1,1, Vector3( 1, 0, 0)));
-  this->cubeVerts.push_back(Vertex(Vector3( 1, 1,  1), IColor(255,255,255), 1,0, Vector3( 1, 0, 0)));
   this->cubeVerts.push_back(Vertex(Vector3( 1, 1, -1), IColor(255,255,255), 0,0, Vector3( 1, 0, 0)));
+  this->cubeVerts.push_back(Vertex(Vector3( 1, 1,  1), IColor(255,255,255), 1,0, Vector3( 1, 0, 0)));
+  this->cubeVerts.push_back(Vertex(Vector3( 1,-1,  1), IColor(255,255,255), 1,1, Vector3( 1, 0, 0)));
+  this->cubeVerts.push_back(Vertex(Vector3( 1,-1, -1), IColor(255,255,255), 0,1, Vector3( 1, 0, 0)));
+
+  this->cubeVerts.push_back(Vertex(Vector3(-1,-1, -1), IColor(255,255,255), 1,1, Vector3(-1, 0, 0)));
+  this->cubeVerts.push_back(Vertex(Vector3(-1,-1,  1), IColor(255,255,255), 2,1, Vector3(-1, 0, 0)));
+  this->cubeVerts.push_back(Vertex(Vector3(-1, 1,  1), IColor(255,255,255), 2,0, Vector3(-1, 0, 0)));
+  this->cubeVerts.push_back(Vertex(Vector3(-1, 1, -1), IColor(255,255,255), 1,0, Vector3(-1, 0, 0)));
   
+  this->cubeVerts.push_back(Vertex(Vector3(-1,-1,  1), IColor(255,255,255), 2,1, Vector3( 0, 0, 1)));
+  this->cubeVerts.push_back(Vertex(Vector3( 1,-1,  1), IColor(255,255,255), 3,1, Vector3( 0, 0, 1)));
+  this->cubeVerts.push_back(Vertex(Vector3( 1, 1,  1), IColor(255,255,255), 3,0, Vector3( 0, 0, 1)));
+  this->cubeVerts.push_back(Vertex(Vector3(-1, 1,  1), IColor(255,255,255), 2,0, Vector3( 0, 0, 1)));
+
+  this->cubeVerts.push_back(Vertex(Vector3(-1, 1, -1), IColor(255,255,255), 3,0, Vector3( 0, 0,-1)));
+  this->cubeVerts.push_back(Vertex(Vector3( 1, 1, -1), IColor(255,255,255), 4,0, Vector3( 0, 0,-1)));
+  this->cubeVerts.push_back(Vertex(Vector3( 1,-1, -1), IColor(255,255,255), 4,1, Vector3( 0, 0,-1)));
+  this->cubeVerts.push_back(Vertex(Vector3(-1,-1, -1), IColor(255,255,255), 3,1, Vector3( 0, 0,-1)));
+  
+  this->cubeVerts.push_back(Vertex(Vector3(-1, 1,  1), IColor(255,255,255), 4,1, Vector3( 0, 1, 0)));
+  this->cubeVerts.push_back(Vertex(Vector3( 1, 1,  1), IColor(255,255,255), 5,1, Vector3( 0, 1, 0)));
+  this->cubeVerts.push_back(Vertex(Vector3( 1, 1, -1), IColor(255,255,255), 5,0, Vector3( 0, 1, 0)));
+  this->cubeVerts.push_back(Vertex(Vector3(-1, 1, -1), IColor(255,255,255), 4,0, Vector3( 0, 1, 0)));
+  
+  this->cubeVerts.push_back(Vertex(Vector3(-1,-1, -1), IColor(255,255,255), 5,0, Vector3( 0,-1, 0)));
+  this->cubeVerts.push_back(Vertex(Vector3( 1,-1, -1), IColor(255,255,255), 6,0, Vector3( 0,-1, 0)));
+  this->cubeVerts.push_back(Vertex(Vector3( 1,-1,  1), IColor(255,255,255), 6,1, Vector3( 0,-1, 0)));
+  this->cubeVerts.push_back(Vertex(Vector3(-1,-1,  1), IColor(255,255,255), 5,1, Vector3( 0,-1, 0)));
+
   // quad
   this->quadVerts.push_back(Vertex(Vector3(-1,-1,  0), IColor(255,255,255), 0,0, Vector3( 0, 0, 1)));
   this->quadVerts.push_back(Vertex(Vector3( 1,-1,  0), IColor(255,255,255), 1,0, Vector3( 0, 0, 1)));
@@ -240,8 +240,8 @@ Gfx::Init(Game &game) {
   glEnable(GL_DEPTH_TEST);
   glEnable(GL_BLEND);
   glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
-
-  // Colors look nicer unclamped
+  
+ // Colors look nicer unclamped
   if (GLEE_ARB_color_buffer_float) {
     glClampColorARB(GL_CLAMP_VERTEX_COLOR_ARB, GL_FALSE);
     glClampColorARB(GL_CLAMP_FRAGMENT_COLOR_ARB, GL_FALSE);
@@ -397,6 +397,15 @@ Gfx::SetColor(const IColor &color, float alpha) {
 }
 
 void 
+Gfx::SetBackfaceCulling(bool cull) {
+  if (cull) {
+    glEnable(GL_CULL_FACE);
+  } else {
+    glDisable(GL_CULL_FACE);
+  }
+}
+
+void 
 Gfx::SetUniforms() const {
   if (!this->activeShader) return;
   
@@ -407,6 +416,7 @@ Gfx::SetUniforms() const {
   this->activeShader->Uniform("u_fogColor", this->fogColor);
   this->activeShader->Uniform("u_time",     this->GetTime());
   this->activeShader->Uniform("u_color",    this->color, this->alpha);
+  this->activeShader->Uniform("u_torch",    this->torchLight);
 }
 
 void

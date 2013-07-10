@@ -6,7 +6,29 @@ struct Vector3 {
 
   Vector3() : x(0), y(0), z(0) {}
   Vector3(float x, float y, float z) : x(x), y(y), z(z) {}
+  
+  Vector3(Side side) {
+    switch(side) {
+      case Side::Right:    *this = Vector3( 1, 0, 0); return;
+      case Side::Left:     *this = Vector3(-1, 0, 0); return;
+      case Side::Up:       *this = Vector3( 0, 1, 0); return;
+      case Side::Down:     *this = Vector3( 0,-1, 0); return;
+      case Side::Forward:  *this = Vector3( 0, 0, 1); return;
+      case Side::Backward: *this = Vector3( 0, 0,-1); return;
+      case Side::InvalidSide: 
+      default:
+        *this = Vector3();
+    }
+  }
+  
+  bool operator ==(const Vector3 &o) const {
+    return x == o.x && y == o.y && z == o.z;
+  }
 
+  bool operator !=(const Vector3 &o) const {
+    return x != o.x || y != o.y || z != o.z;
+  }
+  
   Vector3 operator +(const Vector3 &o) const {
     return Vector3(x+o.x, y+o.y, z+o.z);
   }
@@ -34,7 +56,15 @@ struct Vector3 {
   Vector3 operator /(const Vector3 &o) const {
     return Vector3(x/o.x, y/o.y, z/o.z);
   }
+  
+  Vector3 Min(const Vector3 &o) const {
+    return Vector3( std::min(x,o.x), std::min(y,o.y), std::min(z,o.z) );
+  }
 
+  Vector3 Max(const Vector3 &o) const {
+    return Vector3( std::max(x,o.x), std::max(y,o.y), std::max(z,o.z) );
+  }
+  
   float GetSquareMag() const {
     return x*x + y*y + z*z;
   }
