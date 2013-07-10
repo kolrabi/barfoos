@@ -275,6 +275,7 @@ Player::DrawWeapons(Gfx &gfx) const {
 void 
 Player::DrawGUI(Gfx &gfx) const {
   gfx.SetShader(this->guiShader.get());
+  gfx.SetColor(IColor(255,255,255));
   
   const Point &vsize = gfx.GetVirtualScreenSize();
   Sprite sprite;

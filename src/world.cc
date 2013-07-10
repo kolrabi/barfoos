@@ -320,6 +320,7 @@ World::Draw(Gfx &gfx) {
   }
 
   gfx.SetShader(this->defaultShader);
+  gfx.SetColor(IColor(255,255,255));
   this->defaultShader->Uniform("u_texture", 0);
   this->defaultShader->Uniform("u_texture2", 1);
   

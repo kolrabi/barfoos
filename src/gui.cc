@@ -52,6 +52,7 @@ Gui::Update(Game &game) {
 
 void 
 Gui::Draw(Gfx &gfx, const Point &parentPos) {
+  gfx.SetColor(IColor(255,255,255));
   for (auto c : children) {
     c->Draw(gfx, parentPos+rect.pos);
   }

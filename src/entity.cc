@@ -80,7 +80,7 @@ EntityProperties::EntityProperties(FILE *f) {
     } else if (tokens[0] == "box") {
       this->isBox = true;
     } else if (tokens[0] == "inventory") {
-      this->items[tokens[2]] = std::atof(tokens[1].c_str());
+      this->items.push_back({tokens[2], std::atof(tokens[1].c_str())});
     } else if (tokens[0] == "cell") {
       this->cellEnter = tokens[1];
       this->cellLeave = tokens[2];
@@ -131,6 +131,7 @@ Entity::Start(Game &game, size_t id) {
   for (auto item : this->properties->items) {
     if (game.GetRandom().Chance(item.second)) {
       this->AddToInventory(std::shared_ptr<Item>(new Item(item.first)));
+      std::cerr << item.first << " added" << std::endl;
     }
   }
   
@@ -160,11 +161,9 @@ Entity::Start(Game &game, size_t id) {
   for (int i=0; i<6; i++) {
     if (sides & (1<<i)) {
       Vector3 d((Side)i);
-      std::cerr << d << " " << " " << aabb.extents << std::endl;
       offset = offset - d * d.Dot(aabb.extents);
     }
   }
-  std::cerr << offset << " " << sides << std::endl;
   aabb.center = aabb.center + offset;
 }
 
@@ -239,6 +238,7 @@ Entity::DrawBoundingBox(Gfx &gfx) const {
   //glDepthMask(GL_FALSE);
     
   gfx.SetTextureFrame(gfx.GetNoiseTexture());
+  gfx.SetColor(IColor(64,64,64),0);
   gfx.DrawAABB(this->aabb);
   
   //glDepthMask(GL_TRUE);
@@ -272,8 +272,13 @@ Entity::Die(Game &game, const HealthInfo &info) {
   // drop inventory
   for (auto item : this->inventory) {
     if (item) {
-      Entity *entity = new ItemEntity(item);
+      ItemEntity *entity = new ItemEntity(item);
+      // TODO: AABB::PutInside(aabb);
       entity->SetPosition(this->aabb.center);
+      
+      uint8_t axis;
+      entity->aabb.center = game.GetWorld().MoveAABB(entity->aabb, entity->aabb.center + Vector3(game.GetRandom().Float(), game.GetRandom().Float(), game.GetRandom().Float())*aabb.extents, axis);
+      entity->AddVelocity(Vector3(game.GetRandom().Float()*0.1, 1, game.GetRandom().Float()*0.1)*10);
       game.AddEntity(entity);
     }
   }
@@ -295,7 +300,8 @@ bool
 Entity::AddToInventory(const std::shared_ptr<Item> &item, InventorySlot slot) {
   size_t i = (size_t)slot;
   if (!this->inventory[i]) {
-    if (i>=(size_t)InventorySlot::Backpack ||(item->GetProperties()->equippable & 1<<i)) {
+    std::cerr << (1<<i) << " " << item->GetProperties()->equippable << std::endl;
+    if (i>=(size_t)InventorySlot::Backpack || (item->GetProperties()->equippable & 1<<i)) {
       this->Equip(item, slot);
       return true;
     } else {

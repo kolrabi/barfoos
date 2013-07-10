@@ -27,7 +27,7 @@ struct EntityProperties {
   bool nocollide = false;
   bool isSolid = false;
   
-  std::map<std::string, float> items;
+  std::vector<std::pair<std::string, float>> items;
   
   std::string cellEnter, cellLeave;
   

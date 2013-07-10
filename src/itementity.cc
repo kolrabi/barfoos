@@ -14,7 +14,7 @@ ItemEntity::~ItemEntity() {
 }
 
 void ItemEntity::Draw(Gfx &gfx) const {
-  // Entity::Draw();
+  Entity::Draw(gfx);
   
   gfx.SetColor(this->cellLight);
   
