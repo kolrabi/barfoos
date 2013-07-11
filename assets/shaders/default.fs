@@ -20,14 +20,14 @@ void main() {
   
   float dist = length(pos);
   float torchIntensity = abs(dot(v_norm, eyeDir)) - dist*0.1;
-  vec4 torch = vec4(u_torch.rgb * torchIntensity, 1.0);
-  vec4 light = (u_color * v_color) + torch;
+  vec3 torch = u_torch.rgb * torchIntensity;
+  vec3 light = pow( v_color.rgb, vec3(2.2) ) * u_color.rgb + torch;
   
   float fogDepth = dist;
   //float fogIntensity = 1.0 - 1.0 / (1.0 + fogDepth*u_fogLin*10);
-  float fogIntensity = pow(max(0.0, u_fogLin * fogDepth), 1.0);
+  float fogIntensity = pow(max(0.0, u_fogLin * fogDepth), 0.5);
   
-  vec4 color = mix(t0 * pow(light, vec4(2.2)), u_fogColor, min(1.0, fogIntensity));
+  vec3 color = mix(t0.rgb * light, u_fogColor.rgb, min(1.0, fogIntensity));
  
-  gl_FragColor = color;
+  gl_FragColor = vec4(color, t0.a);
 }
