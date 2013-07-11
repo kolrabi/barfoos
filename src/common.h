@@ -255,18 +255,7 @@ static inline std::ostream & operator<< (std::ostream &out, const Point &p) {
   return out;
 }
 
-/** A texture. */
-struct Texture {
-  Texture();
-  Texture(Texture &&);
-  ~Texture();
-  
-  /** OpenGL Handle of the texture. */
-  unsigned int handle;
-  
-  /** Size of the texture. */
-  Point size;
-};
+struct Texture;
 
 /** A sprite. */
 struct Sprite {

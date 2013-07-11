@@ -2,11 +2,12 @@
 
 #include "GLee.h"
 #include <png.h>
-#include <map>
 
 #include <sys/time.h>
 #include <iostream>
 #include "simplex.h"
+
+#include "texture.h"
 
 static std::map<std::string, std::unique_ptr<Texture>> textures;
 static time_t lastUpdate = 0;
@@ -27,7 +28,7 @@ Texture::Texture(Texture &&rhs) {
   rhs.size = Point();
 }
 
-const Texture *loadTexture(const std::string &name, const Texture * tex = nullptr) {
+const Texture *loadTexture(const std::string &name, const Texture * tex) {
   if (name == "") return nullptr;
   
   GLuint textureHandle = 0;
@@ -195,7 +196,7 @@ void updateTextures() {
 }
 
 const Texture * 
-noiseTexture(const Point &size, const Vector3 &scale = Vector3(1,1,1), const Vector3 &offset = Vector3()) {
+noiseTexture(const Point &size, const Vector3 &scale, const Vector3 &offset) {
   float *image_data = new float[size.x*size.y*4];
   for (int y=0; y<size.y; y++) {
     for (int x=0; x<size.x; x++) {

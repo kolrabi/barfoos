@@ -9,3 +9,7 @@ cooldown 0.2
 light 64 64 64
 
 hand
+
+OnUseSpawnProjectile projectile.test
+CanUseNothing
+CanUseEntity

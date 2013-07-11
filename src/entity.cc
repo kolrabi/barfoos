@@ -1,5 +1,3 @@
-#include <GLFW/glfw3.h>
-
 #include "entity.h"
 #include "world.h"
 #include "cell.h"
@@ -10,6 +8,7 @@
 #include "game.h"
 #include "gfx.h"
 #include "input.h"
+#include "texture.h"
 
 float Entity::ThinkInterval = 0.2f;
 
@@ -31,21 +30,11 @@ EntityProperties::EntityProperties(FILE *f) {
   char line[256];
   
   while(fgets(line, 256, f) && !feof(f)) {
-    if (line[0] == '#') continue;
-    
-    std::vector<std::string> tokens;
-    char *p = line;
-    char *q;
-    do {
-      q = strchr(p, ' ');
-      if (!q) q = strchr(p, '\r');
-      if (!q) q = strchr(p, '\n');
-      if (q) *q = 0;
-      tokens.push_back(p);
-      if (q) { p = q+1; }
-    } while(q);
+    std::vector<std::string> tokens = Tokenize(line);
     if (tokens.size() == 0) continue;
-
+    
+    for (auto &c:tokens[0]) c = ::tolower(c);
+    
     if (tokens[0] == "tex") {
       this->sprite.texture = loadTexture("entities/texture/"+tokens[1]);
     } else if (tokens[0] == "frames") {
@@ -73,8 +62,16 @@ EntityProperties::EntityProperties(FILE *f) {
       this->sprite.height = std::atof(tokens[2].c_str());
     } else if (tokens[0] == "nohit") {
       this->nohit = true;
-    } else if (tokens[0] == "nocollide") {
-      this->nocollide = true;
+    } else if (tokens[0] == "nocollideentity") {
+      this->nocollideEntity = true;
+    } else if (tokens[0] == "nocollidecell") {
+      this->nocollideCell = true;
+    } else if (tokens[0] == "nocollideowner") {
+      this->nocollideOwner = true;
+    } else if (tokens[0] == "gravity") {
+      this->gravity = std::atof(tokens[1].c_str());
+    } else if (tokens[0] == "eyeOffset") {
+      this->eyeOffset = std::atof(tokens[1].c_str());
     } else if (tokens[0] == "solid") {
       this->isSolid = true;
     } else if (tokens[0] == "box") {
@@ -115,6 +112,7 @@ Entity::Entity(const std::string &type) {
   this->health = properties->maxHealth;
   this->lastCell = nullptr;
   this->id = ~0UL;
+  this->ownerId = ~0UL;
   this->drawAABB = false;
 }
 

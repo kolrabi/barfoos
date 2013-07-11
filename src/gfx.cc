@@ -1,12 +1,12 @@
 #include "GLee.h"
 #include <GLFW/glfw3.h>
-#include <GL/glu.h>
 
 #include "gfx.h"
 #include "game.h"
 #include "vertex.h"
 #include "shader.h"
 #include "input.h"
+#include "texture.h"
 
 static InputKey MapMouseButton(int b) {
   InputKey key;

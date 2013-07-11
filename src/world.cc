@@ -668,6 +668,7 @@ Vector3 World::MoveAABB(
       float vY = CastRayYUp(center+v);
       if (vY < endY) {
         endY = vY;
+        
         if (storeCell && endY - aabb.extents.y < target.y) {
           Vector3 end = center + v;
           end.y = endY + 0.01;
@@ -691,6 +692,7 @@ Vector3 World::MoveAABB(
       float vY = CastRayYDown(center+v);
       if (vY > endY) {
         endY = vY;
+        
         if (storeCell && endY + aabb.extents.y > target.y) {
           Vector3 end = center + v;
           end.y = endY + 0.01;
@@ -712,6 +714,15 @@ Vector3 World::MoveAABB(
 
   // done
   return center;
+}
+
+Vector3 
+World::MoveAABB(
+  const AABB &aabb, 
+  const Vector3 &target
+) {
+  uint8_t axis;
+  return this->MoveAABB(aabb, target, axis);
 }
 
 IColor 

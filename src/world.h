@@ -43,7 +43,8 @@ public:
   bool IsPointSolid(const Vector3 &org);
   bool IsAABBSolid(const AABB &aabb);
 
-  Vector3 MoveAABB(const AABB &aabb, const Vector3 &dir, uint8_t &axis, Cell **cell = nullptr, Side *side = nullptr);
+  Vector3 MoveAABB(const AABB &aabb, const Vector3 &target);
+  Vector3 MoveAABB(const AABB &aabb, const Vector3 &target, uint8_t &axis, Cell **cell = nullptr, Side *side = nullptr);
   
   void BeginCheckOverwrite() { checkOverwrite = true; checkOverwriteOK = true; }
   bool FinishCheckOverwrite() { checkOverwrite = false; return checkOverwriteOK;}

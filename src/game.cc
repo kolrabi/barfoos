@@ -177,8 +177,13 @@ Game::Update(float t, float deltaT) {
   for (auto entity1 : this->entities) {
     for (auto entity2 : this->entities) {
       if (entity1.first == entity2.first) continue;
-      if (entity1.second->GetProperties()->nocollide) continue;
-      if (entity2.second->GetProperties()->nocollide) continue;
+      
+      if (entity1.second->GetOwner() == entity2.first && entity1.second->GetProperties()->nocollideOwner) continue;
+      if (entity2.second->GetOwner() == entity1.first && entity2.second->GetProperties()->nocollideOwner) continue;
+      
+      if (entity1.second->GetProperties()->nocollideEntity) continue;
+      if (entity2.second->GetProperties()->nocollideEntity) continue;
+      
       if (entity1.second->GetAABB().Overlap(entity2.second->GetAABB())) {
         entity1.second->OnCollide(*this, *entity2.second);
         entity2.second->OnCollide(*this, *entity1.second);

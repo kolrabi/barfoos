@@ -4,37 +4,7 @@
 #include "mob.h"
 #include "game.h"
 #include "gfx.h"
-
-std::vector<std::string> Tokenize(const char *l) {
-  std::vector<std::string> tokens;
-  
-  std::string line = l;
-  char *p = &line[0];
-  char *q;
-  
-  // skip whitespace
-  while(*p && strchr(" \r\n\t", *p)) p++;
-  
-  // end of string or first character is #?
-  if (*p == 0 || *p == '#') return tokens;
-  
-  do {
-    // find end of token
-    q = p;
-    while(*q && !strchr(" \r\n\t", *q)) q++;
-    
-    // terminate token
-    if (q) *q = 0;
-    tokens.push_back(p);
-    
-    // not end of line? then skip whitespace to next token
-    if (q) { 
-      p = q+1; 
-      while(*p && strchr(" \r\n\t", *p)) p++;
-    }
-  } while(q && *p);
-  return tokens;
-}
+#include "projectile.h"
 
 static std::map<std::string, ItemProperties> allItems;
 ItemProperties defaultItem;
@@ -47,70 +17,83 @@ const ItemProperties *getItem(const std::string &name) {
   return &allItems[name];
 }
 
-ItemProperties::ItemProperties() {
-}
-
-ItemProperties::ItemProperties(FILE *f) {
-  char line[256];
+void
+ItemProperties::ParseProperty(const std::string &cmd) {
+  if (cmd == "tex") {
+    Parse("items/texture/", this->sprite.texture);
+  } else if (cmd == "frames") {
+    Parse(this->sprite.totalFrames);
+  } else if (cmd == "anim") {
+    size_t firstFrame = 0;
+    size_t frameCount = 0;
+    float  fps = 0;
+    
+    Parse(firstFrame);
+    Parse(frameCount);
+    Parse(fps);
+    
+    this->sprite.animations.push_back(Animation(firstFrame, frameCount, fps));
+  } else if (cmd == "size") {
+    Parse(this->sprite.width);
+    Parse(this->sprite.height);
+  } else if (cmd == "damage") {
+    Parse(this->damage);
+  } else if (cmd == "armorpoints") {
+    Parse(this->armor);
+  } else if (cmd == "cooldown") {
+    Parse(this->cooldown);
+  } else if (cmd == "range") {
+    Parse(this->range);
+  } else if (cmd == "light") {
+    Parse(this->light);
+    
+  } else if (cmd == "flicker") {
+    this->flicker = true;
+  } else if (cmd == "canusecell") {
+    this->canUseCell = true;
+  } else if (cmd == "canuseentity") {
+    this->canUseEntity = true;
+  } else if (cmd == "canusenothing") {
+    this->canUseNothing = true;
+    
+  } else if (cmd == "hand") {
+    this->equippable |= (1<<(size_t)InventorySlot::LeftHand) | (1<<(size_t)InventorySlot::RightHand);
+  } else if (cmd == "helmet") {
+    this->equippable |= (1<<(size_t)InventorySlot::Helmet);
+  } else if (cmd == "armor") {
+    this->equippable |= (1<<(size_t)InventorySlot::Armor);
+  } else if (cmd == "leftring") {
+    this->equippable |= (1<<(size_t)InventorySlot::LeftRing);
+  } else if (cmd == "rightring") {
+    this->equippable |= (1<<(size_t)InventorySlot::RightRing);
+  } else if (cmd == "lefthand") {
+    this->equippable |= (1<<(size_t)InventorySlot::LeftHand);
+  } else if (cmd == "righthand") {
+    this->equippable |= (1<<(size_t)InventorySlot::RightHand);
+  } else if (cmd == "greaves") {
+    this->equippable |= (1<<(size_t)InventorySlot::Greaves);
+  } else if (cmd == "boots") {
+    this->equippable |= (1<<(size_t)InventorySlot::Boots);
+    
+  } else if (cmd == "durability") {
+    Parse(this->durability);
+  } else if (cmd == "usedurability") {
+    Parse(this->useDurability);
+  } else if (cmd == "equipdurability") {
+    Parse(this->equipDurability);
+  } else if (cmd == "equipanim") {
+    Parse(this->equipAnim);
+    
+  } else if (cmd == "replacement") {
+    Parse(this->replacement);
+  } else if (cmd == "onusespawnprojectile") {
   
-  while(fgets(line, 256, f) && !feof(f)) {
-    std::vector<std::string> tokens = Tokenize(line);
-    if (tokens.size() == 0) continue;
+    Parse(this->spawnProjectile);
+  } else if (cmd == "breakblockstrength") {
+    Parse(this->breakBlockStrength);
     
-    for (auto &c:tokens[0]) c = ::tolower(c);
-    
-    if (tokens[0] == "tex") {
-      this->sprite.texture = loadTexture("items/texture/"+tokens[1]);
-    } else if (tokens[0] == "frames") {
-      this->sprite.totalFrames = std::atoi(tokens[1].c_str());
-    } else if (tokens[0] == "anim") {
-      this->sprite.animations.push_back(Animation(std::atoi(tokens[1].c_str()), std::atoi(tokens[2].c_str()), std::atof(tokens[3].c_str())));
-    } else if (tokens[0] == "size") {
-      this->sprite.width = std::atof(tokens[1].c_str());
-      this->sprite.height = std::atof(tokens[2].c_str());
-    } else if (tokens[0] == "damage") {
-      this->damage = std::atof(tokens[1].c_str());
-    } else if (tokens[0] == "armorpoints") {
-      this->armor = std::atof(tokens[1].c_str());
-    } else if (tokens[0] == "cooldown") {
-      this->cooldown = std::atof(tokens[1].c_str());
-    } else if (tokens[0] == "range") {
-      this->range = std::atof(tokens[1].c_str());
-    } else if (tokens[0] == "light") {
-      this->light = IColor(std::atoi(tokens[1].c_str()), std::atoi(tokens[2].c_str()), std::atoi(tokens[3].c_str()));
-    } else if (tokens[0] == "flicker") {
-      this->flicker = true;
-    } else if (tokens[0] == "hand") {
-      this->equippable |= (1<<(size_t)InventorySlot::LeftHand) | (1<<(size_t)InventorySlot::RightHand);
-    } else if (tokens[0] == "helmet") {
-      this->equippable |= (1<<(size_t)InventorySlot::Helmet);
-    } else if (tokens[0] == "armor") {
-      this->equippable |= (1<<(size_t)InventorySlot::Armor);
-    } else if (tokens[0] == "leftring") {
-      this->equippable |= (1<<(size_t)InventorySlot::LeftRing);
-    } else if (tokens[0] == "rightring") {
-      this->equippable |= (1<<(size_t)InventorySlot::RightRing);
-    } else if (tokens[0] == "lefthand") {
-      this->equippable |= (1<<(size_t)InventorySlot::LeftHand);
-    } else if (tokens[0] == "righthand") {
-      this->equippable |= (1<<(size_t)InventorySlot::RightHand);
-    } else if (tokens[0] == "greaves") {
-      this->equippable |= (1<<(size_t)InventorySlot::Greaves);
-    } else if (tokens[0] == "boots") {
-      this->equippable |= (1<<(size_t)InventorySlot::Boots);
-    } else if (tokens[0] == "durability") {
-      this->durability = std::atof(tokens[1].c_str());
-    } else if (tokens[0] == "usedurability") {
-      this->useDurability = std::atof(tokens[1].c_str());
-    } else if (tokens[0] == "equipdurability") {
-      this->equipDurability = std::atof(tokens[1].c_str());
-    } else if (tokens[0] == "equipanim") {
-      this->equipAnim = std::atoi(tokens[1].c_str());
-    } else if (tokens[0] == "replacement") {
-      this->replacement = tokens[1];
-    } else if (tokens[0] != "") {
-      std::cerr << "ignoring '" << tokens[0] << "'" << std::endl;
-    }
+  } else if (cmd != "") {
+    this->SetError("ignoring '" + cmd + "'");
   }
 }
 
@@ -121,7 +104,8 @@ LoadItems() {
     FILE *f = openAsset("items/"+name);
     if (f) {
       std::cerr << "loading item " << name << std::endl;
-      allItems[name] = ItemProperties(f);
+      allItems[name] = ItemProperties();
+      allItems[name].ParseFile(f);
       fclose(f);
     }
   }
@@ -180,29 +164,45 @@ void Item::Update(Game &game) {
 
 void Item::UseOnEntity(Game &game, Mob &user, size_t id) {
   if (!this->CanUse(game)) return;
-  
-  temp_ptr<Entity> entity(game.GetEntity(id));
-  if (!entity) return;
-  
-  entity->AddHealth(game, HealthInfo(-this->properties->damage, HealthType::Melee, user.GetId()));
-  
-  this->StartCooldown(game);
+
+  if (this->properties->canUseEntity) {
+    temp_ptr<Entity> entity(game.GetEntity(id));
+    if (!entity) return;
+    
+    entity->AddHealth(game, HealthInfo(-this->properties->damage, HealthType::Melee, user.GetId()));
+    
+    this->StartCooldown(game);
+  } else {
+    this->UseOnNothing(game, user);
+  }
 }
 
 void Item::UseOnCell(Game &game, Mob &user, Cell *cell, Side side) {
-  (void)user;
   (void)side;
   
   if (!this->CanUse(game)) return;
   
-  cell->GetWorld()->BreakBlock(game, cell->GetPosition());
-  this->StartCooldown(game);
+  if (this->properties->canUseCell) {
+    if (game.GetRandom().Chance(this->properties->breakBlockStrength / cell->GetInfo().breakStrength)) {
+      cell->GetWorld()->BreakBlock(game, cell->GetPosition());
+    }
+    this->StartCooldown(game);
+  } else {
+    this->UseOnNothing(game, user);
+  }
 }
 
 void Item::UseOnNothing(Game &game, Mob &user) {
-  (void)user;
   if (!this->CanUse(game)) return;
   this->StartCooldown(game);
+  
+  if (this->properties->spawnProjectile != "") {
+    Projectile *proj = new Projectile(this->properties->spawnProjectile);
+    proj->SetOwner(user);
+    proj->SetAngles(user.GetAngles());
+    proj->SetPosition(user.GetPosition() + Vector3(0,user.GetProperties()->eyeOffset,0));
+    game.AddEntity(proj);
+  }
 }
 
 void Item::Draw(Gfx &gfx, bool left) {

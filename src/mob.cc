@@ -43,7 +43,7 @@ Mob::Update(Game &game) {
   float maxSpeed = this->properties->maxSpeed * this->GetMoveModifier();
   if (speed > maxSpeed) move = move * (maxSpeed/speed);
 
-  float gravity = 3 * 9.81 * deltaT;
+  float gravity = 3 * 9.81 * deltaT * this->properties->gravity;
   float footFriction = 1.0 / (this->footCell ? this->footCell->GetInfo().speedModifier : 1.0);
   float groundFriction = this->groundCell ? this->groundCell->GetInfo().friction : 0.1;
   float friction = 1.0 / (1.0+deltaT * 10 * footFriction * groundFriction);
@@ -102,9 +102,9 @@ Mob::Update(Game &game) {
     Vector3 org = aabb.center + velocity.Horiz() * deltaT;
     bool downStep = false;
     
-    aabb.center = world.MoveAABB(aabb, aabb.center + step, axis2);
+    aabb.center = world.MoveAABB(aabb, aabb.center + step);
     aabb.center = world.MoveAABB(aabb, aabb.center + velocity.Horiz()*deltaT, axis, &cell, &side);
-    aabb.center = world.MoveAABB(aabb, aabb.center - step*1.25 + velocity.Vert()*deltaT, axis2);
+    aabb.center = world.MoveAABB(aabb, aabb.center - step*1.25 + velocity.Vert()*deltaT, axis2, cell ? nullptr : &cell, &side);
     downStep = axis2 & Axis::Y;
     org.y = aabb.center.y;
     axis |= axis2;
@@ -123,10 +123,10 @@ Mob::Update(Game &game) {
     axis |= axis2;
   }
   
-  if (cell) {
-    std::cerr << cell->GetPosition() << " " << side << std::endl;
+  if (cell && !this->properties->nocollideCell) {
+    ((Entity*)this)->OnCollide(game, *cell, side);
   }
-
+  
   // jump out of water
   if (axis & Axis::Horizontal && (inWater || validMoveTarget) && move.GetMag() != 0 && !noclip && !sneak) {
     wantJump = true;

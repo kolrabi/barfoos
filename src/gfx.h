@@ -137,9 +137,5 @@ private:
   void BindVertexPointer(const Vertex *ptr);
 };
 
-const Texture *noiseTexture(const Point &size, const Vector3 &scale = Vector3(1,1,1), const Vector3 &offset = Vector3());
-const Texture *loadTexture(const std::string &name, const Texture * tex = nullptr);
-void updateTextures();
-
 #endif
 

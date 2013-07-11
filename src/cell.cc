@@ -8,6 +8,8 @@
 #include "random.h"
 #include "serializer.h"
 #include "vertex.h"
+
+#include "texture.h"
   
 static std::map<std::string, CellInfo> cellInfos;
 
@@ -52,6 +54,8 @@ CellInfo::CellInfo(const std::string &name, FILE *f) : type(name) {
     else if (tokens[0] == "usedelay")     this->useDelay      = std::atof(tokens[1].c_str());
     
     else if (tokens[0] == "replace")      this->replace = tokens[1];
+
+    else if (tokens[0] == "strength")     this->breakStrength = std::atof(tokens[1].c_str());
     
     else if (tokens[0] == "detailbelowreplace") {
       this->detailBelowReplace = std::atoi(tokens[1].c_str());

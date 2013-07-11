@@ -1,46 +1,50 @@
 #include "player.h"
+
+#include "game.h"
+#include "item.h"
+
 #include "world.h"
 #include "cell.h"
-#include "text.h"
-#include "util.h"
-#include "simplex.h"
-#include "worldedit.h"
-#include "gui.h"
-#include "game.h"
+
 #include "gfx.h"
-#include "vertex.h"
-#include "item.h"
-#include "input.h"
 #include "shader.h"
+#include "texture.h"
+#include "text.h"
+#include "vertex.h"
 
-static float eyeHeight = 0.7f;
+#include "simplex.h"
+#include "input.h"
 
-Player::Player() : Mob("player") {
-  aabb.center = Vector3(16,16,16);
-
-  bobPhase = 0;
-  bobAmplitude = 0;
-  fps = 0;
+Player::Player() 
+: Mob("player") 
+{
+  // rendering
+  this->crosshairTex = loadTexture("gui/crosshair");
+  this->defaultShader = std::unique_ptr<Shader>(new Shader("default"));
+  this->guiShader = std::unique_ptr<Shader>(new Shader("gui"));
   
-  noclip = false;
+  this->bobPhase = 0;
+  this->bobAmplitude = 0;
+  
+  // gameplay
   this->selectedCell = nullptr;
   this->selectedCellSide = Side::Forward;
   this->selectionRange = 0;
   this->selectedEntity = ~0UL;
-
-  this->messageY = 0;
-  this->messageVY = 0;
-
-  this->Equip(std::make_shared<Item>(Item("sword")), InventorySlot::RightHand);
-  this->Equip(std::make_shared<Item>(Item("torch")), InventorySlot::LeftHand);
-  this->AddToInventory(std::make_shared<Item>(Item("torch")));
-
+  
+  // display
   this->itemActiveLeft = false;
   this->itemActiveRight = false;
 
-  this->crosshairTex = loadTexture("gui/crosshair");
-  this->defaultShader = std::unique_ptr<Shader>(new Shader("default"));
-  this->guiShader = std::unique_ptr<Shader>(new Shader("gui"));
+  this->messageY = 0;
+  this->messageVY = 0;
+  this->fps = 0;
+
+  // TEST:
+  this->Equip(std::make_shared<Item>(Item("sword")), InventorySlot::RightHand);
+  this->Equip(std::make_shared<Item>(Item("torch")), InventorySlot::LeftHand);
+  this->AddToInventory(std::make_shared<Item>(Item("torch")));
+  
 }
 
 Player::~Player() {
@@ -52,7 +56,7 @@ Player::View(Gfx &gfx) const {
   Vector3 right = (GetAngles()+Vector3(3.14159/2, 0, 0)).EulerToVector();
   Vector3 bob = Vector3(0,sin(bobPhase*3.14159*4)*0.05, 0) * bobAmplitude + right * cos(bobPhase*3.14159*2)*0.05 * bobAmplitude;
 
-  Vector3 pos = smoothPosition + Vector3(0,eyeHeight,0)+bob;
+  Vector3 pos = smoothPosition + Vector3(0,this->properties->eyeOffset,0)+bob;
   
   gfx.GetView().Look(pos, fwd);
 }
@@ -139,7 +143,7 @@ void Player::UpdateSelection(Game &game) {
   
   // update selection
   Vector3 dir = (this->GetAngles()).EulerToVector();
-  Vector3 pos = this->smoothPosition + Vector3(0, eyeHeight, 0);
+  Vector3 pos = this->smoothPosition + Vector3(0, this->properties->eyeOffset, 0);
   
   float dist  = range;
   
@@ -177,18 +181,6 @@ void Player::UpdateSelection(Game &game) {
   }
   
   this->selectionRange = dist;
-}
-
-void Player::Draw(Gfx &gfx) const {
-  gfx.SetShader(this->defaultShader.get());
-
-  if (this->selectedCell) {
-    std::vector<Vertex> verts;
-    this->selectedCell->DrawHighlight(verts);
-    gfx.SetTextureFrame(loadTexture("cells/texture/select"));
-    gfx.SetColor(IColor(255,255,255), 0.5);
-    gfx.DrawTriangles(verts);
-  }
 }
 
 void
@@ -249,6 +241,18 @@ Player::UpdateInput(
   }
   
   if ((onGround || inWater || noclip) && input->IsKeyActive(InputKey::Jump)) wantJump = true;
+}
+
+void Player::Draw(Gfx &gfx) const {
+  gfx.SetShader(this->defaultShader.get());
+
+  if (this->selectedCell) {
+    std::vector<Vertex> verts;
+    this->selectedCell->DrawHighlight(verts);
+    gfx.SetTextureFrame(loadTexture("cells/texture/select"));
+    gfx.SetColor(IColor(255,255,255), 0.5);
+    gfx.DrawTriangles(verts);
+  }
 }
 
 void 

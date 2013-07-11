@@ -4,6 +4,8 @@
 #include "common.h"
 #include "icolor.h"
 
+#include "properties.h"
+
 class World;
 class Mob;
 class Entity;
@@ -11,7 +13,7 @@ class Cell;
 class Gfx;
 class Game;
 
-struct ItemProperties {
+struct ItemProperties : public Properties {
   // rendering
   Sprite sprite;
   size_t equipAnim;
@@ -26,20 +28,25 @@ struct ItemProperties {
   uint32_t equippable = 0;
   bool twoHanded = false;
   
-  float cooldown = 1.;
+  float cooldown = 1.0;
   
   float durability = 10;
   float useDurability = 1.0;
   float equipDurability = 0.0;
   
+  bool canUseCell = false;
+  bool canUseEntity = false;
+  bool canUseNothing = false;
+  
+  float breakBlockStrength = 0.0;
+  
   std::string replacement;
   
   // std::string placeEntity = "";
   // bool destroyBlock = false;
-  // std::string spawnProjectile = "";
-  
-  ItemProperties();
-  ItemProperties(FILE *f);
+  std::string spawnProjectile = "";
+ 
+  virtual void ParseProperty(const std::string &name) override;
 };
 
 void LoadItems();

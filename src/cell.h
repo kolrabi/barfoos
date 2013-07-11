@@ -108,8 +108,9 @@ struct CellInfo {
   size_t clipSidesOut = 0; // default: don't clip movement out of cell to all sides when solid
   
   size_t onUseCascade = 0;
-  
   float useDelay = 0.0;
+  
+  float breakStrength = 1.0;
 
   CellInfo() {}
   CellInfo(const std::string &name, FILE *f);

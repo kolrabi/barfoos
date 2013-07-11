@@ -7,6 +7,7 @@
 #include "gfx.h"
 #include "icolor.h"
 #include "input.h"
+#include "texture.h"
 
 InventoryGui::InventoryGui(Game &game, Entity &entity) 
 : entity(entity) {

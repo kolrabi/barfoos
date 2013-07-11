@@ -24,8 +24,12 @@ struct EntityProperties {
   int maxHealth = 5;
   Vector3 extents;
   bool nohit = false;
-  bool nocollide = false;
+  bool nocollideEntity = false;
+  bool nocollideCell = false;
+  bool nocollideOwner = false;
   bool isSolid = false;
+  float gravity = 1.0;
+  float eyeOffset = 0.0;
   
   std::vector<std::pair<std::string, float>> items;
   
@@ -67,12 +71,6 @@ public:
   
   static float ThinkInterval;
 
-  const AABB &GetAABB() const { return aabb; }
-  void SetPosition(const Vector3 &pos) { aabb.center = pos; }
-  void SetPosition(const IVector3 &pos) { 
-    smoothPosition = aabb.center = Vector3(pos) + Vector3(0.5,0.5,0.5); 
-  }
-  
   virtual void Start(Game &game, size_t id);
   virtual void Update(Game &game);
   virtual void Think(Game &game);
@@ -82,12 +80,27 @@ public:
   
   virtual void AddHealth(Game &game, const HealthInfo &info); 
   virtual void Die(Game &game, const HealthInfo &info);
+  
   virtual void OnCollide(Game &game, Entity &other) { (void)game; (void)other; }
   virtual void OnCollide(Game &game, Cell &cell, Side side) { (void)game; (void)cell; (void)side; }
   virtual void OnUse(Game &game, Entity &other) { (void)game; (void)other; }
   
+  // management
+  size_t GetId() const { return id; }
   bool IsRemovable() const { return removable; }
+
+  size_t GetOwner() const { return ownerId; }
+  void SetOwner(const Entity &owner) { ownerId = owner.id; }
   
+  // gameplay
+  bool IsSolid() const { return properties->isSolid; }
+  
+  const AABB &GetAABB() const           { return aabb; }
+  void SetPosition(const Vector3 &pos)  { smoothPosition = aabb.center = pos; }
+  void SetPosition(const IVector3 &pos) { SetPosition(Vector3(pos) + Vector3(0.5,0.5,0.5)); }
+  const Vector3 &GetPosition() const    { return aabb.center; }
+  
+  // inventory
   bool AddToInventory(const std::shared_ptr<Item> &item);
   bool AddToInventory(const std::shared_ptr<Item> &item, InventorySlot slot);
 
@@ -99,29 +112,27 @@ public:
   void Equip(const std::shared_ptr<Item> &item, InventorySlot slot);
   const EntityProperties *GetProperties() const { return properties; }
   
-  size_t GetId() const { return id; }
-  bool IsSolid() const { return properties->isSolid; }
-  
 protected:
 
-  size_t id;
+  // management
+  size_t id, ownerId;
   bool removable;
+  const EntityProperties *properties;
   
+  // gameplay
+  int health;
   AABB aabb;
   Vector3 smoothPosition;
   Vector3 lastPos;
-  
-  Sprite sprite;
-  bool drawAABB;
-    
   std::vector<std::shared_ptr<Item>> inventory;
-  const EntityProperties *properties;
-  
   Cell *lastCell;
   IVector3 cellPos;
+  
+  // rendering
+  Sprite sprite;
+  bool drawAABB;
   IColor cellLight;
   
-  int health;
 };
 
 #endif

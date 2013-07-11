@@ -1,6 +1,7 @@
 #include "text.h"
 #include "gfx.h"
 #include "vertex.h"
+#include "texture.h"
 
 static std::map<std::string, Font> fonts;
 
@@ -140,8 +141,6 @@ void RenderString::DrawString() {
     wchar_t wchar;
     p = utf8ToWide(p, &wchar);
     if (!p) break;
-
-    fprintf(stderr, "%08x\n", wchar);
 
     switch(wchar) {
     // handle newlines

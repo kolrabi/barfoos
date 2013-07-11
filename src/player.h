@@ -17,7 +17,7 @@ public:
   virtual void Update(Game &game) override;
   virtual void Draw(Gfx &gfx) const override;
 
-  virtual void AddHealth(Game &game, const HealthInfo &info); 
+  virtual void AddHealth(Game &game, const HealthInfo &info) override; 
   
   void View(Gfx &gfx) const;
   void MapView(Gfx &gfx) const;
@@ -31,9 +31,6 @@ public:
 
 private:
 
-  void UpdateInput(Game &game);
-  void UpdateSelection(Game &game);
-
   struct Message {
     RenderString *text;
     float messageTime;
@@ -42,25 +39,29 @@ private:
     ~Message();
   };
 
-  std::list<Message*> messages;
-  float messageY, messageVY;
-
-  float fps;
+  // rendering
+  const Texture *crosshairTex;
+  std::unique_ptr<Shader> defaultShader;
+  std::unique_ptr<Shader> guiShader;
+  IColor torchLight;
   float bobPhase;
   float bobAmplitude;
-
+  
+  // gameplay
   size_t selectedEntity;
   Cell *selectedCell;
   Side selectedCellSide;
   float selectionRange;
 
-  IColor torchLight;
-  
   bool itemActiveLeft, itemActiveRight;
-  
-  const Texture *crosshairTex;
-  std::unique_ptr<Shader> defaultShader;
-  std::unique_ptr<Shader> guiShader;
+
+  // display
+  std::list<Message*> messages;
+  float messageY, messageVY;
+  float fps;
+
+  void UpdateInput(Game &game);
+  void UpdateSelection(Game &game);
 };
 
 
