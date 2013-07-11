@@ -136,6 +136,12 @@ Gfx::Init(Game &game) {
 
   // Window resize
   glfwSetWindowSizeCallback( this->window, [](GLFWwindow *window, int w, int h) { 
+    if (w < 320 || h < 240) {
+      if (w<320) w = 320;
+      if (h<240) h = 240;
+      glfwSetWindowSize(window, w, h);
+      return;
+    }
     Game &game = *reinterpret_cast<Game*>(glfwGetWindowUserPointer(window));
     Gfx  *gfx  = game.GetGfx();
     

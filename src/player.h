@@ -16,6 +16,8 @@ public:
 
   virtual void Update(Game &game) override;
   virtual void Draw(Gfx &gfx) const override;
+
+  virtual void AddHealth(Game &game, const HealthInfo &info); 
   
   void View(Gfx &gfx) const;
   void MapView(Gfx &gfx) const;
@@ -25,7 +27,7 @@ public:
   
   void HandleEvent(const InputEvent &event);
 
-  void AddMessage(const std::string &text);
+  void AddMessage(const std::string &text, const std::string &font = "default");
 
 private:
 
@@ -36,7 +38,7 @@ private:
     RenderString *text;
     float messageTime;
 
-    Message(const std::string &text);
+    Message(const std::string &text, const std::string &font);
     ~Message();
   };
 

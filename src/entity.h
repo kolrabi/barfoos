@@ -83,6 +83,7 @@ public:
   virtual void AddHealth(Game &game, const HealthInfo &info); 
   virtual void Die(Game &game, const HealthInfo &info);
   virtual void OnCollide(Game &game, Entity &other) { (void)game; (void)other; }
+  virtual void OnCollide(Game &game, Cell &cell, Side side) { (void)game; (void)cell; (void)side; }
   virtual void OnUse(Game &game, Entity &other) { (void)game; (void)other; }
   
   bool IsRemovable() const { return removable; }

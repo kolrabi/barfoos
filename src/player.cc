@@ -117,9 +117,9 @@ Player::Update(Game &game) {
   while(iter!=this->messages.end()) {
     (*iter)->messageTime -= game.GetDeltaT();
     if ((*iter)->messageTime <= 0) {
+      this->messageY += (*iter)->text->GetFont().size.y;
       delete *iter;
       iter = this->messages.erase(iter);
-      this->messageY += 16;
     } else {
       iter++;
     }
@@ -240,9 +240,11 @@ Player::UpdateInput(
   if (bobPhase >= 1.0) {
     bobPhase -= 1.0;
     // TODO: play step sound
-    this->AddMessage("step");
+    //this->AddMessage("step");
+    this->AddMessage(u8"\ufe000\ufe011\ufe022\ufe033\ufe044\ufe055\ufe066\ufe077\ufe088\ufe099\ufe0aa\ufe0bb\ufe0cc\ufe0dd\ufe0ee\ufe0ff");
   } else if (bobPhase >= 0.5 && lastPhase < 0.5) {
-    this->AddMessage("step");
+    //this->AddMessage("step");
+    this->AddMessage(u8"\ufe000\ufe011\ufe022\ufe033\ufe044\ufe055\ufe066\ufe077\ufe088\ufe099\ufe0aa\ufe0bb\ufe0cc\ufe0dd\ufe0ee\ufe0ff");
     // TODO: play step sound
   }
   
@@ -288,7 +290,7 @@ Player::DrawGUI(Gfx &gfx) const {
     if (a > 1.0) a = 1.0;
     gfx.SetColor(IColor(255,255,255), a);
     msg->text->Draw(gfx, 0, y);
-    y += 16;
+    y += msg->text->GetFont().size.y;
   }
 }
 
@@ -310,15 +312,24 @@ Player::HandleEvent(const InputEvent &event) {
 }
 
 void 
-Player::AddMessage(const std::string &text) {
-  Message *msg = new Message(text);
+Player::AddHealth(Game &game, const HealthInfo &info) {
+  Mob::AddHealth(game, info);
+  
+  if (info.amount < 0) {
+    this->AddMessage("OOF!", "big");
+  }
+}
+
+void 
+Player::AddMessage(const std::string &text, const std::string &font) {
+  Message *msg = new Message(text, font);
   msg->messageTime = 5;
   this->messages.push_back(msg);
 }
 
 
-Player::Message::Message(const std::string &txt) {
-  this->text = new RenderString(txt);
+Player::Message::Message(const std::string &txt, const std::string &font) {
+  this->text = new RenderString(txt, font);
 }
 
 Player::Message::~Message() {

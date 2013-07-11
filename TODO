@@ -1,3 +1,5 @@
+projectiles (magic, ranged weapons)
+
 gui
   main menu
 
@@ -9,7 +11,6 @@ items (entities)
   amulets
   more weapons
 
-projectiles (magic, ranged weapons)
 persistence
 connect maps
 

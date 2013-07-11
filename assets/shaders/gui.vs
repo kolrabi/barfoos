@@ -10,6 +10,6 @@ varying vec4 v_color;
 void main() {
   /* output */
   gl_Position = u_matModelView * u_matProjection * gl_Vertex;
-  v_color     = u_color;
+  v_color     = u_color * gl_Color;
   v_tex       = gl_MultiTexCoord0.st;
 }

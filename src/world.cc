@@ -552,13 +552,17 @@ World::IsAABBSolid(const AABB &aabb) {
  * @param aabb The AABB to move.
  * @param targ The target position where to move the AABB.
  * @param axis Output of the colliding axis flags.
+ * @param[out] cell Returns one of the cell with which the aabb collided. 
+ * @param[out] side Returns the side of the cell that collided.
  * @return The final center position of the AABB.
  * @note Might not work for too big AABBs.
  */
 Vector3 World::MoveAABB(
   const AABB &aabb, 
   const Vector3 &targ,
-  uint8_t &axis
+  uint8_t &axis,
+  Cell **cell,
+  Side *side
 ) {
   // initialize axis to no collisions
   axis = 0;
@@ -570,6 +574,7 @@ Vector3 World::MoveAABB(
   if (dist.GetSquareMag() == 0.0f) return center;
 
   bool movingUp      = dist.y > 0;
+  bool storeCell = cell != nullptr;
 
   // create vertices that serve as origins for ray check. must be at most
   // one cell size apart for correct collision detection.
@@ -589,8 +594,10 @@ Vector3 World::MoveAABB(
     }
     
     // try to move along the x axis
+    Vector3 ddx(d.x + (d.x>0?0.01:-0.01), 0, 0);
+    
     for (const Vector3 &v : verts) {
-      if (CastRayX(center + v, d.x) || IsPointSolid(center + v + Vector3(d.x + (d.x>0?0.01:-0.01), 0, 0))) {
+      if (CastRayX(center + v, d.x) || IsPointSolid(center + v + ddx)) {
         float newX = d.x;
         if (d.x > 0) {
           newX = ((int)center.x + 1) - aabb.extents.x - 0.01f;
@@ -602,6 +609,12 @@ Vector3 World::MoveAABB(
           d.x = newX - center.x;
           
         axis |= Axis::X; 
+        
+        if (storeCell) {
+          *cell = &GetCell(center+v+ddx);
+          if (side) *side = d.x > 0 ? Side::Left : Side::Right;
+          storeCell = false;
+        }
       }
     }
 
@@ -609,8 +622,10 @@ Vector3 World::MoveAABB(
     center.x += d.x;
     
     // try to move along the z axis
+    Vector3 ddz(0, 0, d.z + (d.z>0?0.01:-0.01));
+    
     for (const Vector3 &v : verts) {
-      if (CastRayZ(center + v, d.z) || IsPointSolid(center + v + Vector3(0, 0, d.z + (d.z>0?0.01:-0.01)))) {
+      if (CastRayZ(center + v, d.z) || IsPointSolid(center + v + ddz)) {
         float newZ = d.z;
         if (d.z > 0) {
           newZ = ((int)center.z + 1) - aabb.extents.z - 0.01f;
@@ -622,6 +637,12 @@ Vector3 World::MoveAABB(
           d.z = newZ - center.z;
           
         axis |= Axis::Z; 
+        
+        if (storeCell) {
+          *cell = &GetCell(center+v+ddz);
+          if (side) *side = d.z > 0 ? Side::Backward : Side::Forward;
+          storeCell = false;
+        }
       }
     }
     
@@ -644,8 +665,17 @@ Vector3 World::MoveAABB(
     // get lowest collision point
     for (const Vector3 &v : verts) {
       if (v.y <= 0.0f) continue;
-      float vY = CastRayYUp(aabb.center+v);
-      if (vY < endY) endY = vY;
+      float vY = CastRayYUp(center+v);
+      if (vY < endY) {
+        endY = vY;
+        if (storeCell && endY - aabb.extents.y < target.y) {
+          Vector3 end = center + v;
+          end.y = endY + 0.01;
+          *cell = &GetCell(end);
+          if (side) *side = Side::Down;
+          storeCell = false;
+        }
+      }
     }
 
     if (endY - aabb.extents.y < target.y) {
@@ -658,8 +688,17 @@ Vector3 World::MoveAABB(
     // get highest collision point
     for (const Vector3 &v : verts) {
       if (v.y >= 0.0f) continue;
-      float vY = CastRayYDown(aabb.center+v);
-      if (vY > endY) endY = vY;
+      float vY = CastRayYDown(center+v);
+      if (vY > endY) {
+        endY = vY;
+        if (storeCell && endY + aabb.extents.y > target.y) {
+          Vector3 end = center + v;
+          end.y = endY + 0.01;
+          *cell = &GetCell(end);
+          if (side) *side = Side::Up;
+          storeCell = false;
+        }
+      }
     }
     if (endY + aabb.extents.y > target.y) {
       // we are too low, move top of aabb to collision height

@@ -89,6 +89,8 @@ Mob::Update(Game &game) {
   World &world = game.GetWorld();
   uint8_t axis, axis2;
   bool movingDown = velocity.y <= 0;
+  Cell *cell = nullptr;
+  Side side;
 
   if (noclip) {
     aabb.center = aabb.center + velocity * deltaT;
@@ -101,7 +103,7 @@ Mob::Update(Game &game) {
     bool downStep = false;
     
     aabb.center = world.MoveAABB(aabb, aabb.center + step, axis2);
-    aabb.center = world.MoveAABB(aabb, aabb.center + velocity.Horiz()*deltaT, axis);
+    aabb.center = world.MoveAABB(aabb, aabb.center + velocity.Horiz()*deltaT, axis, &cell, &side);
     aabb.center = world.MoveAABB(aabb, aabb.center - step*1.25 + velocity.Vert()*deltaT, axis2);
     downStep = axis2 & Axis::Y;
     org.y = aabb.center.y;
@@ -116,9 +118,13 @@ Mob::Update(Game &game) {
     axis |= axis2;
   } else {
     onGround = false;
-    Vector3 newCenter = world.MoveAABB(aabb, aabb.center + velocity*deltaT, axis);
+    Vector3 newCenter = world.MoveAABB(aabb, aabb.center + velocity*deltaT, axis, &cell, &side);
     aabb.center = game.MoveAABB(aabb, newCenter, axis2);
     axis |= axis2;
+  }
+  
+  if (cell) {
+    std::cerr << cell->GetPosition() << " " << side << std::endl;
   }
 
   // jump out of water
