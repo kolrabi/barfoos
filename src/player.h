@@ -29,6 +29,8 @@ public:
 
   void AddMessage(const std::string &text, const std::string &font = "default");
 
+  virtual IColor GetLight() const { return torchLight; }
+  
 private:
 
   struct Message {

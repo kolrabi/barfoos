@@ -82,8 +82,11 @@ Mob::Update(Game &game) {
     }
     wantJump = false;
   }
-  velocity.x = velocity.x * friction;
-  velocity.z = velocity.z * friction;
+
+  if (!this->properties->noFriction) {
+    velocity.x = velocity.x * friction;
+    velocity.z = velocity.z * friction;
+  }
 
   // move
   World &world = game.GetWorld();

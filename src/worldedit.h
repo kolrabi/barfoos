@@ -26,7 +26,7 @@ public:
 
   WorldEdit &FilledBox(const IVector3 &pos, const IVector3 &size);
   
-  WorldEdit &Explosion(const IVector3 &pos, const IVector3 &size, float strength);
+  WorldEdit &Explosion(const IVector3 &pos, const IVector3 &size, float strength, Random &random);
   WorldEdit &Ellipsoid(const IVector3 &pos, const IVector3 &size);
 
 private:

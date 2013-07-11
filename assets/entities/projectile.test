@@ -2,10 +2,13 @@ tex slime
 frames 2
 
 mass 20
-speed 10
+speed 20
 health 0
 
 extents 0.2 0.2 0.2
 gravity 0.0
 NoCollideOwner
 NoHit
+NoFriction
+
+Glow 255 512 255

@@ -10,11 +10,13 @@ uniform mat4 u_matTexture;
 uniform mat4 u_matNormal;
 
 uniform vec4 u_color;
+uniform vec3 u_lightPos[8];
 
-varying vec4 v_pos;
 varying vec2 v_tex;
 varying vec4 v_color;
 varying vec3 v_norm;
+
+varying vec3 v_pos;
 
 vec3 Distort(vec4 vertex) {
   float t = u_time * 2.0 * 3.14159;
@@ -26,14 +28,13 @@ vec3 Distort(vec4 vertex) {
 }
 
 void main() {
-  v_pos = u_matModelView * gl_Vertex;
- 
   /* turbulence */
-  float turbulence = 0.0;
-  v_pos       += vec4(Distort(v_pos), 0.0)*turbulence;
+  //float turbulence = 0.0;
+  //v_pos       += vec4(Distort(v_pos), 0.0)*turbulence;
 
   /* output */
-  gl_Position = u_matProjection * v_pos;
+  gl_Position = u_matProjection * (u_matModelView * gl_Vertex);
+  v_pos       = vec3(u_matModelView * gl_Vertex);
   v_color     = gl_Color;
   v_tex       = (u_matTexture * gl_MultiTexCoord0).st;
   v_norm      = mat3(u_matNormal) * gl_Normal;

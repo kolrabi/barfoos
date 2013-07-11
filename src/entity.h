@@ -13,6 +13,7 @@ struct EntityProperties {
   // rendering
   Sprite sprite;
   bool isBox = false;
+  IColor glow;
   
   // movement
   float stepHeight = 0.5f;
@@ -27,6 +28,7 @@ struct EntityProperties {
   bool nocollideEntity = false;
   bool nocollideCell = false;
   bool nocollideOwner = false;
+  bool noFriction = false;
   bool isSolid = false;
   float gravity = 1.0;
   float eyeOffset = 0.0;
@@ -111,6 +113,9 @@ public:
 
   void Equip(const std::shared_ptr<Item> &item, InventorySlot slot);
   const EntityProperties *GetProperties() const { return properties; }
+  
+  // rendering
+  virtual IColor GetLight() const { return properties->glow; }
   
 protected:
 

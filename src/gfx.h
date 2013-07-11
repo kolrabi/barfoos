@@ -69,7 +69,7 @@ public:
   void SetFog(float e, float l, const IColor &color);
   void SetColor(const IColor &color, float alpha = 1.0);
   void SetBackfaceCulling(bool cull);
-  void SetTorchLight(const IColor &color) { this->torchLight = color; }
+  void SetLights(const std::vector<Vector3> &positions, const std::vector<IColor> &colors);
   
   const Texture *GetNoiseTexture() const { return noiseTex; }
 
@@ -131,7 +131,8 @@ private:
   float fogExp2;
   float fogLin;
   IColor fogColor;
-  IColor torchLight;
+  std::vector<Vector3> lightPositions;
+  std::vector<IColor> lightColors;
   
   void SetUniforms() const;
   void BindVertexPointer(const Vertex *ptr);

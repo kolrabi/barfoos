@@ -68,10 +68,14 @@ EntityProperties::EntityProperties(FILE *f) {
       this->nocollideCell = true;
     } else if (tokens[0] == "nocollideowner") {
       this->nocollideOwner = true;
+    } else if (tokens[0] == "nofriction") {
+      this->noFriction = true;
     } else if (tokens[0] == "gravity") {
       this->gravity = std::atof(tokens[1].c_str());
-    } else if (tokens[0] == "eyeOffset") {
+    } else if (tokens[0] == "eyeoffset") {
       this->eyeOffset = std::atof(tokens[1].c_str());
+    } else if (tokens[0] == "glow") {
+      this->glow = IColor( std::atoi(tokens[1].c_str()), std::atoi(tokens[2].c_str()), std::atoi(tokens[3].c_str()) );
     } else if (tokens[0] == "solid") {
       this->isSolid = true;
     } else if (tokens[0] == "box") {
@@ -200,6 +204,8 @@ Entity::Update(Game &game) {
     }
     
     this->lastCell = cell;
+  } else if (cell->GetInfo().type != this->properties->cellEnter && this->properties->cellLeave != "") {
+    world.SetCell(cellPos, Cell(this->properties->cellEnter));
   }
   
   if (cell) {
@@ -216,7 +222,7 @@ Entity::Think(Game &game) {
 
 void
 Entity::Draw(Gfx &gfx) const {
-  gfx.SetColor(this->cellLight, 1.0);
+  gfx.SetColor(this->cellLight + this->GetLight(), 1.0);
   if (this->properties->isBox) {
     gfx.SetTextureFrame(this->properties->sprite.texture,0,0,8);
     gfx.DrawAABB(this->aabb);

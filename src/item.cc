@@ -167,7 +167,10 @@ void Item::UseOnEntity(Game &game, Mob &user, size_t id) {
 
   if (this->properties->canUseEntity) {
     temp_ptr<Entity> entity(game.GetEntity(id));
-    if (!entity) return;
+    if (!entity || entity->GetProperties()->nohit) {
+      this->UseOnNothing(game, user);
+      return;
+    }
     
     entity->AddHealth(game, HealthInfo(-this->properties->damage, HealthType::Melee, user.GetId()));
     
@@ -201,6 +204,7 @@ void Item::UseOnNothing(Game &game, Mob &user) {
     proj->SetOwner(user);
     proj->SetAngles(user.GetAngles());
     proj->SetPosition(user.GetPosition() + Vector3(0,user.GetProperties()->eyeOffset,0));
+    proj->AddVelocity(user.GetVelocity());
     game.AddEntity(proj);
   }
 }

@@ -112,7 +112,6 @@ Player::Update(Game &game) {
     }
   }
   
-  game.GetWorld().SetTorchLight(this->torchLight);
   if (headCell) {
     game.GetWorld().AddFeatureSeen(headCell->GetFeatureID());
   }
@@ -267,7 +266,7 @@ Player::DrawWeapons(Gfx &gfx) const {
   
   gfx.GetView().Look(pos, fwd);
 
-  IColor l = this->cellLight+this->torchLight;
+  IColor l = this->cellLight + this->torchLight;
   gfx.SetColor(l);
 
   if (this->inventory[(size_t)InventorySlot::RightHand]) {

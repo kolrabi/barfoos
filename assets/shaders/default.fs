@@ -6,25 +6,42 @@ uniform vec4 u_fogColor;
 uniform vec4 u_color;
 uniform float u_fogLin;
 
-varying vec4 v_pos;
+uniform vec4 u_lightColor[8];
+uniform vec3 u_lightPos[8];
+
+uniform mat4 u_matModelView;
+
 varying vec2 v_tex;
 varying vec4 v_color;
 varying vec3 v_norm;
+
+varying vec3 v_pos;
+varying vec3 v_lightVec[8];
+
+vec3 getLight(int n) {
+  vec3 ld = vec3(u_matModelView * vec4(u_lightPos[n], 1.0)) - v_pos;
+  vec3 L = normalize(ld);
+  float d = length(ld);
+  //vec3 E = normalize(- v_pos);
+
+  return u_lightColor[n].rgb * max(0.0, dot(v_norm, L)) / (d);
+}
+
+vec3 getTotalLight() {
+  vec3 light = vec3(0.0);
+  for (int i=0; i<8; i++) {
+    light += getLight(i);
+  }
+  return light;
+}
 
 void main() {
   vec4 t0 = texture2D(u_texture, v_tex);
   if (t0.a == 0.0) discard;
   
-  vec3 pos = v_pos.xyz / v_pos.w;
-  vec3 eyeDir = -normalize(v_pos.xyz);
+  vec3 light = pow( v_color.rgb + getTotalLight(), vec3(2.2) ) * u_color.rgb;
   
-  float dist = length(pos);
-  float torchIntensity = abs(dot(v_norm, eyeDir)) - dist*0.1;
-  vec3 torch = u_torch.rgb * torchIntensity;
-  vec3 light = pow( v_color.rgb, vec3(2.2) ) * u_color.rgb + torch;
-  
-  float fogDepth = dist;
-  //float fogIntensity = 1.0 - 1.0 / (1.0 + fogDepth*u_fogLin*10);
+  float fogDepth = length(v_pos);
   float fogIntensity = pow(max(0.0, u_fogLin * fogDepth), 0.5);
   
   vec3 color = mix(t0.rgb * light, u_fogColor.rgb, min(1.0, fogIntensity));

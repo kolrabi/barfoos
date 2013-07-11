@@ -108,12 +108,22 @@ void
 Game::Render() const {
   PROFILE();
   
+  std::vector<IColor> lightColors;
+  std::vector<Vector3> lightPositions;
+  std::vector<const Entity*> lightEntities = FindLightEntities(player->GetPosition(), 32);
+  if (lightEntities.size() > 8) lightEntities.resize(8);
+  for (auto e : lightEntities) {
+    lightColors.push_back(e->GetLight());
+    lightPositions.push_back(e->GetPosition());
+  }
+  
   this->gfx->ClearColor(IColor(30, 30, 20));
   this->gfx->ClearDepth(1.0);
   this->gfx->Viewport(Rect());
 
   // draw world first
   this->gfx->SetFog(0.051, 0.05, IColor(20,20,20));
+  this->gfx->SetLights(lightPositions, lightColors);
   
   player->View(*this->gfx);
   world->Draw(*this->gfx);
@@ -293,7 +303,7 @@ Game::RemoveEntity(size_t entityId) {
  * @return A vector of entities.
  */
 std::vector<size_t> 
-Game::FindEntities(const AABB &aabb) {
+Game::FindEntities(const AABB &aabb) const {
   std::vector<size_t> entities;
   
   for (auto entity : this->entities) {
@@ -306,12 +316,26 @@ Game::FindEntities(const AABB &aabb) {
 }
 
 std::vector<size_t> 
-Game::FindSolidEntities(const AABB &aabb) {
+Game::FindSolidEntities(const AABB &aabb) const {
   std::vector<size_t> entities;
   
   for (auto entity : this->entities) {
     if (entity.second->IsSolid() && aabb.Overlap(entity.second->GetAABB())) {
       entities.push_back(entity.first);
+    }
+  } 
+  
+  return entities;
+}
+
+std::vector<const Entity*> 
+Game::FindLightEntities(const Vector3 &pos, float radius) const {
+  std::vector<const Entity*> entities;
+  
+  for (auto entity : this->entities) {
+    
+    if (!entity.second->GetLight().IsBlack() && (entity.second->GetPosition()-pos).GetMag() < radius) {
+      entities.push_back(entity.second);
     }
   } 
   

@@ -368,6 +368,15 @@ Gfx::SetFog(float e, float l, const IColor &color) {
 }
 
 void 
+Gfx::SetLights(const std::vector<Vector3> &positions, const std::vector<IColor> &colors) {
+  this->lightPositions = positions;
+  this->lightColors = colors;
+  
+  if (this->lightColors.size() < 8) this->lightColors.resize(8);
+  if (this->lightPositions.size() < 8) this->lightPositions.resize(8);
+}
+
+void 
 Gfx::SetTextureFrame(const Texture *texture, size_t stage, size_t currentFrame, size_t frameCount) {
   if (stage != this->activeTextureStage) {
     glActiveTexture(GL_TEXTURE0 + stage);
@@ -422,7 +431,9 @@ Gfx::SetUniforms() const {
   this->activeShader->Uniform("u_fogColor", this->fogColor);
   this->activeShader->Uniform("u_time",     this->GetTime());
   this->activeShader->Uniform("u_color",    this->color, this->alpha);
-  this->activeShader->Uniform("u_torch",    this->torchLight);
+  
+  this->activeShader->Uniform("u_lightPos",   this->lightPositions);
+  this->activeShader->Uniform("u_lightColor", this->lightColors);
 }
 
 void

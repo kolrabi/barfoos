@@ -27,6 +27,7 @@ public:
   
   void ApplyForce(Game &game, const Vector3 &f);
   void AddVelocity(const Vector3 &v) { velocity = velocity + v; }
+  const Vector3 &GetVelocity() const { return velocity; }
 
 protected:
 

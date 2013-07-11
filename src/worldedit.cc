@@ -1,5 +1,6 @@
 #include "worldedit.h"
 #include "world.h"
+#include "random.h"
 #include "vertex.h"
 
 WorldEdit::WorldEdit(World *world) : world(world) {}
@@ -59,7 +60,7 @@ WorldEdit &WorldEdit::FilledBox(const IVector3 &pos, const IVector3 &size) {
 }
 
 WorldEdit &
-WorldEdit::Explosion(const IVector3 &pos, const IVector3 &size, float strength) {
+WorldEdit::Explosion(const IVector3 &pos, const IVector3 &size, float strength, Random &random) {
   Vector3 v(pos);
   Vector3 vs(size);
   
@@ -67,8 +68,8 @@ WorldEdit::Explosion(const IVector3 &pos, const IVector3 &size, float strength) 
     IVector3 pp = pos - size + p;
     Vector3 vpp(pp);
     float d = (vpp-v).GetSquareMag()/4;
-    float prob = vs.GetMag()/2-d;
-    if (rand()%100 < (prob*100*strength)) {
+    float prob = (vs.GetMag()/2-d) * strength / this->world->GetCell(pp).GetInfo().breakStrength;
+    if (prob > 0 && random.Chance(prob)) {
       ApplyBrush(pp);
     }
   });

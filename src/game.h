@@ -42,12 +42,14 @@ public:
   void HandleEvent(const InputEvent &event);
 
   size_t AddEntity(Entity *entity);
-  size_t AddPlayer(Player *entity);
-  void RemoveEntity(size_t entity);
-  bool CheckEntities(const IVector3 &pos);
-  std::vector<size_t> FindEntities(const AABB &aabb);
-  std::vector<size_t> FindSolidEntities(const AABB &aabb);
   temp_ptr<Entity> GetEntity(size_t id);
+  void RemoveEntity(size_t entity);
+  
+  size_t AddPlayer(Player *entity);
+  bool CheckEntities(const IVector3 &pos);
+  
+  std::vector<size_t> FindEntities(const AABB &aabb) const;
+  std::vector<size_t> FindSolidEntities(const AABB &aabb) const;
 
   Vector3 MoveAABB(const AABB &aabb, const Vector3 &dir, uint8_t &axis);
   
@@ -90,6 +92,7 @@ private:
   bool showInventory;
   
   void BuildWorld();
+  std::vector<const Entity*> FindLightEntities(const Vector3 &pos, float radius) const;
 };
 
 #endif

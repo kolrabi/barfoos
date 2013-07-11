@@ -57,8 +57,6 @@ public:
   void AddFeatureSeen(size_t f); // TODO: move to separate map class
   void BreakBlock(Game &game, const IVector3 &pos);
   
-  void SetTorchLight(const IColor &color) { this->torchLight = color; }
-  const IColor &GetTorchLight() const { return this->torchLight; }
   void SetDirty() { this->dirty = true; }
 
 private:
@@ -100,7 +98,6 @@ private:
   std::vector<FeatureInstance> instances;
 
   Shader *defaultShader;
-  IColor torchLight;
 };
 
 inline Cell &

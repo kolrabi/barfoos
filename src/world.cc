@@ -324,8 +324,6 @@ World::Draw(Gfx &gfx) {
   this->defaultShader->Uniform("u_texture", 0);
   this->defaultShader->Uniform("u_texture2", 1);
   
-  gfx.SetTorchLight(this->torchLight);
-  
   for (auto &s : this->vertexStarts) {
     gfx.SetTextureFrame(s.first);
     gfx.DrawTriangles(this->vbo, s.second, this->vertexCounts[s.first]);
