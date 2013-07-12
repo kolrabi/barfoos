@@ -6,7 +6,7 @@ varying vec4 v_color;
 void main() {
   vec4 t0 = texture2D(u_texture, v_tex);
   if (t0.a == 0.0) discard;
-  vec4 color = v_color;
+  vec4 color = v_color * t0;
   color.rgb *= color.a;
   gl_FragColor = color;
 }

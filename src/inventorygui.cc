@@ -20,7 +20,7 @@ InventoryGui::InventoryGui(Game &game, Entity &entity)
   //      3          x  x  x  x
   //                 x  x  x  x
 
-  Gfx &gfx = *game.GetGfx();
+  Gfx &gfx = game.GetGfx();
   Point slotDist(36, 36);
   Point topLeft  = gfx.AlignTopLeftScreen(Point(32,32), 16);
   Point topRight = gfx.AlignTopRightScreen(Point(32,32), 16);

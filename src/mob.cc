@@ -47,7 +47,7 @@ Mob::Update(Game &game) {
   float footFriction = 1.0 / (this->footCell ? this->footCell->GetInfo().speedModifier : 1.0);
   float groundFriction = this->groundCell ? this->groundCell->GetInfo().friction : 0.1;
   float friction = 1.0 / (1.0+deltaT * 10 * footFriction * groundFriction);
-
+  
   float tvx = std::abs(move.x) > std::abs(velocity.x) ? move.x : velocity.x;
   float tvz = std::abs(move.z) > std::abs(velocity.z) ? move.z : velocity.z;
   
@@ -143,6 +143,21 @@ Mob::Update(Game &game) {
     velocity.y = 0;
     onGround |= movingDown;
   }
+  
+  IVector3 footPos(aabb.center.x, aabb.center.y - aabb.extents.y + this->properties->stepHeight, aabb.center.z);
+  footCell = &world.GetCell(footPos);
+
+  if (onGround) {
+    groundCell = &world.GetCell(footPos[Side::Down]);
+  } else {
+    groundCell = nullptr;
+  }
+  
+  IVector3 headPos(aabb.center.x, aabb.center.y + aabb.extents.y, aabb.center.z);
+  headCell = &world.GetCell(headPos);
+
+  underWater = headCell->GetInfo().flags & CellFlags::Liquid;
+  if (!noclip) this->SetInLiquid(footCell->GetInfo().flags & CellFlags::Liquid);
 }
 
 void
@@ -161,22 +176,6 @@ Mob::Think(Game &game) {
     if (tmove.GetMag() < 0.1) validMoveTarget = false;
     if (validMoveTarget) move = tmove.Normalize() * this->properties->maxSpeed;
   }
- 
-  World &world = game.GetWorld();
-  IVector3 footPos(aabb.center.x, aabb.center.y - aabb.extents.y + this->properties->stepHeight, aabb.center.z);
-  footCell = &world.GetCell(footPos);
-
-  if (onGround) {
-    groundCell = &world.GetCell(footPos[Side::Down]);
-  } else {
-    groundCell = nullptr;
-  }
-  
-  IVector3 headPos(aabb.center.x, aabb.center.y + aabb.extents.y, aabb.center.z);
-  headCell = &world.GetCell(headPos);
-
-  underWater = headCell->GetInfo().flags & CellFlags::Liquid;
-  if (!noclip) this->SetInLiquid(footCell->GetInfo().flags & CellFlags::Liquid);
 }
 
 void
@@ -192,13 +191,7 @@ Mob::SetInLiquid(bool inLiquid) {
 
 void
 Mob::Die(Game &game, const HealthInfo &info) {
-  //Entity::Die(game, info);
-  (void)info;
-  (void)game;
-  
-  // just respawn
-  health = this->properties->maxHealth;
-  SetPosition(spawnPos);
+  Entity::Die(game, info);
 }
 
 void

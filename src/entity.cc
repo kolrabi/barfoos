@@ -9,8 +9,7 @@
 #include "gfx.h"
 #include "input.h"
 #include "texture.h"
-
-float Entity::ThinkInterval = 0.2f;
+#include "player.h"
 
 static std::map<std::string, EntityProperties> allEntities;
 EntityProperties defaultEntity;
@@ -37,6 +36,10 @@ EntityProperties::EntityProperties(FILE *f) {
     
     if (tokens[0] == "tex") {
       this->sprite.texture = loadTexture("entities/texture/"+tokens[1]);
+    } else if (tokens[0] == "name") {
+      this->name = tokens[1];
+    } else if (tokens[0] == "respawn") {
+      this->respawn = true;
     } else if (tokens[0] == "frames") {
       this->sprite.totalFrames = std::atoi(tokens[1].c_str());
     } else if (tokens[0] == "anim") {
@@ -117,6 +120,8 @@ Entity::Entity(const std::string &type) {
   this->id = ~0UL;
   this->ownerId = ~0UL;
   this->drawAABB = false;
+  
+  this->nextThinkT = 0;
 }
 
 Entity::~Entity() {
@@ -127,6 +132,7 @@ Entity::Start(Game &game, size_t id) {
   World &world = game.GetWorld();
   
   this->id = id;
+  this->nextThinkT = game.GetTime();
   
   // fill inventory with random crap
   for (auto item : this->properties->items) {
@@ -170,7 +176,13 @@ Entity::Start(Game &game, size_t id) {
 void 
 Entity::Update(Game &game) {
   float deltaT = game.GetDeltaT();
-  
+  float t      = game.GetTime();
+
+  while(properties->thinkInterval && nextThinkT < t) {
+    nextThinkT += properties->thinkInterval;
+    Think(game);
+  }
+
   this->sprite.Update(deltaT);
   
   if (deltaT > 1.0/30.0) {
@@ -185,8 +197,8 @@ Entity::Update(Game &game) {
   this->cellPos = IVector3(aabb.center.x, aabb.center.y, aabb.center.z);
   
   World &world = game.GetWorld();
-  Cell *cell = &world.GetCell(cellPos);
-  if (cell != this->lastCell) {
+  Cell &cell = world.GetCell(cellPos);
+  if (&cell != this->lastCell) {
     if (this->lastCell && this->properties->cellLeave != "") {
       world.SetCell(this->lastCell->GetPosition(), Cell(this->properties->cellLeave));
     }
@@ -194,16 +206,14 @@ Entity::Update(Game &game) {
       world.SetCell(cellPos, Cell(this->properties->cellEnter));
     }
     
-    this->lastCell = cell;
-  } else if (cell->GetInfo().type != this->properties->cellEnter && this->properties->cellLeave != "") {
+    this->lastCell = &cell;
+  } else if (cell.GetInfo().type != this->properties->cellEnter && this->properties->cellLeave != "") {
     world.SetCell(cellPos, Cell(this->properties->cellEnter));
   }
   
-  if (cell) {
-    this->cellLight = world.GetLight(cell->GetPosition());
-  }
+  this->cellLight = world.GetLight(cell.GetPosition());
   
-  this->drawAABB = game.GetInput()->IsKeyActive(InputKey::DebugEntityAABB);
+  this->drawAABB = game.GetInput().IsKeyActive(InputKey::DebugEntityAABB);
 }
   
 void 
@@ -254,17 +264,24 @@ Entity::AddHealth(Game &game, const HealthInfo &info) {
 
 void
 Entity::Die(Game &game, const HealthInfo &info) {
-  // TODO: use info (like, displaying a message)
-  (void)info;
-  
-  // TODO: play death animation (if any) and set this->removable afte it finished
-  std::cerr << "removable: " << this->removable;
-  this->removable = true;
-  std::cerr << " -> " << this->removable << std::endl;
+  if (info.dealerId != ~0UL) {
+    game.GetPlayer().AddDeathMessage(*this, *game.GetEntity(info.dealerId), info);
+  } else {
+    game.GetPlayer().AddDeathMessage(*this, info);
+  }
   
   if (this->lastCell && this->properties->cellLeave != "") {
     game.GetWorld().SetCell(this->lastCell->GetPosition(), Cell(this->properties->cellLeave));
   }
 
   this->inventory.Drop(game, *this);
+
+  // TODO: play death animation (if any) and set this->removable afte it finished
+  if (this->properties->respawn) {
+    // just respawn
+    health = this->properties->maxHealth;
+    SetPosition(spawnPos);
+  } else {
+    this->removable = true;
+  }
 }

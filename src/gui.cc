@@ -22,7 +22,7 @@ Gui::Update(Game &game) {
     c->Update(game);
   }
 
-  const Point &vsize = game.GetGfx()->GetVirtualScreenSize();
+  const Point &vsize = game.GetGfx().GetVirtualScreenSize();
 
   if (this->updateGravity) {
     bottomRight = vsize - (rect.pos + rect.size);

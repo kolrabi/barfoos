@@ -173,18 +173,18 @@ Player::UpdateInput(
 ) {
   float deltaT = game.GetDeltaT();
   
-  Input *input = game.GetInput();
+  Input &input = game.GetInput();
   
-  if (input->IsKeyActive(InputKey::DebugDie)) Die(game, HealthInfo());
+  if (input.IsKeyDown(InputKey::DebugDie)) this->Die(game, HealthInfo());
   
-  if (input->IsKeyDown(InputKey::Use) && this->selectedEntity != ~0UL) {
+  if (input.IsKeyDown(InputKey::Use) && this->selectedEntity != ~0UL) {
     temp_ptr<Entity> entity(game.GetEntity(this->selectedEntity));
     if (entity) entity->OnUse(game, *this);
-  } else if (input->IsKeyDown(InputKey::Use) && this->selectedCell) {
+  } else if (input.IsKeyDown(InputKey::Use) && this->selectedCell) {
     this->selectedCell->OnUse(game, *this);
   }
 
-  sneak = input->IsKeyActive(InputKey::Sneak);
+  sneak = input.IsKeyActive(InputKey::Sneak);
 
   if (angles.y >  3.1/2) angles.y =  3.1/2;
   if (angles.y < -3.1/2) angles.y = -3.1/2;
@@ -195,10 +195,10 @@ Player::UpdateInput(
 
   move = Vector3();
   
-  if (input->IsKeyActive(InputKey::Right))     move = move + right * speed;
-  if (input->IsKeyActive(InputKey::Left))      move = move - right * speed;
-  if (input->IsKeyActive(InputKey::Forward))   move = move + fwd * speed;
-  if (input->IsKeyActive(InputKey::Backward))  move = move - fwd * speed;
+  if (input.IsKeyActive(InputKey::Right))     move = move + right * speed;
+  if (input.IsKeyActive(InputKey::Left))      move = move - right * speed;
+  if (input.IsKeyActive(InputKey::Forward))   move = move + fwd * speed;
+  if (input.IsKeyActive(InputKey::Backward))  move = move - fwd * speed;
 
   if (move.GetMag() > 1.5) {
     bobAmplitude += deltaT*4;
@@ -224,7 +224,7 @@ Player::UpdateInput(
     // TODO: play step sound
   }
   
-  if ((onGround || inWater || noclip) && input->IsKeyActive(InputKey::Jump)) wantJump = true;
+  if ((onGround || inWater || noclip) && input.IsKeyActive(InputKey::Jump)) wantJump = true;
 }
 
 void Player::Draw(Gfx &gfx) const {
@@ -278,6 +278,17 @@ Player::DrawGUI(Gfx &gfx) const {
     msg->text->Draw(gfx, 0, y);
     y += msg->text->GetFont().size.y;
   }
+  
+  std::stringstream strHealth;
+  int h = this->health * 2;
+  for (int i=0; i<h; i++) {
+    if (i == h-1 && (h%2))
+      strHealth << u8"\u0082";
+    else
+      strHealth << u8"\u0081";
+  }
+  RenderString rsHealth(strHealth.str());
+  rsHealth.Draw(gfx, 0, vsize.y, (int)Align::Left | (int)Align::Bottom);
 }
 
 void
@@ -299,11 +310,17 @@ Player::HandleEvent(const InputEvent &event) {
 
 void 
 Player::AddHealth(Game &game, const HealthInfo &info) {
-  Mob::AddHealth(game, info);
-  
   if (info.amount < 0) {
     this->AddMessage("OOF!", "big");
+    
+    if (!IsContinuous(info.type) || game.GetTime() > lastHurtT[info.type] + 0.25) {
+      this->AddMessage("papapishu!", "big");
+      lastHurtT[info.type] = game.GetTime();
+      lastHurtAnyT = game.GetTime();
+    }
   }
+  
+  Mob::AddHealth(game, info);
 }
 
 void 
@@ -311,6 +328,41 @@ Player::AddMessage(const std::string &text, const std::string &font) {
   Message *msg = new Message(text, font);
   msg->messageTime = 5;
   this->messages.push_back(msg);
+}
+
+void 
+Player::AddDeathMessage(const Entity &dead, const HealthInfo &info) {
+  switch(info.type) {
+    case HealthType::Unspecified: AddMessage(dead.GetName() + " died"); break;
+    case HealthType::Heal:        AddMessage(dead.GetName() + " was unhealed"); break;
+    case HealthType::Falling:     AddMessage(dead.GetName() + " killed the ground too quickly"); break;
+    case HealthType::Explosion:   AddMessage(dead.GetName() + " blew up"); break;
+    case HealthType::Melee:       AddMessage(dead.GetName() + " was killed"); break;
+    case HealthType::Arrow:       AddMessage(dead.GetName() + " was deadly hit by an arrow"); break;
+    case HealthType::Vampiric:    AddMessage(dead.GetName() + "'s blood was sucked"); break;
+    case HealthType::Fire:        AddMessage(dead.GetName() + " burned "); break;
+    case HealthType::Lava:        AddMessage(dead.GetName() + " tried to swim in lava"); break;
+  }
+}
+
+void 
+Player::AddDeathMessage(const Entity &dead, const Entity &killer, const HealthInfo &info) {
+  switch(info.type) {
+    case HealthType::Unspecified: AddMessage(dead.GetName() + " was killed by " + killer.GetName()); break;
+    case HealthType::Heal:        AddMessage(dead.GetName() + " was unhealed by " + killer.GetName()); break;
+    case HealthType::Falling:     AddMessage(dead.GetName() + " was doomed to fall by " + killer.GetName()); break;
+    case HealthType::Explosion:   AddMessage(dead.GetName() + " was blown up by " + killer.GetName()); break;
+    case HealthType::Melee:       AddMessage(dead.GetName() + " was smitten by " + killer.GetName()); break;
+    case HealthType::Arrow:       AddMessage(dead.GetName() + " was deadly hit by " + killer.GetName() + "'s "); break;
+    case HealthType::Vampiric:    AddMessage(dead.GetName() + "'s blood was sucked by " + killer.GetName()); break;
+    case HealthType::Fire:        AddMessage(dead.GetName() + " was set on fire by " + killer.GetName()); break;
+    case HealthType::Lava:        AddMessage(dead.GetName() + " was pushed into the lava by " + killer.GetName()); break;
+  }
+}
+
+std::string 
+Player::GetName() const {
+  return "<insert player name here>";
 }
 
 

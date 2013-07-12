@@ -23,7 +23,6 @@ Game::Game(const std::string &seed, size_t level, const Point &screenSize)
   this->startT = 0.0;
   this->lastT = 0.0;
   this->deltaT = 0.0;
-  this->nextThinkT = 0.0;
   this->frame = 0;
   this->lastFPST = 0;
   this->fps = 0;
@@ -31,10 +30,11 @@ Game::Game(const std::string &seed, size_t level, const Point &screenSize)
   
   this->handlerId = this->input->AddHandler( [this](const InputEvent &event){ this->HandleEvent(event); } );
   this->isInit = false;
+  this->world = nullptr;
 }
 
 Game::~Game() {
-  if (isInit) this->Deinit();
+  if (this->isInit) this->Deinit();
   
   this->input->RemoveHandler(this->handlerId);
   
@@ -44,6 +44,8 @@ Game::~Game() {
 
 bool 
 Game::Init() {
+  if (this->isInit) return true;
+  
   std::cerr << "initializing game" << std::endl;
   if (!this->gfx->Init(*this)) return false;
   
@@ -56,11 +58,11 @@ Game::Init() {
   this->showInventory = false;
   this->lastT = 0;
   this->deltaT = 0;
-  this->nextThinkT = 0;
   this->frame = 0;
   this->lastFPST = 0;
   this->fps = 0;
 
+  this->world = nullptr;
   this->BuildWorld();
 
   this->startT = this->gfx->GetTime();
@@ -145,15 +147,10 @@ Game::Render() const {
   player->DrawGUI(*this->gfx);
 }
 
-float Game::GetThinkFraction() const {
-  float lastThinkT = this->nextThinkT - Entity::ThinkInterval;
-  return (this->lastT - lastThinkT) / Entity::ThinkInterval;
-}
-
 void 
 Game::Update(float t, float deltaT) {
   PROFILE();
-  
+
   this->lastT = t;
   this->deltaT = deltaT;
   
@@ -180,7 +177,6 @@ Game::Update(float t, float deltaT) {
     }
     this->showInventory = false;
   }
-  if (this->activeGui) this->activeGui->Update(*this);
   
   // update world
   this->world->Update(*this);
@@ -219,16 +215,6 @@ Game::Update(float t, float deltaT) {
     }
   }
   
-  {
-    PROFILE_NAMED("think"); 
-    while(nextThinkT < t) {
-      nextThinkT += Entity::ThinkInterval;
-      for (auto entity : this->entities) {
-        if (!entity.second->IsRemovable()) entity.second->Think(*this);
-      }
-    }
-  }
-
   // remove removable entities
   {
     PROFILE_NAMED("remove"); 
@@ -242,6 +228,8 @@ Game::Update(float t, float deltaT) {
       }
     }
   }
+  
+  this->input->Update();
 }
 
 void 
@@ -249,7 +237,8 @@ Game::BuildWorld() {
   PROFILE();
 
   random.Seed(seed, level); 
-  this->world = std::shared_ptr<World>(new World(*this, IVector3(64, 64, 64)));
+  delete this->world;
+  this->world = new World(*this, IVector3(64, 64, 64));
   this->world->Build(*this);
 
   Player *player = new Player();
@@ -379,13 +368,14 @@ Game::CheckEntities(const IVector3 &pos) {
   return true;
 }
 
-temp_ptr<Entity> 
+Entity *
 Game::GetEntity(size_t entityId) {
   auto iter = this->entities.find(entityId);
   if (iter == this->entities.end()) {
-    return temp_ptr<Entity>(nullptr);
+    std::cerr << "AAAAAAAAAARGH no entity by that id!" << std::endl;
+    return nullptr;
   }
-  return temp_ptr<Entity>(iter->second);
+  return iter->second;
 }
 
 Vector3 Game::MoveAABB(

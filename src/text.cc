@@ -95,9 +95,21 @@ RenderString& RenderString::operator =(const std::string &text) {
   return *this;
 }
 
-void RenderString::Draw(Gfx &gfx, float x, float y) {
+void RenderString::Draw(Gfx &gfx, float x, float y, int align) {
   if (dirty) { 
     this->DrawString();
+  }
+  
+  if (align & (int)Align::Right) {
+    x = x - size.x;
+  } else if (align & (int)Align::Center) {
+    x = x - size.x / 2;
+  }
+
+  if (align & (int)Align::Bottom) {
+    y = y - size.y;
+  } else if (align & (int)Align::Middle) {
+    y = y - size.y / 2;
   }
   
   gfx.SetTextureFrame(this->font.texture);
@@ -135,6 +147,8 @@ void RenderString::DrawString() {
   if (this->text == "") return;
   
   const char *p = this->text.c_str();
+  float maxX = 0;
+  float maxY = size.y;
   
   while (*p) {
     // convert utf8 to wchar_t
@@ -147,6 +161,7 @@ void RenderString::DrawString() {
       case '\n': {
         x = 0;
         y += size.y;
+        maxY += size.y;
         p ++;
         continue;
       }
@@ -174,5 +189,16 @@ void RenderString::DrawString() {
     this->DrawChar(x, y, wchar, color);
     
     x += size.x;
+    if (x > maxX) maxX = x;
   }
+  
+  this->size = Point(maxX, maxY);
+}
+
+const Point &
+RenderString::GetSize() {
+  if (dirty) { 
+    this->DrawString();
+  }
+  return size;
 }

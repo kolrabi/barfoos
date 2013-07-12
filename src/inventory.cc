@@ -160,6 +160,5 @@ Inventory::GetLight() const {
     }
     light = light + item.second->GetProperties()->light * f;
   }  
-  if (!light.IsBlack()) std::cerr << light << std::endl;
   return light;
 }

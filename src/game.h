@@ -24,40 +24,43 @@ public:
   ~Game();
   
   bool Init();
-
   bool Frame();
   
-  Gfx    *GetGfx()    const { return gfx;           }
-  Input  *GetInput()  const { return input;         }
+  Gfx    &GetGfx()    const { return *this->gfx;    }
+  Input  &GetInput()  const { return *this->input;  }
   World  &GetWorld()  const { return *this->world;  }
   Random &GetRandom()       { return random;        }
 
   float   GetTime()   const { return this->lastT;   }
   float   GetDeltaT() const { return this->deltaT;  }
   float   GetFPS()    const { return this->fps;     }
-  float   GetThinkFraction() const; // TODO: move to entity
 
   int     GetLevel()  const { return level;         }
   
-  void HandleEvent(const InputEvent &event);
-
-  size_t AddEntity(Entity *entity);
-  temp_ptr<Entity> GetEntity(size_t id);
-  void RemoveEntity(size_t entity);
+  // entity management
+  size_t  AddEntity(Entity *entity);
+  Entity *GetEntity(size_t id);
+  void    RemoveEntity(size_t entity);
   
-  size_t AddPlayer(Player *entity);
-  bool CheckEntities(const IVector3 &pos);
+  size_t  AddPlayer(Player *entity);
+  Player &GetPlayer() { return *this->player; }
+  
+  bool    CheckEntities(const IVector3 &pos);
   
   std::vector<size_t> FindEntities(const AABB &aabb) const;
   std::vector<size_t> FindSolidEntities(const AABB &aabb) const;
 
+  // misc.
   Vector3 MoveAABB(const AABB &aabb, const Vector3 &dir, uint8_t &axis);
+  
   void Explosion(const IVector3 &pos, const IVector3 &size, float strength);
+  void HandleEvent(const InputEvent &event);
   
 private:
 
   Input *input;
   Gfx *gfx;
+  World *world;
   bool isInit;
   
   size_t handlerId;
@@ -67,7 +70,6 @@ private:
   void Render() const;
   void Update(float t, float deltaT);
   
-  std::shared_ptr<World> world;
   int level;
   
   std::map<size_t, Entity*> entities;
@@ -81,7 +83,6 @@ private:
   float startT;
   float lastT;
   float deltaT;
-  float nextThinkT;
   size_t frame;
   float lastFPST;
   
