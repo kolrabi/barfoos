@@ -52,6 +52,7 @@ public:
   std::vector<size_t> FindSolidEntities(const AABB &aabb) const;
 
   Vector3 MoveAABB(const AABB &aabb, const Vector3 &dir, uint8_t &axis);
+  void Explosion(const IVector3 &pos, const IVector3 &size, float strength);
   
 private:
 

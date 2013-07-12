@@ -865,7 +865,7 @@ void
 World::BreakBlock(Game &game, const IVector3 &pos) {
   AABB aabb = this->SetCell(pos, Cell("air")).GetAABB();
   Random &random = game.GetRandom();
-  for (size_t i=0; i<16; i++) {
+  for (size_t i=0; i<4; i++) {
     Mob *particle = new Particle();
     Vector3 s = aabb.extents - particle->GetAABB().extents;
     Vector3 p = Vector3(random.Float()*s.x, random.Float()*s.y, random.Float()*s.z) + aabb.center;

@@ -868,6 +868,8 @@ bool Cell::HasSolidSides() const {
 }
 
 bool Cell::CheckSideSolid(Side side, const Vector3 &org) const {
+  if (!this->world) return true;
+
   Cell *cell = this->neighbours[(int)side];
 
   // check for clipping movement into cell from opposite side

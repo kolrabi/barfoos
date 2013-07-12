@@ -232,7 +232,7 @@ Player::UpdateInput(
     bobPhase -= 1.0;
     // TODO: play step sound
     //this->AddMessage("step");
-    this->AddMessage(u8"\ufe000\ufe011\ufe022\ufe033\ufe044\ufe055\ufe066\ufe077\ufe088\ufe099\ufe0aa\ufe0bb\ufe0cc\ufe0dd\ufe0ee\ufe0ff");
+    this->AddMessage(u8"\ufe000\ufe011\ufe022\ufe033\ufe044\ufe055\ufe066\ufe077\ufe088\ufe099\ufe0aa\ufe0bb\ufe0cc\ufe0dd\ufe0ee\ufe0ff", "big");
   } else if (bobPhase >= 0.5 && lastPhase < 0.5) {
     //this->AddMessage("step");
     this->AddMessage(u8"\ufe000\ufe011\ufe022\ufe033\ufe044\ufe055\ufe066\ufe077\ufe088\ufe099\ufe0aa\ufe0bb\ufe0cc\ufe0dd\ufe0ee\ufe0ff");

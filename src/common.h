@@ -443,6 +443,7 @@ private:
 };
 
 #define PROFILE() Profile __profile(__PRETTY_FUNCTION__, __FILE__, __LINE__)
+#define PROFILE_NAMED(n) Profile __profile(n, __FILE__, __LINE__)
 
 #endif
 

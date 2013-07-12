@@ -40,7 +40,5 @@ Projectile::OnCollide(Game &game, Cell &cell, Side side) {
   (void)side;
   this->Die(game, HealthInfo());
   
-  WorldEdit we(&game.GetWorld());
-  we.SetBrush(Cell("air"));
-  we.Explosion(cell.GetPosition(), IVector3(2,2,2), 0.5, game.GetRandom());
+  game.Explosion(cell.GetPosition(), IVector3(2,2,2), 0.5);
 }

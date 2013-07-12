@@ -202,26 +202,40 @@ Game::Update(float t, float deltaT) {
   }
 
   // update all entities
+  {
+  PROFILE_NAMED("update"); 
+  size_t count = 0;
   for (auto entity : this->entities) {
-    if (entity.second) entity.second->Update(*this);
+    if (entity.second) { entity.second->Update(*this); count++; }
+  }
+  std::cerr << count << "/" << this->entities.size() << std::endl;
   }
   
+  {
+  PROFILE_NAMED("think"); 
   while(nextThinkT < t) {
     nextThinkT += Entity::ThinkInterval;
     for (auto entity : this->entities) {
       if (entity.second) entity.second->Think(*this);
     }
   }
+  }
 
   // remove removable entities
+  {
+  PROFILE_NAMED("remove"); 
+  size_t count = 0;
   auto entityIter = this->entities.begin();
   while(entityIter != this->entities.end()) {
-    if (entityIter->second->IsRemovable()) {
+    if (!entityIter->second || entityIter->second->IsRemovable()) {
       delete entityIter->second;
       entityIter = this->entities.erase(entityIter);
+      count++;
     } else {
       entityIter++;
     }
+  }
+  std::cerr << count << "/" << this->entities.size() << std::endl;
   }
 }
 
@@ -461,4 +475,20 @@ Vector3 Game::MoveAABB(
   center.y += dist.y;
   
   return center;
+}
+
+void
+Game::Explosion(const IVector3 &pos, const IVector3 &size, float strength) {
+  Vector3 v(pos);
+  Vector3 vs(size);
+  
+  IVector3(size.x*2+1, size.y*2+1, size.z*2+1).For( [&] (IVector3 p) {
+    IVector3 pp = pos - size + p;
+    Vector3 vpp(pp);
+    float d = (vpp-v).GetSquareMag()/4;
+    float prob = (vs.GetMag()/2-d) * strength / this->world->GetCell(pp).GetInfo().breakStrength;
+    if (prob > 0 && random.Chance(prob)) {
+      this->GetWorld().BreakBlock(*this, pp);
+    }
+  });
 }
