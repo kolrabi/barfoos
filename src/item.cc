@@ -172,7 +172,7 @@ void Item::UseOnEntity(Game &game, Mob &user, size_t id) {
       return;
     }
     
-    entity->AddHealth(game, HealthInfo(-this->properties->damage, HealthType::Melee, user.GetId()));
+    entity->AddHealth(game, HealthInfo(-this->properties->damage, HealthType::Melee, Element::Physical, user.GetId()));
     
     this->StartCooldown(game);
   } else {

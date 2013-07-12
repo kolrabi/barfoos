@@ -10,6 +10,7 @@ class GLFWwindow;
 class Shader;
 class Game;
 class Gfx;
+class Player;
 
 class GfxView final {
 public:
@@ -70,6 +71,7 @@ public:
   void SetColor(const IColor &color, float alpha = 1.0);
   void SetBackfaceCulling(bool cull);
   void SetLights(const std::vector<Vector3> &positions, const std::vector<IColor> &colors);
+  void SetPlayer(const Player *player);
   
   const Texture *GetNoiseTexture() const { return noiseTex; }
 
@@ -98,6 +100,8 @@ private:
   
   bool isInit;
   float startTime;
+  
+  const Player *player;
 
   // display
   Point screenPos;

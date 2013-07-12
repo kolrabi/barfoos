@@ -138,26 +138,33 @@ Mob::Update(Game &game) {
   // fall damage  
   if (axis & Axis::Y) {
     if (velocity.y < -15) {
-      AddHealth(game, HealthInfo( (velocity.y+15)/5, HealthType::Falling, this->id));
+      AddHealth(game, HealthInfo( (velocity.y+15)/5, HealthType::Falling));
     }
     velocity.y = 0;
     onGround |= movingDown;
   }
   
   IVector3 footPos(aabb.center.x, aabb.center.y - aabb.extents.y + this->properties->stepHeight, aabb.center.z);
+  IVector3 headPos(aabb.center.x, aabb.center.y + aabb.extents.y, aabb.center.z);
+  
   footCell = &world.GetCell(footPos);
+  headCell = &world.GetCell(headPos);
 
   if (onGround) {
     groundCell = &world.GetCell(footPos[Side::Down]);
   } else {
     groundCell = nullptr;
   }
-  
-  IVector3 headPos(aabb.center.x, aabb.center.y + aabb.extents.y, aabb.center.z);
-  headCell = &world.GetCell(headPos);
 
   underWater = headCell->GetInfo().flags & CellFlags::Liquid;
   if (!noclip) this->SetInLiquid(footCell->GetInfo().flags & CellFlags::Liquid);
+
+  if (footCell->GetInfo().lavaDamage) {
+    this->AddHealth(game, HealthInfo( -footCell->GetInfo().lavaDamage * deltaT, HealthType::Lava));
+  } else if (headCell->GetInfo().lavaDamage) {
+    this->AddHealth(game, HealthInfo( -headCell->GetInfo().lavaDamage * deltaT, HealthType::Lava));
+  }
+  
 }
 
 void

@@ -72,8 +72,12 @@ int main() {
   }
 
   std::cerr << "game initialized, entering mainloop" << std::endl;
-  while(game->Frame()) 
-    ;
+  try {
+    while(game->Frame()) 
+      ;
+  } catch (std::exception &e) {
+    std::cerr << e.what() << std::endl;
+  }
     
   std::cerr << "shutting down" << std::endl;
   

@@ -111,6 +111,8 @@ struct CellInfo {
   float useDelay = 0.0;
   
   float breakStrength = 1.0;
+  
+  float lavaDamage = 0.0;
 
   CellInfo() {}
   CellInfo(const std::string &name, FILE *f);

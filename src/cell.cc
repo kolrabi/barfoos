@@ -56,6 +56,7 @@ CellInfo::CellInfo(const std::string &name, FILE *f) : type(name) {
     else if (tokens[0] == "replace")      this->replace = tokens[1];
 
     else if (tokens[0] == "strength")     this->breakStrength = std::atof(tokens[1].c_str());
+    else if (tokens[0] == "lavadamage")   this->lavaDamage = std::atof(tokens[1].c_str());
     
     else if (tokens[0] == "detailbelowreplace") {
       this->detailBelowReplace = std::atoi(tokens[1].c_str());

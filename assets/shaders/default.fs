@@ -11,6 +11,8 @@ uniform vec3 u_lightPos[8];
 
 uniform mat4 u_matModelView;
 
+uniform vec4 u_fade;
+
 varying vec2 v_tex;
 varying vec4 v_color;
 varying vec3 v_norm;
@@ -44,7 +46,7 @@ void main() {
   float fogDepth = length(v_pos);
   float fogIntensity = 0.0; //pow(max(0.0, u_fogLin * fogDepth), 0.5);
   
-  vec3 color = mix(t0.rgb * light, u_fogColor.rgb, min(1.0, fogIntensity));
+  vec3 color = mix(t0.rgb * light, u_fogColor.rgb, min(1.0, fogIntensity)) + u_fade.rgb;
  
   gl_FragColor = vec4(color, t0.a);
 }

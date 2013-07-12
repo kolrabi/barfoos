@@ -38,6 +38,8 @@ Player::Player()
   this->messageY = 0;
   this->messageVY = 0;
   this->fps = 0;
+  
+  this->pain = 0.0;
 
   // TEST:
   this->inventory.Equip(std::make_shared<Item>(Item("sword")), InventorySlot::RightHand);
@@ -68,11 +70,20 @@ Player::MapView(Gfx &gfx) const {
   gfx.GetView().Look(pos, Vector3(0,-1,0), -32.0, fwd);
 }
 
+void
+Player::Start(Game &game, size_t id) {
+  Mob::Start(game, id);
+  
+  this->pain = 0;
+}
+
 void 
 Player::Update(Game &game) {
   Mob::Update(game);
   
   this->fps = game.GetFPS();
+  this->pain -= game.GetDeltaT() * 0.1;
+  if (this->pain < 0) this->pain = 0;
 
   UpdateInput(game);
   UpdateSelection(game);
@@ -105,7 +116,7 @@ Player::Update(Game &game) {
   while(iter!=this->messages.end()) {
     (*iter)->messageTime -= game.GetDeltaT();
     if ((*iter)->messageTime <= 0) {
-      this->messageY += (*iter)->text->GetFont().size.y;
+      this->messageY += (*iter)->text->GetSize().y;
       delete *iter;
       iter = this->messages.erase(iter);
     } else {
@@ -217,10 +228,10 @@ Player::UpdateInput(
     bobPhase -= 1.0;
     // TODO: play step sound
     //this->AddMessage("step");
-    this->AddMessage(u8"\ufe000\ufe011\ufe022\ufe033\ufe044\ufe055\ufe066\ufe077\ufe088\ufe099\ufe0aa\ufe0bb\ufe0cc\ufe0dd\ufe0ee\ufe0ff", "big");
+    //this->AddMessage(u8"\ufe000\ufe011\ufe022\ufe033\ufe044\ufe055\ufe066\ufe077\ufe088\ufe099\ufe0aa\ufe0bb\ufe0cc\ufe0dd\ufe0ee\ufe0ff", "big");
   } else if (bobPhase >= 0.5 && lastPhase < 0.5) {
     //this->AddMessage("step");
-    this->AddMessage(u8"\ufe000\ufe011\ufe022\ufe033\ufe044\ufe055\ufe066\ufe077\ufe088\ufe099\ufe0aa\ufe0bb\ufe0cc\ufe0dd\ufe0ee\ufe0ff");
+    //this->AddMessage(u8"\ufe000\ufe011\ufe022\ufe033\ufe044\ufe055\ufe066\ufe077\ufe088\ufe099\ufe0aa\ufe0bb\ufe0cc\ufe0dd\ufe0ee\ufe0ff");
     // TODO: play step sound
   }
   
@@ -275,8 +286,9 @@ Player::DrawGUI(Gfx &gfx) const {
     float a = msg->messageTime * 4;
     if (a > 1.0) a = 1.0;
     gfx.SetColor(IColor(255,255,255), a);
+    msg->text->WrapWords(vsize.x);
     msg->text->Draw(gfx, 0, y);
-    y += msg->text->GetFont().size.y;
+    y += msg->text->GetSize().y;
   }
   
   std::stringstream strHealth;
@@ -288,7 +300,7 @@ Player::DrawGUI(Gfx &gfx) const {
       strHealth << u8"\u0081";
   }
   RenderString rsHealth(strHealth.str());
-  rsHealth.Draw(gfx, 0, vsize.y, (int)Align::Left | (int)Align::Bottom);
+  rsHealth.Draw(gfx, 0+4, vsize.y-4, (int)Align::Left | (int)Align::Bottom);
 }
 
 void
@@ -308,16 +320,19 @@ Player::HandleEvent(const InputEvent &event) {
   }
 }
 
+void Player::SetUniforms(const Shader *shader) const {
+  shader->Uniform("u_fade", IColor(std::sqrt(this->pain)*255, 0, 0));
+}
+
 void 
 Player::AddHealth(Game &game, const HealthInfo &info) {
   if (info.amount < 0) {
-    this->AddMessage("OOF!", "big");
-    
     if (!IsContinuous(info.type) || game.GetTime() > lastHurtT[info.type] + 0.25) {
-      this->AddMessage("papapishu!", "big");
+      this->AddMessage("ouch!");
       lastHurtT[info.type] = game.GetTime();
-      lastHurtAnyT = game.GetTime();
     }
+    this->pain -= info.amount / this->properties->maxHealth;
+    std::cerr << this->pain << std::endl;
   }
   
   Mob::AddHealth(game, info);

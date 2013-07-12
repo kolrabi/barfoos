@@ -253,7 +253,7 @@ Entity::DrawBoundingBox(Gfx &gfx) const {
 void
 Entity::AddHealth(Game &game, const HealthInfo &info) {
   // don't change health of dead or immortal entities
-  if (this->health == 0 || this->properties->maxHealth == 0) return;
+  if (this->health <= 0 || this->properties->maxHealth == 0) return;
   
   this->health += info.amount;
   if (this->health <= 0) {
@@ -281,6 +281,7 @@ Entity::Die(Game &game, const HealthInfo &info) {
     // just respawn
     health = this->properties->maxHealth;
     SetPosition(spawnPos);
+    Start(game, id);
   } else {
     this->removable = true;
   }

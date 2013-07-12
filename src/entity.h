@@ -5,6 +5,8 @@
 #include "icolor.h"
 #include "inventory.h"
 
+#include "stats.h"
+
 class Cell;
 class Game;
 class Gfx;
@@ -43,31 +45,6 @@ struct EntityProperties {
   
   EntityProperties();
   EntityProperties(FILE *f);
-};
-
-enum class HealthType : size_t {
-  Unspecified = 0,
-  Heal,
-  Falling,
-  Explosion,
-  Melee,
-  Arrow,
-  Vampiric,
-  
-  Fire,
-  Lava
-};
-
-static inline bool IsContinuous(HealthType t) { return t == HealthType::Fire || t == HealthType::Lava; }
-
-struct HealthInfo {
-  float amount = 0;
-  HealthType type = HealthType::Unspecified;
-  size_t dealerId = ~0UL;
-  
-  HealthInfo() {}
-  HealthInfo(int amount, HealthType type = HealthType::Unspecified, size_t dealerId = ~0UL) 
-    : amount(amount), type(type), dealerId(dealerId) { }
 };
 
 void LoadEntities();

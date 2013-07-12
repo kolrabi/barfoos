@@ -86,11 +86,12 @@ decode_error:
 
 
 RenderString::RenderString(const std::string &text, const std::string &font)
-: font(loadFont(font)), text(text), dirty(true) {
+: font(loadFont(font)), dirty(true) {
+  this->SetText(text);
 }
 
 RenderString& RenderString::operator =(const std::string &text) {
-  this->text = text;
+  this->SetText(text);
   this->dirty = true;
   return *this;
 }
@@ -144,25 +145,21 @@ void RenderString::DrawString() {
   this->vertices = std::vector<Vertex>(); 
   this->dirty = false;
 
-  if (this->text == "") return;
+  if (this->text == L"") return;
   
-  const char *p = this->text.c_str();
+  const wchar_t *p = this->wrappedText.c_str();
   float maxX = 0;
   float maxY = size.y;
   
   while (*p) {
-    // convert utf8 to wchar_t
-    wchar_t wchar;
-    p = utf8ToWide(p, &wchar);
-    if (!p) break;
-
+    wchar_t wchar = *p++;
+    
     switch(wchar) {
-    // handle newlines
-      case '\n': {
+      // handle newlines
+      case L'\n': {
         x = 0;
         y += size.y;
         maxY += size.y;
-        p ++;
         continue;
       }
       
@@ -201,4 +198,62 @@ RenderString::GetSize() {
     this->DrawString();
   }
   return size;
+}
+
+void 
+RenderString::WrapWords(size_t width) {
+  this->dirty = true;
+  
+  int lastSpace = -1;
+  size_t p = 0;
+  size_t x = 0;
+  
+  this->wrappedText = this->text;
+  
+  while(p < this->wrappedText.size()) {
+    size_t w = this->font.size.x;
+    wchar_t c = this->wrappedText[p];
+    
+    if (c == L'\n') {
+      p++;
+      lastSpace = -1;
+      x = 0;
+      continue;
+    } 
+    
+    if (c >= 0xFE00 && c <= 0xFE0F) {
+      p++;
+      continue;
+    }
+    
+    if (c == L' ') {
+      lastSpace = p;
+    }
+    
+    if (x+w > width && lastSpace != -1) {
+      this->wrappedText[lastSpace] = '\n';
+      lastSpace = -1;
+      x = 0; 
+      w = 0;
+    }
+    
+    x += w;
+    p++;
+  }
+}
+
+void
+RenderString::SetText(const std::string &text) {
+  const char *p = text.c_str();
+
+  while (*p) {
+    // convert utf8 to wchar_t
+    wchar_t wchar;
+    p = utf8ToWide(p, &wchar);
+    if (!wchar || !p) break;
+    this->text += wchar;
+  }
+  this->wrappedText = this->text;
+  
+  this->dirty = true;
 }

@@ -31,19 +31,23 @@ public:
 
   void Draw(Gfx &gfx, float x, float y, int align = 0);
   
+  void WrapWords(size_t width);
   const Font &GetFont()  const { return font; }
   const Point &GetSize();
 
 private:
 
   const Font &font;
-  std::string text;
-  bool dirty;
+  std::wstring text;
+  std::wstring wrappedText;
+  size_t dirty;
   std::vector<Vertex> vertices;
   Point size;
   
   void DrawChar(float x, float y, wchar_t c, const IColor &color);
   void DrawString();
+  
+  void SetText(const std::string &text);
 };
 
 #endif

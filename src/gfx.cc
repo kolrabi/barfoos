@@ -7,6 +7,7 @@
 #include "shader.h"
 #include "input.h"
 #include "texture.h"
+#include "player.h"
 
 static InputKey MapMouseButton(int b) {
   InputKey key;
@@ -59,6 +60,7 @@ Gfx::Gfx(const Point &pos, const Point &size, bool fullscreen)
   this->activeVertexPointer = nullptr;
   
   this->fogLin = 0.05;
+  this->player = nullptr;
   
   // unit cube vertices
   this->cubeVerts.push_back(Vertex(Vector3( 1, 1, -1), IColor(255,255,255), 0,0, Vector3( 1, 0, 0)));
@@ -421,6 +423,11 @@ Gfx::SetBackfaceCulling(bool cull) {
 }
 
 void 
+Gfx::SetPlayer(const Player *player) {
+  this->player = player;
+}
+
+void 
 Gfx::SetUniforms() const {
   if (!this->activeShader) return;
   
@@ -434,6 +441,8 @@ Gfx::SetUniforms() const {
   
   this->activeShader->Uniform("u_lightPos",   this->lightPositions);
   this->activeShader->Uniform("u_lightColor", this->lightColors);
+  
+  if (this->player) this->player->SetUniforms(this->activeShader);
 }
 
 void
@@ -552,6 +561,7 @@ Gfx::AlignTopRightScreen(const Point &size, int padding) {
   const Point &ssize(this->GetVirtualScreenSize());
   return Point( ssize.x - padding - size.x/2, padding + size.y/2 );
 }
+
 
 
 // TODO: move to different file

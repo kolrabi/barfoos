@@ -280,6 +280,7 @@ size_t
 Game::AddPlayer(Player *player) {
   this->player = player;
   this->inventoryGui = std::shared_ptr<InventoryGui>(new InventoryGui(*this, *player));
+  this->gfx->SetPlayer(player);
   return this->AddEntity(player);
 }
 
@@ -297,6 +298,7 @@ Game::RemoveEntity(size_t entityId) {
 
   if (this->player == iter->second) {
     this->player = nullptr;
+    this->gfx->SetPlayer(nullptr);
   }
   
   delete iter->second;

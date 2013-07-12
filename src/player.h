@@ -14,6 +14,7 @@ public:
   Player();
   virtual ~Player();
 
+  virtual void Start(Game &game, size_t id) override;
   virtual void Update(Game &game) override;
   virtual void Draw(Gfx &gfx) const override;
 
@@ -32,6 +33,9 @@ public:
   void AddDeathMessage(const Entity &dead, const Entity &killer, const HealthInfo &info);
 
   virtual std::string       GetName()                         const;
+  float                     GetPain()                         const { return this->pain; }
+  
+  void SetUniforms(const Shader *shader) const;
   
 private:
 
@@ -59,7 +63,7 @@ private:
   bool itemActiveLeft, itemActiveRight;
   
   std::map<HealthType, float> lastHurtT;
-  float lastHurtAnyT;
+  float pain;
 
   // display
   std::list<Message*> messages;
