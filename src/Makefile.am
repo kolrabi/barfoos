@@ -48,6 +48,7 @@ barfoos_SOURCES=\
   worldedit.cc worldedit.h \
   \
   item.cc item.h \
+  inventory.cc inventory.h \
   \
   common.h ivector3.h space.h vector3.h \
   random.h util.h \

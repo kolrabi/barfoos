@@ -23,7 +23,7 @@ void ItemEntity::Draw(Gfx &gfx) const {
 
 void ItemEntity::OnUse(Game &game, Entity &other) {
   (void)game;
-  if (!this->removable && other.AddToInventory(this->item)) {
+  if (!this->removable && other.GetInventory().AddToBackpack(this->item)) {
     this->removable = true;
   }
 }

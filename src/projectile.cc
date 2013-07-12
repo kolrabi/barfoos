@@ -38,7 +38,9 @@ void
 Projectile::OnCollide(Game &game, Cell &cell, Side side) {
   (void)cell;
   (void)side;
-  this->Die(game, HealthInfo());
+  
+  std::cerr << "BAM!" << std::endl;
+  Entity::Die(game, HealthInfo());
   
   game.Explosion(cell.GetPosition(), IVector3(2,2,2), 0.5);
 }

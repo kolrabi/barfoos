@@ -863,6 +863,8 @@ World::AddFeatureSeen(size_t f) {
 
 void
 World::BreakBlock(Game &game, const IVector3 &pos) {
+  if (this->GetCell(pos).GetInfo().type == "air") return;
+  
   AABB aabb = this->SetCell(pos, Cell("air")).GetAABB();
   Random &random = game.GetRandom();
   for (size_t i=0; i<4; i++) {

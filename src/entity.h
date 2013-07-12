@@ -3,10 +3,10 @@
 
 #include "common.h"
 #include "icolor.h"
+#include "inventory.h"
 
 class Cell;
 class Game;
-class Item;
 class Gfx;
 
 struct EntityProperties {
@@ -90,32 +90,29 @@ public:
   // management
   size_t GetId() const { return id; }
   bool IsRemovable() const { return removable; }
+  const EntityProperties *GetProperties() const { return properties; }
 
   size_t GetOwner() const { return ownerId; }
   void SetOwner(const Entity &owner) { ownerId = owner.id; }
   
   // gameplay
   bool IsSolid() const { return properties->isSolid; }
+  Inventory &GetInventory() { return inventory; }
   
-  const AABB &GetAABB() const           { return aabb; }
+  void SetSpawnPos(const Vector3 &p)    { this->spawnPos = p; }
+
   void SetPosition(const Vector3 &pos)  { smoothPosition = aabb.center = pos; }
   void SetPosition(const IVector3 &pos) { SetPosition(Vector3(pos) + Vector3(0.5,0.5,0.5)); }
   const Vector3 &GetPosition() const    { return aabb.center; }
   
-  // inventory
-  bool AddToInventory(const std::shared_ptr<Item> &item);
-  bool AddToInventory(const std::shared_ptr<Item> &item, InventorySlot slot);
-
-  size_t GetInventorySize() const { return inventory.size(); }
-  std::shared_ptr<Item> GetInventory(InventorySlot slot) { 
-    return inventory[(size_t)slot]; 
-  }
-
-  void Equip(const std::shared_ptr<Item> &item, InventorySlot slot);
-  const EntityProperties *GetProperties() const { return properties; }
+  void SetAngles(const Vector3 &angles) { this->angles = angles; }
+  const Vector3 &GetAngles() const      { return angles; }
+  Vector3 GetForward() const            { return GetAngles().EulerToVector(); }
+  
+  const AABB &GetAABB() const           { return aabb; }
   
   // rendering
-  virtual IColor GetLight() const { return properties->glow; }
+  virtual IColor GetLight() const       { return properties->glow + inventory.GetLight(); }
   
 protected:
 
@@ -125,13 +122,18 @@ protected:
   const EntityProperties *properties;
   
   // gameplay
-  int health;
-  AABB aabb;
   Vector3 smoothPosition;
   Vector3 lastPos;
-  std::vector<std::shared_ptr<Item>> inventory;
+  Vector3 spawnPos;
+  Vector3 angles;
+  
+  AABB aabb;
+  
+  int health;
+  
   Cell *lastCell;
   IVector3 cellPos;
+  Inventory inventory;
   
   // rendering
   Sprite sprite;

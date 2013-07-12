@@ -192,7 +192,7 @@ Mob::SetInLiquid(bool inLiquid) {
 
 void
 Mob::Die(Game &game, const HealthInfo &info) {
-  // Entity::Die(game);
+  //Entity::Die(game, info);
   (void)info;
   (void)game;
   

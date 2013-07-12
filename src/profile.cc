@@ -51,8 +51,10 @@ Profile::~Profile() {
   funcStack.pop_back();
 }
 
-void 
-Profile::Dump() {
+std::string 
+Profile::GetDump() {
+  std::stringstream str;
+  
   std::vector<ProfileFunc> sortedFuncs;
   for (auto f : funcs) {
     sortedFuncs.push_back(f.second);
@@ -63,6 +65,13 @@ Profile::Dump() {
   for (auto f : sortedFuncs) {
     char tmp[512];
     snprintf(tmp, sizeof(tmp), "%s %10" PRIu64 " c, %10" PRIu64 " t, %10" PRIu64 " t/c", f.name.c_str(), f.calls, f.totalTicks, f.ticksPerCall);
-    std::cerr << tmp << std::endl << std::endl;
+    str << tmp << std::endl << std::endl;
   }
+  
+  return str.str();
+}
+
+void 
+Profile::Dump() {
+  std::cerr << GetDump();
 }

@@ -39,37 +39,6 @@
 
 struct IColor;
 
-//                 x  x  x  x
-//   8  0          x  x  x  x
-//   4  1  5       x  x  x  x
-//   6  2  7       x  x  x  x
-//      3          x  x  x  x
-//                 x  x  x  x
-
-/** Enum to identify inventory slots. */
-enum class InventorySlot {
-  Helmet     =  0, 
-  Armor      =  1, 
-  Greaves    =  2, 
-  Boots      =  3,
-  LeftHand   =  4, 
-  RightHand  =  5,
-  LeftRing   =  6, 
-  RightRing  =  7,
-  Amulet     =  8, 
-  
-  Reserved9  =  9,
-  Reserved10 = 10,
-  Reserved11 = 11,
-  Reserved12 = 12,
-  Reserved13 = 13,
-  Reserved14 = 14,
-  Reserved15 = 15,
-
-  Backpack   = 16
-  // ...
-};
-
 /** An axis aligned bounding box. */
 struct AABB {
   /** Center of the box. */
@@ -219,14 +188,15 @@ static inline std::ostream & operator<< (std::ostream &out, const AABB &aabb) {
 /** Animation information. */
 struct Animation {
   /** Frame index where the animation begins. */
-  size_t firstFrame;
+  size_t firstFrame = 0;
 
   /** Total number of frames in the animation. */
-  size_t frameCount;
+  size_t frameCount = 0;
   
   /** Frames per second. */
-  float fps;
+  float fps         = 0;
   
+  Animation() {}
   Animation(size_t firstFrame, size_t frameCount, float fps) : firstFrame(firstFrame), frameCount(frameCount), fps(fps) {}
 };
 
@@ -435,6 +405,7 @@ public:
   ~Profile();
   
   static void Dump();
+  static std::string GetDump();
   
 private:
   

@@ -10,6 +10,8 @@ class Item;
 class Gfx;
 struct InputEvent;
 
+enum class InventorySlot : size_t;
+
 class InventorySlotGui : public Gui {
 public: 
   InventorySlotGui(InventoryGui *parent, Entity &entity, InventorySlot slot);

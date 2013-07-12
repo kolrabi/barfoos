@@ -14,10 +14,6 @@ public:
   Mob(const std::string &entityPropertyName);
   virtual ~Mob();
 
-  void SetSpawnPos(const Vector3 &p) { this->spawnPos = p; }
-  const Vector3 &GetAngles() const { return angles; }
-  void SetAngles(const Vector3 &angles) { this->angles = angles; }
-
   virtual void Start(Game &game, size_t id) override;
   virtual void Update(Game &game) override;
   virtual void Think(Game &game) override;
@@ -31,8 +27,6 @@ public:
 
 protected:
 
-  Vector3 spawnPos;
-  Vector3 angles;
   Vector3 velocity, move;
   bool wantJump;
   float lastJumpT;

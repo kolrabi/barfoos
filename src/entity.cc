@@ -111,7 +111,6 @@ Entity::Entity(const std::string &type) {
   this->sprite = this->properties->sprite;
 
   this->aabb.extents = properties->extents;
-  this->inventory.resize(32, nullptr);
   
   this->health = properties->maxHealth;
   this->lastCell = nullptr;
@@ -132,8 +131,7 @@ Entity::Start(Game &game, size_t id) {
   // fill inventory with random crap
   for (auto item : this->properties->items) {
     if (game.GetRandom().Chance(item.second)) {
-      this->AddToInventory(std::shared_ptr<Item>(new Item(item.first)));
-      std::cerr << item.first << " added" << std::endl;
+      this->GetInventory().AddToBackpack(std::shared_ptr<Item>(new Item(item.first)));
     }
   }
   
@@ -181,14 +179,7 @@ Entity::Update(Game &game) {
     this->smoothPosition = this->smoothPosition + (aabb.center - this->smoothPosition) * game.GetDeltaT() * 30.0f;
   }
   
-  for (size_t i=0; i<this->inventory.size(); i++) {
-    if (this->inventory[i]) {
-      this->inventory[i]->Update(game);
-      if (this->inventory[i]->IsRemovable()) {
-        this->inventory[i] = nullptr;
-      }
-    }
-  }
+  this->inventory.Update(game, *this);
   
   this->lastPos = aabb.center;
   this->cellPos = IVector3(aabb.center.x, aabb.center.y, aabb.center.z);
@@ -267,76 +258,13 @@ Entity::Die(Game &game, const HealthInfo &info) {
   (void)info;
   
   // TODO: play death animation (if any) and set this->removable afte it finished
+  std::cerr << "removable: " << this->removable;
   this->removable = true;
+  std::cerr << " -> " << this->removable << std::endl;
   
   if (this->lastCell && this->properties->cellLeave != "") {
     game.GetWorld().SetCell(this->lastCell->GetPosition(), Cell(this->properties->cellLeave));
   }
-  
-  // drop inventory
-  for (auto item : this->inventory) {
-    if (item) {
-      ItemEntity *entity = new ItemEntity(item);
-      // TODO: AABB::PutInside(aabb);
-      entity->SetPosition(this->aabb.center);
-      
-      uint8_t axis;
-      entity->aabb.center = game.GetWorld().MoveAABB(entity->aabb, entity->aabb.center + Vector3(game.GetRandom().Float(), game.GetRandom().Float(), game.GetRandom().Float())*aabb.extents, axis);
-      entity->AddVelocity(Vector3(game.GetRandom().Float()*0.1, 1, game.GetRandom().Float()*0.1)*10);
-      game.AddEntity(entity);
-    }
-  }
+
+  this->inventory.Drop(game, *this);
 }
-
-bool
-Entity::AddToInventory(const std::shared_ptr<Item> &item) {
-  for (size_t i=(size_t)InventorySlot::Backpack; i<this->inventory.size(); i++) {
-    if (!this->inventory[i]) {
-      this->inventory[i] = item;
-      item->SetEquipped(false);
-      return true;
-    }
-  }
-  return false;
-}
-
-bool
-Entity::AddToInventory(const std::shared_ptr<Item> &item, InventorySlot slot) {
-  size_t i = (size_t)slot;
-  if (!this->inventory[i]) {
-    std::cerr << (1<<i) << " " << item->GetProperties()->equippable << std::endl;
-    if (i>=(size_t)InventorySlot::Backpack || (item->GetProperties()->equippable & 1<<i)) {
-      this->Equip(item, slot);
-      return true;
-    } else {
-      return this->AddToInventory(item);
-    }
-  }
-
-  std::shared_ptr<Item> combo;
-  combo = item->Combine(this->inventory[i]);
-  if (!combo) combo = this->inventory[i]->Combine(item);
-  if (combo) {
-    this->Equip(combo, slot);
-    return true;
-  }
-
-  if (this->AddToInventory(this->inventory[i])) {
-    this->inventory[i] = nullptr;
-    this->Equip(item, slot);
-    return true;
-  }
-  return false;
-}
- 
-void 
-Entity::Equip(const std::shared_ptr<Item> &item, InventorySlot slot) {
-  bool equip = (size_t)slot < (size_t)InventorySlot::Backpack;
-  if (this->inventory[(size_t)slot] && item) {
-    this->inventory[(size_t)slot]->SetEquipped(false);
-    this->AddToInventory(this->inventory[(size_t)slot]);
-  }
-  this->inventory[(size_t)slot] = item;
-  if (item) item->SetEquipped(equip);
-}
-

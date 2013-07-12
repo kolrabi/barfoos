@@ -28,8 +28,6 @@ public:
   void HandleEvent(const InputEvent &event);
 
   void AddMessage(const std::string &text, const std::string &font = "default");
-
-  virtual IColor GetLight() const { return torchLight; }
   
 private:
 
@@ -45,7 +43,6 @@ private:
   const Texture *crosshairTex;
   std::unique_ptr<Shader> defaultShader;
   std::unique_ptr<Shader> guiShader;
-  IColor torchLight;
   float bobPhase;
   float bobAmplitude;
   

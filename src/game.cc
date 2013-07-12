@@ -157,8 +157,7 @@ Game::Update(float t, float deltaT) {
   this->lastT = t;
   this->deltaT = deltaT;
   
-  world->Update(*this);
-
+  // show or hide inventory
   if (this->input->IsKeyActive(InputKey::Inventory)) {
     if (!this->showInventory) {
       if (this->activeGui) {
@@ -183,59 +182,65 @@ Game::Update(float t, float deltaT) {
   }
   if (this->activeGui) this->activeGui->Update(*this);
   
+  // update world
+  this->world->Update(*this);
+  
   // handle collision between entities
-  for (auto entity1 : this->entities) {
-    for (auto entity2 : this->entities) {
-      if (entity1.first == entity2.first) continue;
+  std::vector<size_t> entityIds;
+  for (auto entity : this->entities) {
+    entityIds.push_back(entity.first);
+  }
+  
+  for (size_t i=0; i<entityIds.size(); i++) {
+    size_t e1 = entityIds[i];
+    for (size_t j=i+1; j<entityIds.size(); j++) {
+      size_t e2 = entityIds[j];
       
-      if (entity1.second->GetOwner() == entity2.first && entity1.second->GetProperties()->nocollideOwner) continue;
-      if (entity2.second->GetOwner() == entity1.first && entity2.second->GetProperties()->nocollideOwner) continue;
+      // don't collide with owners if not wanted
+      if (entities[e1]->GetOwner() == e2 && entities[e1]->GetProperties()->nocollideOwner) continue;
+      if (entities[e2]->GetOwner() == e1 && entities[e2]->GetProperties()->nocollideOwner) continue;
       
-      if (entity1.second->GetProperties()->nocollideEntity) continue;
-      if (entity2.second->GetProperties()->nocollideEntity) continue;
+      // don't collide nocollide entities
+      if (entities[e1]->GetProperties()->nocollideEntity) continue;
+      if (entities[e2]->GetProperties()->nocollideEntity) continue;
       
-      if (entity1.second->GetAABB().Overlap(entity2.second->GetAABB())) {
-        entity1.second->OnCollide(*this, *entity2.second);
-        entity2.second->OnCollide(*this, *entity1.second);
+      if (entities[e1]->GetAABB().Overlap(entities[e2]->GetAABB())) {
+        entities[e1]->OnCollide(*this, *entities[e2]);
+        entities[e2]->OnCollide(*this, *entities[e1]);
       }
     }
   }
 
   // update all entities
   {
-  PROFILE_NAMED("update"); 
-  size_t count = 0;
-  for (auto entity : this->entities) {
-    if (entity.second) { entity.second->Update(*this); count++; }
-  }
-  std::cerr << count << "/" << this->entities.size() << std::endl;
+    PROFILE_NAMED("update"); 
+    for (auto entity : this->entities) {
+      entity.second->Update(*this); 
+    }
   }
   
   {
-  PROFILE_NAMED("think"); 
-  while(nextThinkT < t) {
-    nextThinkT += Entity::ThinkInterval;
-    for (auto entity : this->entities) {
-      if (entity.second) entity.second->Think(*this);
+    PROFILE_NAMED("think"); 
+    while(nextThinkT < t) {
+      nextThinkT += Entity::ThinkInterval;
+      for (auto entity : this->entities) {
+        if (!entity.second->IsRemovable()) entity.second->Think(*this);
+      }
     }
-  }
   }
 
   // remove removable entities
   {
-  PROFILE_NAMED("remove"); 
-  size_t count = 0;
-  auto entityIter = this->entities.begin();
-  while(entityIter != this->entities.end()) {
-    if (!entityIter->second || entityIter->second->IsRemovable()) {
-      delete entityIter->second;
-      entityIter = this->entities.erase(entityIter);
-      count++;
-    } else {
-      entityIter++;
+    PROFILE_NAMED("remove"); 
+    auto entityIter = this->entities.begin();
+    while(entityIter != this->entities.end()) {
+      if (!entityIter->second || entityIter->second->IsRemovable()) {
+        delete entityIter->second;
+        entityIter = this->entities.erase(entityIter);
+      } else {
+        entityIter++;
+      }
     }
-  }
-  std::cerr << count << "/" << this->entities.size() << std::endl;
   }
 }
 

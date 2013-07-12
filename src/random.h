@@ -34,6 +34,14 @@ public:
     return Float01()*2-1;
   }
   
+  Vector3 Vector() {
+    return Vector3(Float(), Float(), Float());
+  }
+
+  Vector3 Vector01() {
+    return Vector3(Float01(), Float01(), Float01());
+  }
+  
   bool Coin() {
     return Integer()%2;
   }

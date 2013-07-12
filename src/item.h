@@ -13,6 +13,8 @@ class Cell;
 class Gfx;
 class Game;
 
+enum class InventorySlot : size_t;
+
 struct ItemProperties : public Properties {
   // rendering
   Sprite sprite;
@@ -58,26 +60,29 @@ public:
   Item(const std::string &type);
   virtual ~Item();
 
+  void Update(Game &game);
+  
+  void Draw(Gfx &gfx, bool left);
+  void DrawIcon(Gfx &gfx, const Point &pos) const;
+  void DrawSprite(Gfx &gfx, const Vector3 &pos) const;
+  
   bool CanUse(Game &game) const;
   void StartCooldown(Game &game);
   
   void UseOnEntity(Game &game, Mob &user, size_t ent);
   void UseOnCell(Game &game, Mob &user, Cell *cell, Side side);
   void UseOnNothing(Game &game, Mob &user);
-  void Draw(Gfx &gfx, bool left);
-  void DrawIcon(Gfx &gfx, const Point &pos) const;
-  void DrawSprite(Gfx &gfx, const Vector3 &pos) const;
 
-  void Update(Game &game);
-
-  float GetRange() const { return this->properties->range; }  
-  uint32_t GetEquippableSlots() { return this->properties->equippable; }
-  bool IsTwoHanded() { return this->properties->twoHanded; }
+  float GetRange()                      const { return this->properties->range; }  
+  bool IsTwoHanded()                    const { return this->properties->twoHanded; }
   
-  bool IsEquipped() const { return isEquipped; }
-  void SetEquipped(bool equipped) { this->isEquipped = equipped; }
+  bool IsEquippable(InventorySlot slot) const { return this->properties->equippable & 1<<(size_t)slot; }
+  uint32_t GetEquippableSlots()         const { return this->properties->equippable; }
+  bool IsEquipped()                     const { return isEquipped; }
   
-  bool IsRemovable() const { return isRemovable; }
+  void SetEquipped(bool equipped)             { this->isEquipped = equipped; }
+  
+  bool IsRemovable()                    const { return isRemovable; }
   
   const ItemProperties *GetProperties() const { return this->properties; }
   virtual std::shared_ptr<Item> Combine(const std::shared_ptr<Item> &other) {

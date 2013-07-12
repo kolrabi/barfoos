@@ -12,7 +12,6 @@
 #include "text.h"
 #include "vertex.h"
 
-#include "simplex.h"
 #include "input.h"
 
 Player::Player() 
@@ -41,9 +40,9 @@ Player::Player()
   this->fps = 0;
 
   // TEST:
-  this->Equip(std::make_shared<Item>(Item("sword")), InventorySlot::RightHand);
-  this->Equip(std::make_shared<Item>(Item("torch")), InventorySlot::LeftHand);
-  this->AddToInventory(std::make_shared<Item>(Item("torch")));
+  this->inventory.Equip(std::make_shared<Item>(Item("sword")), InventorySlot::RightHand);
+  this->inventory.Equip(std::make_shared<Item>(Item("torch")), InventorySlot::LeftHand);
+  this->inventory.AddToBackpack(std::make_shared<Item>(Item("torch")));
   
 }
 
@@ -78,37 +77,23 @@ Player::Update(Game &game) {
   UpdateInput(game);
   UpdateSelection(game);
 
-  float t = game.GetTime();
-  IColor torch;
-  for (auto item : this->inventory) {
-    if (!item || !item->IsEquipped()) continue;
-    
-    float f = 1.0;
-    if (item->GetProperties()->flicker) {
-      f = simplexNoise(Vector3(t*3, 0, 0)) * simplexNoise(Vector3(t*2, -t, 0));
-      f = f * 0.4 + 0.5;
-    }
-    torch = torch + item->GetProperties()->light * f;
-  }  
-  this->torchLight = torch;
-  
-  if (itemActiveLeft && this->inventory[(size_t)InventorySlot::RightHand]) {
-    if (this->inventory[(size_t)InventorySlot::RightHand]->GetRange() < this->selectionRange) {
-      this->inventory[(int)InventorySlot::RightHand]->UseOnNothing(game, *this);
+  if (itemActiveLeft && this->inventory[InventorySlot::RightHand]) {
+    if (this->inventory[InventorySlot::RightHand]->GetRange() < this->selectionRange) {
+      this->inventory[InventorySlot::RightHand]->UseOnNothing(game, *this);
     } else if (this->selectedCell) {
-      this->inventory[(int)InventorySlot::RightHand]->UseOnCell(game, *this, this->selectedCell, this->selectedCellSide);
+      this->inventory[InventorySlot::RightHand]->UseOnCell(game, *this, this->selectedCell, this->selectedCellSide);
     } else if (this->selectedEntity != ~0UL) {
-      this->inventory[(int)InventorySlot::RightHand]->UseOnEntity(game, *this, this->selectedEntity);
+      this->inventory[InventorySlot::RightHand]->UseOnEntity(game, *this, this->selectedEntity);
     }
   }
   
-  if (itemActiveRight && this->inventory[(size_t)InventorySlot::LeftHand]) {
-    if (this->inventory[(size_t)InventorySlot::LeftHand]->GetRange() < this->selectionRange) {
-      this->inventory[(int)InventorySlot::LeftHand]->UseOnNothing(game, *this);
+  if (itemActiveRight && this->inventory[InventorySlot::LeftHand]) {
+    if (this->inventory[InventorySlot::LeftHand]->GetRange() < this->selectionRange) {
+      this->inventory[InventorySlot::LeftHand]->UseOnNothing(game, *this);
     } else if (this->selectedCell) {
-      this->inventory[(int)InventorySlot::LeftHand]->UseOnCell(game, *this, this->selectedCell, this->selectedCellSide);
+      this->inventory[InventorySlot::LeftHand]->UseOnCell(game, *this, this->selectedCell, this->selectedCellSide);
     } else if (this->selectedEntity != ~0UL) {
-      this->inventory[(int)InventorySlot::LeftHand]->UseOnEntity(game, *this, this->selectedEntity);
+      this->inventory[InventorySlot::LeftHand]->UseOnEntity(game, *this, this->selectedEntity);
     }
   }
   
@@ -265,15 +250,13 @@ Player::DrawWeapons(Gfx &gfx) const {
   Vector3 pos = Vector3(0,0,-1)+bob;
   
   gfx.GetView().Look(pos, fwd);
+  gfx.SetColor(this->GetLight() + this->cellLight);
 
-  IColor l = this->cellLight + this->torchLight;
-  gfx.SetColor(l);
-
-  if (this->inventory[(size_t)InventorySlot::RightHand]) {
-    this->inventory[(size_t)InventorySlot::RightHand]->Draw(gfx, false);
+  if (this->inventory[InventorySlot::RightHand]) {
+    this->inventory[InventorySlot::RightHand]->Draw(gfx, false);
   }
-  if (this->inventory[(size_t)InventorySlot::LeftHand]) {
-    this->inventory[(size_t)InventorySlot::LeftHand]->Draw(gfx, true);
+  if (this->inventory[InventorySlot::LeftHand]) {
+    this->inventory[InventorySlot::LeftHand]->Draw(gfx, true);
   }
 }
 
