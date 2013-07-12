@@ -103,6 +103,7 @@ bool Game::Frame() {
     this->frame = 0;
     this->lastFPST += 1.0;
   }
+  
   return true;
 }
 
@@ -177,6 +178,8 @@ Game::Update(float t, float deltaT) {
     }
     this->showInventory = false;
   }
+  
+  if (this->activeGui) this->activeGui->Update(*this);
   
   // update world
   this->world->Update(*this);
