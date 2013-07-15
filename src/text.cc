@@ -3,6 +3,11 @@
 #include "vertex.h"
 #include "texture.h"
 
+struct Font {
+  const Texture *texture;
+  Point size;
+};
+
 static std::map<std::string, Font> fonts;
 
 static const Font &loadFont(const std::string &name) {

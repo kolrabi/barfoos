@@ -19,6 +19,7 @@ Player::Player()
 {
   // rendering
   this->crosshairTex = loadTexture("gui/crosshair");
+  this->slotTex = loadTexture("gui/slot");
   this->defaultShader = std::unique_ptr<Shader>(new Shader("default"));
   this->guiShader = std::unique_ptr<Shader>(new Shader("gui"));
   
@@ -53,21 +54,22 @@ Player::~Player() {
 
 void
 Player::View(Gfx &gfx) const {
-  Vector3 fwd   = (GetAngles()).EulerToVector();
-  Vector3 right = (GetAngles()+Vector3(3.14159/2, 0, 0)).EulerToVector();
-  Vector3 bob = Vector3(0,sin(bobPhase*3.14159*4)*0.05, 0) * bobAmplitude + right * cos(bobPhase*3.14159*2)*0.05 * bobAmplitude;
-
-  Vector3 pos = smoothPosition + Vector3(0,this->properties->eyeOffset,0)+bob;
+  Vector3 fwd   = this->GetForward();
+  Vector3 right = this->GetRight();
+  Vector3 bob   = Vector3(0,1,0) * std::abs(std::sin(bobPhase * Const::pi * 2)*0.05) * bobAmplitude + 
+                  right          *          std::cos(bobPhase * Const::pi * 2)*0.05  * bobAmplitude;
+  
+  Vector3 pos   = this->smoothPosition + Vector3(0,this->properties->eyeOffset,0) + bob;
   
   gfx.GetView().Look(pos, fwd);
 }
 
 void
 Player::MapView(Gfx &gfx) const {
-  Vector3 fwd = this->GetAngles().EulerToVector();
-  Vector3 pos = this->smoothPosition + Vector3(0,16,0);
+  Vector3 up    = this->GetForward();
+  Vector3 pos   = this->smoothPosition + Vector3(0,16,0);
   
-  gfx.GetView().Look(pos, Vector3(0,-1,0), -32.0, fwd);
+  gfx.GetView().Look(pos, Vector3(0,-1,0), -32.0, up);
 }
 
 void
@@ -82,11 +84,12 @@ Player::Update(Game &game) {
   Mob::Update(game);
   
   this->fps = game.GetFPS();
+  
   this->pain -= game.GetDeltaT() * 0.1;
   if (this->pain < 0) this->pain = 0;
 
-  UpdateInput(game);
-  UpdateSelection(game);
+  this->UpdateInput(game);
+  this->UpdateSelection(game);
 
   if (itemActiveLeft && this->inventory[InventorySlot::RightHand]) {
     if (this->inventory[InventorySlot::RightHand]->GetRange() < this->selectionRange) {
@@ -108,10 +111,12 @@ Player::Update(Game &game) {
     }
   }
   
+  // update map
   if (headCell) {
     game.GetWorld().AddFeatureSeen(headCell->GetFeatureID());
   }
 
+  // update messages
   auto iter = this->messages.begin();
   while(iter!=this->messages.end()) {
     (*iter)->messageTime -= game.GetDeltaT();
@@ -155,7 +160,7 @@ void Player::UpdateSelection(Game &game) {
   
   // check entities in range  
   for (auto id : entitiesInRange) {
-    temp_ptr<Entity> entity = game.GetEntity(id);
+    Entity *entity = game.GetEntity(id);
     if (!entity || entity == this) continue;
     if (entity->GetProperties()->nohit) continue;
 
@@ -189,7 +194,7 @@ Player::UpdateInput(
   if (input.IsKeyDown(InputKey::DebugDie)) this->Die(game, HealthInfo());
   
   if (input.IsKeyDown(InputKey::Use) && this->selectedEntity != ~0UL) {
-    temp_ptr<Entity> entity(game.GetEntity(this->selectedEntity));
+    Entity *entity = game.GetEntity(this->selectedEntity);
     if (entity) entity->OnUse(game, *this);
   } else if (input.IsKeyDown(InputKey::Use) && this->selectedCell) {
     this->selectedCell->OnUse(game, *this);
@@ -197,19 +202,19 @@ Player::UpdateInput(
 
   sneak = input.IsKeyActive(InputKey::Sneak);
 
-  if (angles.y >  3.1/2) angles.y =  3.1/2;
-  if (angles.y < -3.1/2) angles.y = -3.1/2;
+  if (angles.y >  Const::pi_2*0.99) angles.y =  Const::pi_2*0.99;
+  if (angles.y < -Const::pi_2*0.99) angles.y = -Const::pi_2*0.99;
 
-  Vector3 fwd( Vector3(angles.x, 0, 0).EulerToVector() );
-  Vector3 right( Vector3(angles.x+3.14159/2, 0, 0).EulerToVector() );
-  float speed = this->properties->maxSpeed * this->GetMoveModifier();
+  Vector3 fwd   = this->GetForward().Horiz().Normalize();
+  Vector3 right = this->GetRight().Horiz().Normalize();
+  float   speed = this->properties->maxSpeed * this->GetMoveModifier();
 
   move = Vector3();
   
   if (input.IsKeyActive(InputKey::Right))     move = move + right * speed;
   if (input.IsKeyActive(InputKey::Left))      move = move - right * speed;
-  if (input.IsKeyActive(InputKey::Forward))   move = move + fwd * speed;
-  if (input.IsKeyActive(InputKey::Backward))  move = move - fwd * speed;
+  if (input.IsKeyActive(InputKey::Forward))   move = move + fwd   * speed;
+  if (input.IsKeyActive(InputKey::Backward))  move = move - fwd   * speed;
 
   if (move.GetMag() > 1.5) {
     bobAmplitude += deltaT*4;
@@ -227,11 +232,7 @@ Player::UpdateInput(
   if (bobPhase >= 1.0) {
     bobPhase -= 1.0;
     // TODO: play step sound
-    //this->AddMessage("step");
-    //this->AddMessage(u8"\ufe000\ufe011\ufe022\ufe033\ufe044\ufe055\ufe066\ufe077\ufe088\ufe099\ufe0aa\ufe0bb\ufe0cc\ufe0dd\ufe0ee\ufe0ff", "big");
   } else if (bobPhase >= 0.5 && lastPhase < 0.5) {
-    //this->AddMessage("step");
-    //this->AddMessage(u8"\ufe000\ufe011\ufe022\ufe033\ufe044\ufe055\ufe066\ufe077\ufe088\ufe099\ufe0aa\ufe0bb\ufe0cc\ufe0dd\ufe0ee\ufe0ff");
     // TODO: play step sound
   }
   
@@ -276,11 +277,25 @@ Player::DrawGUI(Gfx &gfx) const {
   gfx.SetShader(this->guiShader.get());
   gfx.SetColor(IColor(255,255,255));
   
+  Point itemPos = gfx.AlignBottomRightScreen(Point(32,32), 4);
+  gfx.SetTextureFrame(this->slotTex);
+  gfx.DrawIconQuad(itemPos);
+  gfx.DrawIconQuad(itemPos - Point(36,0));
+  
+  if (this->inventory[InventorySlot::RightHand]) {
+    this->inventory[InventorySlot::RightHand]->DrawIcon(gfx, itemPos);
+  }
+  if (this->inventory[InventorySlot::LeftHand]) {
+    this->inventory[InventorySlot::LeftHand]->DrawIcon(gfx, itemPos - Point(36,0));
+  }
+  
+  // draw crosshair
   const Point &vsize = gfx.GetVirtualScreenSize();
   Sprite sprite;
   sprite.texture = crosshairTex;
   gfx.DrawIcon(sprite, Point(vsize.x/2, vsize.y/2));
 
+  // draw messages
   float y = this->messageY;
   for (auto &msg : this->messages) {
     float a = msg->messageTime * 4;
@@ -290,9 +305,10 @@ Player::DrawGUI(Gfx &gfx) const {
     msg->text->Draw(gfx, 0, y);
     y += msg->text->GetSize().y;
   }
-  
+
+  // draw health bar
   std::stringstream strHealth;
-  int h = this->health * 2;
+  int h = this->health * 2+1;
   for (int i=0; i<h; i++) {
     if (i == h-1 && (h%2))
       strHealth << u8"\u0082";
@@ -379,7 +395,6 @@ std::string
 Player::GetName() const {
   return "<insert player name here>";
 }
-
 
 Player::Message::Message(const std::string &txt, const std::string &font) {
   this->text = new RenderString(txt, font);

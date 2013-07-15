@@ -32,8 +32,6 @@ World::World(Game &game, const IVector3 &size) : game(game)
   this->cells = std::vector<Cell>(this->cellCount, Cell("default"));
   this->defaultMask = std::vector<bool>(this->cellCount, true);
   
-  std::cerr << this->cellCount << " cells, " << (sizeof(Cell)*this->cellCount) << std::endl;
-    
   this->tickInterval = 0.01;
   this->nextTickT = 0;
   glGenBuffers(1, &this->vbo);
@@ -150,7 +148,8 @@ World::Build(Game &game) {
     } while(instances.size() < featureCount); 
   }
 
-  std::cerr << "built world with " << instances.size() << " features. level " << (game.GetLevel()) << std::endl;
+  Log("Built world with %lu features. Level %lu.\n", instances.size(), game.GetLevel());
+  
   for (size_t i=0; i<this->cellCount; i++) {
     IVector3 pos = GetCellPos(i);
 

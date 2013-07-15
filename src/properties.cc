@@ -2,6 +2,8 @@
 
 #include "icolor.h"
 #include "texture.h"
+#include "vector3.h"
+#include "ivector3.h"
 
 std::vector<std::string> Tokenize(const char *l) {
   std::vector<std::string> tokens;

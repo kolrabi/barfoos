@@ -5,16 +5,17 @@
 #include "game.h"
 #include "gfx.h"
 #include "projectile.h"
+#include "texture.h"
 
 static std::map<std::string, ItemProperties> allItems;
 ItemProperties defaultItem;
 
-const ItemProperties *getItem(const std::string &name) {
+const ItemProperties &getItem(const std::string &name) {
   if (allItems.find(name) == allItems.end()) {
     std::cerr << "entity " << name << " not found" << std::endl;
-    return &defaultItem;
+    return defaultItem;
   }
-  return &allItems[name];
+  return allItems[name];
 }
 
 void
@@ -33,6 +34,7 @@ ItemProperties::ParseProperty(const std::string &cmd) {
     Parse(fps);
     
     this->sprite.animations.push_back(Animation(firstFrame, frameCount, fps));
+    
   } else if (cmd == "size") {
     Parse(this->sprite.width);
     Parse(this->sprite.height);
@@ -111,8 +113,9 @@ LoadItems() {
   }
 }
 
-Item::Item(const std::string &type) {
-  this->properties = getItem(type);
+Item::Item(const std::string &type) 
+: properties(&getItem(type)) {
+  this->durabilityTex = loadTexture("gui/durability");
   this->sprite = this->properties->sprite;
   this->nextUseT = 0;
   this->isEquipped = false;
@@ -166,7 +169,7 @@ void Item::UseOnEntity(Game &game, Mob &user, size_t id) {
   if (!this->CanUse(game)) return;
 
   if (this->properties->canUseEntity) {
-    temp_ptr<Entity> entity(game.GetEntity(id));
+    Entity *entity = game.GetEntity(id);
     if (!entity || entity->GetProperties()->nohit) {
       this->UseOnNothing(game, user);
       return;
@@ -228,6 +231,13 @@ void Item::Draw(Gfx &gfx, bool left) {
 
 void Item::DrawIcon(Gfx &gfx, const Point &p) const {
   gfx.DrawIcon(this->sprite, p);
+  
+  if (this->properties->durability != this->durability) {
+    float dur = this->durability / this->properties->durability;
+    int frame = 8 * dur;
+    gfx.SetTextureFrame(this->durabilityTex, 0, frame, 8);
+    gfx.DrawIconQuad(p);
+  }
 }
 
 void Item::DrawSprite(Gfx &gfx, const Vector3 &pos) const {

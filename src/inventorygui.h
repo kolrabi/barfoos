@@ -41,8 +41,6 @@ public:
   virtual void OnHide();
 
   virtual void Draw(Gfx &gfx, const Point &parentPos) override;  
-  
-  void SetForward(const Vector3 &forward) { this->forward = forward; }
 
   std::shared_ptr<Item> dragItem;
 
@@ -50,7 +48,6 @@ protected:
 
   Entity &entity;
   Point mousePos;
-  Vector3 forward;
   
   bool dropItem;
 

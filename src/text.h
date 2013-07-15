@@ -2,16 +2,7 @@
 #define BARFOOS_TEXT_H
 
 #include "common.h"
-
-struct Vertex;
-struct IColor;
-class Texture;
-class Gfx;
-
-struct Font {
-  const Texture *texture;
-  Point size;
-};
+#include "2d.h"
 
 enum class Align {
   Left = 0,

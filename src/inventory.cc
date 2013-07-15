@@ -154,11 +154,11 @@ Inventory::GetLight() const {
     if (!item.second || !item.second->IsEquipped()) continue;
     
     float f = 1.0;
-    if (item.second->GetProperties()->flicker) {
+    if (item.second->GetProperties().flicker) {
       f = simplexNoise(Vector3(t*3, 0, 0)) * simplexNoise(Vector3(t*2, -t, 0));
       f = f * 0.4 + 0.5;
     }
-    light = light + item.second->GetProperties()->light * f;
+    light = light + item.second->GetProperties().light * f;
   }  
   return light;
 }

@@ -1,6 +1,10 @@
 #ifndef BARFOOS_IVECTOR3_H
 #define BARFOOS_IVECTOR3_H
 
+#include "space.h"
+
+#include "vector3.h"
+
 struct IVector3 {
   size_t x,y,z;
 

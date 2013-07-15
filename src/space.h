@@ -3,7 +3,7 @@
 
 // ====================================================================
 
-enum Axis {
+enum Axis : int {
   X = (1<<0),
   Y = (1<<1),
   Z = (1<<2),
@@ -20,7 +20,7 @@ static inline std::ostream & operator<< (std::ostream &out, Axis a) {
 
 // ====================================================================
 
-enum Corner {
+enum Corner : int {
   CornerX = 1,
   CornerY = 2,
   CornerZ = 4,
@@ -37,13 +37,13 @@ enum Corner {
 
 // ====================================================================
 
-enum class Side {
-  Right = 0,
-  Left  = 1,
-  Up = 2,
-  Down = 3,
-  Forward = 4,
-  Backward = 5,
+enum class Side : int {
+  Right       = 0,
+  Left        = 1,
+  Up          = 2,
+  Down        = 3,
+  Forward     = 4,
+  Backward    = 5,
   InvalidSide = -1
 };
 
@@ -55,7 +55,7 @@ static inline std::ostream & operator<< (std::ostream &out, Side side) {
     case Side::Down:     out << "-Y"; break;
     case Side::Forward:  out << "+Z"; break;
     case Side::Backward: out << "-Z"; break;
-    default:       out << "<?" "?>";
+    default:             out << "<?" "?>";
   }
   return out;
 }

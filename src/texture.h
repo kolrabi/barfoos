@@ -2,6 +2,8 @@
 #define BARFOOS_TEXTURE_H
 
 #include "common.h"
+#include "2d.h"
+#include "vector3.h"
 
 /** A texture. */
 struct Texture {

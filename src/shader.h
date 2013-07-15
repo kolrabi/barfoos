@@ -3,8 +3,6 @@
 
 #include "common.h"
 
-struct IColor;
-
 class Shader final {
 public:
 
