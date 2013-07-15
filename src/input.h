@@ -2,6 +2,7 @@
 #define BARFOOS_INPUT_H
 
 #include "common.h"
+#include "2d.h"
 
 enum class InputKey {
   Invalid = 0,

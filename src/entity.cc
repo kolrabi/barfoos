@@ -22,75 +22,65 @@ const EntityProperties *getEntity(const std::string &name) {
   return &allEntities[name];
 }
 
-EntityProperties::EntityProperties() {
-}
+void
+EntityProperties::ParseProperty(const std::string &cmd) {
+  if (cmd == "tex")             Parse("entities/texture/", this->sprite.texture);
+  else if (cmd == "frames")     Parse(this->sprite.totalFrames);
+  else if (cmd == "anim") {
+    size_t firstFrame = 0;
+    size_t frameCount = 0;
+    float  fps = 0;
+    
+    Parse(firstFrame);
+    Parse(frameCount);
+    Parse(fps);
+    
+    this->sprite.animations.push_back(Animation(firstFrame, frameCount, fps));
+  } else if (cmd == "size") {
+    Parse(this->sprite.width);
+    Parse(this->sprite.height);
+      
+  } else if (cmd == "name")     Parse(this->name);
+    
+  else if (cmd == "flinchanim") Parse(this->flinchAnim);
+  else if (cmd == "dyinganim")  Parse(this->dyingAnim);
+      
+  else if (cmd == "respawn")          this->respawn         = true;
+  else if (cmd == "vert")             this->sprite.vertical = true;
 
-EntityProperties::EntityProperties(FILE *f) {
-  char line[256];
-  
-  while(fgets(line, 256, f) && !feof(f)) {
-    std::vector<std::string> tokens = Tokenize(line);
-    if (tokens.size() == 0) continue;
+  else if (cmd == "box")              this->isBox           = true;
+  else if (cmd == "nohit")            this->nohit           = true;
+  else if (cmd == "solid")            this->isSolid         = true;
+  else if (cmd == "nocollideentity")  this->nocollideEntity = true;
+  else if (cmd == "nocollidecell")    this->nocollideCell   = true;
+  else if (cmd == "nocollideowner")   this->nocollideOwner  = true;
+  else if (cmd == "nofriction")       this->noFriction      = true;
+
+  else if (cmd == "step")             Parse(this->stepHeight);
+  else if (cmd == "mass")             Parse(this->mass);
+  else if (cmd == "move")             Parse(this->moveInterval);
+  else if (cmd == "speed")            Parse(this->maxSpeed);
+  else if (cmd == "health")           Parse(this->maxHealth);
+  else if (cmd == "extents") {
+    Parse(this->extents);
+    this->sprite.width = this->extents.x;
+    this->sprite.height = this->extents.y;
+      
+  } else if (cmd == "gravity")        Parse(this->gravity);
+  else if (cmd == "eyeoffset")        Parse(this->eyeOffset);
+  else if (cmd == "glow")             Parse(this->glow);
+  else if (cmd == "inventory") {
+    std::string type;
+    float prob;
+    Parse(type);
+    Parse(prob);
     
-    for (auto &c:tokens[0]) c = ::tolower(c);
-    
-    if (tokens[0] == "tex") {
-      this->sprite.texture = loadTexture("entities/texture/"+tokens[1]);
-    } else if (tokens[0] == "name") {
-      this->name = tokens[1];
-    } else if (tokens[0] == "respawn") {
-      this->respawn = true;
-    } else if (tokens[0] == "frames") {
-      this->sprite.totalFrames = std::atoi(tokens[1].c_str());
-    } else if (tokens[0] == "anim") {
-      this->sprite.animations.push_back(Animation(std::atoi(tokens[1].c_str()), std::atoi(tokens[2].c_str()), std::atof(tokens[3].c_str())));
-    } else if (tokens[0] == "vert") {
-      this->sprite.vertical = true;
-    } else if (tokens[0] == "step") {
-      this->stepHeight = std::atof(tokens[1].c_str());
-    } else if (tokens[0] == "mass") {
-      this->mass = std::atof(tokens[1].c_str());
-    } else if (tokens[0] == "move") {
-      this->moveInterval = std::atof(tokens[1].c_str());
-    } else if (tokens[0] == "speed") {
-      this->maxSpeed = std::atof(tokens[1].c_str());
-    } else if (tokens[0] == "health") {
-      this->maxHealth = std::atoi(tokens[1].c_str());
-    } else if (tokens[0] == "extents") {
-      this->extents = Vector3( std::atof(tokens[1].c_str()), std::atof(tokens[2].c_str()), std::atof(tokens[3].c_str()) );
-      this->sprite.width = this->extents.x;
-      this->sprite.height = this->extents.y;
-    } else if (tokens[0] == "size") {
-      this->sprite.width = std::atof(tokens[1].c_str());
-      this->sprite.height = std::atof(tokens[2].c_str());
-    } else if (tokens[0] == "nohit") {
-      this->nohit = true;
-    } else if (tokens[0] == "nocollideentity") {
-      this->nocollideEntity = true;
-    } else if (tokens[0] == "nocollidecell") {
-      this->nocollideCell = true;
-    } else if (tokens[0] == "nocollideowner") {
-      this->nocollideOwner = true;
-    } else if (tokens[0] == "nofriction") {
-      this->noFriction = true;
-    } else if (tokens[0] == "gravity") {
-      this->gravity = std::atof(tokens[1].c_str());
-    } else if (tokens[0] == "eyeoffset") {
-      this->eyeOffset = std::atof(tokens[1].c_str());
-    } else if (tokens[0] == "glow") {
-      this->glow = IColor( std::atoi(tokens[1].c_str()), std::atoi(tokens[2].c_str()), std::atoi(tokens[3].c_str()) );
-    } else if (tokens[0] == "solid") {
-      this->isSolid = true;
-    } else if (tokens[0] == "box") {
-      this->isBox = true;
-    } else if (tokens[0] == "inventory") {
-      this->items.push_back({tokens[2], std::atof(tokens[1].c_str())});
-    } else if (tokens[0] == "cell") {
-      this->cellEnter = tokens[1];
-      this->cellLeave = tokens[2];
-    } else if (tokens[0] != "") {
-      std::cerr << "ignoring '" << tokens[0] << "'" << std::endl;
-    }
+    this->items.push_back({type, prob});
+  } else if (cmd == "cell") {
+    Parse(this->cellEnter);
+    Parse(this->cellLeave);
+  } else if (cmd != "") {
+    this->SetError("Ignoring '" + cmd + "'");;
   }
 }
 
@@ -101,7 +91,8 @@ LoadEntities() {
     FILE *f = openAsset("entities/"+name);
     if (f) {
       std::cerr << "loading entity " << name << std::endl;
-      allEntities[name] = EntityProperties(f);
+      allEntities[name] = EntityProperties();
+      allEntities[name].ParseFile(f);
       fclose(f);
     }
   }
@@ -170,30 +161,38 @@ Entity::Start(Game &game, size_t id) {
       offset = offset - d * d.Dot(aabb.extents);
     }
   }
-  aabb.center = aabb.center + offset;
+  this->SetPosition(aabb.center + offset);
 }
 
 void 
 Entity::Update(Game &game) {
   float deltaT = game.GetDeltaT();
   float t      = game.GetTime();
+  
+  // bring out your dead
+  if (this->IsDead() && this->sprite.currentAnimation == 0) {
+    if (this->properties->respawn) {
+      // just respawn
+      health = this->properties->maxHealth;
+      SetPosition(spawnPos);
+      Start(game, id);
+    } else {
+      this->removable = true;
+    }
+    return;
+  }
 
+  // think, mcfly, think
   while(properties->thinkInterval && nextThinkT < t) {
     nextThinkT += properties->thinkInterval;
     Think(game);
   }
 
   this->sprite.Update(deltaT);
-  
-  if (deltaT > 1.0/30.0) {
-    this->smoothPosition = aabb.center;
-  } else {
-    this->smoothPosition = this->smoothPosition + (aabb.center - this->smoothPosition) * game.GetDeltaT() * 30.0f;
-  }
-  
   this->inventory.Update(game, *this);
+  this->smoothPosition.Update(deltaT);
   
-  this->lastPos = aabb.center;
+  this->lastPos = this->aabb.center;
   this->cellPos = IVector3(aabb.center.x, aabb.center.y, aabb.center.z);
   
   World &world = game.GetWorld();
@@ -238,16 +237,9 @@ Entity::Draw(Gfx &gfx) const {
 
 void
 Entity::DrawBoundingBox(Gfx &gfx) const {
-  //glBlendFunc(GL_ONE, GL_ONE);
-  
-  //glDepthMask(GL_FALSE);
-    
   gfx.SetTextureFrame(gfx.GetNoiseTexture());
   gfx.SetColor(IColor(64,64,64),0);
   gfx.DrawAABB(this->aabb);
-  
-  //glDepthMask(GL_TRUE);
-  //glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
 }
 
 void
@@ -256,6 +248,9 @@ Entity::AddHealth(Game &game, const HealthInfo &info) {
   if (this->health <= 0 || this->properties->maxHealth == 0) return;
   
   this->health += info.amount;
+  
+  if (info.amount < 0) this->sprite.StartAnim(this->properties->flinchAnim);
+  
   if (this->health <= 0) {
     this->health = 0;
     this->Die(game, info);
@@ -275,14 +270,5 @@ Entity::Die(Game &game, const HealthInfo &info) {
   }
 
   this->inventory.Drop(game, *this);
-
-  // TODO: play death animation (if any) and set this->removable afte it finished
-  if (this->properties->respawn) {
-    // just respawn
-    health = this->properties->maxHealth;
-    SetPosition(spawnPos);
-    Start(game, id);
-  } else {
-    this->removable = true;
-  }
+  this->sprite.StartAnim(this->properties->dyingAnim);
 }

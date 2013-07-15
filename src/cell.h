@@ -3,14 +3,7 @@
 
 #include "common.h"
 #include "icolor.h"
-
-class World;
-class Random;
-class Serializer;
-class Game;
-class Mob;
-
-struct Vertex;
+#include "ivector3.h"
 
 /** Optional flags of a cell. */
 enum CellFlags {

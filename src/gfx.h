@@ -2,15 +2,11 @@
 #define BARFOOS_GFX_H
 
 #include "common.h"
-#include "icolor.h"
 
-struct Vertex;
-struct InputEvent;
-class GLFWwindow;
-class Shader;
-class Game;
-class Gfx;
-class Player;
+#include "2d.h"
+#include "icolor.h"
+#include "matrix4.h"
+#include "vector3.h"
 
 class GfxView final {
 public:
@@ -86,6 +82,7 @@ public:
   void DrawAABB(const AABB &aabb);
   void DrawSprite(const Sprite &sprite, const Vector3 &pos, bool billboard = true);
   void DrawIcon(const Sprite &sprite, const Point &pos, const Point &size = Point(32, 32));
+  void DrawIconQuad(const Point &pos, const Point &size = Point(32, 32));
 
   Point AlignBottomLeftScreen(const Point &size, int padding = 0);
   Point AlignBottomRightScreen(const Point &size, int padding = 0);

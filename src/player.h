@@ -49,6 +49,7 @@ private:
 
   // rendering
   const Texture *crosshairTex;
+  const Texture *slotTex;
   std::unique_ptr<Shader> defaultShader;
   std::unique_ptr<Shader> guiShader;
   float bobPhase;

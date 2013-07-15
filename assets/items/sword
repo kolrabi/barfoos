@@ -10,6 +10,6 @@ light 64 64 64
 
 hand
 
-OnUseSpawnProjectile projectile.test
+#OnUseSpawnProjectile projectile.test
 CanUseNothing
 CanUseEntity

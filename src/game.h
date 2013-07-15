@@ -4,16 +4,7 @@
 #include "common.h"
 #include "feature.h"
 #include "random.h"
-
-class World;
-class Player;
-class Mob;
-class InventoryGui;
-class Gui;
-class Entity;
-class Gfx;
-class Input;
-struct InputEvent;
+#include "2d.h"
 
 class Game final {
 public:

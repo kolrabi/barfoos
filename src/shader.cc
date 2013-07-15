@@ -1,8 +1,9 @@
+#include "GLee.h"
+
 #include "shader.h"
 #include "icolor.h"
 #include "util.h"
-
-#include "GLee.h"
+#include "matrix4.h"
 
 Shader::Shader(const std::string &name) {
   const char *txt;
@@ -18,10 +19,10 @@ Shader::Shader(const std::string &name) {
   glCompileShader(vshad);
   glAttachObjectARB(program, vshad);
 
-  std::cerr << "vertex shader " << name << " result:" << std::endl;
   glGetInfoLogARB(vshad, sizeof(tmp)-1, &l, tmp);
   tmp[l] = 0;
-  std::cerr << tmp << std::endl;
+  
+  if (l) Log("Vertex shader %s result:\n%s\n", name.c_str(), tmp);
 
   unsigned int fshad = glCreateShaderObjectARB(GL_FRAGMENT_SHADER_ARB);
   std::string ftext = loadAssetAsString("shaders/"+name+".fs");
@@ -30,17 +31,17 @@ Shader::Shader(const std::string &name) {
   glCompileShader(fshad);
   glAttachObjectARB(program, fshad);
   
-  std::cerr << "fragment shader " << name << " result:" << std::endl;
   glGetInfoLogARB(fshad, sizeof(tmp)-1, &l, tmp);
   tmp[l] = 0;
-  std::cerr << tmp << std::endl;
+  
+  if (l) Log("Fragment shader %s result:\n%s\n", name.c_str(), tmp);
 
   glLinkProgramARB(program);
   
-  std::cerr << "program " << name << " result:" << std::endl;
   glGetInfoLogARB(program, sizeof(tmp)-1, &l, tmp);
   tmp[l] = 0;
-  std::cerr << tmp << std::endl;
+  
+  if (l) Log("Shader program %s result:\n%s\n", name.c_str(), tmp);
 
   glDeleteObjectARB(vshad);
   glDeleteObjectARB(fshad);

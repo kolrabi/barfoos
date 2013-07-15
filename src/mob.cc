@@ -125,6 +125,7 @@ Mob::Update(Game &game) {
     aabb.center = game.MoveAABB(aabb, newCenter, axis2);
     axis |= axis2;
   }
+  this->smoothPosition = this->aabb.center;
   
   if (cell && !this->properties->nocollideCell) {
     ((Entity*)this)->OnCollide(game, *cell, side);
@@ -164,7 +165,6 @@ Mob::Update(Game &game) {
   } else if (headCell->GetInfo().lavaDamage) {
     this->AddHealth(game, HealthInfo( -headCell->GetInfo().lavaDamage * deltaT, HealthType::Lava));
   }
-  
 }
 
 void

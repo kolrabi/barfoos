@@ -65,7 +65,7 @@ CellInfo::CellInfo(const std::string &name, FILE *f) : type(name) {
       this->scale = Vector3(std::atof(tokens[1].c_str()), std::atof(tokens[2].c_str()), std::atof(tokens[3].c_str()));
     } else if (tokens[0] == "multi") this->flags |= MultiSided;
     else {
-      std::cerr << "ignoring '" << tokens[0] << "'" << std::endl;
+      Log("Ignoring '%s'\n", tokens[0].c_str());
     }
   }
 }

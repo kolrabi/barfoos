@@ -18,14 +18,14 @@ Game::Game(const std::string &seed, size_t level, const Point &screenSize)
   random(seed, level)
   {
 
-  this->player = nullptr;
-  this->nextEntityId = 0;
-  this->startT = 0.0;
-  this->lastT = 0.0;
-  this->deltaT = 0.0;
-  this->frame = 0;
-  this->lastFPST = 0;
-  this->fps = 0;
+  this->player        = nullptr;
+  this->nextEntityId  = 0;
+  this->startT        = 0.0;
+  this->lastT         = 0.0;
+  this->deltaT        = 0.0;
+  this->frame         = 0;
+  this->lastFPST      = 0.0;
+  this->fps           = 0.0;
   this->showInventory = false;
   
   this->handlerId = this->input->AddHandler( [this](const InputEvent &event){ this->HandleEvent(event); } );
@@ -163,7 +163,6 @@ Game::Update(float t, float deltaT) {
         this->gfx->DecGuiCount();
       }
       this->activeGui = this->inventoryGui;
-      this->inventoryGui->SetForward(this->player->GetAngles().EulerToVector());
       this->activeGui->OnShow();
       this->gfx->IncGuiCount();
     }
@@ -415,7 +414,7 @@ Vector3 Game::MoveAABB(
   if (dist.x) {
   for (const Vector3 &v : verts) {
     for (size_t eid : entities) {
-      temp_ptr<Entity> ent = GetEntity(eid);
+      Entity *ent = GetEntity(eid);
       if (!ent) continue;
       
       float t = INFINITY;
@@ -436,7 +435,7 @@ Vector3 Game::MoveAABB(
   if (dist.z) {
   for (const Vector3 &v : verts) {
     for (size_t eid : entities) {
-      temp_ptr<Entity> ent = GetEntity(eid);
+      Entity *ent = GetEntity(eid);
       if (!ent) continue;
       
       float t = INFINITY;
@@ -457,7 +456,7 @@ Vector3 Game::MoveAABB(
   if (dist.y) {
   for (const Vector3 &v : verts) {
     for (size_t eid : entities) {
-      temp_ptr<Entity> ent = GetEntity(eid);
+      Entity *ent = GetEntity(eid);
       if (!ent) continue;
       
       float t = INFINITY;

@@ -1,4 +1,3 @@
-#include "util.h"
 
 #include "GLee.h"
 #include <png.h>
@@ -8,6 +7,7 @@
 #include "simplex.h"
 
 #include "texture.h"
+#include "util.h"
 
 static std::map<std::string, std::unique_ptr<Texture>> textures;
 static time_t lastUpdate = 0;
@@ -34,6 +34,7 @@ const Texture *loadTexture(const std::string &name, const Texture * tex) {
   GLuint textureHandle = 0;
   if (tex) {
     textureHandle = tex->handle;
+    Log("Reloading texture %s as %u\n", name.c_str(), textureHandle);
   } else {
     auto iter = textures.find(name);
     if (iter != textures.end()) {
@@ -45,7 +46,7 @@ const Texture *loadTexture(const std::string &name, const Texture * tex) {
     textures[name] = std::unique_ptr<Texture>(new Texture());
     textures[name]->handle = textureHandle;
     
-    std::cerr << "loading texture " << name << " as " << textureHandle << std::endl;
+    Log("Loading texture %s as %u\n", name.c_str(), textureHandle);
   }
 
   unsigned long w,h;
@@ -64,7 +65,7 @@ const Texture *loadTexture(const std::string &name, const Texture * tex) {
   png_structp png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
   if (!png_ptr)
   {
-    std::cerr << "Error: png_create_read_struct returned 0.\n";
+    Log("Error: png_create_read_struct returned 0.\n");
     fclose(fp);
     return nullptr;
   }
@@ -73,7 +74,7 @@ const Texture *loadTexture(const std::string &name, const Texture * tex) {
   png_infop info_ptr = png_create_info_struct(png_ptr);
   if (!info_ptr)
   {
-    std::cerr << "Error: png_create_info_struct returned 0.\n";
+    Log("Error: png_create_info_struct returned 0.\n");
     png_destroy_read_struct(&png_ptr, (png_infopp)NULL, (png_infopp)NULL);
     fclose(fp);
     return nullptr;
@@ -83,7 +84,7 @@ const Texture *loadTexture(const std::string &name, const Texture * tex) {
   png_infop end_info = png_create_info_struct(png_ptr);
   if (!end_info)
   {
-    std::cerr << "Error: png_create_info_struct returned 0.\n";
+    Log("Error: png_create_info_struct returned 0.\n");
     png_destroy_read_struct(&png_ptr, &info_ptr, (png_infopp) NULL);
     fclose(fp);
     return nullptr;
@@ -91,7 +92,7 @@ const Texture *loadTexture(const std::string &name, const Texture * tex) {
 
   // the code in this if statement gets called if libpng encounters an error
   if (setjmp(png_jmpbuf(png_ptr))) {
-    std::cerr << "Error: Could not read image.\n";
+    Log("Error: Could not read image.\n");
     png_destroy_read_struct(&png_ptr, &info_ptr, &end_info);
     fclose(fp);
     return nullptr;
@@ -176,7 +177,7 @@ void updateTextures() {
   time_t lastMod = lastUpdate;
   if (time(nullptr) - lastMod < 2) return;
   
-  std::cerr << "updating textures" << std::endl;
+  Log("Checking for updated textures...\n");
 
   bool updated = false;
   for (auto &t : textures) {
@@ -188,6 +189,7 @@ void updateTextures() {
       updated = true;
     }
   }
+  
   if (updated) {
     lastUpdate = lastMod;
   } else {
@@ -226,7 +228,7 @@ noiseTexture(const Point &size, const Vector3 &scale, const Vector3 &offset) {
   
   std::string name = str.str();
   
-  std::cerr << "generated noise texture " << name << " as " << texture << std::endl;
+  Log("Generated noise texture '%s' as %u.\n", name.c_str(), texture);
   
   textures[name] = std::unique_ptr<Texture>(new Texture());
   textures[name]->handle = texture;

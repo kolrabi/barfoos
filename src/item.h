@@ -3,17 +3,9 @@
 
 #include "common.h"
 #include "icolor.h"
+#include "sprite.h"
 
 #include "properties.h"
-
-class World;
-class Mob;
-class Entity;
-class Cell;
-class Gfx;
-class Game;
-
-enum class InventorySlot : size_t;
 
 struct ItemProperties : public Properties {
   // rendering
@@ -45,14 +37,13 @@ struct ItemProperties : public Properties {
   std::string replacement;
   
   // std::string placeEntity = "";
-  // bool destroyBlock = false;
   std::string spawnProjectile = "";
  
   virtual void ParseProperty(const std::string &name) override;
 };
 
 void LoadItems();
-const ItemProperties *getItem(const std::string &name);
+const ItemProperties &getItem(const std::string &name);
 
 class Item final {
 public:
@@ -84,7 +75,8 @@ public:
   
   bool IsRemovable()                    const { return isRemovable; }
   
-  const ItemProperties *GetProperties() const { return this->properties; }
+  const ItemProperties &GetProperties() const { return *this->properties; }
+  
   virtual std::shared_ptr<Item> Combine(const std::shared_ptr<Item> &other) {
     (void)other;
     return nullptr;
@@ -93,6 +85,7 @@ public:
 protected:
 
   const ItemProperties *properties;
+  const Texture *durabilityTex;
   
   // lifecycle management
   bool isRemovable;

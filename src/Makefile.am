@@ -51,10 +51,11 @@ barfoos_SOURCES=\
   inventory.cc inventory.h \
   \
   common.h ivector3.h space.h vector3.h \
-  random.h util.h \
+  random.h util.h aabb.h 2d.h \
   serializer.cc serializer.h \
   input.cc input.h \
-  profile.cc \
+  profile.cc profile.h \
+  log.cc log.h \
   $(RESFILE)
 
 ## Packaging ------------------------------------------------------

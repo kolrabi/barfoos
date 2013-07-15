@@ -2,10 +2,7 @@
 #define BARFOOS_GUI_H
 
 #include "common.h"
-
-class Gfx;
-class Game;
-struct InputEvent;
+#include "2d.h"
 
 class Gui {
 public:

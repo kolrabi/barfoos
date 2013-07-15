@@ -8,6 +8,7 @@
 #include "input.h"
 #include "texture.h"
 #include "player.h"
+#include "sprite.h"
 
 static InputKey MapMouseButton(int b) {
   InputKey key;
@@ -535,6 +536,14 @@ void Gfx::DrawIcon(const Sprite &sprite, const Point &center, const Point &size)
   this->view.Push();
   this->view.Translate(Vector3(center.x + sprite.offsetX*size.x, center.y + sprite.offsetY*size.y, 0));
   this->view.Scale    (Vector3((sprite.width*size.x)/2, -(sprite.height*size.y)/2, 1));
+  this->DrawQuads(this->quadVerts);
+  this->view.Pop();
+}
+
+void Gfx::DrawIconQuad(const Point &center, const Point &size) {
+  this->view.Push();
+  this->view.Translate(Vector3(center.x, center.y, 0));
+  this->view.Scale    (Vector3(size.x/2, -size.y/2, 1));
   this->DrawQuads(this->quadVerts);
   this->view.Pop();
 }

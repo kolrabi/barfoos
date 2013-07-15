@@ -1,5 +1,7 @@
 #include "simplex.h"
 
+#include "vector3.h"
+
 static Vector3 grad3[12] = {
   {1,1,0},{-1,1,0},{1,-1,0},{-1,-1,0},
   {1,0,1},{-1,0,1},{1,0,-1},{-1,0,-1},
