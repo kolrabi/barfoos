@@ -113,11 +113,11 @@ Game::Render() const {
   
   std::vector<IColor> lightColors;
   std::vector<Vector3> lightPositions;
-  std::vector<const Entity*> lightEntities = FindLightEntities(player->GetPosition(), 32);
+  std::vector<const Entity*> lightEntities = FindLightEntities(player->GetSmoothPosition(), 32);
   if (lightEntities.size() > 8) lightEntities.resize(8);
   for (auto e : lightEntities) {
     lightColors.push_back(e->GetLight());
-    lightPositions.push_back(e->GetPosition());
+    lightPositions.push_back(e->GetSmoothEyePosition());
   }
   
   this->gfx->ClearColor(IColor(30, 30, 20));

@@ -97,13 +97,16 @@ public:
   void                      SetSpawnPos(const Vector3  &p)          { this->spawnPos = p; }
 
   void                      SetPosition(const Vector3  &pos)        { this->smoothPosition.SnapTo( this->aabb.center = pos ); }
-  void                      SetPosition(const IVector3 &pos)        { SetPosition(Vector3(pos) + Vector3(0.5,0.5,0.5)); }
-  const Vector3 &           GetPosition()                     const { return aabb.center; }
+  void                      SetPosition(const IVector3 &pos)        { this->SetPosition(Vector3(pos) + Vector3(0.5,0.5,0.5)); }
+  const Vector3 &           GetPosition()                     const { return this->aabb.center; }
+  const Vector3 &           GetSmoothPosition()               const { return this->smoothPosition; }
+  const Vector3             GetEyePosition()                  const { return this->GetPosition() + Vector3(0,this->properties->eyeOffset,0); }
+  const Vector3             GetSmoothEyePosition()            const { return this->GetSmoothPosition() + Vector3(0,this->properties->eyeOffset,0); }
   
   void                      SetAngles(const Vector3 &angles)        { this->angles = angles; }
   const Vector3 &           GetAngles()                       const { return angles; }
   Vector3                   GetForward()                      const { return this->GetAngles().EulerToVector(); }
-  Vector3                   GetRight()                        const { return (this->GetAngles() + Vector3(Const::pi, 0, 0)).EulerToVector(); }
+  Vector3                   GetRight()                        const { return (this->GetAngles() + Vector3(Const::pi_2, 0, 0)).EulerToVector(); }
   
   const AABB &              GetAABB()                         const { return aabb; }
   

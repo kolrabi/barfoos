@@ -232,7 +232,7 @@ void Item::Draw(Gfx &gfx, bool left) {
 void Item::DrawIcon(Gfx &gfx, const Point &p) const {
   gfx.DrawIcon(this->sprite, p);
   
-  if (this->properties->durability != 0) {
+  if (this->properties->durability != this->durability) {
     float dur = this->durability / this->properties->durability;
     int frame = 8 * dur;
     gfx.SetTextureFrame(this->durabilityTex, 0, frame, 8);

@@ -202,11 +202,11 @@ Player::UpdateInput(
 
   sneak = input.IsKeyActive(InputKey::Sneak);
 
-  if (angles.y >  Const::pi_2) angles.y =  Const::pi_2;
-  if (angles.y < -Const::pi_2) angles.y = -Const::pi_2;
+  if (angles.y >  Const::pi_2*0.99) angles.y =  Const::pi_2*0.99;
+  if (angles.y < -Const::pi_2*0.99) angles.y = -Const::pi_2*0.99;
 
-  Vector3 fwd   = this->GetForward();
-  Vector3 right = this->GetRight();
+  Vector3 fwd   = this->GetForward().Horiz().Normalize();
+  Vector3 right = this->GetRight().Horiz().Normalize();
   float   speed = this->properties->maxSpeed * this->GetMoveModifier();
 
   move = Vector3();
