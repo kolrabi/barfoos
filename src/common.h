@@ -56,7 +56,6 @@ enum class  InventorySlot : size_t;
 
 struct AABB;
 struct Animation;
-struct Font;
 struct IColor;
 struct IVector3;
 struct InputEvent;

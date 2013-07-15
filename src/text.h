@@ -4,6 +4,8 @@
 #include "common.h"
 #include "2d.h"
 
+struct Font;
+
 enum class Align {
   Left = 0,
   Right = 1,
