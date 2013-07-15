@@ -20,6 +20,9 @@ varying vec3 v_norm;
 varying vec3 v_pos;
 varying vec3 v_lightVec[8];
 
+const float gamma = 2.2;
+const float contrast = 1.25;
+
 vec3 getLight(int n) {
   vec3 ld = vec3(u_matModelView * vec4(u_lightPos[n], 1.0)) - v_pos;
   vec3 L = normalize(ld);
@@ -41,12 +44,12 @@ void main() {
   vec4 t0 = texture2D(u_texture, v_tex);
   if (t0.a == 0.0) discard;
   
-  vec3 light = pow( v_color.rgb + getTotalLight(), vec3(2.2) ) * u_color.rgb;
+  vec3 light = pow( v_color.rgb + getTotalLight(), vec3(gamma) ) * u_color.rgb;
   
   float fogDepth = length(v_pos);
   float fogIntensity = 0.0; //pow(max(0.0, u_fogLin * fogDepth), 0.5);
   
   vec3 color = mix(t0.rgb * light, u_fogColor.rgb, min(1.0, fogIntensity)) + u_fade.rgb;
  
-  gl_FragColor = vec4(color, t0.a);
+  gl_FragColor = vec4(color * contrast, t0.a);
 }

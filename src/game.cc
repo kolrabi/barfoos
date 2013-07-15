@@ -192,16 +192,15 @@ Game::Update(float t, float deltaT) {
   
   for (size_t i=0; i<entityIds.size(); i++) {
     size_t e1 = entityIds[i];
+    if (entities[e1]->GetProperties()->nocollideEntity) continue;
+
     for (size_t j=i+1; j<entityIds.size(); j++) {
       size_t e2 = entityIds[j];
+      if (entities[e2]->GetProperties()->nocollideEntity) continue;
       
       // don't collide with owners if not wanted
       if (entities[e1]->GetOwner() == e2 && entities[e1]->GetProperties()->nocollideOwner) continue;
       if (entities[e2]->GetOwner() == e1 && entities[e2]->GetProperties()->nocollideOwner) continue;
-      
-      // don't collide nocollide entities
-      if (entities[e1]->GetProperties()->nocollideEntity) continue;
-      if (entities[e2]->GetProperties()->nocollideEntity) continue;
       
       if (entities[e1]->GetAABB().Overlap(entities[e2]->GetAABB())) {
         entities[e1]->OnCollide(*this, *entities[e2]);

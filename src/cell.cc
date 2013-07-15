@@ -27,7 +27,7 @@ CellInfo::CellInfo(const std::string &name, FILE *f) : type(name) {
       this->textures.push_back(loadTexture("cells/texture/"+tokens[1]));
     } else if (tokens[0] == "light") {
       this->light = IColor(std::atoi(tokens[1].c_str()), std::atoi(tokens[2].c_str()), std::atoi(tokens[3].c_str()));
-    } 
+    } else if (tokens[0] == "lightscale") this->light = this->light * (float)std::atof(tokens[1].c_str());
     else if (tokens[0] == "lightfactor")  this->lightFactor = std::atof(tokens[1].c_str());
     else if (tokens[0] == "lightfade")    this->lightFade   = std::atoi(tokens[1].c_str());
     

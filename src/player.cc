@@ -299,7 +299,7 @@ Player::DrawGUI(Gfx &gfx) const {
     else
       strHealth << u8"\u0081";
   }
-  RenderString rsHealth(strHealth.str());
+  RenderString rsHealth(strHealth.str(), "big");
   rsHealth.Draw(gfx, 0+4, vsize.y-4, (int)Align::Left | (int)Align::Bottom);
 }
 

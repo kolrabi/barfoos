@@ -102,6 +102,8 @@ LoadEntities() {
     if (f) {
       std::cerr << "loading entity " << name << std::endl;
       allEntities[name] = EntityProperties(f);
+      if (allEntities[name].name == "") 
+        allEntities[name].name = name;
       fclose(f);
     }
   }

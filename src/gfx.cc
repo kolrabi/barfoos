@@ -63,35 +63,35 @@ Gfx::Gfx(const Point &pos, const Point &size, bool fullscreen)
   this->player = nullptr;
   
   // unit cube vertices
-  this->cubeVerts.push_back(Vertex(Vector3( 1, 1, -1), IColor(255,255,255), 0,0, Vector3( 1, 0, 0)));
-  this->cubeVerts.push_back(Vertex(Vector3( 1, 1,  1), IColor(255,255,255), 1,0, Vector3( 1, 0, 0)));
-  this->cubeVerts.push_back(Vertex(Vector3( 1,-1,  1), IColor(255,255,255), 1,1, Vector3( 1, 0, 0)));
-  this->cubeVerts.push_back(Vertex(Vector3( 1,-1, -1), IColor(255,255,255), 0,1, Vector3( 1, 0, 0)));
+  this->cubeVerts.push_back(Vertex(Vector3( 1, 1, -1), IColor(255,255,255), 0,1, Vector3( 1, 0, 0)));
+  this->cubeVerts.push_back(Vertex(Vector3( 1, 1,  1), IColor(255,255,255), 1,1, Vector3( 1, 0, 0)));
+  this->cubeVerts.push_back(Vertex(Vector3( 1,-1,  1), IColor(255,255,255), 1,0, Vector3( 1, 0, 0)));
+  this->cubeVerts.push_back(Vertex(Vector3( 1,-1, -1), IColor(255,255,255), 0,0, Vector3( 1, 0, 0)));
 
-  this->cubeVerts.push_back(Vertex(Vector3(-1,-1, -1), IColor(255,255,255), 1,1, Vector3(-1, 0, 0)));
-  this->cubeVerts.push_back(Vertex(Vector3(-1,-1,  1), IColor(255,255,255), 2,1, Vector3(-1, 0, 0)));
-  this->cubeVerts.push_back(Vertex(Vector3(-1, 1,  1), IColor(255,255,255), 2,0, Vector3(-1, 0, 0)));
-  this->cubeVerts.push_back(Vertex(Vector3(-1, 1, -1), IColor(255,255,255), 1,0, Vector3(-1, 0, 0)));
+  this->cubeVerts.push_back(Vertex(Vector3(-1,-1, -1), IColor(255,255,255), 1,0, Vector3(-1, 0, 0)));
+  this->cubeVerts.push_back(Vertex(Vector3(-1,-1,  1), IColor(255,255,255), 2,0, Vector3(-1, 0, 0)));
+  this->cubeVerts.push_back(Vertex(Vector3(-1, 1,  1), IColor(255,255,255), 2,1, Vector3(-1, 0, 0)));
+  this->cubeVerts.push_back(Vertex(Vector3(-1, 1, -1), IColor(255,255,255), 1,1, Vector3(-1, 0, 0)));
   
-  this->cubeVerts.push_back(Vertex(Vector3(-1,-1,  1), IColor(255,255,255), 2,1, Vector3( 0, 0, 1)));
-  this->cubeVerts.push_back(Vertex(Vector3( 1,-1,  1), IColor(255,255,255), 3,1, Vector3( 0, 0, 1)));
-  this->cubeVerts.push_back(Vertex(Vector3( 1, 1,  1), IColor(255,255,255), 3,0, Vector3( 0, 0, 1)));
-  this->cubeVerts.push_back(Vertex(Vector3(-1, 1,  1), IColor(255,255,255), 2,0, Vector3( 0, 0, 1)));
+  this->cubeVerts.push_back(Vertex(Vector3(-1,-1,  1), IColor(255,255,255), 2,0, Vector3( 0, 0, 1)));
+  this->cubeVerts.push_back(Vertex(Vector3( 1,-1,  1), IColor(255,255,255), 3,0, Vector3( 0, 0, 1)));
+  this->cubeVerts.push_back(Vertex(Vector3( 1, 1,  1), IColor(255,255,255), 3,1, Vector3( 0, 0, 1)));
+  this->cubeVerts.push_back(Vertex(Vector3(-1, 1,  1), IColor(255,255,255), 2,1, Vector3( 0, 0, 1)));
 
-  this->cubeVerts.push_back(Vertex(Vector3(-1, 1, -1), IColor(255,255,255), 3,0, Vector3( 0, 0,-1)));
-  this->cubeVerts.push_back(Vertex(Vector3( 1, 1, -1), IColor(255,255,255), 4,0, Vector3( 0, 0,-1)));
-  this->cubeVerts.push_back(Vertex(Vector3( 1,-1, -1), IColor(255,255,255), 4,1, Vector3( 0, 0,-1)));
-  this->cubeVerts.push_back(Vertex(Vector3(-1,-1, -1), IColor(255,255,255), 3,1, Vector3( 0, 0,-1)));
+  this->cubeVerts.push_back(Vertex(Vector3(-1, 1, -1), IColor(255,255,255), 3,1, Vector3( 0, 0,-1)));
+  this->cubeVerts.push_back(Vertex(Vector3( 1, 1, -1), IColor(255,255,255), 4,1, Vector3( 0, 0,-1)));
+  this->cubeVerts.push_back(Vertex(Vector3( 1,-1, -1), IColor(255,255,255), 4,0, Vector3( 0, 0,-1)));
+  this->cubeVerts.push_back(Vertex(Vector3(-1,-1, -1), IColor(255,255,255), 3,0, Vector3( 0, 0,-1)));
   
-  this->cubeVerts.push_back(Vertex(Vector3(-1, 1,  1), IColor(255,255,255), 4,1, Vector3( 0, 1, 0)));
-  this->cubeVerts.push_back(Vertex(Vector3( 1, 1,  1), IColor(255,255,255), 5,1, Vector3( 0, 1, 0)));
-  this->cubeVerts.push_back(Vertex(Vector3( 1, 1, -1), IColor(255,255,255), 5,0, Vector3( 0, 1, 0)));
-  this->cubeVerts.push_back(Vertex(Vector3(-1, 1, -1), IColor(255,255,255), 4,0, Vector3( 0, 1, 0)));
+  this->cubeVerts.push_back(Vertex(Vector3(-1, 1,  1), IColor(255,255,255), 4,0, Vector3( 0, 1, 0)));
+  this->cubeVerts.push_back(Vertex(Vector3( 1, 1,  1), IColor(255,255,255), 5,0, Vector3( 0, 1, 0)));
+  this->cubeVerts.push_back(Vertex(Vector3( 1, 1, -1), IColor(255,255,255), 5,1, Vector3( 0, 1, 0)));
+  this->cubeVerts.push_back(Vertex(Vector3(-1, 1, -1), IColor(255,255,255), 4,1, Vector3( 0, 1, 0)));
   
-  this->cubeVerts.push_back(Vertex(Vector3(-1,-1, -1), IColor(255,255,255), 5,0, Vector3( 0,-1, 0)));
-  this->cubeVerts.push_back(Vertex(Vector3( 1,-1, -1), IColor(255,255,255), 6,0, Vector3( 0,-1, 0)));
-  this->cubeVerts.push_back(Vertex(Vector3( 1,-1,  1), IColor(255,255,255), 6,1, Vector3( 0,-1, 0)));
-  this->cubeVerts.push_back(Vertex(Vector3(-1,-1,  1), IColor(255,255,255), 5,1, Vector3( 0,-1, 0)));
+  this->cubeVerts.push_back(Vertex(Vector3(-1,-1, -1), IColor(255,255,255), 5,1, Vector3( 0,-1, 0)));
+  this->cubeVerts.push_back(Vertex(Vector3( 1,-1, -1), IColor(255,255,255), 6,1, Vector3( 0,-1, 0)));
+  this->cubeVerts.push_back(Vertex(Vector3( 1,-1,  1), IColor(255,255,255), 6,0, Vector3( 0,-1, 0)));
+  this->cubeVerts.push_back(Vertex(Vector3(-1,-1,  1), IColor(255,255,255), 5,0, Vector3( 0,-1, 0)));
 
   // quad
   this->quadVerts.push_back(Vertex(Vector3(-1,-1,  0), IColor(255,255,255), 0,0, Vector3( 0, 0, 1)));
