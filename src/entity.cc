@@ -98,22 +98,24 @@ LoadEntities() {
   }
 }
 
-Entity::Entity(const std::string &type) {
-  this->removable = false;
-  
-  this->properties = getEntity(type);
-  this->sprite = this->properties->sprite;
-
-  this->aabb.extents = properties->extents;
-  
-  this->health = properties->maxHealth;
-  this->lastCell = nullptr;
-  this->id = ~0UL;
-  this->ownerId = ~0UL;
-  this->drawAABB = false;
-  
-  this->nextThinkT = 0;
-}
+Entity::Entity(const std::string &type) :
+  id(~0UL),
+  ownerId(~0UL),
+  removable(false),
+  properties(getEntity(type)),
+  nextThinkT(0.0),
+  lastPos(),
+  spawnPos(),
+  angles(),
+  aabb(this->properties->extents),
+  health(this->properties->maxHealth),
+  lastCell(nullptr),
+  cellPos(),
+  inventory(),
+  sprite(this->properties->sprite),
+  drawAABB(false),
+  cellLight(0,0,0)
+{}
 
 Entity::~Entity() {
 }

@@ -7,13 +7,13 @@
 struct Font;
 
 enum class Align {
-  Left = 0,
-  Right = 1,
-  Center = 2,
+  HorizLeft = 0,
+  HorizRight = 1,
+  HorizCenter = 2,
   
-  Top = 0,
-  Middle = 4,
-  Bottom = 8
+  VertTop = 0,
+  VertMiddle = 4,
+  VertBottom = 8
 };
 
 class RenderString {
@@ -25,7 +25,8 @@ public:
   void Draw(Gfx &gfx, float x, float y, int align = 0);
   
   void WrapWords(size_t width);
-  const Font &GetFont()  const { return font; }
+  
+  const Font & GetFont()  const { return font; }
   const Point &GetSize();
 
 private:

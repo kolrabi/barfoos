@@ -14,6 +14,8 @@ public:
   Game(Game &&game) = delete;
   ~Game();
   
+  Game &operator=(Game &game) = delete;
+  
   bool Init();
   bool Frame();
   
@@ -49,40 +51,42 @@ public:
   
 private:
 
-  Input *input;
-  Gfx *gfx;
-  World *world;
-  bool isInit;
+  bool    isInit;
   
-  size_t handlerId;
+  Input   *input;
+  Gfx     *gfx;
+  World   *world;
+  
+  size_t  handlerId;
+  
+  int     level;
+  
+  std::map<size_t, Entity*> entities;
+  Player *player;
+  size_t  nextEntityId;
+  
+  std::shared_ptr<InventoryGui> inventoryGui;
+  std::shared_ptr<Gui> activeGui;
+
+  float   startT;
+  float   lastT;
+  float   deltaT;
+  size_t  frame;
+  float   lastFPST;
+  
+  float   fps;
+  
+  std::string seed;
+  Random random;
+  
+  bool showInventory;
   
   void Deinit();
   
   void Render() const;
   void Update(float t, float deltaT);
   
-  int level;
-  
-  std::map<size_t, Entity*> entities;
-  Player *player;
-  size_t nextEntityId;
   size_t GetNextEntityId() { return nextEntityId++; }
-  
-  std::shared_ptr<InventoryGui> inventoryGui;
-  std::shared_ptr<Gui> activeGui;
-
-  float startT;
-  float lastT;
-  float deltaT;
-  size_t frame;
-  float lastFPST;
-  
-  float fps;
-  
-  std::string seed;
-  Random random;
-  
-  bool showInventory;
   
   void BuildWorld();
   std::vector<const Entity*> FindLightEntities(const Vector3 &pos, float radius) const;

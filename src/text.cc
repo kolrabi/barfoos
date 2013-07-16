@@ -6,16 +6,23 @@
 struct Font {
   const Texture *texture;
   Point size;
+  
+  Font() :
+    texture(0),
+    size(0,0)
+  {}
+  
+  Font(const std::string &name) :
+    texture(loadTexture("gui/font."+name)),
+    size( texture->size.x / 32, texture->size.y / 8 )
+  {}
 };
 
 static std::map<std::string, Font> fonts;
 
 static const Font &loadFont(const std::string &name) {
   if (fonts.find(name) != fonts.end()) return fonts[name];
-  Font font;
-  font.texture = loadTexture("gui/font."+name);
-  font.size = Point( font.texture->size.x / 32, font.texture->size.y / 8);
-  fonts[name] = font;
+  fonts[name] = Font(name);
   return fonts[name];
 }
 
@@ -89,9 +96,14 @@ decode_error:
   return p;
 }
 
-
-RenderString::RenderString(const std::string &text, const std::string &font)
-: font(loadFont(font)), dirty(true) {
+RenderString::RenderString(const std::string &text, const std::string &fontName) : 
+  font(loadFont(fontName)), 
+  text(L""),
+  wrappedText(L""),
+  dirty(true),
+  vertices(0),
+  size(0,0)
+{
   this->SetText(text);
 }
 
@@ -106,15 +118,15 @@ void RenderString::Draw(Gfx &gfx, float x, float y, int align) {
     this->DrawString();
   }
   
-  if (align & (int)Align::Right) {
+  if (align & (int)Align::HorizRight) {
     x = x - size.x;
-  } else if (align & (int)Align::Center) {
+  } else if (align & (int)Align::HorizCenter) {
     x = x - size.x / 2;
   }
 
-  if (align & (int)Align::Bottom) {
+  if (align & (int)Align::VertBottom) {
     y = y - size.y;
-  } else if (align & (int)Align::Middle) {
+  } else if (align & (int)Align::VertMiddle) {
     y = y - size.y / 2;
   }
   

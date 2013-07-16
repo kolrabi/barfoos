@@ -22,17 +22,20 @@ public:
   
 private:
 
-  Matrix4 proj;
-  Matrix4 modelView;
-  Matrix4 textureMatrix;
+  Gfx &gfx;
+  
   std::vector<Matrix4> projStack;
-  std::vector<Matrix4> viewStack;
+  std::vector<Matrix4> modelViewStack;
   std::vector<Matrix4> textureStack;
 
   friend class Gfx;
   
-  Gfx &gfx;
-  GfxView(Gfx &gfx) : gfx(gfx) {}
+  GfxView(Gfx &gfx) : 
+    gfx(gfx),
+    projStack(1),
+    modelViewStack(1),
+    textureStack(1)
+  {}
   
   void SetUniforms(const Shader *shader) const;
 };
@@ -41,6 +44,8 @@ class Gfx final {
 public:
 
   Gfx(const Point &pos, const Point &size, bool fullscreen);
+  Gfx(const Gfx &) = delete;
+  Gfx &operator=(const Gfx &) = delete;
   ~Gfx();
   
   bool Init(Game &game);
@@ -63,7 +68,7 @@ public:
 
   void SetShader(const Shader *shader);
   void SetTextureFrame(const Texture *texture, size_t stage = 0, size_t currentFrame = 0, size_t frameCount = 1);
-  void SetFog(float e, float l, const IColor &color);
+  void SetFog(float l, const IColor &color);
   void SetColor(const IColor &color, float alpha = 1.0);
   void SetBackfaceCulling(bool cull);
   void SetLights(const std::vector<Vector3> &positions, const std::vector<IColor> &colors);
@@ -129,7 +134,6 @@ private:
   size_t activeTextureStage;
   const Vertex *activeVertexPointer;
   
-  float fogExp2;
   float fogLin;
   IColor fogColor;
   std::vector<Vector3> lightPositions;

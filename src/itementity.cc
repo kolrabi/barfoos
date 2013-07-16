@@ -5,6 +5,11 @@
 #include "gfx.h"
 #include "world.h"
 
+ItemEntity::ItemEntity(const std::string &itemName) : 
+  Mob("item"),
+  item(new Item(itemName)) {
+}
+
 ItemEntity::ItemEntity(const std::shared_ptr<Item> &item) : 
   Mob("item"),
   item(item) {

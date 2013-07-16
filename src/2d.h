@@ -29,7 +29,7 @@ struct Rect {
   /** Size of rectangle. */
   Point size;
   
-  Rect()                                                            {} 
+  Rect()                                    : pos(),    size()      {} 
   Rect(const Point &pos, const Point &size) : pos(pos), size(size)  {}
 
   /** Check if a point is inside the rectangle. 

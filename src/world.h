@@ -5,13 +5,6 @@
 #include "cell.h"
 #include "icolor.h"
 
-class Entity;
-class Player;
-class Shader;
-class Gfx;
-class FeatureInstance;
-class Game;
-
 class World final {
 public:
 
@@ -19,6 +12,8 @@ public:
   World(const World &world) = delete;
   World(World &&world) = delete;
   ~World();
+  
+  World &operator=(const World &) = delete;
   
   void Build(Game &game);
   
@@ -61,15 +56,6 @@ public:
 
 private:
 
-  void UpdateCell(size_t i);
-  void UpdateCell(const IVector3 &pos);
-  
-  size_t GetCellIndex(const IVector3 &pos) const { return pos.x+size.x*(pos.y+size.y*pos.z); }
-  IVector3 GetCellPos(size_t i) const { return IVector3( i%size.x, (i/size.x)%size.y, (i/(size.x*size.y))%size.z); }
-  bool IsValidCellPosition(const IVector3 &pos) const { 
-    return pos.x < size.x  && pos.y < size.y && pos.z < size.z; 
-  }
- 
   Game &game;
   IVector3 size;
   bool dirty, firstDirty;
@@ -98,6 +84,15 @@ private:
   std::vector<FeatureInstance> instances;
 
   Shader *defaultShader;
+
+  void UpdateCell(size_t i);
+  void UpdateCell(const IVector3 &pos);
+  
+  size_t GetCellIndex(const IVector3 &pos) const { return pos.x+size.x*(pos.y+size.y*pos.z); }
+  IVector3 GetCellPos(size_t i) const { return IVector3( i%size.x, (i/size.x)%size.y, (i/(size.x*size.y))%size.z); }
+  bool IsValidCellPosition(const IVector3 &pos) const { 
+    return pos.x < size.x  && pos.y < size.y && pos.z < size.z; 
+  }
 };
 
 inline Cell &

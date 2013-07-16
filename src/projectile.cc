@@ -5,9 +5,9 @@
 #include "worldedit.h"
 
 Projectile::Projectile(const std::string &type) :
-  Mob(type) {
-  this->dieT = 0.0;
-}
+  Mob(type),
+  dieT(0.0)
+{}
 
 Projectile::~Projectile() {
 }
@@ -28,10 +28,6 @@ void Projectile::Update(Game &game) {
   if (game.GetTime() > this->dieT) {
     this->Die(game, HealthInfo());
   }
-}
-
-void Projectile::Draw(Gfx &gfx) const {
-  Mob::Draw(gfx);
 }
 
 void 

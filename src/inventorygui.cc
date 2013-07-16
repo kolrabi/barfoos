@@ -5,13 +5,16 @@
 #include "itementity.h"
 #include "game.h"
 #include "gfx.h"
-#include "icolor.h"
 #include "input.h"
 #include "texture.h"
 #include "inventory.h"
 
-InventoryGui::InventoryGui(Game &game, Entity &entity) 
-: entity(entity) {
+InventoryGui::InventoryGui(Game &game, Entity &entity) : 
+  dragItem(nullptr),
+  entity(entity), 
+  mousePos(),
+  dropItem(false)
+{
 
   //                 x  x  x  x
   //   8  0          x  x  x  x
@@ -102,12 +105,13 @@ void InventoryGui::OnHide() {
 
 InventorySlotGui::InventorySlotGui(
   InventoryGui *parent, Entity &entity, InventorySlot slot
-) : entity(entity) {
-  this->parent = parent;
-  this->slot = slot;
-  this->slotTex = loadTexture("gui/slot");
-  this->hover = false;
-}
+) : 
+  entity(entity),
+  parent(parent),
+  slot(slot),
+  hover(false),
+  slotTex(loadTexture("gui/slot"))
+{}
 
 InventorySlotGui::~InventorySlotGui() {
 }

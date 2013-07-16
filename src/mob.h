@@ -5,14 +5,14 @@
 
 #include "entity.h"
 
-class World;
-class Cell;
-
 class Mob : public Entity {
 public:
 
   Mob(const std::string &entityPropertyName);
+  Mob(const Mob &that) = delete;
   virtual ~Mob();
+  
+  Mob &operator=(const Mob &that) = delete;
 
   virtual void Start(Game &game, size_t id) override;
   virtual void Update(Game &game) override;

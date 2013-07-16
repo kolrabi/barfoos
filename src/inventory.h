@@ -3,11 +3,6 @@
 
 #include "common.h"
 #include "icolor.h"
-
-class Item;
-class Game;
-class Entity;
-
 //                 x  x  x  x
 //   8  0          x  x  x  x
 //   4  1  5       x  x  x  x
@@ -58,6 +53,8 @@ enum class InventorySlot : size_t {
 class Inventory final {
 public:
 
+  Inventory();
+  
   void Update(Game &game, Entity &owner);
 
   std::shared_ptr<Item> &operator[](InventorySlot slot);

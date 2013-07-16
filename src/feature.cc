@@ -3,7 +3,7 @@
 #include "world.h"
 #include "cell.h"
 #include "random.h"
-#include "mob.h"
+#include "itementity.h"
 #include "game.h"
 #include "vertex.h"
 
@@ -17,14 +17,39 @@ const Feature *getFeature(const std::string &name) {
   return &allFeatures[name];
 }
 
-Feature::Feature(FILE *f, const std::string &name) 
-: name(name), group(name) {
-  this->minLevel = 0;
-  this->maxLevel = -1;
-  this->maxProbability = 1.0;
-  this->minLevel = 0;
-  this->minY = 0;
+Feature::Feature() :
+  defs(),
+  conns(),
+  spawns(),
+  replacements(),
+  name("<undefined>"),
+  group("<undefined>"),
+  cells(0),
+  defaultMask(0),
+  chars(0),
+  size(0,0,0),
+  minLevel(0),
+  maxLevel(0),
+  maxProbability(0.0),
+  minY(0)
+{}
 
+Feature::Feature(FILE *f, const std::string &name) :
+  defs(),
+  conns(),
+  spawns(),
+  replacements(),
+  name(name),
+  group(name),
+  cells(0),
+  defaultMask(0),
+  chars(0),
+  size(0,0,0),
+  minLevel(0),
+  maxLevel(-1),
+  maxProbability(1.0),
+  minY(0)
+{
   char line[256];
   char lastDef = 0;
   
@@ -71,8 +96,6 @@ Feature::Feature(FILE *f, const std::string &name)
       defs[lastDef] = FeatureCharDef();
     } else if (tokens[0] == "cell") {
       defs[lastDef].type = tokens[1];
-      if (!IsCellTypeNameValid(tokens[1])) 
-        std::cerr << "unknown cell type " << tokens[1] << std::endl;
     } else if (tokens[0] == "top") {
       defs[lastDef].top[0] = std::atof(tokens[1].c_str());
       defs[lastDef].top[1] = std::atof(tokens[2].c_str());
@@ -99,7 +122,7 @@ Feature::Feature(FILE *f, const std::string &name)
       defs[lastDef].revRand = false;
     } else if (tokens[0] == "mob") {
       FeatureSpawn spawn;
-      spawn.spawnClass = SpawnClass::Mob;
+      spawn.spawnClass = SpawnClass::MobClass;
       spawn.probability = std::atof(tokens[1].c_str());
       spawn.type = tokens[2];
       spawn.attach = std::atoi(tokens[3].c_str());
@@ -107,7 +130,15 @@ Feature::Feature(FILE *f, const std::string &name)
       this->spawns.push_back(spawn);
     } else if (tokens[0] == "entity") {
       FeatureSpawn spawn;
-      spawn.spawnClass = SpawnClass::Entity;
+      spawn.spawnClass = SpawnClass::EntityClass;
+      spawn.probability = std::atof(tokens[1].c_str());
+      spawn.type = tokens[2];
+      spawn.attach = std::atoi(tokens[3].c_str());
+      spawn.pos = Vector3(std::atof(tokens[4].c_str()), std::atof(tokens[5].c_str()), std::atof(tokens[6].c_str()));
+      this->spawns.push_back(spawn);
+    } else if (tokens[0] == "item") {
+      FeatureSpawn spawn;
+      spawn.spawnClass = SpawnClass::ItemEntityClass;
       spawn.probability = std::atof(tokens[1].c_str());
       spawn.type = tokens[2];
       spawn.attach = std::atoi(tokens[3].c_str());
@@ -232,8 +263,9 @@ void Feature::SpawnEntities(Game &game, const IVector3 &pos) const {
       Entity *entity = nullptr;
 
       switch(spawn.spawnClass) {
-        case SpawnClass::Mob: entity = new Mob(spawn.type); break;
-        case SpawnClass::Entity: entity = new Entity(spawn.type); break;
+        case SpawnClass::MobClass:        entity = new Mob(spawn.type); break;
+        case SpawnClass::EntityClass:     entity = new Entity(spawn.type); break;
+        case SpawnClass::ItemEntityClass: entity = new ItemEntity(spawn.type); break;
         default: continue;
       }
       

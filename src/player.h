@@ -8,11 +8,14 @@ struct InputEvent;
 class RenderString;
 class Shader;
 
-class Player : public Mob {
+class Player final : public Mob {
 public:
 
   Player();
+  Player(const Player &) = delete;
   virtual ~Player();
+
+  Player &operator=(const Player &) = delete;
 
   virtual void Start(Game &game, size_t id) override;
   virtual void Update(Game &game) override;
@@ -44,7 +47,10 @@ private:
     float messageTime;
 
     Message(const std::string &text, const std::string &font);
+    Message(const Message &) = default;
     ~Message();
+    
+    Message &operator=(const Message &) = default;
   };
 
   // rendering

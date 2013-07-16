@@ -7,7 +7,10 @@ class Shader final {
 public:
 
   Shader(const std::string &name);
+  Shader(const Shader &) = delete;
   ~Shader();
+  
+  Shader &operator=(const Shader &) = delete;
 
   void Uniform(const std::string &name, int value) const;
   void Uniform(const std::string &name, float value) const;

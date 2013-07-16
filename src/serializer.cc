@@ -5,14 +5,15 @@
 Serializer::Serializer(
   const char *magic, 
   size_t magiclen
-) {
-  this->magicLen = magiclen;
-  this->magic = new char[magiclen];
+) :
+  strings(),
+  byteCount(0),
+  byteCapacity(1024),
+  bytes(new uint8_t[this->byteCapacity]),
+  magic(new char[magiclen]),
+  magicLen(magiclen)
+{
   memcpy(this->magic, magic, magiclen);
-  
-  this->byteCount = 0;
-  this->byteCapacity = 1024;
-  this->bytes = new uint8_t[this->byteCapacity];
 }
 
 Serializer::~Serializer() {

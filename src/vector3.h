@@ -6,21 +6,13 @@
 struct Vector3 {
   float x,y,z;
 
-  Vector3() : x(0), y(0), z(0) {}
-  Vector3(float x, float y, float z) : x(x), y(y), z(z) {}
+  Vector3()                           : x(0), y(0), z(0) {}
+  Vector3(float x, float y, float z)  : x(x), y(y), z(z) {}
   
-  Vector3(Side side) {
-    switch(side) {
-      case Side::Right:    *this = Vector3( 1, 0, 0); return;
-      case Side::Left:     *this = Vector3(-1, 0, 0); return;
-      case Side::Up:       *this = Vector3( 0, 1, 0); return;
-      case Side::Down:     *this = Vector3( 0,-1, 0); return;
-      case Side::Forward:  *this = Vector3( 0, 0, 1); return;
-      case Side::Backward: *this = Vector3( 0, 0,-1); return;
-      case Side::InvalidSide: 
-      default:
-        *this = Vector3();
-    }
+  Vector3(Side side)                  : 
+    x( side == Side::Right   ? 1 : (side == Side::Left     ? -1 : 0) ), 
+    y( side == Side::Up      ? 1 : (side == Side::Down     ? -1 : 0) ), 
+    z( side == Side::Forward ? 1 : (side == Side::Backward ? -1 : 0) ) {
   }
   
   bool operator ==(const Vector3 &o) const {

@@ -10,6 +10,8 @@ public:
   Serializer(const Serializer &) = delete;
   Serializer(Serializer &&) = delete;
   ~Serializer();
+  
+  Serializer &operator=(const Serializer &) = delete;
 
   Serializer &operator << (const uint8_t &);
   Serializer &operator << (const uint16_t &);
@@ -29,9 +31,9 @@ public:
 private:
 
   std::vector<std::string> strings;
-  uint8_t *bytes;
   size_t byteCount;
   size_t byteCapacity;
+  uint8_t *bytes;
   
   char *magic;
   size_t magicLen;

@@ -21,8 +21,11 @@ int saveImage(const std::string &fileName, size_t w, size_t h, const uint8_t *rg
 template<class T>
 struct Smooth {
 
-  Smooth(float f) : f(f) {
-  }
+  Smooth(float f, const T &v = T() ) : 
+    target(v),
+    current(v),
+    f(f)
+  {}
 
   struct Smooth<T> &operator=(T value) {
     this->target = value;

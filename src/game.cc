@@ -10,28 +10,28 @@
 #include "item.h"
 #include "input.h"
 
-Game::Game(const std::string &seed, size_t level, const Point &screenSize) 
-: input(new Input()), 
-  gfx(new Gfx(Point(1920, 32), screenSize, false)),
-  level(level),
-  seed(seed), 
-  random(seed, level)
-  {
-
-  this->player        = nullptr;
-  this->nextEntityId  = 0;
-  this->startT        = 0.0;
-  this->lastT         = 0.0;
-  this->deltaT        = 0.0;
-  this->frame         = 0;
-  this->lastFPST      = 0.0;
-  this->fps           = 0.0;
-  this->showInventory = false;
-  
-  this->handlerId = this->input->AddHandler( [this](const InputEvent &event){ this->HandleEvent(event); } );
-  this->isInit = false;
-  this->world = nullptr;
-}
+Game::Game(const std::string &seed, size_t level, const Point &screenSize) : 
+  isInit        (false),
+  input         (new Input()), 
+  gfx           (new Gfx(Point(1920, 32), screenSize, false)),
+  world         (nullptr),
+  handlerId     (this->input->AddHandler( [this](const InputEvent &event){ this->HandleEvent(event); } )),
+  level         (level),
+  entities      (),
+  player        (nullptr),
+  nextEntityId  (1),
+  inventoryGui  (nullptr),
+  activeGui     (nullptr),
+  startT        (0.0),
+  lastT         (0.0),
+  deltaT        (0.0),
+  frame         (0),
+  lastFPST      (0.0),
+  fps           (0.0),
+  seed          (seed), 
+  random        (seed, level),
+  showInventory (false)
+{}
 
 Game::~Game() {
   if (this->isInit) this->Deinit();
@@ -125,7 +125,7 @@ Game::Render() const {
   this->gfx->Viewport(Rect());
 
   // draw world first
-  this->gfx->SetFog(0.051, 0.05, IColor(20,20,20));
+  this->gfx->SetFog(0.05, IColor(64,64,64));
   this->gfx->SetLights(lightPositions, lightColors);
   
   player->View(*this->gfx);

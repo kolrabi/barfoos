@@ -16,9 +16,9 @@
 struct EntityProperties : public Properties {
 
   // rendering
-  Sprite  sprite;
+  Sprite  sprite            = Sprite();
   bool    isBox             = false;  //< Render entity as a box instead of a sprite.
-  IColor  glow;
+  IColor  glow              = IColor(0,0,0);
   size_t  flinchAnim        = ~0UL;   //< Animation to play when hurt.
   size_t  dyingAnim         = ~0UL;   //< Animation to play on death.
   
@@ -30,7 +30,7 @@ struct EntityProperties : public Properties {
   float   gravity           = 1.0;    //< Amount of effect of gravity on entity.
 
   // gameplay
-  Vector3 extents;                    //< Size of the entity.
+  Vector3 extents           = Vector3(0.5,0.5,0.5); //< Size of the entity.
   float   eyeOffset         = 0.0;    //< Offset from the center.
   float   thinkInterval     = 0.0;    //< Time interval beetween calls to Entity::Think().
   float   maxHealth         = 5;      //< Health of entity after spawn.
@@ -43,16 +43,16 @@ struct EntityProperties : public Properties {
   bool    respawn           = false;  //< Entity will automatically respawn on death.
   
   /** Inventory items and their absolute probability. */
-  std::vector<std::pair<std::string, float>> items;
+  std::vector<std::pair<std::string, float>> items = std::vector<std::pair<std::string, float>>(0);
   
   /** When entering a cell, replace it with a cell of this type. */
-  std::string cellEnter;
+  std::string cellEnter     = "";
 
   /** When leaving a cell, replace it with a cell of this type. */
-  std::string cellLeave;
+  std::string cellLeave     = "";
   
   /** Display name of entity. */
-  std::string name;
+  std::string name          = "";
   
   virtual void ParseProperty(const std::string &name) override;
 };
@@ -63,7 +63,10 @@ const EntityProperties *getEntity(const std::string &name);
 class Entity {
 public:
   Entity(const std::string &visualName);
+  Entity(const Entity &that) = delete;
   virtual ~Entity();
+  
+  Entity &operator=(const Entity &that) = delete;
   
   virtual void Start(Game &game, size_t id);
   virtual void Update(Game &game);
@@ -92,7 +95,7 @@ public:
   
   bool                      IsSolid()                         const { return properties->isSolid; }
   bool                      IsDead()                          const { return this->health <= 0 && this->properties->maxHealth != 0;}
-  Inventory &               GetInventory()                          { return inventory; }
+  Inventory &               GetInventory()                          { return this->inventory; }
   
   void                      SetSpawnPos(const Vector3  &p)          { this->spawnPos = p; }
 
@@ -104,14 +107,14 @@ public:
   const Vector3             GetSmoothEyePosition()            const { return this->GetSmoothPosition() + Vector3(0,this->properties->eyeOffset,0); }
   
   void                      SetAngles(const Vector3 &angles)        { this->angles = angles; }
-  const Vector3 &           GetAngles()                       const { return angles; }
+  const Vector3 &           GetAngles()                       const { return this->angles; }
   Vector3                   GetForward()                      const { return this->GetAngles().EulerToVector(); }
   Vector3                   GetRight()                        const { return (this->GetAngles() + Vector3(Const::pi_2, 0, 0)).EulerToVector(); }
   
-  const AABB &              GetAABB()                         const { return aabb; }
+  const AABB &              GetAABB()                         const { return this->aabb; }
   
   // rendering
-  virtual IColor            GetLight()                        const { return properties->glow + inventory.GetLight(); }
+  virtual IColor            GetLight()                        const { return this->properties->glow + inventory.GetLight(); }
   
 protected:
 

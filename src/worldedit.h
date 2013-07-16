@@ -11,8 +11,11 @@ public:
 
   WorldEdit(World *world);
   WorldEdit(const std::shared_ptr<World> &world);
+  WorldEdit(const WorldEdit &) = delete;
   ~WorldEdit();
- 
+
+  WorldEdit &operator=(const WorldEdit &) = delete;
+  
   WorldEdit &SetBrush(const Cell &brush);
   WorldEdit &ApplyBrush(const IVector3 &pos);
 

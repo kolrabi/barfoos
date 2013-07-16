@@ -12,18 +12,19 @@
 static std::map<std::string, std::unique_ptr<Texture>> textures;
 static time_t lastUpdate = 0;
 
-Texture::Texture() {
-  handle = 0;
-}
+Texture::Texture() :
+  handle(0),
+  size()
+{}
 
 Texture::~Texture() {
   if (handle) glDeleteTextures(1, &handle);
 }
 
-Texture::Texture(Texture &&rhs) {
-  this->size = rhs.size;
-  this->handle = rhs.handle;
-  
+Texture::Texture(Texture &&rhs) :
+  handle(rhs.handle),
+  size(rhs.size)
+{
   rhs.handle = 0;
   rhs.size = Point();
 }

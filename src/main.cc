@@ -10,25 +10,6 @@ float Wave(float x, float z, float t, float a) {
            * cos( ((x-z)*0.6+t*0.7) );
 }
 
-size_t ParseSidesMask(const std::string &str) {
-  size_t sides = 0;
-  for (auto c:str) {
-    c = ::tolower(c);
-    std::cerr << c << std::endl;
-    switch(c) {
-      case 'l': sides |= 1<<Side::Left;     break;
-      case 'r': sides |= 1<<Side::Right;    break;
-      case 'u': sides |= 1<<Side::Up;       break;
-      case 'd': sides |= 1<<Side::Down;     break;
-      case 'f': sides |= 1<<Side::Forward;  break;
-      case 'b': sides |= 1<<Side::Backward; break;
-      default: break;
-    }
-  }
-  std::cerr << sides << std::endl;
-  return sides;
-}
-
 static std::string credits() {
   std::string str;
 

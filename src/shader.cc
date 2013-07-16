@@ -5,13 +5,13 @@
 #include "util.h"
 #include "matrix4.h"
 
-Shader::Shader(const std::string &name) {
+Shader::Shader(const std::string &name) :
+  program(glCreateProgramObjectARB())
+{
   const char *txt;
   char tmp[1024];
   GLsizei l;
 
-  program = glCreateProgramObjectARB();
-  
   unsigned int vshad = glCreateShaderObjectARB(GL_VERTEX_SHADER_ARB);
   std::string vtext = loadAssetAsString("shaders/"+name+".vs");
   txt = vtext.c_str();

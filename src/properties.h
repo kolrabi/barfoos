@@ -6,6 +6,14 @@
 struct IColor;
 
 struct Properties {
+  
+  Properties() :
+    tokens(),
+    lastError("")
+  {}
+  
+  virtual ~Properties() {}
+
   void ParseFile(FILE *f);
   
   virtual void ParseProperty(const std::string &name) = 0;
@@ -17,7 +25,9 @@ struct Properties {
   void Parse(IVector3 &iv);
   void Parse(IColor &c);
   void Parse(const std::string &prefix, const Texture *&t);
+  void Parse(const std::string &prefix, std::vector<const Texture *> &t);
   void Parse(std::string &s);
+  void ParseSideMask(size_t &i);
   
 private:
 

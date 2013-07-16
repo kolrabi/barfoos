@@ -9,6 +9,12 @@
 
 #include "simplex.h"
 
+Inventory::Inventory() :
+  inventory(),
+  overflow(0),
+  lastT(0.0)
+{}
+
 std::shared_ptr<Item> &
 Inventory::operator[](InventorySlot slot) { 
   return inventory[slot]; 

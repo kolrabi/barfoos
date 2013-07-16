@@ -14,34 +14,37 @@
 
 #include "input.h"
 
-Player::Player() 
-: Mob("player") 
-{
-  // rendering
-  this->crosshairTex = loadTexture("gui/crosshair");
-  this->slotTex = loadTexture("gui/slot");
-  this->defaultShader = std::unique_ptr<Shader>(new Shader("default"));
-  this->guiShader = std::unique_ptr<Shader>(new Shader("gui"));
+Player::Player() : 
+  Mob("player"),
   
-  this->bobPhase = 0;
-  this->bobAmplitude = 0;
+  // rendering
+  crosshairTex      (loadTexture("gui/crosshair")),
+  slotTex           (loadTexture("gui/slot")),
+  defaultShader     (std::unique_ptr<Shader>(new Shader("default"))),
+  guiShader         (std::unique_ptr<Shader>(new Shader("gui"))),
+  
+  bobPhase          (0.0),
+  bobAmplitude      (0.0),
   
   // gameplay
-  this->selectedCell = nullptr;
-  this->selectedCellSide = Side::Forward;
-  this->selectionRange = 0;
-  this->selectedEntity = ~0UL;
+  selectedEntity    (~0UL),
+  selectedCell      (nullptr),
+  selectedCellSide  (Side::Forward),
+  selectionRange    (0.0),
+
+  itemActiveLeft    (false),
+  itemActiveRight   (false),
   
+  lastHurtT         (),
+  pain              (0.0),
+
   // display
-  this->itemActiveLeft = false;
-  this->itemActiveRight = false;
-
-  this->messageY = 0;
-  this->messageVY = 0;
-  this->fps = 0;
+  messages          (),
+  messageY          (0.0),
+  messageVY         (0.0),
   
-  this->pain = 0.0;
-
+  fps               (0.0)
+{
   // TEST:
   this->inventory.Equip(std::make_shared<Item>(Item("sword")), InventorySlot::RightHand);
   this->inventory.Equip(std::make_shared<Item>(Item("torch")), InventorySlot::LeftHand);
@@ -316,7 +319,7 @@ Player::DrawGUI(Gfx &gfx) const {
       strHealth << u8"\u0081";
   }
   RenderString rsHealth(strHealth.str(), "big");
-  rsHealth.Draw(gfx, 0+4, vsize.y-4, (int)Align::Left | (int)Align::Bottom);
+  rsHealth.Draw(gfx, 0+4, vsize.y-4, (int)Align::HorizLeft | (int)Align::VertBottom);
 }
 
 void
@@ -357,7 +360,6 @@ Player::AddHealth(Game &game, const HealthInfo &info) {
 void 
 Player::AddMessage(const std::string &text, const std::string &font) {
   Message *msg = new Message(text, font);
-  msg->messageTime = 5;
   this->messages.push_back(msg);
 }
 
@@ -396,9 +398,10 @@ Player::GetName() const {
   return "<insert player name here>";
 }
 
-Player::Message::Message(const std::string &txt, const std::string &font) {
-  this->text = new RenderString(txt, font);
-}
+Player::Message::Message(const std::string &txt, const std::string &font) :
+  text(new RenderString(txt, font)),
+  messageTime(5)
+{}
 
 Player::Message::~Message() {
   delete text;

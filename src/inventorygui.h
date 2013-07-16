@@ -4,26 +4,21 @@
 #include "common.h"
 #include "gui.h"
 
-class Entity;
-class InventoryGui;
-class Item;
-class Gfx;
-struct InputEvent;
-
-enum class InventorySlot : size_t;
-
 class InventorySlotGui : public Gui {
 public: 
   InventorySlotGui(InventoryGui *parent, Entity &entity, InventorySlot slot);
+  InventorySlotGui(const InventorySlotGui &) = delete;
   virtual ~InventorySlotGui();
 
+  InventorySlotGui &operator=(const InventorySlotGui &) = delete;
+  
   virtual void Draw(Gfx &gfx, const Point &parentPos) override;
   virtual void HandleEvent(const InputEvent &event) override;
 
 private:
 
-  InventoryGui *parent;
   Entity &entity;
+  InventoryGui *parent;
   InventorySlot slot;
   bool hover;
 

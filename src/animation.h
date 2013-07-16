@@ -4,16 +4,25 @@
 /** Animation information. */
 struct Animation {
   /** Frame index where the animation begins. */
-  size_t firstFrame = 0;
+  size_t firstFrame;
 
   /** Total number of frames in the animation. */
-  size_t frameCount = 0;
+  size_t frameCount;
   
   /** Frames per second. */
-  float fps         = 0;
+  float fps;
   
-  Animation() {}
-  Animation(size_t firstFrame, size_t frameCount, float fps) : firstFrame(firstFrame), frameCount(frameCount), fps(fps) {}
+  Animation() :
+    firstFrame(0), 
+    frameCount(1), 
+    fps(0) 
+  {}
+  
+  Animation(size_t firstFrame, size_t frameCount, float fps) : 
+    firstFrame(firstFrame), 
+    frameCount(frameCount), 
+    fps(fps) 
+  {}
 };
 
 #endif

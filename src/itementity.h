@@ -10,6 +10,7 @@ class Item;
 class ItemEntity : public Mob {
 public:
 
+  ItemEntity(const std::string &itemName);
   ItemEntity(const std::shared_ptr<Item> &item);
   virtual ~ItemEntity();
 

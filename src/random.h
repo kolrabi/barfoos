@@ -8,8 +8,10 @@
 class Random {
 public:
 
-  Random(const std::string &s, size_t n = 0) {
-    Seed(s, n);
+  Random(const std::string &s, size_t n = 0) :
+    gen()
+  {
+    Seed(s,n);
   }
   
   void Seed(const std::string &s, size_t n = 0) {

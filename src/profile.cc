@@ -7,7 +7,7 @@
 #endif
 
 struct ProfileFunc {
-  std::string name;
+  std::string name = "";
   uint64_t calls = 0;
   uint64_t totalTicks = 0;
   uint64_t ticksPerCall = 0;
@@ -28,7 +28,10 @@ static inline uint64_t measure() {
 #endif
 }
 
-Profile::Profile(const char *func, const char *file, int line) {
+Profile::Profile(const char *func, const char *file, int line) :
+  name(""),
+  startTick(0)
+{
   char tmp[512];
   if (funcStack.empty()) {
     snprintf(tmp, sizeof(tmp), "%10s %4d %-42s", file, line, func);

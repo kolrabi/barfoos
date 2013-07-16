@@ -9,6 +9,7 @@
 #include "texture.h"
 #include "player.h"
 #include "sprite.h"
+#include "vertex.h"
 
 static InputKey MapMouseButton(int b) {
   InputKey key;
@@ -44,25 +45,41 @@ static InputKey MapKey(int k) {
   return key;
 }
 
-Gfx::Gfx(const Point &pos, const Point &size, bool fullscreen) 
-  : isInit(false),
-    startTime(glfwGetTime()),
-    screenPos(pos),
-    screenSize(size),
-    isFullscreen(fullscreen),
-    mouseGrab(false),
-    guiActiveCount(0),
-    view(*this)
+Gfx::Gfx(const Point &pos, const Point &size, bool fullscreen) : 
+  window(nullptr),
+  isInit(false),
+  startTime(glfwGetTime()),
+  player(nullptr),
+  
+  screenPos(pos),
+  screenSize(size),
+  isFullscreen(fullscreen),
+  virtualScreenSize(size),
+  viewportSize(size),
+  
+  mousePos(),
+  mouseDelta(),
+  mouseGrab(false),
+  guiActiveCount(0),
+  
+  noiseTex(nullptr),
+  cubeVerts(0),
+  quadVerts(0),
+
+  activeShader(nullptr),
+  view(*this),
+  color(255, 255, 255),
+  alpha(1.0),
+  activeTextures(),
+  activeTextureStage(0),
+  activeVertexPointer(nullptr),
+  
+  fogLin(0.05),
+  fogColor(64, 64, 64),
+  
+  lightPositions(8),
+  lightColors(8)
 {
-  this->window = nullptr;
-  this->noiseTex = nullptr;
-  this->activeShader = nullptr;
-  this->activeTextureStage = 0;
-  this->activeVertexPointer = nullptr;
-  
-  this->fogLin = 0.05;
-  this->player = nullptr;
-  
   // unit cube vertices
   this->cubeVerts.push_back(Vertex(Vector3( 1, 1, -1), IColor(255,255,255), 0,1, Vector3( 1, 0, 0)));
   this->cubeVerts.push_back(Vertex(Vector3( 1, 1,  1), IColor(255,255,255), 1,1, Vector3( 1, 0, 0)));
@@ -364,8 +381,7 @@ void Gfx::SetShader(const Shader *shader) {
 }
 
 void 
-Gfx::SetFog(float e, float l, const IColor &color) {
-  this->fogExp2 = e;
+Gfx::SetFog(float l, const IColor &color) {
   this->fogLin = l;
   this->fogColor = color;
 }
@@ -399,10 +415,10 @@ Gfx::SetTextureFrame(const Texture *texture, size_t stage, size_t currentFrame, 
   
   if (!texture) return;
   
-  this->view.textureMatrix = Matrix4();
+  this->view.textureStack.back() = Matrix4();
   
   if (frameCount > 1) {
-    this->view.textureMatrix = 
+    this->view.textureStack.back() = 
       Matrix4::Scale(Vector3(1.0/frameCount, 1, 1)) *
       Matrix4::Translate(Vector3(currentFrame, 0, 0));
   }
@@ -434,7 +450,6 @@ Gfx::SetUniforms() const {
   
   this->view.SetUniforms(this->activeShader);
   
-  this->activeShader->Uniform("u_fogExp2",  this->fogExp2);
   this->activeShader->Uniform("u_fogLin",   this->fogLin);
   this->activeShader->Uniform("u_fogColor", this->fogColor);
   this->activeShader->Uniform("u_time",     this->GetTime());
@@ -505,20 +520,21 @@ void Gfx::DrawSprite(const Sprite &sprite, const Vector3 &pos, bool billboard) {
   this->view.Push();
   this->view.Translate(pos);
 
+  // TODO: move to GfxView::Billboard(vertical);
   if (billboard) {
-    this->view.modelView(0,0) = 1; 
-    this->view.modelView(0,1) = 0;
-    this->view.modelView(0,2) = 0;
+    this->view.modelViewStack.back()(0,0) = 1; 
+    this->view.modelViewStack.back()(0,1) = 0;
+    this->view.modelViewStack.back()(0,2) = 0;
 
     if (!sprite.vertical) {
-      this->view.modelView(1,0) = 0; 
-      this->view.modelView(1,1) = 1;
-      this->view.modelView(1,2) = 0;
+      this->view.modelViewStack.back()(1,0) = 0; 
+      this->view.modelViewStack.back()(1,1) = 1;
+      this->view.modelViewStack.back()(1,2) = 0;
     }
     
-    this->view.modelView(2,0) = 0; 
-    this->view.modelView(2,1) = 0;
-    this->view.modelView(2,2) = 1;
+    this->view.modelViewStack.back()(2,0) = 0; 
+    this->view.modelViewStack.back()(2,1) = 0;
+    this->view.modelViewStack.back()(2,2) = 1;
     
     this->view.Translate(Vector3(sprite.offsetX, sprite.offsetY, 0));
   }
@@ -579,61 +595,59 @@ void GfxView::Look(const Vector3 &pos, const Vector3 &forward, float fovY, const
   float aspect = (float)gfx.viewportSize.x / (float)gfx.viewportSize.y;
   
   if (fovY > 0.0) {
-    this->proj = Matrix4::Perspective(fovY, aspect, 0.0015f, 64.0f);
+    this->projStack.back() = Matrix4::Perspective(fovY, aspect, 0.0015f, 64.0f);
   } else {
-    this->proj = Matrix4::Ortho(fovY*aspect, -fovY*aspect, fovY, -fovY, 0.0015f, 64.0f);
+    this->projStack.back() = Matrix4::Ortho(fovY*aspect, -fovY*aspect, fovY, -fovY, 0.0015f, 64.0f);
   }
   
-  this->modelView = Matrix4::LookFrom(pos, forward, up);
+  this->modelViewStack.back() = Matrix4::LookFrom(pos, forward, up);
   glEnable(GL_DEPTH_TEST);
 }
 
 void GfxView::GUI() {
-  this->proj = Matrix4();
+  this->projStack.back() = Matrix4();
 
-  this->modelView = 
+  this->modelViewStack.back() = 
     Matrix4::Scale(    Vector3(2.0/gfx.screenSize.x, -2.0/gfx.screenSize.y, 1)) *
     Matrix4::Translate(Vector3( -gfx.screenSize.x/2, -gfx.screenSize.y/2,   0));
     
   if (gfx.screenSize.x > 640) {
-    this->modelView = this->modelView * Matrix4::Scale(Vector3(2,2,1));
+    this->modelViewStack.back() = this->modelViewStack.back() * Matrix4::Scale(Vector3(2,2,1));
   }
   glDisable(GL_DEPTH_TEST);
 }
 
 void GfxView::Push() {
-  this->projStack.push_back(this->proj);
-  this->viewStack.push_back(this->modelView);
-  this->textureStack.push_back(this->textureMatrix);
+  this->projStack.push_back(this->projStack.back());
+  this->modelViewStack.push_back(this->modelViewStack.back());
+  this->textureStack.push_back(this->textureStack.back());
 }
 
 void GfxView::Pop() {
-  if (projStack.empty()) return;
-  
-  this->proj = this->projStack.back();
-  this->modelView = this->viewStack.back();
-  this->textureMatrix = this->textureStack.back();
-  
   this->projStack.pop_back();
-  this->viewStack.pop_back();
+  this->modelViewStack.pop_back();
   this->textureStack.pop_back();
+
+  if (projStack.empty())      projStack.push_back(Matrix4());
+  if (modelViewStack.empty()) modelViewStack.push_back(Matrix4());
+  if (textureStack.empty())   textureStack.push_back(Matrix4());
 }
 
 void GfxView::Translate(const Vector3 &p) {
-  this->modelView = this->modelView * Matrix4::Translate(p);
+  this->modelViewStack.back() = this->modelViewStack.back() * Matrix4::Translate(p);
 }
 
 void GfxView::Scale(const Vector3 &p) {
-  this->modelView = this->modelView * Matrix4::Scale(p);
+  this->modelViewStack.back() = this->modelViewStack.back() * Matrix4::Scale(p);
 }
 
 void GfxView::Rotate(float angle, const Vector3 &p)  {
-  this->modelView = this->modelView * Matrix4::Rotate(angle, p);
+  this->modelViewStack.back() = this->modelViewStack.back() * Matrix4::Rotate(angle, p);
 }
 
 void GfxView::SetUniforms(const Shader *shader) const {
-  shader->Uniform("u_matProjection",    this->proj);
-  shader->Uniform("u_matModelView",     this->modelView);
-  shader->Uniform("u_matTexture",       this->textureMatrix);
-  shader->Uniform("u_matNormal",        this->modelView.Mat3().Inverse());
+  shader->Uniform("u_matProjection",    this->projStack.back());
+  shader->Uniform("u_matModelView",     this->modelViewStack.back());
+  shader->Uniform("u_matTexture",       this->textureStack.back());
+  shader->Uniform("u_matNormal",        this->modelViewStack.back().Mat3().Inverse());
 }

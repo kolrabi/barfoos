@@ -18,22 +18,29 @@
 
 #include "vertex.h"
 
-World::World(Game &game, const IVector3 &size) : game(game)
+World::World(Game &game, const IVector3 &size) : 
+  game(game),
+  size(size),
+  dirty(true),
+  firstDirty(true),
+  cellCount(size.x * size.y * size.z),
+  cells(cellCount, Cell("default")),
+  defaultCell("default"),
+  defaultMask(cellCount, true),
+  dynamicCells(0),
+  nextTickT(0.0),
+  tickInterval(0.01),
+  ambientLight(32, 32, 64),
+  allVerts(0),
+  vertexStarts(),
+  vertexCounts(),
+  vbo(0),
+  seenFeatures(0),
+  checkOverwrite(false),
+  checkOverwriteOK(true),
+  instances(0),
+  defaultShader(new Shader("default"))
 {  
-  this->defaultShader = new Shader("default");
-  this->ambientLight = IColor(32,32,64);
-  this->checkOverwrite = false;
-  this->checkOverwriteOK = true;
-  this->size = size;
-  this->dirty = true;
-  this->firstDirty = true;
-
-  this->cellCount = size.x * size.y * size.z;
-  this->cells = std::vector<Cell>(this->cellCount, Cell("default"));
-  this->defaultMask = std::vector<bool>(this->cellCount, true);
-  
-  this->tickInterval = 0.01;
-  this->nextTickT = 0;
   glGenBuffers(1, &this->vbo);
 }
 
@@ -217,7 +224,7 @@ World::SetCell(const IVector3 &pos, const Cell &cell, bool ignoreLock) {
  
   size_t featId = this->cells[i].GetFeatureID();
   
-  CellInfo info = this->cells[i].GetInfo();
+  CellProperties info = this->cells[i].GetInfo();
   this->cells[i] = cell;
   this->cells[i].SetWorld(this, pos);
   this->cells[i].SetFeatureID(featId);
@@ -280,7 +287,7 @@ World::Draw(Gfx &gfx) {
 
     for (size_t i=0; i<this->cellCount; i++) {
       Cell &cell = this->cells[i];
-      const CellInfo &info = cell.GetInfo();
+      const CellProperties &info = cell.GetInfo();
 
       // don't bother with invisible cells 
       if (info.flags & CellFlags::DoNotRender || !cell.GetVisibility()) continue;

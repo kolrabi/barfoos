@@ -15,8 +15,6 @@ public:
 
   virtual void Update(Game &game) override;
   
-  virtual void Draw(Gfx &gfx) const override;
-  
 protected:
 
   float dieT;

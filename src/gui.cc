@@ -4,14 +4,16 @@
 #include "game.h"
 #include "input.h"
 
-Gui::Gui() {
-  this->gravN = true;
-  this->gravE = false;
-  this->gravS = false;
-  this->gravW = true;
-  
-  this->updateGravity = true;
-}
+Gui::Gui() :
+  rect(),
+  bottomRight(),
+  children(0),
+  gravN(true), 
+  gravE(false), 
+  gravS(false), 
+  gravW(true),
+  updateGravity(true)
+{}
 
 Gui::~Gui() {
 }

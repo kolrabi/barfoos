@@ -1,8 +1,11 @@
 #include "input.h"
 
-Input::Input() {
-  nextHandlerId = 0;
-}
+Input::Input() :
+  nextHandlerId(0),
+  handlers(),
+  activeKeys(),
+  lastActiveKeys()
+{}
 
 Input::~Input() {
 }

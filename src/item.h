@@ -9,9 +9,9 @@
 
 struct ItemProperties : public Properties {
   // rendering
-  Sprite sprite;
-  size_t equipAnim;
-  IColor light;
+  Sprite sprite = Sprite();
+  size_t equipAnim = 0;
+  IColor light {0,0,0};
   bool flicker = false;
 
   // gameplay
@@ -34,7 +34,7 @@ struct ItemProperties : public Properties {
   
   float breakBlockStrength = 0.0;
   
-  std::string replacement;
+  std::string replacement = "";
   
   // std::string placeEntity = "";
   std::string spawnProjectile = "";
@@ -49,7 +49,10 @@ class Item final {
 public:
 
   Item(const std::string &type);
+  Item(const Item &) = default;
   virtual ~Item();
+  
+  Item &operator=(const Item &) = default;
 
   void Update(Game &game);
   

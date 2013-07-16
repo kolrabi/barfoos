@@ -42,10 +42,12 @@ enum CellFlags {
   OnUseReplace = (1<<11),
 };
 
+#include "properties.h"
+
 /** Information about a cell shared by cells of same type. */
-struct CellInfo {
+struct CellProperties : public Properties {
   /** Name of cell type. */
-  std::string type = "default";
+  std::string type;
   
   /** An array of textures to randomly choose from on cell creation. */
   std::vector<const Texture *> textures;
@@ -58,19 +60,19 @@ struct CellInfo {
   /** Default flags for cell. @see CellFlags.
     * Default: Nonsolid, nontransparent, render.
     */
-  uint32_t flags = 0;
+  uint32_t flags;
   
   /** Light attenuation factor of light passing through this cell. 
     * This is only used for transparent cells. Nontransparent cells 
     * always have a factor of 0.
     * Default: 85%.
     */
-  float lightFactor = 0.85;
+  float lightFactor;
   
   /** Light reduction value. This value is subtracted from all components of light passing through. 
     * Default: 0, don't reduce light.
     */
-  int lightFade = 0;
+  int lightFade;
 
   /** Name of cell type with which to replace this cell under certain conditions. 
     * Default: "", don't replace.
@@ -80,64 +82,65 @@ struct CellInfo {
   /** If nonzero, the chance per tick to replace this cell. 
     * Default: 0.0, don't replace.
     */
-  float replaceChance = 0.0;
+  float replaceChance;
   
   /** If nonzero, replace this cell when cell detail goes below this value. 
     * Default: 0, don't replace.
     */
-  size_t detailBelowReplace = 0;
+  size_t detailBelowReplace;
   
   /** Rendering scale of this cell. Has no effect on collision detection. 
     * Default: [1,1,1], don't change size.
     */
-  Vector3 scale = Vector3(1,1,1);
+  Vector3 scale;
   
-  float speedModifier = 1.0;
-  float friction = 1.0;
+  float speedModifier;
+  float friction;
 
-  size_t showSides = 0;
-  size_t hideSides = 0;
-  size_t clipSidesIn = 0;  // default: don't clip movement into cell from all sides when solid
-  size_t clipSidesOut = 0; // default: don't clip movement out of cell to all sides when solid
+  size_t showSides;
+  size_t hideSides;
+  size_t clipSidesIn;  // default: don't clip movement into cell from all sides when solid
+  size_t clipSidesOut; // default: don't clip movement out of cell to all sides when solid
   
-  size_t onUseCascade = 0;
-  float useDelay = 0.0;
-  
-  float breakStrength = 1.0;
-  
-  float lavaDamage = 0.0;
+  size_t onUseCascade;
+  float useDelay;
+  float breakStrength;
+  float lavaDamage;
 
-  CellInfo() {}
-  CellInfo(const std::string &name, FILE *f);
+  CellProperties(); 
   
-  bool operator==(const CellInfo &that) const {
+  virtual void ParseProperty(const std::string &name);
+  
+  bool operator==(const CellProperties &that) const {
     return this == &that;
   }
 
-  bool operator!=(const CellInfo &that) const {
+  bool operator!=(const CellProperties &that) const {
     return this != &that;
   }
 };
 
 /** A cell in the world. */
-class Cell {
+class Cell final {
 public:
 
   Cell(const std::string &type = "default");
   Cell(const Cell &that);
   ~Cell();
   
+  Cell &operator=(const Cell &that);
+  
   void Update(Game &game);
   
   void OnUse(Game &game, Mob &user);
   
-  virtual void UpdateNeighbours();
+  void UpdateNeighbours();
   
-  virtual void Draw(std::vector<Vertex> &vertices) const;
-  virtual void DrawHighlight(std::vector<Vertex> &vertices) const;
+  void Draw(std::vector<Vertex> &vertices) const;
+  void DrawHighlight(std::vector<Vertex> &vertices) const;
   
   const std::string &GetType() const;
-  const CellInfo &GetInfo() const;
+  const CellProperties &GetInfo() const;
 
   uint8_t GetVisibility() const;
   void SetVisibility(uint8_t visibility);
@@ -201,7 +204,7 @@ protected:
   static const int OffsetScale = 127;
 
   // unique information, that will change after assignment from different cell
-  const CellInfo *info;
+  const CellProperties *info;
   World *world;
   IVector3 pos;
   bool dirty;
@@ -221,7 +224,7 @@ protected:
   float lastUseT;
 
   // shared information, that will stay the same after assignment from different cell
-  struct {
+  struct SharedInfo {
     size_t tickInterval;
     
     // map generation
@@ -234,7 +237,6 @@ protected:
     bool reversedTop;
     bool reversedBottom;
     
-    uint8_t visibilityOverride;
     int8_t topHeights[4], bottomHeights[4];
     float u[4], v[4];
 
@@ -242,6 +244,23 @@ protected:
     float smoothDetail;
     
     uint32_t nextDetail;
+    
+    SharedInfo(const CellProperties *info) :
+      tickInterval( info->flags & CellFlags::Viscous ? 32 : 5 ),
+      isLocked(false),
+      ignoreLock(false),
+      ignoreWrite(false),
+      featureID(~0UL),
+      reversedTop(false),
+      reversedBottom(false),
+      topHeights { OffsetScale, OffsetScale, OffsetScale, OffsetScale },
+      bottomHeights { 0, 0, 0, 0 },
+      u { 0,0,0,0 },
+      v { 0,0,0,0 },
+      detail( info->flags & CellFlags::Liquid ? 15 : 0 ),
+      smoothDetail( detail ),
+      nextDetail( detail )
+    { }
   } shared;
   
   float YOfs(size_t n)  const { return this->shared.topHeights[n]/(float)OffsetScale; }
@@ -266,7 +285,7 @@ inline IVector3 Cell::GetPosition() const {
   return this->pos; 
 }
 
-inline const CellInfo &Cell::GetInfo() const { 
+inline const CellProperties &Cell::GetInfo() const { 
   return *this->info; 
 }
 
@@ -366,7 +385,6 @@ inline Cell &Cell::operator[](Side side) {
 }
 
 void LoadCells();
-bool IsCellTypeNameValid(const std::string &name);
 
 #endif
 

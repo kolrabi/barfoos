@@ -106,23 +106,22 @@ LoadItems() {
     FILE *f = openAsset("items/"+name);
     if (f) {
       std::cerr << "loading item " << name << std::endl;
-      allItems[name] = ItemProperties();
       allItems[name].ParseFile(f);
       fclose(f);
     }
   }
 }
 
-Item::Item(const std::string &type) 
-: properties(&getItem(type)) {
-  this->durabilityTex = loadTexture("gui/durability");
-  this->sprite = this->properties->sprite;
-  this->nextUseT = 0;
-  this->isEquipped = false;
-  this->isRemovable = false;
-  this->durability = this->properties->durability;
-  this->cooldownFrac = 0;
-}
+Item::Item(const std::string &type) : 
+  properties(&getItem(type)),
+  durabilityTex(loadTexture("gui/durability")),
+  isRemovable(false),
+  sprite(this->properties->sprite),
+  cooldownFrac(0),
+  durability(this->properties->durability),
+  isEquipped(false),
+  nextUseT(0.0)
+{}
 
 Item::~Item() {
 }

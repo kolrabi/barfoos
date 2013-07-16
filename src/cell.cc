@@ -11,63 +11,74 @@
 
 #include "texture.h"
   
-static std::map<std::string, CellInfo> cellInfos;
+static std::map<std::string, CellProperties> cellProperties;
 
-CellInfo::CellInfo(const std::string &name, FILE *f) : type(name) {
-  char line[256];
-  this->flags = 0;
+CellProperties::CellProperties() :
+  type("default"),
+  textures(0),
+  light(0,0,0),
+  flags(0),
+  lightFactor(0.85),
+  lightFade(0),
+  replace(""),
+  replaceChance(0.0),
+  detailBelowReplace(0),
+  scale(1.0, 1.0, 1.0),
+  speedModifier(1.0),
+  friction(1.0),
+  showSides(0),
+  hideSides(0),
+  clipSidesIn(0),
+  clipSidesOut(0),
+  onUseCascade(0),
+  useDelay(0.0),
+  breakStrength(1.0),
+  lavaDamage(0.0)
+{}
+
+void CellProperties::ParseProperty(const std::string &cmd) {
+  if (cmd == "tex")               Parse("cells/texture/", this->textures);
   
-  while(fgets(line, 256, f) && !feof(f)) {
-    std::vector<std::string> tokens = Tokenize(line);
-    if (tokens.size() == 0) continue;
-    
-    for (auto &c:tokens[0]) c = ::tolower(c);
-    
-    if (tokens[0] == "tex") {
-      this->textures.push_back(loadTexture("cells/texture/"+tokens[1]));
-    } else if (tokens[0] == "light") {
-      this->light = IColor(std::atoi(tokens[1].c_str()), std::atoi(tokens[2].c_str()), std::atoi(tokens[3].c_str()));
-    } else if (tokens[0] == "lightscale") this->light = this->light * (float)std::atof(tokens[1].c_str());
-    else if (tokens[0] == "lightfactor")  this->lightFactor = std::atof(tokens[1].c_str());
-    else if (tokens[0] == "lightfade")    this->lightFade   = std::atoi(tokens[1].c_str());
-    
-    else if (tokens[0] == "uvturb")       this->flags |= UVTurb | Dynamic;
-    else if (tokens[0] == "wave")         this->flags |= Waving | Dynamic;
-    else if (tokens[0] == "solid")      { this->flags |= Solid  | Pickable; this->clipSidesIn = ~0; }
-    else if (tokens[0] == "dynamic")      this->flags |= Dynamic;
-    else if (tokens[0] == "liquid")       this->flags |= Liquid;
-    else if (tokens[0] == "norender")     this->flags |= DoNotRender;
-    else if (tokens[0] == "transparent")  this->flags |= Transparent;
-    else if (tokens[0] == "doublesided")  this->flags |= DoubleSided;
-    else if (tokens[0] == "pickable")     this->flags |= Pickable; 
-    else if (tokens[0] == "onusereplace") this->flags |= OnUseReplace;
-    
-    else if (tokens[0] == "speed")        this->speedModifier = std::atof(tokens[1].c_str());
-    else if (tokens[0] == "friction")     this->friction      = std::atof(tokens[1].c_str());
-    
-    else if (tokens[0] == "showsides")    this->showSides     = ParseSidesMask(tokens[1]);
-    else if (tokens[0] == "hidesides")    this->hideSides     = ParseSidesMask(tokens[1]);
-    else if (tokens[0] == "clipsidesin")  this->clipSidesIn   = ParseSidesMask(tokens[1]);
-    else if (tokens[0] == "clipsidesout") this->clipSidesOut  = ParseSidesMask(tokens[1]);
-    
-    else if (tokens[0] == "onusecascade") this->onUseCascade  = ParseSidesMask(tokens[1]);
-    else if (tokens[0] == "usedelay")     this->useDelay      = std::atof(tokens[1].c_str());
-    
-    else if (tokens[0] == "replace")      this->replace = tokens[1];
+  else if (cmd == "light")        Parse(this->light);
+  else if (cmd == "lightscale")   { float f; Parse(f); this->light = this->light * f; }
+  else if (cmd == "lightfactor")  Parse(this->lightFactor);
+  else if (cmd == "lightfade")    Parse(this->lightFade);
+  
+  else if (cmd == "uvturb")       this->flags |= UVTurb | Dynamic;
+  else if (cmd == "wave")         this->flags |= Waving | Dynamic;
+  else if (cmd == "solid")      { this->flags |= Solid  | Pickable; this->clipSidesIn = ~0; }
+  else if (cmd == "dynamic")      this->flags |= Dynamic;
+  else if (cmd == "liquid")       this->flags |= Liquid;
+  else if (cmd == "norender")     this->flags |= DoNotRender;
+  else if (cmd == "transparent")  this->flags |= Transparent;
+  else if (cmd == "doublesided")  this->flags |= DoubleSided;
+  else if (cmd == "pickable")     this->flags |= Pickable; 
+  else if (cmd == "onusereplace") this->flags |= OnUseReplace;
+  else if (cmd == "multi")        this->flags |= MultiSided;
+  
+  else if (cmd == "speed")        Parse(this->speedModifier);
+  else if (cmd == "friction")     Parse(this->friction);
+  
+  else if (cmd == "showsides")    ParseSideMask(this->showSides);
+  else if (cmd == "hidesides")    ParseSideMask(this->hideSides);
+  else if (cmd == "clipsidesin")  ParseSideMask(this->clipSidesIn);
+  else if (cmd == "clipsidesout") ParseSideMask(this->clipSidesOut);
+  
+  else if (cmd == "onusecascade") ParseSideMask(this->onUseCascade);
+  else if (cmd == "usedelay")     Parse(this->useDelay);
+  
+  else if (cmd == "replace")      Parse(this->replace);
 
-    else if (tokens[0] == "strength")     this->breakStrength = std::atof(tokens[1].c_str());
-    else if (tokens[0] == "lavadamage")   this->lavaDamage = std::atof(tokens[1].c_str());
-    
-    else if (tokens[0] == "detailbelowreplace") {
-      this->detailBelowReplace = std::atoi(tokens[1].c_str());
-      this->replaceChance = std::atof(tokens[2].c_str());
-    } else if (tokens[0] == "scale") {
-      this->scale = Vector3(std::atof(tokens[1].c_str()), std::atof(tokens[2].c_str()), std::atof(tokens[3].c_str()));
-    } else if (tokens[0] == "multi") this->flags |= MultiSided;
-    else {
-      Log("Ignoring '%s'\n", tokens[0].c_str());
-    }
-  }
+  else if (cmd == "strength")     Parse(this->breakStrength);
+  else if (cmd == "lavadamage")   Parse(this->lavaDamage);
+  
+  else if (cmd == "scale")        Parse(this->scale);
+  
+  else if (cmd == "detailbelowreplace") {
+    Parse(this->detailBelowReplace);
+    Parse(this->replaceChance);
+  } 
+  else SetError("Ignoring '" + cmd + "'\n");
 }
 
 void LoadCells() {
@@ -75,74 +86,72 @@ void LoadCells() {
   for (const std::string &name : assets) {
     FILE *f = openAsset("cells/"+name);
     if (f) {
-      std::cerr << "loading cell info " << name << std::endl;
-      cellInfos[name] = CellInfo(name, f);
+      std::cerr << "Loading cell properties for " << name << std::endl;
+      cellProperties[name].ParseFile(f);
+      cellProperties[name].type = name;
       fclose(f);
     }
   }
 }
 
-bool IsCellTypeNameValid(const std::string &name) {
-  return cellInfos.find(name) != cellInfos.end();
-}
-
 // -------------------------------------------------------------------------
 
-Cell::Cell(const std::string &type) 
-: info(&cellInfos[type])
+Cell::Cell(const std::string &type) : 
+  info(&cellProperties[type]),
+  world(nullptr),
+  pos(0,0,0),
+  dirty(true),
+  
+  tickPhase(0),
+  lightLevel(0,0,0),
+  lastT(0.0),
+  visibility(0),
+  reversedSides(false),
+  verts(0),
+  
+  texture(nullptr),
+  uscale(1.0),
+  
+  lastUseT(0.0),
+  
+  shared(info)
 {
-  // shared information
-  if (info->flags & CellFlags::Viscous) {
-    this->shared.tickInterval = 32;
-  } else {
-    this->shared.tickInterval = 5;
-  }
-  
-  this->shared.isLocked = false;
-  this->shared.ignoreLock = false;
-  this->shared.ignoreWrite = false;
-  this->shared.featureID = ~0;
-
-  this->shared.reversedTop = 
-  this->shared.reversedBottom = false;
-  this->shared.visibilityOverride = 0;
-  
+  // unique information
   this->SetYOffsets(1,1,1,1);
   this->SetYOffsetsBottom(0,0,0,0);
 
-  this->shared.u[0] = 0;  this->shared.u[1] = 0;  this->shared.u[2] = 0;  this->shared.u[3] = 0;
-  this->shared.v[0] = 0;  this->shared.v[1] = 0;  this->shared.v[2] = 0;  this->shared.v[3] = 0;
-
-  if (this->IsLiquid()) {
-    this->shared.smoothDetail = this->shared.detail = 15;
-    this->shared.detail = 15;
-  } else {
-    this->shared.smoothDetail = this->shared.detail = 0;
-    this->shared.detail = 0;
-  }
-  
-  // unique information
-  this->world = nullptr;
-  this->tickPhase = 0;
-  
   for (size_t i=0; i<6; i++)
     this->neighbours[i] = nullptr;
-
-  this->visibility = 0;
-  this->reversedSides = false;
-
-  this->texture = nullptr;
-  this->uscale = 1.0;
-  
-  this->lastUseT = 0;
-  
-  this->dirty = true;
 }
 
 Cell::Cell(const Cell &that)
-: info(that.info), shared(that.shared)
+: info(that.info), 
+  world(nullptr),
+  pos(0,0,0),
+  dirty(true),
+  
+  tickPhase(0),
+  lightLevel(0,0,0),
+  lastT(0.0),
+  visibility(0),
+  reversedSides(false),
+  verts(0),
+  
+  texture(nullptr),
+  uscale(1.0),
+  
+  lastUseT(0.0),
+  
+  shared(that.shared)
+{}
+
+Cell &
+Cell::operator =(const Cell &that)
 {
+  this->shared = that.shared;
+  
   // unique information
+  this->info = that.info;
   this->world = nullptr;
   this->tickPhase = 0;
   this->visibility = 0;
@@ -154,9 +163,12 @@ Cell::Cell(const Cell &that)
   this->texture = that.texture;
   this->uscale = that.uscale;
   
-  this->lastUseT = 0;
+  this->lastUseT = 0.0;
+  this->lastT = 0.0;
 
   this->dirty = true;
+  
+  return self;
 }
 
 Cell::~Cell() {
@@ -492,8 +504,6 @@ Cell::UpdateNeighbours(
   if (!this->IsBottomFlat()) this->visibility |= 1<<Side::Down;
 
   // override
-  this->visibility |= this->shared.visibilityOverride;
-  
   this->visibility |= this->info->showSides;
   this->visibility &= ~(this->info->hideSides);
 

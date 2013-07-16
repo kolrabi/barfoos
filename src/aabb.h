@@ -10,7 +10,22 @@ struct AABB {
   
   /** Half the size of the box. */
   Vector3 extents;
+  
+  AABB() : 
+    center(),
+    extents()
+  {}
 
+  AABB(const Vector3 &extents) : 
+    center(),
+    extents(extents)
+  {}
+
+  AABB(const Vector3 &center, const Vector3 &extents) : 
+    center(center),
+    extents(extents)
+  {}
+  
   /** Test if another AABB overlaps the box. 
    * @param o AABB to check against.
    * @return true if @a this and @a o overlap.

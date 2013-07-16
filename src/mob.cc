@@ -6,22 +6,29 @@
 
 #include <cmath>
 
-Mob::Mob(const std::string &propertyName) : Entity(propertyName) {
-  this->onGround = false;
-  this->wantJump = false;
-  this->lastJumpT = 0;
+Mob::Mob(const std::string &propertyName) : 
+  Entity          (propertyName),
   
-  this->inWater  = false;
-  this->underWater  = false;
-
-  this->headCell = this->groundCell = this->footCell = nullptr;
-
-  this->sneak = false;
-  this->noclip = false;
+  velocity        (0, 0, 0),
+  move            (0, 0, 0),
   
-  this->nextMoveT = 0;
-  this->validMoveTarget = false;
-}
+  wantJump        (false),
+  lastJumpT       (0.0),
+  
+  onGround        (false),
+  inWater         (false),
+  underWater      (false),
+  noclip          (false),
+  sneak           (false),
+  
+  nextMoveT       (0.0),
+  moveTarget      (0,0,0),
+  validMoveTarget (false),
+  
+  headCell        (nullptr),
+  footCell        (nullptr),
+  groundCell      (nullptr)
+{}
 
 Mob::~Mob() {
 }
@@ -103,7 +110,7 @@ Mob::Update(Game &game) {
     
     Vector3 step(0, move.GetMag()!=0 ? this->properties->stepHeight : 0, 0);
     Vector3 org = aabb.center + velocity.Horiz() * deltaT;
-    bool downStep = false;
+    bool downStep;
     
     aabb.center = world.MoveAABB(aabb, aabb.center + step);
     aabb.center = world.MoveAABB(aabb, aabb.center + velocity.Horiz()*deltaT, axis, &cell, &side);

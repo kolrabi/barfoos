@@ -56,6 +56,7 @@ enum class  InventorySlot : size_t;
 
 struct AABB;
 struct Animation;
+struct FeatureInstance;
 struct IColor;
 struct IVector3;
 struct InputEvent;
@@ -73,6 +74,7 @@ class Game;
 class Gfx;
 class GLFWwindow;
 class Gui;
+class Item;
 class Input;
 class InventoryGui;
 class Mob;

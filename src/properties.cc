@@ -126,6 +126,14 @@ Properties::Parse(const std::string &prefix, const Texture *&t) {
 }
 
 void 
+Properties::Parse(const std::string &prefix, std::vector<const Texture *> &t) {
+  const Texture *tex = nullptr;
+  Parse(prefix, tex);
+  if (tex) t.push_back(tex);
+}
+
+
+void 
 Properties::Parse(std::string &str) {
   if (tokens.size() == 0) {
     this->SetError("unexpected end of line, expecting string");
@@ -140,3 +148,29 @@ Properties::SetError(const std::string &error) {
   if (this->lastError != "") return;
   this->lastError = error;
 }
+
+void
+Properties::ParseSideMask(size_t &sides) {
+  if (tokens.size() == 0) {
+    this->SetError("unexpected end of line, expecting string");
+    return;
+  }
+  const std::string &str = tokens[0];
+
+  sides = 0;
+  for (auto c:str) {
+    c = ::tolower(c);
+    std::cerr << c << std::endl;
+    switch(c) {
+      case 'l': sides |= 1<<Side::Left;     break;
+      case 'r': sides |= 1<<Side::Right;    break;
+      case 'u': sides |= 1<<Side::Up;       break;
+      case 'd': sides |= 1<<Side::Down;     break;
+      case 'f': sides |= 1<<Side::Forward;  break;
+      case 'b': sides |= 1<<Side::Backward; break;
+      default: break;
+    }
+  }
+  tokens.erase(tokens.begin());
+}
+
