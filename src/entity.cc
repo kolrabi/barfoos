@@ -70,10 +70,10 @@ EntityProperties::ParseProperty(const std::string &cmd) {
   else if (cmd == "eyeoffset")        Parse(this->eyeOffset);
   else if (cmd == "glow")             Parse(this->glow);
   else if (cmd == "inventory") {
-    std::string type;
     float prob;
-    Parse(type);
+    std::string type;
     Parse(prob);
+    Parse(type);
     
     this->items.push_back({type, prob});
   } else if (cmd == "cell") {
@@ -130,7 +130,9 @@ Entity::Start(Game &game, size_t id) {
   // fill inventory with random crap
   for (auto item : this->properties->items) {
     if (game.GetRandom().Chance(item.second)) {
-      this->GetInventory().AddToBackpack(std::shared_ptr<Item>(new Item(item.first)));
+      Item *ii = new Item(item.first);
+      Log("%p\n", ii->GetProperties().sprite.texture);
+      this->GetInventory().AddToBackpack(std::shared_ptr<Item>(ii));
     }
   }
   

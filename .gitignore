@@ -12,3 +12,4 @@
 .thumbnails
 .deps
 Makefile
+/doc
