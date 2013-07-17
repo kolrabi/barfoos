@@ -13,6 +13,11 @@
 
 #include "properties.h"
 
+struct EntityDrawBox {
+  const Texture *texture = nullptr;
+  AABB aabb = AABB();
+};
+
 struct EntityProperties : public Properties {
 
   // rendering
@@ -21,6 +26,7 @@ struct EntityProperties : public Properties {
   IColor  glow              = IColor(0,0,0);
   size_t  flinchAnim        = ~0UL;   //< Animation to play when hurt.
   size_t  dyingAnim         = ~0UL;   //< Animation to play on death.
+  std::vector<EntityDrawBox> drawBoxes = std::vector<EntityDrawBox>(0);
   
   // movement
   float   stepHeight        = 0.5;    //< Allow entity to climb stairs.

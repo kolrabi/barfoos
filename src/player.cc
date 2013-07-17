@@ -228,7 +228,7 @@ Player::UpdateInput(
   if (input.IsKeyActive(InputKey::Forward))   move = move + fwd   * speed;
   if (input.IsKeyActive(InputKey::Backward))  move = move - fwd   * speed;
 
-  if (move.GetMag() > 1.5) {
+  if (!this->inWater && move.GetMag() > 1.5) {
     bobAmplitude += deltaT*4;
     if (bobAmplitude > 1.0) bobAmplitude = 1.0;
   } else {
@@ -319,6 +319,7 @@ Player::DrawGUI(Gfx &gfx) const {
   }
 
   // draw health bar
+  gfx.SetColor(IColor(255,255,255));
   std::stringstream strHealth;
   int h = 10 * this->health / this->GetEffectiveStats().maxHealth;
   for (int i=0; i<10; i++) {
@@ -331,12 +332,12 @@ Player::DrawGUI(Gfx &gfx) const {
   rsHealth.Draw(gfx, 0+4, vsize.y-4, (int)Align::HorizLeft | (int)Align::VertBottom);
   
   char tmp[1024];
-  snprintf(tmp, sizeof(tmp), "Base stats: str %3d dex %3d agi %3d\ndef %3d max hp %3d exp %f", this->baseStats.str, this->baseStats.dex, this->baseStats.agi, this->baseStats.def, this->baseStats.maxHealth, this->baseStats.exp);
-  RenderString(tmp).Draw(gfx, 0,vsize.y-32);
-  snprintf(tmp, sizeof(tmp), "Effective : str %3d dex %3d agi %3d\ndef %3d max hp %3d exp %f", this->GetEffectiveStats().str, this->GetEffectiveStats().dex, this->GetEffectiveStats().agi, this->GetEffectiveStats().def, this->GetEffectiveStats().maxHealth, this->GetEffectiveStats().exp);
-  RenderString(tmp).Draw(gfx, 0,vsize.y-32-16);
+  snprintf(tmp, sizeof(tmp), "Base stats: str %3d dex %3d agi %3d def %3d max hp %3d exp %f", this->baseStats.str, this->baseStats.dex, this->baseStats.agi, this->baseStats.def, this->baseStats.maxHealth, this->baseStats.exp);
+  RenderString(tmp, "small").Draw(gfx, 0,vsize.y-32);
+  snprintf(tmp, sizeof(tmp), "Effective : str %3d dex %3d agi %3d def %3d max hp %3d exp %f", this->GetEffectiveStats().str, this->GetEffectiveStats().dex, this->GetEffectiveStats().agi, this->GetEffectiveStats().def, this->GetEffectiveStats().maxHealth, this->GetEffectiveStats().exp);
+  RenderString(tmp, "small").Draw(gfx, 0,vsize.y-32-16);
   snprintf(tmp, sizeof(tmp), "Level %u %f", this->GetEffectiveStats().GetLevel(), Stats::GetExpForLevel(this->GetEffectiveStats().GetLevel() + 1) - this->GetEffectiveStats().exp);
-  RenderString(tmp).Draw(gfx, 0,vsize.y-32-24);
+  RenderString(tmp, "small").Draw(gfx, 0,vsize.y-32-24);
 }
 
 void

@@ -57,7 +57,6 @@ World::Build(Game &game) {
   IVector3 r(random.Integer(), random.Integer(), random.Integer());
   size_t featureCount  = random.Integer(400)+100;             // 100 - 500
   float  useLastChance = 0.1 + random.Float01()*0.8;          // 0.1 - 0.9
-  size_t caveCount     = random.Integer(30)+5;                //   5 -  35
   size_t caveLengthMin = random.Integer(20);                  //   0 -  20
   size_t caveLengthMax = caveLengthMin + random.Integer(100); //   0 - 200
   size_t caveRepeat    = random.Integer(20)+1;                //   1 -  21
@@ -176,6 +175,7 @@ World::Build(Game &game) {
   
   // create caves
   e.SetBrush(Cell("air"));
+  size_t caveCount     = random.Integer(instances.size()/10);
 
   for (size_t i = 0; i<caveCount; i++) {
     size_t featNum = random.Integer(instances.size());

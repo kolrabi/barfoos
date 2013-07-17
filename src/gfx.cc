@@ -77,8 +77,8 @@ Gfx::Gfx(const Point &pos, const Point &size, bool fullscreen) :
   fogLin(0.05),
   fogColor(64, 64, 64),
   
-  lightPositions(8),
-  lightColors(8)
+  lightPositions(MaxLights),
+  lightColors(MaxLights)
 {
   // unit cube vertices
   this->cubeVerts.push_back(Vertex(Vector3( 1, 1, -1), IColor(255,255,255), 0,1, Vector3( 1, 0, 0)));
@@ -391,8 +391,8 @@ Gfx::SetLights(const std::vector<Vector3> &positions, const std::vector<IColor> 
   this->lightPositions = positions;
   this->lightColors = colors;
   
-  if (this->lightColors.size() < 8) this->lightColors.resize(8);
-  if (this->lightPositions.size() < 8) this->lightPositions.resize(8);
+  if (this->lightColors.size() > MaxLights) this->lightColors.resize(MaxLights);
+  if (this->lightPositions.size() > MaxLights) this->lightPositions.resize(MaxLights);
 }
 
 void 
@@ -600,6 +600,7 @@ void GfxView::Look(const Vector3 &pos, const Vector3 &forward, float fovY, const
     this->projStack.back() = Matrix4::Ortho(fovY*aspect, -fovY*aspect, fovY, -fovY, 0.0015f, 64.0f);
   }
   
+  this->viewStack.back() = 
   this->modelViewStack.back() = Matrix4::LookFrom(pos, forward, up);
   glEnable(GL_DEPTH_TEST);
 }
@@ -614,22 +615,26 @@ void GfxView::GUI() {
   if (gfx.screenSize.x > 640) {
     this->modelViewStack.back() = this->modelViewStack.back() * Matrix4::Scale(Vector3(2,2,1));
   }
+  this->viewStack.back() = this->modelViewStack.back();
   glDisable(GL_DEPTH_TEST);
 }
 
 void GfxView::Push() {
   this->projStack.push_back(this->projStack.back());
   this->modelViewStack.push_back(this->modelViewStack.back());
+  this->viewStack.push_back(this->viewStack.back());
   this->textureStack.push_back(this->textureStack.back());
 }
 
 void GfxView::Pop() {
   this->projStack.pop_back();
   this->modelViewStack.pop_back();
+  this->viewStack.pop_back();
   this->textureStack.pop_back();
 
   if (projStack.empty())      projStack.push_back(Matrix4());
   if (modelViewStack.empty()) modelViewStack.push_back(Matrix4());
+  if (viewStack.empty()) viewStack.push_back(Matrix4());
   if (textureStack.empty())   textureStack.push_back(Matrix4());
 }
 
@@ -648,6 +653,8 @@ void GfxView::Rotate(float angle, const Vector3 &p)  {
 void GfxView::SetUniforms(const Shader *shader) const {
   shader->Uniform("u_matProjection",    this->projStack.back());
   shader->Uniform("u_matModelView",     this->modelViewStack.back());
+  shader->Uniform("u_matView",          this->viewStack.back());
+  shader->Uniform("u_matInvModelView",  this->modelViewStack.back().Inverse());
   shader->Uniform("u_matTexture",       this->textureStack.back());
-  shader->Uniform("u_matNormal",        this->modelViewStack.back().Mat3().Inverse());
+  shader->Uniform("u_matNormal",        this->modelViewStack.back().Mat3().Inverse().Transpose());
 }

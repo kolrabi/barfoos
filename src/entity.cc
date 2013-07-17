@@ -65,7 +65,13 @@ EntityProperties::ParseProperty(const std::string &cmd) {
     Parse(this->extents);
     this->sprite.width = this->extents.x;
     this->sprite.height = this->extents.y;
-      
+  } else if (cmd == "drawbox") {
+    EntityDrawBox box;
+    Parse("entities/texture/", box.texture);
+    Parse(box.aabb.center);
+    Parse(box.aabb.extents);
+    this->drawBoxes.push_back(box);
+  
   } else if (cmd == "gravity")        Parse(this->gravity);
   else if (cmd == "eyeoffset")        Parse(this->eyeOffset);
   else if (cmd == "glow")             Parse(this->glow);
@@ -136,7 +142,6 @@ Entity::Start(Game &game, size_t id) {
   for (auto item : this->properties->items) {
     if (game.GetRandom().Chance(item.second)) {
       Item *ii = new Item(item.first);
-      Log("%p\n", ii->GetProperties().sprite.texture);
       this->GetInventory().AddToBackpack(std::shared_ptr<Item>(ii));
     }
   }
@@ -232,6 +237,15 @@ Entity::Think(Game &game) {
 void
 Entity::Draw(Gfx &gfx) const {
   gfx.SetColor(this->cellLight + this->GetLight(), 1.0);
+  
+  for (auto &box : this->properties->drawBoxes) {
+    AABB aabb = box.aabb;
+    aabb.center = aabb.center + this->GetSmoothPosition();
+    
+    gfx.SetTextureFrame(box.texture,0,0,8);
+    gfx.DrawAABB(aabb);
+  }
+  
   if (this->properties->isBox) {
     gfx.SetTextureFrame(this->properties->sprite.texture,0,0,8);
     gfx.DrawAABB(this->aabb);

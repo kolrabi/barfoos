@@ -86,6 +86,9 @@ Shader::Uniform(const std::string &name, const std::vector<IColor> &value) const
   glUseProgramObjectARB(program);
   int loc = glGetUniformLocationARB(program, name.c_str());
   glUniform4fv(loc, value.size(), rgb);
+
+  loc = glGetUniformLocationARB(program, (name+"_length").c_str());
+  glUniform1i(loc, value.size());
 }
 
 void 
@@ -108,6 +111,9 @@ Shader::Uniform(const std::string &name, const std::vector<Vector3> &value) cons
   glUseProgramObjectARB(program);
   int loc = glGetUniformLocationARB(program, name.c_str());
   glUniform3fv(loc, value.size(), xyz);
+  
+  loc = glGetUniformLocationARB(program, (name+"_length").c_str());
+  glUniform1i(loc, value.size());
 }
   
 void 

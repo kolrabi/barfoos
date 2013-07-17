@@ -153,7 +153,7 @@ struct Matrix4 {
     t(3,2) = -(m(2,0) * d24 + m(2,1) * d41 + m(2,3) * d12) * invDet;
     t(3,3) =  (m(2,0) * d23 - m(2,1) * d13 + m(2,2) * d12) * invDet;
 
-    return t;
+    return t.Transpose();
   }
   
   Matrix4 ModelViewToNormal() const {

@@ -56,42 +56,45 @@ Mob::Update(Game &game) {
   float friction = 1.0 / (1.0+deltaT * 10 * footFriction * groundFriction);
   
   float tvx = std::abs(move.x) > std::abs(velocity.x) ? move.x : velocity.x;
+  float tvy = velocity.y;
   float tvz = std::abs(move.z) > std::abs(velocity.z) ? move.z : velocity.z;
-  
-  velocity.x += (tvx-velocity.x) * groundFriction * deltaT * 10;
-  velocity.z += (tvz-velocity.z) * groundFriction * deltaT * 10;
-  
+
   if (noclip) {
     if (wantJump) {
-      velocity.y = 3;
+      tvy = 3;
       wantJump = false;
     } else if (sneak) {
-      velocity.y = -3;
+      tvy = -3;
       sneak = false;
     } else {
-      velocity.y = 0;
+      tvy = 0;
     }
   } else if (inWater) { 
     if (wantJump) {
-      velocity.y += gravity * (underWater?2:1);
+      tvy = 3 * friction;
       wantJump = false;
     } else {
-      velocity.y -= gravity;
+      tvy = -3 * friction;
     }
-    velocity.y = velocity.y * friction;
   } else {
-    velocity.y -= gravity;
+    tvy = velocity.y -= gravity;
     if (wantJump && onGround) {
       if (game.GetTime() - lastJumpT > 0.5) {
-        velocity.y = 8;
+        tvy = velocity.y = 8;
         lastJumpT = game.GetTime();
       }
     }
     wantJump = false;
   }
+  
+  velocity.x += (tvx-velocity.x) * groundFriction * deltaT * 10;
+  velocity.y += (tvy-velocity.y) * groundFriction * deltaT * 10;
+  velocity.z += (tvz-velocity.z) * groundFriction * deltaT * 10;
+  
 
   if (!this->properties->noFriction) {
     velocity.x = velocity.x * friction;
+    if (this->inWater) velocity.y = velocity.y * friction;
     velocity.z = velocity.z * friction;
   }
 
@@ -165,7 +168,7 @@ Mob::Update(Game &game) {
   }
 
   underWater = headCell->GetInfo().flags & CellFlags::Liquid;
-  if (!noclip) this->SetInLiquid(footCell->GetInfo().flags & CellFlags::Liquid);
+  if (!noclip) this->SetInLiquid(footCell->GetInfo().flags & (CellFlags::Liquid | CellFlags::Ladder));
 
   if (footCell->GetInfo().lavaDamage) {
     this->AddHealth(game, HealthInfo( -footCell->GetInfo().lavaDamage * deltaT, HealthType::Lava));

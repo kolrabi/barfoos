@@ -114,7 +114,6 @@ Game::Render() const {
   std::vector<IColor> lightColors;
   std::vector<Vector3> lightPositions;
   std::vector<const Entity*> lightEntities = FindLightEntities(player->GetSmoothPosition(), 32);
-  if (lightEntities.size() > 8) lightEntities.resize(8); 
   for (auto e : lightEntities) {
     lightColors.push_back(e->GetLight());
     lightPositions.push_back(e->GetSmoothEyePosition());
@@ -415,20 +414,24 @@ Vector3 Game::MoveAABB(
   
   // try to move along the x axis
   if (dist.x) {
-  for (const Vector3 &v : verts) {
-    for (size_t eid : entities) {
-      Entity *ent = GetEntity(eid);
-      if (!ent) continue;
-      
-      float t = INFINITY;
-      Vector3 p;
-      
-      if (ent->GetAABB().Ray(center + v, Vector3(dd.x,0,0), t, p) && t < std::abs(dist.x)+0.001 && t >= 0) {
-        dist.x = t - dd.x * 0.001;
-        axis |= Axis::X;
+      for (size_t eid : entities) {
+        Entity *ent = GetEntity(eid);
+        if (!ent) continue;
+        
+        const AABB &entAABB = ent->GetAABB();
+        
+        if (entAABB.Min().z > aabb.Max().z) continue;
+        if (entAABB.Max().z < aabb.Min().z) continue;
+        if (entAABB.Min().y > aabb.Max().y) continue;
+        if (entAABB.Max().y < aabb.Min().y) continue;
+        
+        float t = (aabb.center.x + dd.x * aabb.extents.x) - (entAABB.center.x - dd.x * entAABB.extents.x);
+        if (t * dd.x < std::abs(dist.x)) {
+          dist.x = -t - dd.x * 0.001;
+          axis |= Axis::X;
+        }
+
       }
-    }
-  }
   }
   
   // update center to new position
@@ -436,20 +439,23 @@ Vector3 Game::MoveAABB(
 
   // try to move along the z axis
   if (dist.z) {
-  for (const Vector3 &v : verts) {
     for (size_t eid : entities) {
       Entity *ent = GetEntity(eid);
       if (!ent) continue;
       
-      float t = INFINITY;
-      Vector3 p;
+      const AABB &entAABB = ent->GetAABB();
       
-      if (ent->GetAABB().Ray(center + v, Vector3(0,0,dd.z), t, p) && t < std::abs(dist.z)+0.001 && t >= 0) {
-        dist.z = t - dd.z * 0.001;
+      if (entAABB.Min().x > aabb.Max().x) continue;
+      if (entAABB.Max().x < aabb.Min().x) continue;
+      if (entAABB.Min().y > aabb.Max().y) continue;
+      if (entAABB.Max().y < aabb.Min().y) continue;
+      
+      float t = (aabb.center.z + dd.z * aabb.extents.z) - (entAABB.center.z - dd.z * entAABB.extents.z);
+      if (t * dd.z < std::abs(dist.z)) {
+        dist.z = -t - dd.z * 0.001;
         axis |= Axis::Z;
       }
     }
-  }
   }
   
   // update center to new position
@@ -457,20 +463,23 @@ Vector3 Game::MoveAABB(
 
   // try to move along the y axis
   if (dist.y) {
-  for (const Vector3 &v : verts) {
     for (size_t eid : entities) {
       Entity *ent = GetEntity(eid);
       if (!ent) continue;
       
-      float t = INFINITY;
-      Vector3 p;
+      const AABB &entAABB = ent->GetAABB();
       
-      if (ent->GetAABB().Ray(center + v, Vector3(0,dd.y,0), t, p) && t < std::abs(dist.y)+0.001 && t >= 0) {
-        dist.y = t - dd.y * 0.001;
+      if (entAABB.Min().x > aabb.Max().x) continue;
+      if (entAABB.Max().x < aabb.Min().x) continue;
+      if (entAABB.Min().z > aabb.Max().z) continue;
+      if (entAABB.Max().z < aabb.Min().z) continue;
+      
+      float t = (aabb.center.y + dd.y * aabb.extents.y) - (entAABB.center.y - dd.y * entAABB.extents.y);
+      if (t * dd.y < std::abs(dist.y)) {
+        dist.y = -t - dd.y * 0.001;
         axis |= Axis::Y;
       }
     }
-  }
   }
   
   // update center to new position

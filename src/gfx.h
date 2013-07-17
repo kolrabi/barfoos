@@ -25,6 +25,7 @@ private:
   Gfx &gfx;
   
   std::vector<Matrix4> projStack;
+  std::vector<Matrix4> viewStack;
   std::vector<Matrix4> modelViewStack;
   std::vector<Matrix4> textureStack;
 
@@ -33,6 +34,7 @@ private:
   GfxView(Gfx &gfx) : 
     gfx(gfx),
     projStack(1),
+    viewStack(1),
     modelViewStack(1),
     textureStack(1)
   {}
@@ -93,6 +95,8 @@ public:
   Point AlignBottomRightScreen(const Point &size, int padding = 0);
   Point AlignTopLeftScreen(const Point &size, int padding = 0);
   Point AlignTopRightScreen(const Point &size, int padding = 0);
+  
+  static const size_t MaxLights = 32;
   
 private:
 

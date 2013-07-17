@@ -40,6 +40,8 @@ enum CellFlags {
   DoubleSided = (1<<9),
   Pickable    = (1<<10),
   OnUseReplace = (1<<11),
+  
+  Ladder = (1<<12)
 };
 
 #include "properties.h"

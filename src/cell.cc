@@ -55,6 +55,7 @@ void CellProperties::ParseProperty(const std::string &cmd) {
   else if (cmd == "pickable")     this->flags |= Pickable; 
   else if (cmd == "onusereplace") this->flags |= OnUseReplace;
   else if (cmd == "multi")        this->flags |= MultiSided;
+  else if (cmd == "ladder")       this->flags |= Ladder;
   
   else if (cmd == "speed")        Parse(this->speedModifier);
   else if (cmd == "friction")     Parse(this->friction);
