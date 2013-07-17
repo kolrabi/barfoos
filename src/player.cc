@@ -43,7 +43,10 @@ Player::Player() :
   messageY          (0.0),
   messageVY         (0.0),
   
-  fps               (0.0)
+  fps               (0.0),
+  
+  leftHand          (new Item("barehand.player")),
+  rightHand         (new Item("barehand.player"))
 {
   // TEST:
   this->inventory.Equip(std::make_shared<Item>(Item("sword")), InventorySlot::RightHand);
@@ -93,24 +96,30 @@ Player::Update(Game &game) {
 
   this->UpdateInput(game);
   this->UpdateSelection(game);
-
-  if (itemActiveLeft && this->inventory[InventorySlot::RightHand]) {
-    if (this->inventory[InventorySlot::RightHand]->GetRange() < this->selectionRange) {
-      this->inventory[InventorySlot::RightHand]->UseOnNothing(game, *this);
+  
+  if (itemActiveLeft) {
+    std::shared_ptr<Item> useItem = this->inventory[InventorySlot::RightHand];
+    if (!useItem) useItem = this->rightHand;
+  
+    if (useItem->GetRange() < this->selectionRange) {
+      useItem->UseOnNothing(game, *this);
     } else if (this->selectedCell) {
-      this->inventory[InventorySlot::RightHand]->UseOnCell(game, *this, this->selectedCell, this->selectedCellSide);
+      useItem->UseOnCell(game, *this, this->selectedCell, this->selectedCellSide);
     } else if (this->selectedEntity != ~0UL) {
-      this->inventory[InventorySlot::RightHand]->UseOnEntity(game, *this, this->selectedEntity);
+      useItem->UseOnEntity(game, *this, this->selectedEntity);
     }
   }
   
-  if (itemActiveRight && this->inventory[InventorySlot::LeftHand]) {
-    if (this->inventory[InventorySlot::LeftHand]->GetRange() < this->selectionRange) {
-      this->inventory[InventorySlot::LeftHand]->UseOnNothing(game, *this);
+  if (itemActiveRight) {
+    std::shared_ptr<Item> useItem = this->inventory[InventorySlot::LeftHand];
+    if (!useItem) useItem = this->leftHand;
+  
+    if (useItem->GetRange() < this->selectionRange) {
+      useItem->UseOnNothing(game, *this);
     } else if (this->selectedCell) {
-      this->inventory[InventorySlot::LeftHand]->UseOnCell(game, *this, this->selectedCell, this->selectedCellSide);
+      useItem->UseOnCell(game, *this, this->selectedCell, this->selectedCellSide);
     } else if (this->selectedEntity != ~0UL) {
-      this->inventory[InventorySlot::LeftHand]->UseOnEntity(game, *this, this->selectedEntity);
+      useItem->UseOnEntity(game, *this, this->selectedEntity);
     }
   }
   
@@ -311,15 +320,23 @@ Player::DrawGUI(Gfx &gfx) const {
 
   // draw health bar
   std::stringstream strHealth;
-  int h = this->health * 2+1;
-  for (int i=0; i<h; i++) {
-    if (i == h-1 && (h%2))
-      strHealth << u8"\u0082";
-    else
+  int h = 10 * this->health / this->GetEffectiveStats().maxHealth;
+  for (int i=0; i<10; i++) {
+    if (i < h)
       strHealth << u8"\u0081";
+    else
+      strHealth << u8"\u0082";
   }
   RenderString rsHealth(strHealth.str(), "big");
   rsHealth.Draw(gfx, 0+4, vsize.y-4, (int)Align::HorizLeft | (int)Align::VertBottom);
+  
+  char tmp[1024];
+  snprintf(tmp, sizeof(tmp), "Base stats: str %3d dex %3d agi %3d\ndef %3d max hp %3d exp %f", this->baseStats.str, this->baseStats.dex, this->baseStats.agi, this->baseStats.def, this->baseStats.maxHealth, this->baseStats.exp);
+  RenderString(tmp).Draw(gfx, 0,vsize.y-32);
+  snprintf(tmp, sizeof(tmp), "Effective : str %3d dex %3d agi %3d\ndef %3d max hp %3d exp %f", this->GetEffectiveStats().str, this->GetEffectiveStats().dex, this->GetEffectiveStats().agi, this->GetEffectiveStats().def, this->GetEffectiveStats().maxHealth, this->GetEffectiveStats().exp);
+  RenderString(tmp).Draw(gfx, 0,vsize.y-32-16);
+  snprintf(tmp, sizeof(tmp), "Level %u %f", this->GetEffectiveStats().GetLevel(), Stats::GetExpForLevel(this->GetEffectiveStats().GetLevel() + 1) - this->GetEffectiveStats().exp);
+  RenderString(tmp).Draw(gfx, 0,vsize.y-32-24);
 }
 
 void

@@ -114,7 +114,7 @@ Game::Render() const {
   std::vector<IColor> lightColors;
   std::vector<Vector3> lightPositions;
   std::vector<const Entity*> lightEntities = FindLightEntities(player->GetSmoothPosition(), 32);
-  if (lightEntities.size() > 8) lightEntities.resize(8);
+  if (lightEntities.size() > 8) lightEntities.resize(8); 
   for (auto e : lightEntities) {
     lightColors.push_back(e->GetLight());
     lightPositions.push_back(e->GetSmoothEyePosition());
@@ -349,6 +349,10 @@ Game::FindLightEntities(const Vector3 &pos, float radius) const {
       entities.push_back(entity.second);
     }
   } 
+
+  std::sort(entities.begin(), entities.end(), [&](const Entity *a, const Entity *b) -> bool {
+    return (a->GetPosition()-pos).GetSquareMag() < (b->GetPosition()-pos).GetSquareMag(); 
+  });
   
   return entities;
 }

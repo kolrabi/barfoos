@@ -1,8 +1,11 @@
-step 0.6
-mass 100
-speed 5
-health 5
 
-extents 0.2 0.8 0.2
-eyeOffset 0.7
-respawn
+EyeOffset   0.7
+Step        0.6
+Mass      100.0
+Speed      10.0
+
+Health     10.0
+
+Extents     0.2 0.8 0.2
+
+Respawn

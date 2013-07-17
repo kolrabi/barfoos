@@ -168,3 +168,11 @@ Inventory::GetLight() const {
   }  
   return light;
 }
+
+void 
+Inventory::ModifyStats(Stats &stats) const {
+  for (auto item : this->inventory) {
+    if (!item.second) continue;
+    item.second->ModifyStats(stats);
+  }
+}

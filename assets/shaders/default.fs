@@ -29,7 +29,7 @@ vec3 getLight(int n) {
   float d = length(ld);
   //vec3 E = normalize(- v_pos);
 
-  return u_lightColor[n].rgb * max(0.0, dot(v_norm, L)) / (d);
+  return u_lightColor[n].rgb * max(0.0, dot(v_norm, L)) / (1.0 + d);
 }
 
 vec3 getTotalLight() {

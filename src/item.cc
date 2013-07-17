@@ -40,8 +40,25 @@ ItemProperties::ParseProperty(const std::string &cmd) {
     Parse(this->sprite.height);
   } else if (cmd == "damage") {
     Parse(this->damage);
-  } else if (cmd == "armorpoints") {
-    Parse(this->armor);
+    
+  } else if (cmd == "eqstr") {
+    Parse(this->eqAddStr);
+  } else if (cmd == "eqdex") {
+    Parse(this->eqAddDex);
+  } else if (cmd == "eqagi") {
+    Parse(this->eqAddAgi);
+  } else if (cmd == "eqdef") {
+    Parse(this->eqAddDef);
+    
+  } else if (cmd == "uneqstr") {
+    Parse(this->uneqAddStr);
+  } else if (cmd == "uneqdex") {
+    Parse(this->uneqAddDex);
+  } else if (cmd == "uneqagi") {
+    Parse(this->uneqAddAgi);
+  } else if (cmd == "uneqdef") {
+    Parse(this->uneqAddDef);
+    
   } else if (cmd == "cooldown") {
     Parse(this->cooldown);
   } else if (cmd == "range") {
@@ -93,6 +110,9 @@ ItemProperties::ParseProperty(const std::string &cmd) {
     Parse(this->spawnProjectile);
   } else if (cmd == "breakblockstrength") {
     Parse(this->breakBlockStrength);
+
+  } else if (cmd == "name") {
+    Parse(this->name);
     
   } else if (cmd != "") {
     this->SetError("ignoring '" + cmd + "'");
@@ -106,6 +126,7 @@ LoadItems() {
     FILE *f = openAsset("items/"+name);
     if (f) {
       std::cerr << "loading item " << name << std::endl;
+      allItems[name].name = name;
       allItems[name].ParseFile(f);
       fclose(f);
     }
@@ -113,6 +134,7 @@ LoadItems() {
 }
 
 Item::Item(const std::string &type) : 
+  initDone(false),
   properties(&getItem(type)),
   durabilityTex(loadTexture("gui/durability")),
   isRemovable(false),
@@ -120,7 +142,9 @@ Item::Item(const std::string &type) :
   cooldownFrac(0),
   durability(this->properties->durability),
   isEquipped(false),
-  nextUseT(0.0)
+  nextUseT(0.0),
+  beatitude(Beatitude::Normal),
+  modifier(0)
 {}
 
 Item::~Item() {
@@ -138,6 +162,19 @@ void Item::StartCooldown(Game &game) {
 }
 
 void Item::Update(Game &game) {
+  if (!this->initDone) {
+    this->initDone = true;
+    if (game.GetRandom().Chance(0.1)) {
+      this->beatitude = Beatitude::Cursed;
+    } else if (game.GetRandom().Chance(0.01)) {
+      this->beatitude = Beatitude::Blessed;
+    }
+    
+    this->modifier = game.GetRandom().Integer(2) + game.GetRandom().Integer(2) - 2;
+    
+    Log("Item is a %s %+d %s\n", this->beatitude == Beatitude::Normal ? "normal" : (this->beatitude == Beatitude::Blessed ? "blessed" : "cursed"), this->modifier, this->properties->name.c_str());
+  }
+
   // reduce durability while equipped  
   if (this->isEquipped) { 
     this->sprite.currentAnimation = this->properties->equipAnim;
@@ -174,7 +211,10 @@ void Item::UseOnEntity(Game &game, Mob &user, size_t id) {
       return;
     }
     
-    entity->AddHealth(game, HealthInfo(-this->properties->damage, HealthType::Melee, Element::Physical, user.GetId()));
+    //entity->AddHealth(game, HealthInfo(-this->properties->damage, HealthType::Melee, Element::Physical, user.GetId()));
+    HealthInfo healthInfo(Stats::MeleeAttack(user, *entity, *this, game.GetRandom()));
+    entity->AddHealth(game, healthInfo);
+    user.OnHealthDealt(game, *entity, healthInfo);
     
     this->StartCooldown(game);
   } else {
@@ -239,6 +279,22 @@ void Item::DrawIcon(Gfx &gfx, const Point &p) const {
   }
 }
 
-void Item::DrawSprite(Gfx &gfx, const Vector3 &pos) const {
+void
+Item::DrawSprite(Gfx &gfx, const Vector3 &pos) const {
   gfx.DrawSprite(this->sprite, pos);
+}
+
+void 
+Item::ModifyStats(Stats &stats) const {
+  if (this->isEquipped) {
+    stats.str += this->properties->eqAddStr   * (1 + 0.25*this->modifier);
+    stats.agi += this->properties->eqAddAgi   * (1 + 0.25*this->modifier);
+    stats.dex += this->properties->eqAddDex   * (1 + 0.25*this->modifier);
+    stats.def += this->properties->eqAddDef   * (1 + 0.25*this->modifier);
+  } else {
+    stats.str += this->properties->uneqAddStr * (1 + 0.25*this->modifier);
+    stats.agi += this->properties->uneqAddAgi * (1 + 0.25*this->modifier);
+    stats.dex += this->properties->uneqAddDex * (1 + 0.25*this->modifier);
+    stats.def += this->properties->uneqAddDef * (1 + 0.25*this->modifier);
+  }
 }

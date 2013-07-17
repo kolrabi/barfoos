@@ -8,6 +8,8 @@
 #include "properties.h"
 
 struct ItemProperties : public Properties {
+  std::string name = "<item>";
+  
   // rendering
   Sprite sprite = Sprite();
   size_t equipAnim = 0;
@@ -17,7 +19,18 @@ struct ItemProperties : public Properties {
   // gameplay
   float range = 5.0;
   float damage = 1.0;
-  float armor = 0.0;
+  
+  int eqAddStr = 0;
+  int eqAddDex = 0;
+  int eqAddAgi = 0;
+  int eqAddDef = 0;
+
+  int uneqAddStr = 0;
+  int uneqAddDex = 0;
+  int uneqAddAgi = 0;
+  int uneqAddDef = 0;
+  
+  std::string weaponClass = "";
   
   uint32_t equippable = 0;
   bool twoHanded = false;
@@ -44,6 +57,12 @@ struct ItemProperties : public Properties {
 
 void LoadItems();
 const ItemProperties &getItem(const std::string &name);
+
+enum class Beatitude : int {
+  Normal = 0,
+  Cursed = -1,
+  Blessed = 1
+};
 
 class Item final {
 public:
@@ -85,7 +104,11 @@ public:
     return nullptr;
   }
   
+  void ModifyStats(Stats &stats) const;
+  
 protected:
+
+  bool initDone;
 
   const ItemProperties *properties;
   const Texture *durabilityTex;
@@ -102,10 +125,8 @@ protected:
   bool isEquipped;
   float nextUseT;
  
-  
-  // bool isBlessed;
-  // bool isCursed;
-  // int modifier;
+  Beatitude beatitude;
+  int modifier;
 };
 
 #endif

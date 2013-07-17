@@ -64,6 +64,7 @@ struct Matrix4;
 struct Point;
 struct Rect;
 struct Sprite;
+struct Stats;
 struct Texture;
 struct Vector3;
 struct Vertex;

@@ -76,6 +76,8 @@ private:
   std::list<Message*> messages;
   float messageY, messageVY;
   float fps;
+  
+  std::shared_ptr<Item> leftHand, rightHand;
 
   void UpdateInput(Game &game);
   void UpdateSelection(Game &game);

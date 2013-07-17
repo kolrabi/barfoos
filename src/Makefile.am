@@ -29,6 +29,7 @@ barfoos_SOURCES=\
   simplex.cc simplex.h \
   text.cc text.h \
   shader.cc shader.h \
+  stats.cc stats.h \
   \
   properties.cc properties.h \
   \

@@ -1,13 +1,18 @@
-tex slime
-frames 2
+Tex       slime
+Frames    2
 
-anim 0 2 5
+# idle animation
+Anim      0 2 5
 
-step 0.5
-mass 20
-move 10
-speed 0.1
-health 5
+Step          0.5
+Mass         20.0
+Move         10.0
+Speed         2.0
+Health        2.0
+ThinkInterval 0.1
 
-extents 0.4 0.4 0.4
+Extents    0.4 0.4 0.4
 
+Exp        1.0
+
+Glow         0 128   0

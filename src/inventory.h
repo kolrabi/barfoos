@@ -68,6 +68,8 @@ public:
   void DropItem(const std::shared_ptr<Item> &item);
   
   IColor GetLight() const;
+  
+  void ModifyStats(Stats &stats) const;
 
 private:
 

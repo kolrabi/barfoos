@@ -41,6 +41,7 @@ struct EntityProperties : public Properties {
   bool    noFriction        = false;  //< Entity is unaffected by friction.
   bool    isSolid           = false;  //< Entity is solid in collision detection.
   bool    respawn           = false;  //< Entity will automatically respawn on death.
+  float   exp               = 0.0;
   
   /** Inventory items and their absolute probability. */
   std::vector<std::pair<std::string, float>> items = std::vector<std::pair<std::string, float>>(0);
@@ -81,6 +82,7 @@ public:
   virtual void OnCollide(Game &game, Entity &other)          { (void)game; (void)other; }
   virtual void OnCollide(Game &game, Cell &cell, Side side)  { (void)game; (void)cell; (void)side; }
   virtual void OnUse(Game &game, Entity &other)              { (void)game; (void)other; }
+  virtual void OnHealthDealt(Game &game, Entity &other, HealthInfo &info);
   
   // management
   size_t                    GetId()                           const { return id; }
@@ -112,6 +114,8 @@ public:
   Vector3                   GetRight()                        const { return (this->GetAngles() + Vector3(Const::pi_2, 0, 0)).EulerToVector(); }
   
   const AABB &              GetAABB()                         const { return this->aabb; }
+  Stats                     GetEffectiveStats()               const;
+  float                     GetHealth()                       const { return this->health; }
   
   // rendering
   virtual IColor            GetLight()                        const { return this->properties->glow + inventory.GetLight(); }
@@ -129,6 +133,7 @@ protected:
   Vector3 lastPos;
   Vector3 spawnPos;
   Vector3 angles;
+  Stats baseStats;
   
   AABB aabb;
   

@@ -69,6 +69,8 @@ EntityProperties::ParseProperty(const std::string &cmd) {
   } else if (cmd == "gravity")        Parse(this->gravity);
   else if (cmd == "eyeoffset")        Parse(this->eyeOffset);
   else if (cmd == "glow")             Parse(this->glow);
+  else if (cmd == "exp")              Parse(this->exp);
+  else if (cmd == "thinkinterval")    Parse(this->thinkInterval);
   else if (cmd == "inventory") {
     float prob;
     std::string type;
@@ -91,7 +93,7 @@ LoadEntities() {
     FILE *f = openAsset("entities/"+name);
     if (f) {
       std::cerr << "loading entity " << name << std::endl;
-      allEntities[name] = EntityProperties();
+      allEntities[name].name = name;
       allEntities[name].ParseFile(f);
       fclose(f);
     }
@@ -107,6 +109,7 @@ Entity::Entity(const std::string &type) :
   lastPos(),
   spawnPos(),
   angles(),
+  baseStats(),
   aabb(this->properties->extents),
   health(this->properties->maxHealth),
   lastCell(nullptr),
@@ -115,7 +118,9 @@ Entity::Entity(const std::string &type) :
   sprite(this->properties->sprite),
   drawAABB(false),
   cellLight(0,0,0)
-{}
+{
+  this->baseStats.maxHealth = this->properties->maxHealth;
+}
 
 Entity::~Entity() {
 }
@@ -177,7 +182,7 @@ Entity::Update(Game &game) {
   if (this->IsDead() && this->sprite.currentAnimation == 0) {
     if (this->properties->respawn) {
       // just respawn
-      health = this->properties->maxHealth;
+      health = this->GetEffectiveStats().maxHealth;
       SetPosition(spawnPos);
       Start(game, id);
     } else {
@@ -275,4 +280,18 @@ Entity::Die(Game &game, const HealthInfo &info) {
 
   this->inventory.Drop(game, *this);
   this->sprite.StartAnim(this->properties->dyingAnim);
+}
+
+Stats 
+Entity::GetEffectiveStats() const {
+  Stats stats = this->baseStats;
+  this->inventory.ModifyStats(stats);
+  return stats;
+}
+
+void
+Entity::OnHealthDealt(Game &game, Entity &other, HealthInfo &info) {
+  (void)game;
+  (void)other;
+  this->baseStats.AddExp(info.exp);
 }
