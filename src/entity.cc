@@ -11,12 +11,14 @@
 #include "texture.h"
 #include "player.h"
 
-static std::map<std::string, EntityProperties> allEntities;
+#include <unordered_map>
+
+static std::unordered_map<std::string, EntityProperties> allEntities;
 EntityProperties defaultEntity;
 
 const EntityProperties *getEntity(const std::string &name) {
   if (allEntities.find(name) == allEntities.end()) {
-    std::cerr << "entity " << name << " not found" << std::endl;
+    Log("Properties for entity of type '%s' not found\n", name.c_str());
     return &defaultEntity;
   }
   return &allEntities[name];
@@ -98,7 +100,6 @@ LoadEntities() {
   for (const std::string &name : assets) {
     FILE *f = openAsset("entities/"+name);
     if (f) {
-      std::cerr << "loading entity " << name << std::endl;
       allEntities[name].name = name;
       allEntities[name].ParseFile(f);
       fclose(f);
@@ -271,6 +272,9 @@ Entity::AddHealth(Game &game, const HealthInfo &info) {
   if (this->health <= 0 || this->properties->maxHealth == 0) return;
   
   this->health += info.amount;
+
+  Entity *dealer = game.GetEntity(info.dealerId);
+  if (dealer) dealer->OnHealthDealt(game, *this, info);
   
   if (info.amount < 0) this->sprite.StartAnim(this->properties->flinchAnim);
   
@@ -304,8 +308,8 @@ Entity::GetEffectiveStats() const {
 }
 
 void
-Entity::OnHealthDealt(Game &game, Entity &other, HealthInfo &info) {
+Entity::OnHealthDealt(Game &game, Entity &other, const HealthInfo &info) {
   (void)game;
   (void)other;
-  this->baseStats.AddExp(info.exp);
+  if (this->baseStats.AddExp(info.exp)) this->OnLevelUp(game);
 }

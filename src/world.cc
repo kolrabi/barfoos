@@ -272,7 +272,6 @@ World::Draw(Gfx &gfx) {
 
     this->defaultCell = Cell("default");
 
-    //this->vertices = std::map<uintmax_t, std::vector<Vertex>>();
     this->allVerts.clear();
     this->dynamicCells.clear();
 
@@ -283,7 +282,7 @@ World::Draw(Gfx &gfx) {
       firstDirty = false;
     }
 
-    std::map<const Texture *, std::vector<Vertex>> vertices;
+    std::unordered_map<const Texture *, std::vector<Vertex>> vertices;
 
     for (size_t i=0; i<this->cellCount; i++) {
       Cell &cell = this->cells[i];
@@ -336,14 +335,13 @@ World::Draw(Gfx &gfx) {
   }
 
   // get vertices for dynamic cells
-  std::map<uintmax_t, std::vector<Vertex>> dynvertices;
+  std::unordered_map<const Texture *, std::vector<Vertex>> dynvertices;
   for (size_t i : dynamicCells) {
     const Texture *tex = this->cells[i].GetTexture();
-    uintmax_t texint = (uintmax_t)tex;
-    if (dynvertices.find(texint) == dynvertices.end()) 
-        dynvertices[texint] = std::vector<Vertex>();
+    if (dynvertices.find(tex) == dynvertices.end()) 
+        dynvertices[tex] = std::vector<Vertex>();
     this->cells[i].UpdateVertices();
-    this->cells[i].Draw(dynvertices[texint]);
+    this->cells[i].Draw(dynvertices[tex]);
   }
 
   // render vertices for dynamic cells
@@ -871,14 +869,18 @@ void
 World::BreakBlock(Game &game, const IVector3 &pos) {
   if (this->GetCell(pos).GetInfo().type == "air") return;
   
+  std::string particleType = this->GetCell(pos).GetInfo().breakParticle;
   AABB aabb = this->SetCell(pos, Cell("air")).GetAABB();
-  Random &random = game.GetRandom();
-  for (size_t i=0; i<4; i++) {
-    Mob *particle = new Particle();
-    Vector3 s = aabb.extents - particle->GetAABB().extents;
-    Vector3 p = Vector3(random.Float()*s.x, random.Float()*s.y, random.Float()*s.z) + aabb.center;
-    particle->SetPosition(p);
-    particle->AddVelocity(Vector3(random.Float(), random.Float(), random.Float()*10));
-    game.AddEntity(particle);
+  
+  if (particleType != "") {
+    Random &random = game.GetRandom();
+    for (size_t i=0; i<4; i++) {
+      Mob *particle = new Particle(particleType);
+      Vector3 s = aabb.extents - particle->GetAABB().extents;
+      Vector3 p = random.Vector() * s + aabb.center;
+      particle->SetPosition(p);
+      particle->AddVelocity(random.Vector() * 10);
+      game.AddEntity(particle);
+    }
   }
 }

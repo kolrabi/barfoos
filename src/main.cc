@@ -5,11 +5,27 @@
 #include <png.h>
 #include <zlib.h>
 
+#include "2d.h"
+#include "vector3.h"
+#include <sstream>
+
 float Wave(float x, float z, float t, float a) {
   return a * cos( ((x+z)*0.4+t*0.4) )
            * cos( ((x-z)*0.6+t*0.7) );
 }
 
+Point::operator std::string() const {
+  std::stringstream str;
+  str << "[" << x << ", " << y << "]";
+  return str.str();
+}
+
+Vector3::operator std::string() const {
+  std::stringstream str;
+  str << "[" << x << ", " << y << ", " << z << "]";
+  return str.str();
+}
+  
 static std::string credits() {
   std::string str;
 
@@ -33,34 +49,34 @@ static std::string credits() {
 }
 
 int main() {
-  std::cerr << credits() << std::endl;
   std::setlocale(LC_ALL, "en_US.utf8");
+
+  Log("%s", credits().c_str());
   
   // Set up glfw
   if (!glfwInit()) {
-    std::cerr << "Could not initialize GLFW\n";
+    Log("Could not initialize GLFW\n");
     return -1;
   }
-  std::cerr << "GLFW initialized" << std::endl;
+  Log("GLFW initialized\n");
 
   Game *game = new Game("seed", 0);
-  std::cerr << "Game created" << std::endl;
   if (!game->Init()) {
-    std::cerr << "could not initialize game" << std::endl;
+    Log("Could not initialize game object\n");
     delete game;
     glfwTerminate();
     return -1;
   }
 
-  std::cerr << "game initialized, entering mainloop" << std::endl;
+  Log("Game object initialized, entering mainloop\n");
   try {
     while(game->Frame()) 
       ;
   } catch (std::exception &e) {
-    std::cerr << e.what() << std::endl;
+    Log("Caught exception: %s\n", e.what());
   }
     
-  std::cerr << "shutting down" << std::endl;
+  Log("Shutting down\n");
   
   delete game;
   

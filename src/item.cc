@@ -7,12 +7,14 @@
 #include "projectile.h"
 #include "texture.h"
 
-static std::map<std::string, ItemProperties> allItems;
+#include <unordered_map>
+
+static std::unordered_map<std::string, ItemProperties> allItems;
 ItemProperties defaultItem;
 
 const ItemProperties &getItem(const std::string &name) {
   if (allItems.find(name) == allItems.end()) {
-    std::cerr << "entity " << name << " not found" << std::endl;
+    Log("Properties for entity of type '%s' not found\n", name.c_str());
     return defaultItem;
   }
   return allItems[name];
@@ -125,7 +127,6 @@ LoadItems() {
   for (const std::string &name : assets) {
     FILE *f = openAsset("items/"+name);
     if (f) {
-      std::cerr << "loading item " << name << std::endl;
       allItems[name].name = name;
       allItems[name].ParseFile(f);
       fclose(f);
@@ -164,13 +165,14 @@ void Item::StartCooldown(Game &game) {
 void Item::Update(Game &game) {
   if (!this->initDone) {
     this->initDone = true;
+    this->modifier = game.GetRandom().Integer(2) + game.GetRandom().Integer(2) - 2;
+    
     if (game.GetRandom().Chance(0.1)) {
       this->beatitude = Beatitude::Cursed;
-    } else if (game.GetRandom().Chance(0.01)) {
+      this->modifier = -2;
+    } else if (game.GetRandom().Chance(0.1) && this->modifier == 2) {
       this->beatitude = Beatitude::Blessed;
     }
-    
-    this->modifier = game.GetRandom().Integer(2) + game.GetRandom().Integer(2) - 2;
     
     Log("Item is a %s %+d %s\n", this->beatitude == Beatitude::Normal ? "normal" : (this->beatitude == Beatitude::Blessed ? "blessed" : "cursed"), this->modifier, this->properties->name.c_str());
   }
@@ -214,7 +216,6 @@ void Item::UseOnEntity(Game &game, Mob &user, size_t id) {
     //entity->AddHealth(game, HealthInfo(-this->properties->damage, HealthType::Melee, Element::Physical, user.GetId()));
     HealthInfo healthInfo(Stats::MeleeAttack(user, *entity, *this, game.GetRandom()));
     entity->AddHealth(game, healthInfo);
-    user.OnHealthDealt(game, *entity, healthInfo);
     
     this->StartCooldown(game);
   } else {
@@ -228,7 +229,7 @@ void Item::UseOnCell(Game &game, Mob &user, Cell *cell, Side side) {
   if (!this->CanUse(game)) return;
   
   if (this->properties->canUseCell) {
-    if (game.GetRandom().Chance(this->properties->breakBlockStrength / cell->GetInfo().breakStrength)) {
+    if (this->properties->breakBlockStrength && game.GetRandom().Chance(this->properties->breakBlockStrength / cell->GetInfo().breakStrength)) {
       cell->GetWorld()->BreakBlock(game, cell->GetPosition());
     }
     this->StartCooldown(game);

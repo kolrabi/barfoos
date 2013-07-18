@@ -3,6 +3,8 @@
 #include "vertex.h"
 #include "texture.h"
 
+#include <unordered_map>
+
 struct Font {
   const Texture *texture;
   Point size;
@@ -18,7 +20,7 @@ struct Font {
   {}
 };
 
-static std::map<std::string, Font> fonts;
+static std::unordered_map<std::string, Font> fonts;
 
 static const Font &loadFont(const std::string &name) {
   if (fonts.find(name) != fonts.end()) return fonts[name];

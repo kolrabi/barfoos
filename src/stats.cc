@@ -39,6 +39,26 @@ Stats::MeleeAttack(const Entity &attacker, const Entity &victim, const Item &ite
   return info;
 }
 
+HealthInfo 
+Stats::ExplosionAttack(const Entity &attacker, const Entity &victim, float damage, Element element) {
+  HealthInfo info;
+  info.dealerId = attacker.GetId();
+  info.type = HealthType::Explosion;
+  info.element = element;
+  
+  // TODO: buffs
+  
+  // get stats
+  Stats defStat = victim.GetEffectiveStats();
+  
+  info.amount = -(damage - defStat.def * 0.1);
+  bool kill = -info.amount > victim.GetHealth();
+  float expDmg = kill ? victim.GetHealth() : -info.amount;
+  info.exp = (expDmg / defStat.maxHealth) * 0.5 * victim.GetProperties()->exp + kill ? victim.GetProperties()->exp : 0;
+
+  return info;
+}
+
 size_t 
 Stats::GetLevel() {
   return std::log(this->exp + 1) / std::log(1.7);

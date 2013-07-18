@@ -85,10 +85,12 @@ public:
   virtual void AddHealth(Game &game, const HealthInfo &info); 
   virtual void Die(Game &game, const HealthInfo &info);
   
-  virtual void OnCollide(Game &game, Entity &other)          { (void)game; (void)other; }
-  virtual void OnCollide(Game &game, Cell &cell, Side side)  { (void)game; (void)cell; (void)side; }
-  virtual void OnUse(Game &game, Entity &other)              { (void)game; (void)other; }
-  virtual void OnHealthDealt(Game &game, Entity &other, HealthInfo &info);
+  virtual void OnCollide(Game &game, Entity &other)           { (void)game; (void)other; }
+  virtual void OnCollide(Game &game, Cell &cell, Side side)   { (void)game; (void)cell; (void)side; }
+  virtual void OnUse(Game &game, Entity &other)               { (void)game; (void)other; }
+  
+  virtual void OnHealthDealt(Game &game, Entity &other, const HealthInfo &info);
+  virtual void OnLevelUp(Game &game)                          { (void)game; }
   
   // management
   size_t                    GetId()                           const { return id; }

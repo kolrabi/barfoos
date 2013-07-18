@@ -2,6 +2,7 @@
 #define BARFOOS_SPRITE_H
 
 #include "animation.h"
+#include <list>
 
 /** A sprite. */
 struct Sprite {

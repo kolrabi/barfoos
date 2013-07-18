@@ -12,9 +12,6 @@ items (entities)
 persistence
 connect maps
 
-experience
-  level up
-
 npcs
   dialogs
   shops

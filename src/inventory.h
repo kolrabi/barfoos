@@ -3,6 +3,9 @@
 
 #include "common.h"
 #include "icolor.h"
+
+#include <unordered_map>
+
 //                 x  x  x  x
 //   8  0          x  x  x  x
 //   4  1  5       x  x  x  x
@@ -50,6 +53,10 @@ enum class InventorySlot : size_t {
   End
 };
 
+namespace std { template<> struct hash<InventorySlot> {
+  size_t operator()(const InventorySlot &slot) const { return (size_t)slot; }
+}; }
+
 class Inventory final {
 public:
 
@@ -75,7 +82,7 @@ private:
 
   void DropItem(Game &game, Entity &owner, const std::shared_ptr<Item> &item);
 
-  std::map<InventorySlot, std::shared_ptr<Item>> inventory;
+  std::unordered_map<InventorySlot, std::shared_ptr<Item>> inventory;
   std::vector<std::shared_ptr<Item>> overflow;
   
   float lastT;

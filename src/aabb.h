@@ -157,12 +157,9 @@ struct AABB {
     p = start + dir * t;
     return true;
   }
+  
+  operator std::string() const;
 };
-
-static inline std::ostream & operator<< (std::ostream &out, const AABB &aabb) {
-  out << "{" << aabb.center << " +/- " << aabb.extents << "}";
-  return out;
-}
 
 #endif
 

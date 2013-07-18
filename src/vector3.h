@@ -7,6 +7,7 @@ struct Vector3 {
   float x,y,z;
 
   Vector3()                           : x(0), y(0), z(0) {}
+  Vector3(const float &f)             : x(f), y(f), z(f) {}
   Vector3(float x, float y, float z)  : x(x), y(y), z(z) {}
   
   Vector3(Side side)                  : 
@@ -26,11 +27,19 @@ struct Vector3 {
   Vector3 operator +(const Vector3 &o) const {
     return Vector3(x+o.x, y+o.y, z+o.z);
   }
-  
+
   Vector3 operator -(const Vector3 &o) const {
     return Vector3(x-o.x, y-o.y, z-o.z);
   }
 
+  Vector3 operator +(const float &o) const {
+    return Vector3(x+o, y+o, z+o);
+  }
+
+  Vector3 operator -(const float &o) const {
+    return Vector3(x-o, y-o, z-o);
+  }
+  
   Vector3 operator -() const {
     return Vector3(-x, -y, -z);
   }
@@ -101,11 +110,9 @@ struct Vector3 {
   Vector3 YZX() const { return Vector3(y,z,x); }
   Vector3 ZXY() const { return Vector3(z,x,y); }
   Vector3 ZYX() const { return Vector3(z,y,x); }
+
+  operator std::string() const;
 };
 
-static inline std::ostream & operator<< (std::ostream &out, const Vector3 &v) {
-  out << "[" << v.x << ", " << v.y << ", " << v.z << "]";
-  return out;
-}
 
 #endif

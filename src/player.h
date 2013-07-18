@@ -4,9 +4,8 @@
 #include "common.h"
 #include "mob.h"
 
-struct InputEvent;
-class RenderString;
-class Shader;
+#include <unordered_map>
+#include <list>
 
 class Player final : public Mob {
 public:
@@ -69,7 +68,7 @@ private:
 
   bool itemActiveLeft, itemActiveRight;
   
-  std::map<HealthType, float> lastHurtT;
+  std::unordered_map<HealthType, float> lastHurtT;
   float pain;
 
   // display

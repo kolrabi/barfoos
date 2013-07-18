@@ -18,6 +18,10 @@ enum class HealthType : size_t {
   Lava
 };
 
+namespace std { template<> struct hash<HealthType> {
+  size_t operator()(const HealthType &type) const { return (size_t)type; }
+}; }
+
 static inline bool IsContinuous(HealthType t) { return t == HealthType::Fire || t == HealthType::Lava; }
 
 enum class HitType : size_t {
@@ -71,6 +75,7 @@ struct Stats {
   size_t GetLevel();
   
   static HealthInfo MeleeAttack(const Entity &attacker, const Entity &victim, const Item &item, Random &random);
+  static HealthInfo ExplosionAttack(const Entity &attacker, const Entity &victim, float damage, Element element);
   static float GetExpForLevel(size_t lvl);
 };
 

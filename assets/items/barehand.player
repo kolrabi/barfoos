@@ -1,5 +1,6 @@
 # no texture yet
-# tex torch
+tex sword
+frames 1
 
 # do 1 base damage per hit
 Damage      1
@@ -13,3 +14,6 @@ Cooldown    0.5
 # TODO: use this to determine proficiency 
 # WeaponClass hand
 
+CanUseNothing
+CanUseEntity
+CanUseCell

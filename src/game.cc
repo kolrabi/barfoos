@@ -10,6 +10,8 @@
 #include "item.h"
 #include "input.h"
 
+#include <algorithm>
+
 Game::Game(const std::string &seed, size_t level, const Point &screenSize) : 
   isInit        (false),
   input         (new Input()), 
@@ -46,7 +48,7 @@ bool
 Game::Init() {
   if (this->isInit) return true;
   
-  std::cerr << "initializing game" << std::endl;
+  Log("Initializing game\n");
   if (!this->gfx->Init(*this)) return false;
   
   LoadCells();
@@ -377,10 +379,7 @@ Game::CheckEntities(const IVector3 &pos) {
 Entity *
 Game::GetEntity(size_t entityId) {
   auto iter = this->entities.find(entityId);
-  if (iter == this->entities.end()) {
-    std::cerr << "AAAAAAAAAARGH no entity by that id!" << std::endl;
-    return nullptr;
-  }
+  if (iter == this->entities.end()) return nullptr;
   return iter->second;
 }
 
@@ -489,17 +488,39 @@ Vector3 Game::MoveAABB(
 }
 
 void
-Game::Explosion(const IVector3 &pos, const IVector3 &size, float strength) {
-  Vector3 v(pos);
-  Vector3 vs(size);
+Game:: Explosion(Entity &entity, const Vector3 &pos, size_t radius, float strength, float damage, Element element) {
+  IVector3 ivPos(pos);
+  IVector3 ivRadius(radius, radius, radius);
   
-  IVector3(size.x*2+1, size.y*2+1, size.z*2+1).For( [&] (IVector3 p) {
-    IVector3 pp = pos - size + p;
-    Vector3 vpp(pp);
-    float d = (vpp-v).GetSquareMag()/4;
-    float prob = (vs.GetMag()/2-d) * strength / this->world->GetCell(pp).GetInfo().breakStrength;
-    if (prob > 0 && random.Chance(prob)) {
-      this->GetWorld().BreakBlock(*this, pp);
+  IVector3(radius*2, radius*2, radius*2).For( [&] (IVector3 p) {
+    IVector3 worldCellPos    = p - ivRadius + ivPos;
+    Vector3  worldCellCenter = Vector3(worldCellPos) + 0.5;
+    Vector3  d = worldCellCenter - pos;
+    float    dsqmag = d.GetSquareMag();
+    
+    float    chance = 1.0 / dsqmag * strength / this->world->GetCell(worldCellPos).GetInfo().breakStrength;
+    if (chance > 0 && random.Chance(chance)) {
+      this->GetWorld().BreakBlock(*this, worldCellPos);
     }
   });
+
+  AABB aabb(pos, radius);
+  
+  size_t ownerID = entity.GetOwner();
+  if (ownerID == ~0UL) ownerID = entity.GetId();
+  Entity &owner = *this->entities[ownerID];
+
+  std::vector<size_t> entIDs = this->FindEntities(aabb);
+  for (size_t entID : entIDs) {
+    Entity &ent  = *this->entities[entID];
+    Vector3 d = ent.GetPosition() - pos;
+    float dmg = damage / (1.0 + d.GetSquareMag());
+    
+    HealthInfo info = Stats::ExplosionAttack(owner, ent, dmg, element);
+    ent.AddHealth(*this, info);
+    
+    try {
+      dynamic_cast<Mob&>(ent).AddImpulse(d.Normalize() * dmg);
+    } catch(const std::bad_cast &) { }
+  }
 }

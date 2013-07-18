@@ -4,7 +4,9 @@
 #include "common.h"
 #include "2d.h"
 
-enum class InputKey {
+#include <unordered_map>
+
+enum class InputKey : size_t {
   Invalid = 0,
 
   Forward,
@@ -27,6 +29,10 @@ enum class InputKey {
   DebugDie,
   DebugNoclip
 };
+
+namespace std { template<> struct hash<InputKey> {
+  size_t operator()(const InputKey &key) const { return (size_t)key; }
+}; }
 
 enum class InputEventType {
   Invalid = 0,
@@ -89,8 +95,8 @@ private:
   size_t nextHandlerId;
   std::vector<Handler> handlers;
 
-  std::map<InputKey, bool> activeKeys;
-  std::map<InputKey, bool> lastActiveKeys;
+  std::unordered_map<InputKey, bool> activeKeys;
+  std::unordered_map<InputKey, bool> lastActiveKeys;
 
   void SetKey(int key, bool down);
 };

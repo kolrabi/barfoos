@@ -66,12 +66,9 @@ struct IVector3 {
       }
     }
   }
+  
+  operator std::string() const;
 };
-
-static inline std::ostream & operator<< (std::ostream &out, const IVector3 &v) {
-  out << "[" << v.x << ", " << v.y << ", " << v.z << "]";
-  return out;
-}
 
 #endif
 

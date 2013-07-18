@@ -8,26 +8,15 @@
 
 // often needed types and functions
 #include <cstdint>
-#include <cinttypes>
-#include <cstdlib>
-#include <cstring>
 #include <cmath>
 
 #include <string>
-#include <algorithm>
-#include <functional>
 
 // pointer types
 #include <memory>
 
 // containers
 #include <vector>
-#include <list>
-#include <map>
-
-// io
-#include <iostream>
-#include <sstream>
 
 // ====================================================================================
 
@@ -35,10 +24,6 @@
 #if __cplusplus < 201103L
   #define final
   #define override
-
-  #ifndef PRIu64
-    #define PRIu64 "I64u"
-  #endif
 #endif
 
 // useful if you need a reference to yourself
@@ -53,6 +38,7 @@ enum        Axis          : int;
 enum        Corner        : int;
 enum class  Side          : int;
 enum class  InventorySlot : size_t;
+enum class  Element       : size_t;
 
 struct AABB;
 struct Animation;
@@ -81,14 +67,19 @@ class InventoryGui;
 class Mob;
 class Player;
 class Random;
+class RenderString;
 class Serializer;
 class Shader;
 class World;
 
 namespace Const {
-  constexpr float pi   = std::atan(1.0)*4.0;
-  constexpr float pi_2 = std::atan(1.0)*2.0;
+  constexpr float pi          = std::atan(1.0)*4.0;
+  constexpr float pi_2        = std::atan(1.0)*2.0;
+  constexpr size_t InvalidID  = ~0UL;
 }
+
+constexpr float operator"" _deg(long double f)        { return        f / 180 * Const::pi; }
+constexpr float operator"" _deg(unsigned long long f) { return (float)f / 180 * Const::pi; }
 
 #endif
 

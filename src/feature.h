@@ -5,11 +5,9 @@
 #include "util.h"
 #include "cell.h"
 
+#include <unordered_map>
+
 class Feature;
-class Template;
-class World;
-class Random;
-class Game;
 
 struct FeatureConnection {
   // where can be put a connection to another feature
@@ -18,7 +16,7 @@ struct FeatureConnection {
   size_t id;
 
   // possible features that can be connected here
-  std::map<std::string, float> nextFeatures;
+  std::unordered_map<std::string, float> nextFeatures;
   
   bool resolved;
 
@@ -139,7 +137,7 @@ public:
 
 protected:
 
-  std::map<char, FeatureCharDef> defs;
+  std::unordered_map<char, FeatureCharDef> defs;
   std::vector<FeatureConnection> conns;
   std::vector<FeatureSpawn> spawns;
   std::vector<FeatureReplacement> replacements;

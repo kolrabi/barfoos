@@ -8,6 +8,8 @@
 #include "matrix4.h"
 #include "vector3.h"
 
+#include <unordered_map>
+
 class GfxView final {
 public:
 
@@ -134,7 +136,7 @@ private:
   GfxView view;
   IColor color;
   float alpha;
-  std::map<size_t, const Texture *> activeTextures;
+  std::unordered_map<size_t, const Texture *> activeTextures;
   size_t activeTextureStage;
   const Vertex *activeVertexPointer;
   

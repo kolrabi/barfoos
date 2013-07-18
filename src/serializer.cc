@@ -1,4 +1,6 @@
 #include <cstring>
+#include <cstdio>
+#include <algorithm>
 
 #include "serializer.h"
 

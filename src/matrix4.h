@@ -25,11 +25,14 @@ struct Matrix4 {
   }
   
   Matrix4(const Matrix4 &o) {
-    ::memcpy(m, o.m, sizeof(m));
+    for (int i=0; i<4; i++)
+      for (int j=0; j<4; j++)
+        self(i,j) = o(i,j);
   }
 
   Matrix4(float *o) {
-    ::memcpy(m, o, sizeof(m));
+    for (int i=0; i<16; i++)
+      m[i] = o[i];
   }
   
   float &operator()(int i, int j) {
@@ -225,14 +228,8 @@ struct Matrix4 {
     t(2,2) = f.z;
     return t;
   }
+  
+  operator std::string() const;
 };
-
-static inline std::ostream & operator<< (std::ostream &out, const Matrix4 &m) {
-  out << "/" << m(0,0) << " " << m(1,0) << m(2,0) << " " << m(3,0) << "\\" << std::endl;
-  out << "|" << m(0,1) << " " << m(1,1) << m(2,1) << " " << m(3,1) << "|"  << std::endl;
-  out << "|" << m(0,2) << " " << m(1,2) << m(2,2) << " " << m(3,2) << "|"  << std::endl;
-  out << "\\"<< m(0,3) << " " << m(1,3) << m(2,3) << " " << m(3,3) << "/"  << std::endl;
-  return out;
-}
 
 #endif

@@ -14,6 +14,8 @@
 
 #include "input.h"
 
+#include <sstream>
+
 Player::Player() : 
   Mob("player"),
   
@@ -96,6 +98,9 @@ Player::Update(Game &game) {
 
   this->UpdateInput(game);
   this->UpdateSelection(game);
+  
+  this->rightHand->Update(game);
+  this->leftHand->Update(game);
   
   if (itemActiveLeft) {
     std::shared_ptr<Item> useItem = this->inventory[InventorySlot::RightHand];
@@ -214,8 +219,8 @@ Player::UpdateInput(
 
   sneak = input.IsKeyActive(InputKey::Sneak);
 
-  if (angles.y >  Const::pi_2*0.99) angles.y =  Const::pi_2*0.99;
-  if (angles.y < -Const::pi_2*0.99) angles.y = -Const::pi_2*0.99;
+  if (angles.y >  89_deg) angles.y =  89_deg;
+  if (angles.y < -89_deg) angles.y = -89_deg;
 
   Vector3 fwd   = this->GetForward().Horiz().Normalize();
   Vector3 right = this->GetRight().Horiz().Normalize();
@@ -278,9 +283,13 @@ Player::DrawWeapons(Gfx &gfx) const {
 
   if (this->inventory[InventorySlot::RightHand]) {
     this->inventory[InventorySlot::RightHand]->Draw(gfx, false);
+  } else {
+    this->rightHand->Draw(gfx, false);
   }
   if (this->inventory[InventorySlot::LeftHand]) {
     this->inventory[InventorySlot::LeftHand]->Draw(gfx, true);
+  } else {
+    this->leftHand->Draw(gfx, true);
   }
 }
 
@@ -296,9 +305,14 @@ Player::DrawGUI(Gfx &gfx) const {
   
   if (this->inventory[InventorySlot::RightHand]) {
     this->inventory[InventorySlot::RightHand]->DrawIcon(gfx, itemPos);
+  } else {
+    this->rightHand->DrawIcon(gfx, itemPos);
   }
+  
   if (this->inventory[InventorySlot::LeftHand]) {
     this->inventory[InventorySlot::LeftHand]->DrawIcon(gfx, itemPos - Point(36,0));
+  } else {
+    this->leftHand->DrawIcon(gfx, itemPos);
   }
   
   // draw crosshair
@@ -369,7 +383,6 @@ Player::AddHealth(Game &game, const HealthInfo &info) {
       lastHurtT[info.type] = game.GetTime();
     }
     this->pain -= info.amount / this->properties->maxHealth;
-    std::cerr << this->pain << std::endl;
   }
   
   Mob::AddHealth(game, info);
@@ -383,6 +396,8 @@ Player::AddMessage(const std::string &text, const std::string &font) {
 
 void 
 Player::AddDeathMessage(const Entity &dead, const HealthInfo &info) {
+  if (dead.GetName() == "") return;
+  
   switch(info.type) {
     case HealthType::Unspecified: AddMessage(dead.GetName() + " died"); break;
     case HealthType::Heal:        AddMessage(dead.GetName() + " was unhealed"); break;
@@ -398,6 +413,8 @@ Player::AddDeathMessage(const Entity &dead, const HealthInfo &info) {
 
 void 
 Player::AddDeathMessage(const Entity &dead, const Entity &killer, const HealthInfo &info) {
+  if (dead.GetName() == "") return;
+  
   switch(info.type) {
     case HealthType::Unspecified: AddMessage(dead.GetName() + " was killed by " + killer.GetName()); break;
     case HealthType::Heal:        AddMessage(dead.GetName() + " was unhealed by " + killer.GetName()); break;

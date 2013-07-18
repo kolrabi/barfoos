@@ -6,6 +6,8 @@
 #include "random.h"
 #include "2d.h"
 
+#include <unordered_map>
+
 class Game final {
 public:
 
@@ -46,7 +48,8 @@ public:
   // misc.
   Vector3 MoveAABB(const AABB &aabb, const Vector3 &dir, uint8_t &axis);
   
-  void Explosion(const IVector3 &pos, const IVector3 &size, float strength);
+  void Explosion(Entity &entity, const Vector3 &pos, size_t radius, float strength, float damage, Element element);
+  
   void HandleEvent(const InputEvent &event);
   
 private:
@@ -61,7 +64,7 @@ private:
   
   int     level;
   
-  std::map<size_t, Entity*> entities;
+  std::unordered_map<size_t, Entity*> entities;
   Player *player;
   size_t  nextEntityId;
   
