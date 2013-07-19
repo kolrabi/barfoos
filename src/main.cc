@@ -5,27 +5,6 @@
 #include <png.h>
 #include <zlib.h>
 
-#include "2d.h"
-#include "vector3.h"
-#include <sstream>
-
-float Wave(float x, float z, float t, float a) {
-  return a * cos( ((x+z)*0.4+t*0.4) )
-           * cos( ((x-z)*0.6+t*0.7) );
-}
-
-Point::operator std::string() const {
-  std::stringstream str;
-  str << "[" << x << ", " << y << "]";
-  return str.str();
-}
-
-Vector3::operator std::string() const {
-  std::stringstream str;
-  str << "[" << x << ", " << y << ", " << z << "]";
-  return str.str();
-}
-  
 static std::string credits() {
   std::string str;
 
@@ -48,7 +27,7 @@ static std::string credits() {
   return str;
 }
 
-int main() {
+int main(int argc, char **argv) {
   std::setlocale(LC_ALL, "en_US.utf8");
 
   Log("%s", credits().c_str());
@@ -60,15 +39,21 @@ int main() {
   }
   Log("GLFW initialized\n");
 
-  Game *game = new Game("seed", 0);
+  Game *game = new Game();
   if (!game->Init()) {
     Log("Could not initialize game object\n");
     delete game;
     glfwTerminate();
     return -1;
   }
-
-  Log("Game object initialized, entering mainloop\n");
+  
+  Log("Game object initialized, new game\n");
+  if (argc == 1)
+    game->NewGame("fooobaaar");
+  else
+    game->NewGame(argv[1]);
+  
+  Log("entering mainloop\n");
   try {
     while(game->Frame()) 
       ;
@@ -92,12 +77,15 @@ int main() {
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 
+extern int __argc;
+extern char **__argv;
+
 int CALLBACK WinMain(
   HINSTANCE,
   HINSTANCE,
   LPSTR,
   int
 ) {
-  return main();
+  return main(__argc, __argv);
 }
 #endif

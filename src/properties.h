@@ -8,6 +8,7 @@ struct IColor;
 struct Properties {
   
   Properties() :
+    game(nullptr),
     tokens(),
     lastError("")
   {}
@@ -28,6 +29,8 @@ struct Properties {
   void Parse(const std::string &prefix, std::vector<const Texture *> &t);
   void Parse(std::string &s);
   void ParseSideMask(size_t &i);
+
+  Game *game;
   
 private:
 

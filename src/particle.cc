@@ -20,5 +20,8 @@ void Particle::Start(Game &game, size_t id) {
 void Particle::Update(Game &game) {
   Mob::Update(game);
   
-  if (game.GetTime() > this->dieT) this->removable = true;
+  if (game.GetTime() > this->dieT) {
+    this->Die(game, HealthInfo());
+    this->removable = true;
+  }
 }

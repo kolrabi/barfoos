@@ -4,57 +4,11 @@
 #include "texture.h"
 #include "vector3.h"
 #include "ivector3.h"
+#include "util.h"
 
 #include <cstdio>
 #include <cstring>
 #include <cstdlib>
-
-std::vector<std::string> Tokenize(const char *l) {
-  std::vector<std::string> tokens;
-  
-  std::string line = l;
-  char *p = &line[0];
-  char *q;
-  
-  // skip whitespace
-  while(*p && strchr(" \r\n\t", *p)) p++;
-  
-  // end of string or first character is #?
-  if (*p == 0 || *p == '#') return tokens;
-  
-  bool inString = *p == '\"';
-  if (inString) p++;
-  
-  do {
-    // find end of token
-    q = p;
-    while(*q) {
-      if (inString) {
-        if (*q == '\"') {
-          inString = false;
-          break;
-        }
-      } else {
-        if (strchr(" \r\n\t", *q)) break;
-      }
-      q++;
-    }
-    
-    // terminate token
-    if (q) *q = 0;
-    tokens.push_back(p);
-    Log("parsed token '%s'\n", p);
-    
-    // not end of line? then skip whitespace to next token
-    if (q) { 
-      p = q+1; 
-      while(*p && strchr(" \r\n\t", *p)) p++;
-    }
-    inString = *p == '\"';
-    if (inString) p++;
-  } while(q && *p);
-  return tokens;
-}
 
 void 
 Properties::ParseFile(FILE *f) {

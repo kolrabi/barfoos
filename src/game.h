@@ -7,11 +7,12 @@
 #include "2d.h"
 
 #include <unordered_map>
+#include "markov.h"
 
 class Game final {
 public:
 
-  Game(const std::string &seed, size_t level = 0, const Point &screenSize = Point(320, 240));
+  Game(const Point &screenSize = Point(320, 240));
   Game(const Game &game) = delete;
   Game(Game &&game) = delete;
   ~Game();
@@ -19,6 +20,7 @@ public:
   Game &operator=(Game &game) = delete;
   
   bool Init();
+  void NewGame(const std::string &seed);
   bool Frame();
   
   Gfx    &GetGfx()    const { return *this->gfx;    }
@@ -31,6 +33,8 @@ public:
   float   GetFPS()    const { return this->fps;     }
 
   int     GetLevel()  const { return level;         }
+  
+  std::string GetScrollName();
   
   // entity management
   size_t  AddEntity(Entity *entity);
@@ -93,6 +97,8 @@ private:
   
   void BuildWorld();
   std::vector<const Entity*> FindLightEntities(const Vector3 &pos, float radius) const;
+  
+  markov_chain<char> scrollMarkov;
 };
 
 #endif

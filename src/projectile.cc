@@ -36,6 +36,7 @@ Projectile::OnCollide(Game &game, Cell &cell, Side side) {
   (void)side;
   
   Mob::Die(game, HealthInfo());
+  this->removable = true;
   
   game.Explosion(*this, this->GetPosition(), 3, 1.0, 10, Element::Physical);
 }

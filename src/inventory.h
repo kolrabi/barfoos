@@ -5,6 +5,7 @@
 #include "icolor.h"
 
 #include <unordered_map>
+#include <utility>
 
 //                 x  x  x  x
 //   8  0          x  x  x  x
@@ -73,6 +74,7 @@ public:
   
   void Drop(Game &game, Entity &owner);
   void DropItem(const std::shared_ptr<Item> &item);
+  void ConsumeItem(const std::shared_ptr<Item> &item);
   
   IColor GetLight() const;
   
@@ -84,7 +86,10 @@ private:
 
   std::unordered_map<InventorySlot, std::shared_ptr<Item>> inventory;
   std::vector<std::shared_ptr<Item>> overflow;
-  
+  std::vector<std::pair<InventorySlot, std::shared_ptr<Item>>> equipped;
+  std::vector<std::pair<InventorySlot, std::shared_ptr<Item>>> unequipped;
+  std::vector<std::shared_ptr<Item>> consumed;
+
   float lastT;
 };
 

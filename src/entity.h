@@ -10,6 +10,7 @@
 #include "util.h"
 #include "ivector3.h"
 #include "vector3.h"
+#include "smooth.h"
 
 #include "properties.h"
 
@@ -60,12 +61,17 @@ struct EntityProperties : public Properties {
   
   /** Display name of entity. */
   std::string name          = "";
+
+  std::string group         = "";
+  
+  std::unordered_map<std::string, std::string> onUseItemReplace;
   
   virtual void ParseProperty(const std::string &name) override;
 };
 
 void LoadEntities();
 const EntityProperties *getEntity(const std::string &name);
+std::vector<std::string> GetEntitiesInGroup(const std::string &group);
 
 class Entity {
 public:
@@ -91,6 +97,7 @@ public:
   
   virtual void OnHealthDealt(Game &game, Entity &other, const HealthInfo &info);
   virtual void OnLevelUp(Game &game)                          { (void)game; }
+  virtual void OnEquip(Game &, const Item &, InventorySlot, bool)      {}
   
   // management
   size_t                    GetId()                           const { return id; }
@@ -123,6 +130,7 @@ public:
   
   const AABB &              GetAABB()                         const { return this->aabb; }
   Stats                     GetEffectiveStats()               const;
+  Stats &                   GetBaseStats()                          { return this->baseStats; }
   float                     GetHealth()                       const { return this->health; }
   
   // rendering

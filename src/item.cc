@@ -51,6 +51,8 @@ ItemProperties::ParseProperty(const std::string &cmd) {
     Parse(this->eqAddAgi);
   } else if (cmd == "eqdef") {
     Parse(this->eqAddDef);
+  } else if (cmd == "eqhp") {
+    Parse(this->eqAddHP);
     
   } else if (cmd == "uneqstr") {
     Parse(this->uneqAddStr);
@@ -60,6 +62,8 @@ ItemProperties::ParseProperty(const std::string &cmd) {
     Parse(this->uneqAddAgi);
   } else if (cmd == "uneqdef") {
     Parse(this->uneqAddDef);
+  } else if (cmd == "uneqhp") {
+    Parse(this->uneqAddHP);
     
   } else if (cmd == "cooldown") {
     Parse(this->cooldown);
@@ -76,6 +80,10 @@ ItemProperties::ParseProperty(const std::string &cmd) {
     this->canUseEntity = true;
   } else if (cmd == "canusenothing") {
     this->canUseNothing = true;
+  } else if (cmd == "nomodifier") {
+    this->noModifier = true;
+  } else if (cmd == "nobeatitude") {
+    this->noBeatitude = true;
     
   } else if (cmd == "hand") {
     this->equippable |= (1<<(size_t)InventorySlot::LeftHand) | (1<<(size_t)InventorySlot::RightHand);
@@ -115,6 +123,28 @@ ItemProperties::ParseProperty(const std::string &cmd) {
 
   } else if (cmd == "name") {
     Parse(this->name);
+  } else if (cmd == "identifiedname") {
+    Parse(this->identifiedName);
+  } else if (cmd == "unidentifiedname") {
+    Parse(this->unidentifiedName);
+  } else if (cmd == "scroll") {
+    this->unidentifiedName = this->game->GetScrollName();
+    
+  } else if (cmd == "oncombineeffect") {
+    Parse(this->onCombineEffect);
+  } else if (cmd == "onconsumeeffect") {
+    Parse(this->onConsumeEffect);
+  } else if (cmd == "onconsumeresult") {
+    Parse(this->onConsumeResult);
+
+  } else if (cmd == "effect") {
+    float w;
+    Parse(w);
+    
+    std::string name;
+    Parse(name);
+    
+    this->effects[name] = w;
     
   } else if (cmd != "") {
     this->SetError("ignoring '" + cmd + "'");
@@ -122,12 +152,17 @@ ItemProperties::ParseProperty(const std::string &cmd) {
 }
 
 void
-LoadItems() {
+LoadItems(Game &game) {
+  allItems.clear();
+  
   std::vector<std::string> assets = findAssets("items");
   for (const std::string &name : assets) {
     FILE *f = openAsset("items/"+name);
     if (f) {
+      allItems[name].game = &game;
       allItems[name].name = name;
+      allItems[name].identifiedName = name;
+      allItems[name].unidentifiedName = name;
       allItems[name].ParseFile(f);
       fclose(f);
     }
@@ -137,6 +172,7 @@ LoadItems() {
 Item::Item(const std::string &type) : 
   initDone(false),
   properties(&getItem(type)),
+  effect(nullptr),
   durabilityTex(loadTexture("gui/durability")),
   isRemovable(false),
   sprite(this->properties->sprite),
@@ -145,7 +181,8 @@ Item::Item(const std::string &type) :
   isEquipped(false),
   nextUseT(0.0),
   beatitude(Beatitude::Normal),
-  modifier(0)
+  modifier(0),
+  identified(true)
 {}
 
 Item::~Item() {
@@ -157,30 +194,38 @@ bool Item::CanUse(Game &game) const {
          this->nextUseT < game.GetTime();
 }
   
-void Item::StartCooldown(Game &game) {
-  this->durability -= this->properties->useDurability;
-  this->nextUseT = game.GetTime() + this->properties->cooldown;
+void Item::StartCooldown(Game &game, Entity &user) {
+  this->durability -= this->properties->useDurability * this->effect->useDurability;
+  this->nextUseT = game.GetTime() + this->GetCooldown() / (1.0 + Const::AttackSpeedFactorPerAGI*user.GetEffectiveStats().agi);
 }
 
 void Item::Update(Game &game) {
   if (!this->initDone) {
     this->initDone = true;
-    this->modifier = game.GetRandom().Integer(2) + game.GetRandom().Integer(2) - 2;
     
-    if (game.GetRandom().Chance(0.1)) {
-      this->beatitude = Beatitude::Cursed;
-      this->modifier = -2;
-    } else if (game.GetRandom().Chance(0.1) && this->modifier == 2) {
-      this->beatitude = Beatitude::Blessed;
+    if (!this->properties->noModifier) {
+      this->modifier = game.GetRandom().Integer(2) + game.GetRandom().Integer(2) - 2;
     }
     
-    Log("Item is a %s %+d %s\n", this->beatitude == Beatitude::Normal ? "normal" : (this->beatitude == Beatitude::Blessed ? "blessed" : "cursed"), this->modifier, this->properties->name.c_str());
+    if (!this->properties->noBeatitude) {
+      if (game.GetRandom().Chance(0.01)) {
+        this->beatitude = Beatitude::Cursed;
+        this->modifier = -2;
+      } else if (game.GetRandom().Chance(0.1) && this->modifier == 2) {
+        this->beatitude = Beatitude::Blessed;
+      }
+    }
+    
+    this->effect = this->properties->effects.size() == 0 ? &getEffect("") : &getEffect(this->properties->effects.select(game.GetRandom().Float01()));
+    this->durability *= this->effect->durability;
+    
+    Log("Item is a %s %+d %s%s\n", this->beatitude == Beatitude::Normal ? "normal" : (this->beatitude == Beatitude::Blessed ? "blessed" : "cursed"), this->modifier, this->properties->name.c_str(), this->effect->name.c_str());
   }
 
   // reduce durability while equipped  
   if (this->isEquipped) { 
     this->sprite.currentAnimation = this->properties->equipAnim;
-    this->durability -= this->properties->equipDurability * game.GetDeltaT();
+    this->durability -= this->properties->equipDurability * game.GetDeltaT() * this->effect->equipDurability;
   }
 
   this->sprite.Update(game.GetDeltaT());
@@ -213,11 +258,15 @@ void Item::UseOnEntity(Game &game, Mob &user, size_t id) {
       return;
     }
     
-    //entity->AddHealth(game, HealthInfo(-this->properties->damage, HealthType::Melee, Element::Physical, user.GetId()));
-    HealthInfo healthInfo(Stats::MeleeAttack(user, *entity, *this, game.GetRandom()));
-    entity->AddHealth(game, healthInfo);
+    auto iter = entity->GetProperties()->onUseItemReplace.find(this->properties->name);
+    if (iter != entity->GetProperties()->onUseItemReplace.end()) {
+      *this = Item(iter->second);
+    } else {
+      HealthInfo healthInfo(Stats::MeleeAttack(user, *entity, *this, game.GetRandom()));
+      entity->AddHealth(game, healthInfo);
+    }
     
-    this->StartCooldown(game);
+    this->StartCooldown(game, user);
   } else {
     this->UseOnNothing(game, user);
   }
@@ -229,10 +278,10 @@ void Item::UseOnCell(Game &game, Mob &user, Cell *cell, Side side) {
   if (!this->CanUse(game)) return;
   
   if (this->properties->canUseCell) {
-    if (this->properties->breakBlockStrength && game.GetRandom().Chance(this->properties->breakBlockStrength / cell->GetInfo().breakStrength)) {
+    if (this->GetBreakBlockStrength() && game.GetRandom().Chance(this->properties->breakBlockStrength / cell->GetInfo().breakStrength)) {
       cell->GetWorld()->BreakBlock(game, cell->GetPosition());
     }
-    this->StartCooldown(game);
+    this->StartCooldown(game, user);
   } else {
     this->UseOnNothing(game, user);
   }
@@ -240,7 +289,7 @@ void Item::UseOnCell(Game &game, Mob &user, Cell *cell, Side side) {
 
 void Item::UseOnNothing(Game &game, Mob &user) {
   if (!this->CanUse(game)) return;
-  this->StartCooldown(game);
+  this->StartCooldown(game, user);
   
   if (this->properties->spawnProjectile != "") {
     Projectile *proj = new Projectile(this->properties->spawnProjectile);
@@ -286,16 +335,86 @@ Item::DrawSprite(Gfx &gfx, const Vector3 &pos) const {
 }
 
 void 
-Item::ModifyStats(Stats &stats) const {
-  if (this->isEquipped) {
-    stats.str += this->properties->eqAddStr   * (1 + 0.25*this->modifier);
-    stats.agi += this->properties->eqAddAgi   * (1 + 0.25*this->modifier);
-    stats.dex += this->properties->eqAddDex   * (1 + 0.25*this->modifier);
-    stats.def += this->properties->eqAddDef   * (1 + 0.25*this->modifier);
+Item::ModifyStats(Stats &stats, bool forceEquipped) const {
+  if (this->isEquipped || forceEquipped) {
+    stats.str += this->properties->eqAddStr   * (1 + 0.4*this->modifier);
+    stats.agi += this->properties->eqAddAgi   * (1 + 0.4*this->modifier);
+    stats.dex += this->properties->eqAddDex   * (1 + 0.4*this->modifier);
+    stats.def += this->properties->eqAddDef   * (1 + 0.4*this->modifier);
+    stats.maxHealth = this->properties->eqAddHP * (1 + 0.4*this->modifier);;
   } else {
-    stats.str += this->properties->uneqAddStr * (1 + 0.25*this->modifier);
-    stats.agi += this->properties->uneqAddAgi * (1 + 0.25*this->modifier);
-    stats.dex += this->properties->uneqAddDex * (1 + 0.25*this->modifier);
-    stats.def += this->properties->uneqAddDef * (1 + 0.25*this->modifier);
+    stats.str += this->properties->uneqAddStr * (1 + 0.4*this->modifier);
+    stats.agi += this->properties->uneqAddAgi * (1 + 0.4*this->modifier);
+    stats.dex += this->properties->uneqAddDex * (1 + 0.4*this->modifier);
+    stats.def += this->properties->uneqAddDef * (1 + 0.4*this->modifier);
+    stats.maxHealth = this->properties->uneqAddHP * (1 + 0.4*this->modifier);;
   }
+  this->effect->ModifyStats(stats, this->isEquipped);
 }
+
+std::string
+Item::GetDisplayName() const {
+  if (!this->identified) return this->properties->unidentifiedName;
+
+  const char *modifierString = "";
+  
+  switch(this->modifier) {
+    case -2: modifierString = "terrible "; break;
+    case -1: modifierString = "bad "; break;
+    case  0: modifierString = ""; break;
+    case  1: modifierString = "good "; break;
+    case  2: modifierString = "excellent "; break;
+  }
+  
+  char tmp[1024];
+  snprintf(tmp, sizeof(tmp), "%s%s%s", this->beatitude == Beatitude::Normal ? "" : (this->beatitude == Beatitude::Blessed ? "blessed " : "cursed "), modifierString, this->properties->name.c_str());
+  
+  std::string name = tmp;
+  if (this->effect) { name += this->effect->name; }
+  
+  return name;
+}
+
+Stats
+Item::GetDisplayStats() const {
+  Stats stats;
+  stats.str = 0; stats.agi = 0; stats.dex = 0; stats.def = 0;
+  stats.maxHealth = 0;
+  this->ModifyStats(stats, true);
+  return stats;
+}
+
+std::shared_ptr<Item> 
+Item::Combine(const std::shared_ptr<Item> &other) {
+  // TODO: check combination recipies
+  
+  if (this->properties->onCombineEffect != "") {
+    const EffectProperties &effect = getEffect(this->properties->onCombineEffect);
+    other->modifier += effect.onCombineAddModifier;
+    if (effect.onCombineRemoveCurse && other->IsCursed()) other->beatitude = Beatitude::Normal;
+    if (effect.onCombineIdentify) other->identified = true;
+    this->isRemovable = true;
+  }
+  
+  return nullptr;
+}
+
+std::shared_ptr<Item> 
+Item::Consume(Game &game, Entity &user) {
+  if (this->properties->onConsumeEffect != "") {
+    const EffectProperties &effect = getEffect(this->properties->onConsumeEffect);
+    effect.ModifyStats(user.GetBaseStats(), true);
+    if (effect.onConsumeAddHealth) {
+      HealthInfo info(effect.onConsumeAddHealth);
+      user.AddHealth(game, info);
+    }
+  }
+  
+  this->isRemovable = true;
+  
+  if (this->properties->onConsumeResult != "") {
+    return std::shared_ptr<Item>(new Item(this->properties->onConsumeResult));
+  }
+  return nullptr;
+}
+

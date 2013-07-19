@@ -16,6 +16,7 @@ public:
   virtual void OnShow() {}
 
   virtual void Draw(Gfx &gfx, const Point &parentPos);
+  virtual void DrawTooltip(Gfx &gfx, const Point &parentPos);
 
   virtual bool IsOver(const Point &p) const;
   virtual Gui *GetChildAt(const Point &p);

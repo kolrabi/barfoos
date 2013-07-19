@@ -16,4 +16,5 @@ void Log(const char *fmt, ...) {
   va_end(ap);
 
   fputs(str, stderr);
+  fflush(stderr);
 }

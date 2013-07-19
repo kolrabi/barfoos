@@ -79,7 +79,13 @@ EntityProperties::ParseProperty(const std::string &cmd) {
   else if (cmd == "glow")             Parse(this->glow);
   else if (cmd == "exp")              Parse(this->exp);
   else if (cmd == "thinkinterval")    Parse(this->thinkInterval);
-  else if (cmd == "inventory") {
+  else if (cmd == "onuseitemreplace") {
+    std::pair<std::string, std::string> replace;
+    Parse(replace.first);
+    Parse(replace.second);
+    this->onUseItemReplace[replace.first] = replace.second;
+    
+  } else if (cmd == "inventory") {
     float prob;
     std::string type;
     Parse(prob);
@@ -101,10 +107,21 @@ LoadEntities() {
     FILE *f = openAsset("entities/"+name);
     if (f) {
       allEntities[name].name = name;
+      allEntities[name].group = name;
       allEntities[name].ParseFile(f);
       fclose(f);
     }
   }
+}
+
+std::vector<std::string>
+GetEntitiesInGroup(const std::string &group) {
+  std::vector<std::string> entities;
+  for (auto &ent : allEntities) {
+    if (ent.second.group == group)
+      entities.push_back(ent.first);
+  }
+  return entities;
 }
 
 Entity::Entity(const std::string &type) :

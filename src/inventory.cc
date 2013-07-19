@@ -99,6 +99,8 @@ Inventory::Equip(const std::shared_ptr<Item> &item, InventorySlot slot) {
   
   if (item) {
     item->SetEquipped(equip);
+    if (equip) this->equipped.push_back({slot, item});
+    else this->unequipped.push_back({slot, item});
   }
 }
 
@@ -110,6 +112,21 @@ Inventory::Update(Game &game, Entity &owner) {
     DropItem(game, owner, i);
   }
   overflow.clear();
+
+  for (auto &i:consumed) {
+    i->Consume(game, owner);
+  }
+  consumed.clear();
+  
+  for (auto &i:equipped) {
+    owner.OnEquip(game, *i.second, i.first, true);
+  }
+  equipped.clear();
+
+  for (auto &i:unequipped) {
+    owner.OnEquip(game, *i.second, i.first, false);
+  }
+  unequipped.clear();
   
   for (auto &i:inventory) {
     if (i.second) {
@@ -133,6 +150,11 @@ Inventory::Drop(Game &game, Entity &owner) {
 void 
 Inventory::DropItem(const std::shared_ptr<Item> &item) {
   overflow.push_back(item);
+}
+
+void 
+Inventory::ConsumeItem(const std::shared_ptr<Item> &item) {
+  consumed.push_back(item);
 }
 
 void

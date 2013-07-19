@@ -5,6 +5,11 @@
 #include "icolor.h"
 #include "inventory.h"
 
+namespace Const {
+  static constexpr float WalkSpeedFactorPerAGI   = 0.2f; // double walk speed every 5 agi points
+  static constexpr float AttackSpeedFactorPerAGI = 0.2f; // double speed every 5 agi points
+};
+
 enum class HealthType : size_t {
   Unspecified = 0,
   Heal,
@@ -60,10 +65,10 @@ struct HealthInfo {
 };
 
 struct Stats {
-  int str = 10;
-  int dex = 10;
-  int agi = 10;
-  int def = 10;
+  int str = 0;
+  int dex = 0;
+  int agi = 0;
+  int def = 0;
   
   int maxHealth = 10;
   
@@ -73,6 +78,8 @@ struct Stats {
   
   bool AddExp(float exp);
   size_t GetLevel();
+  
+  std::string GetToolTip() const;
   
   static HealthInfo MeleeAttack(const Entity &attacker, const Entity &victim, const Item &item, Random &random);
   static HealthInfo ExplosionAttack(const Entity &attacker, const Entity &victim, float damage, Element element);

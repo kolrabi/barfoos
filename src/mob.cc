@@ -229,5 +229,5 @@ Mob::GetMoveModifier() const {
   float mod = 1.0;
   if (sneak) mod *= 0.5;
   if (this->footCell) mod *= this->footCell->GetInfo().speedModifier;
-  return mod;
+  return mod * (1.0 + GetEffectiveStats().agi * Const::WalkSpeedFactorPerAGI);
 }

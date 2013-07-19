@@ -8,6 +8,7 @@
 #include "vertex.h"
 
 #include <unordered_map>
+#include "weighted_map.h"
 
 static std::unordered_map<std::string, Feature> allFeatures;
 
@@ -261,11 +262,18 @@ void Feature::SpawnEntities(Game &game, const IVector3 &pos) const {
   for (const FeatureSpawn &spawn : spawns) {
     if (game.GetRandom().Chance(spawn.probability)) {
       Entity *entity = nullptr;
+      
+      std::string type = spawn.type;
+      if (type[0] == '$') {
+        std::vector<std::string> types = GetEntitiesInGroup(type.substr(1));
+        if (type.size() == 0) continue;
+        type = types[game.GetRandom().Integer(types.size())];
+      }
 
       switch(spawn.spawnClass) {
-        case SpawnClass::MobClass:        entity = new Mob(spawn.type); break;
-        case SpawnClass::EntityClass:     entity = new Entity(spawn.type); break;
-        case SpawnClass::ItemEntityClass: entity = new ItemEntity(spawn.type); break;
+        case SpawnClass::MobClass:        entity = new Mob(type); break;
+        case SpawnClass::EntityClass:     entity = new Entity(type); break;
+        case SpawnClass::ItemEntityClass: entity = new ItemEntity(type); break;
         default: continue;
       }
       
@@ -325,6 +333,20 @@ void FeatureConnection::Resolve() {
 const Feature *FeatureConnection::GetRandomFeature(Game &game, const IVector3 &pos) const {
   if (nextFeatures.empty()) return nullptr;
   
+  weighted_map<const Feature *> wm;
+  
+  for (auto fname : nextFeatures) {
+    const Feature *f = getFeature(fname.first);
+    if (!f) continue;
+    float w = std::abs(f->GetProbability(game, pos+this->pos)*fname.second);
+    if (w <= 0.0) continue;
+    
+    wm[f] = w;
+  }
+  
+  return wm.select(game.GetRandom().Float01());
+    
+  /*
   struct W {
     const Feature *f;
     float w;
@@ -355,6 +377,7 @@ const Feature *FeatureConnection::GetRandomFeature(Game &game, const IVector3 &p
   }
   
   return nullptr;
+  */
 }
 
 const FeatureConnection *

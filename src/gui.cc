@@ -60,6 +60,14 @@ Gui::Draw(Gfx &gfx, const Point &parentPos) {
   }
 }
 
+void 
+Gui::DrawTooltip(Gfx &gfx, const Point &parentPos) {
+  gfx.SetColor(IColor(255,255,255));
+  for (auto c : children) {
+    c->DrawTooltip(gfx, parentPos+rect.pos);
+  }
+}
+
 void
 Gui::HandleEvent(const InputEvent &event) {
   for (auto c : children) {

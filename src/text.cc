@@ -139,6 +139,10 @@ void RenderString::Draw(Gfx &gfx, float x, float y, int align) {
   gfx.GetView().Pop();
 }
 
+void RenderString::Draw(Gfx &gfx, const Point &pos, int align) { 
+  Draw(gfx, pos.x, pos.y, align);
+}
+
 void RenderString::DrawChar(float x, float y, wchar_t c, const IColor &color) {
   float u =   (c%32)/32.0;
   float v = 1-(c/32)/ 8.0;

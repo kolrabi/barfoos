@@ -175,7 +175,7 @@ World::Build(Game &game) {
   
   // create caves
   e.SetBrush(Cell("air"));
-  size_t caveCount     = random.Integer(instances.size()/10);
+  size_t caveCount     = instances.size()>10 ? random.Integer(instances.size()/10) : 0;
 
   for (size_t i = 0; i<caveCount; i++) {
     size_t featNum = random.Integer(instances.size());

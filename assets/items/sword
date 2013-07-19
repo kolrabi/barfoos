@@ -2,14 +2,17 @@ tex sword2
 frames 1
 
 damage 1
-durability 25
-usedurability 1
+# durability 25
+# usedurability 1
 
 cooldown 0.2
 light 64 64 64
 
 hand
 
-OnUseSpawnProjectile projectile.test
+# OnUseSpawnProjectile projectile.test
 CanUseNothing
 CanUseEntity
+
+Effect  0.5 ""
+Effect  0.5 "strength"

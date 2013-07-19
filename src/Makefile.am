@@ -2,7 +2,7 @@
 
 ## Build ----------------------------------------------------------
 
-CF=$(GL_CFLAGS) -Werror -Wall -Wextra -I$(top_srcdir)/src -DDATA_PATH=\"$(pkgdatadir)\" -Weffc++
+CF=$(GL_CFLAGS) -Werror -Wall -Wextra -I$(top_srcdir)/src -DDATA_PATH=\"$(pkgdatadir)\" 
 
 if WINDOOF
 RESFILE=res.rc icon.ico
@@ -50,9 +50,12 @@ barfoos_SOURCES=\
   \
   item.cc item.h \
   inventory.cc inventory.h \
+  effect.cc effect.h \
   \
   common.h ivector3.h space.h vector3.h \
-  random.h util.h aabb.h 2d.h \
+  random.h \
+  util.cc util.h \
+  aabb.h 2d.h \
   serializer.cc serializer.h \
   input.cc input.h \
   profile.cc profile.h \

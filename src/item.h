@@ -5,10 +5,15 @@
 #include "icolor.h"
 #include "sprite.h"
 
+#include "weighted_map.h"
+
+#include "effect.h"
 #include "properties.h"
 
 struct ItemProperties : public Properties {
   std::string name = "<item>";
+  std::string identifiedName = "<item>";
+  std::string unidentifiedName = "<item>";
   
   // rendering
   Sprite sprite = Sprite();
@@ -24,11 +29,13 @@ struct ItemProperties : public Properties {
   int eqAddDex = 0;
   int eqAddAgi = 0;
   int eqAddDef = 0;
+  int eqAddHP  = 0;
 
   int uneqAddStr = 0;
   int uneqAddDex = 0;
   int uneqAddAgi = 0;
   int uneqAddDef = 0;
+  int uneqAddHP  = 0;
   
   std::string weaponClass = "";
   
@@ -44,6 +51,12 @@ struct ItemProperties : public Properties {
   bool canUseCell = false;
   bool canUseEntity = false;
   bool canUseNothing = false;
+  bool noModifier = false;
+  bool noBeatitude = false;
+  
+  std::string onCombineEffect = "";
+  std::string onConsumeEffect = "";
+  std::string onConsumeResult = "";
   
   float breakBlockStrength = 0.0;
   
@@ -51,11 +64,13 @@ struct ItemProperties : public Properties {
   
   // std::string placeEntity = "";
   std::string spawnProjectile = "";
+  
+  weighted_map<std::string> effects = weighted_map<std::string>();
  
   virtual void ParseProperty(const std::string &name) override;
 };
 
-void LoadItems();
+void LoadItems(Game &game);
 const ItemProperties &getItem(const std::string &name);
 
 enum class Beatitude : int {
@@ -80,13 +95,18 @@ public:
   void DrawSprite(Gfx &gfx, const Vector3 &pos) const;
   
   bool CanUse(Game &game) const;
-  void StartCooldown(Game &game);
+  void StartCooldown(Game &game, Entity &user);
   
   void UseOnEntity(Game &game, Mob &user, size_t ent);
   void UseOnCell(Game &game, Mob &user, Cell *cell, Side side);
   void UseOnNothing(Game &game, Mob &user);
 
-  float GetRange()                      const { return this->properties->range; }  
+  float GetRange()                      const { return this->properties->range * this->effect->range; }  
+  float GetDamage()                     const { return this->properties->damage * this->effect->damage; }  
+  Element GetElement()                  const { return this->effect->element; }  
+  float GetCooldown()                   const { return this->properties->cooldown * this->effect->cooldown; }
+  float GetBreakBlockStrength()         const { return this->properties->breakBlockStrength * this->effect->breakBlockStrength; }
+  
   bool IsTwoHanded()                    const { return this->properties->twoHanded; }
   
   bool IsEquippable(InventorySlot slot) const { return this->properties->equippable & 1<<(size_t)slot; }
@@ -94,23 +114,29 @@ public:
   bool IsEquipped()                     const { return isEquipped; }
   
   void SetEquipped(bool equipped)             { this->isEquipped = equipped; }
+  bool IsCursed()                       const { return this->beatitude == Beatitude::Cursed; }
+  
+  std::string GetDisplayName()          const;
+  Stats GetDisplayStats()               const;
+  
+  bool IsConsumable()                   const { return this->properties->onConsumeEffect != "" || this->properties->onConsumeResult != ""; }
   
   bool IsRemovable()                    const { return isRemovable; }
   
   const ItemProperties &GetProperties() const { return *this->properties; }
+  const EffectProperties &GetEffect()   const { return *this->effect; }
   
-  virtual std::shared_ptr<Item> Combine(const std::shared_ptr<Item> &other) {
-    (void)other;
-    return nullptr;
-  }
+  virtual std::shared_ptr<Item> Combine(const std::shared_ptr<Item> &other);
+  virtual std::shared_ptr<Item> Consume(Game &game, Entity &user);
   
-  void ModifyStats(Stats &stats) const;
+  void ModifyStats(Stats &stats, bool forceEquipped = false) const;
   
 protected:
 
   bool initDone;
 
   const ItemProperties *properties;
+  const EffectProperties *effect;
   const Texture *durabilityTex;
   
   // lifecycle management
@@ -127,6 +153,8 @@ protected:
  
   Beatitude beatitude;
   int modifier;
+  
+  bool identified;
 };
 
 #endif
