@@ -11,4 +11,8 @@ Extents     0.2 0.8 0.2
 Respawn
 
 Inventory   1.0 pants.1
+Inventory   0.3 boots.1
+Inventory   0.3 helmet.1
+Inventory   0.3 armor.1
 Inventory   1.0 scroll.remove.curse
+Inventory   1.0 scroll.identify

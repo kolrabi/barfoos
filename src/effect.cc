@@ -13,8 +13,9 @@ static std::unordered_map<std::string, EffectProperties> allEffects;
 EffectProperties defaultEffect;
 
 const EffectProperties &getEffect(const std::string &name) {
+  if (name == "") return defaultEffect;
   if (allEffects.find(name) == allEffects.end()) {
-    Log("Properties for entity of type '%s' not found\n", name.c_str());
+    Log("Properties for effect of type '%s' not found\n", name.c_str());
     return defaultEffect;
   }
   return allEffects[name];

@@ -10,14 +10,14 @@ uniform mat4 u_matView;
 uniform mat4 u_matTexture;
 uniform mat4 u_matNormal;
 
-uniform vec3 u_lightPos[32];
+uniform vec3 u_lightPos[16];
 uniform int  u_lightPos_length;
 
 varying vec3 v_pos;
 varying vec2 v_tex;
 varying vec4 v_color;
 varying vec3 v_norm;
-varying vec3 v_light[32];
+varying vec3 v_light[16];
 
 vec3 Distort(vec4 vertex) {
   float t = u_time * 2.0 * 3.14159;

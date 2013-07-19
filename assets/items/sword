@@ -11,7 +11,7 @@ light 64 64 64
 hand
 
 # OnUseSpawnProjectile projectile.test
-CanUseNothing
+# CanUseNothing
 CanUseEntity
 
 Effect  0.5 ""

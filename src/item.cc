@@ -36,6 +36,7 @@ ItemProperties::ParseProperty(const std::string &cmd) {
     Parse(fps);
     
     this->sprite.animations.push_back(Animation(firstFrame, frameCount, fps));
+    if (this->sprite.animations.size() == 1) this->sprite.StartAnim(0);
     
   } else if (cmd == "size") {
     Parse(this->sprite.width);
@@ -182,8 +183,10 @@ Item::Item(const std::string &type) :
   nextUseT(0.0),
   beatitude(Beatitude::Normal),
   modifier(0),
-  identified(true)
-{}
+  identified(false)
+{
+  if (this->sprite.animations.size() > 0) this->sprite.StartAnim(0);
+}
 
 Item::~Item() {
 }
@@ -341,13 +344,13 @@ Item::ModifyStats(Stats &stats, bool forceEquipped) const {
     stats.agi += this->properties->eqAddAgi   * (1 + 0.4*this->modifier);
     stats.dex += this->properties->eqAddDex   * (1 + 0.4*this->modifier);
     stats.def += this->properties->eqAddDef   * (1 + 0.4*this->modifier);
-    stats.maxHealth = this->properties->eqAddHP * (1 + 0.4*this->modifier);;
+    stats.maxHealth = this->properties->eqAddHP * (1 + 0.4*this->modifier);
   } else {
     stats.str += this->properties->uneqAddStr * (1 + 0.4*this->modifier);
     stats.agi += this->properties->uneqAddAgi * (1 + 0.4*this->modifier);
     stats.dex += this->properties->uneqAddDex * (1 + 0.4*this->modifier);
     stats.def += this->properties->uneqAddDef * (1 + 0.4*this->modifier);
-    stats.maxHealth = this->properties->uneqAddHP * (1 + 0.4*this->modifier);;
+    stats.maxHealth = this->properties->uneqAddHP * (1 + 0.4*this->modifier);
   }
   this->effect->ModifyStats(stats, this->isEquipped);
 }
@@ -367,7 +370,7 @@ Item::GetDisplayName() const {
   }
   
   char tmp[1024];
-  snprintf(tmp, sizeof(tmp), "%s%s%s", this->beatitude == Beatitude::Normal ? "" : (this->beatitude == Beatitude::Blessed ? "blessed " : "cursed "), modifierString, this->properties->name.c_str());
+  snprintf(tmp, sizeof(tmp), "%s%s%s", this->beatitude == Beatitude::Normal ? "" : (this->beatitude == Beatitude::Blessed ? "blessed " : "cursed "), modifierString, this->properties->identifiedName.c_str());
   
   std::string name = tmp;
   if (this->effect) { name += this->effect->name; }
@@ -394,6 +397,7 @@ Item::Combine(const std::shared_ptr<Item> &other) {
     if (effect.onCombineRemoveCurse && other->IsCursed()) other->beatitude = Beatitude::Normal;
     if (effect.onCombineIdentify) other->identified = true;
     this->isRemovable = true;
+    return other;
   }
   
   return nullptr;

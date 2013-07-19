@@ -98,7 +98,7 @@ public:
   Point AlignTopLeftScreen(const Point &size, int padding = 0);
   Point AlignTopRightScreen(const Point &size, int padding = 0);
   
-  static const size_t MaxLights = 32;
+  static const size_t MaxLights = 16;
   
 private:
 

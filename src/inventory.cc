@@ -48,7 +48,7 @@ Inventory::AddToBackpack(const std::shared_ptr<Item> &item) {
 bool
 Inventory::AddToInventory(const std::shared_ptr<Item> &item, InventorySlot slot) {
   if (!this->inventory[slot]) {
-    // target slot is not free
+    // target slot is free
     if (slot >= InventorySlot::Backpack0 || item->IsEquippable(slot)) {
       // replace item
       this->Equip(item, slot);
@@ -60,7 +60,7 @@ Inventory::AddToInventory(const std::shared_ptr<Item> &item, InventorySlot slot)
   }
 
   // combine
-  std::shared_ptr<Item> combo(item->Combine(self[slot]));
+  std::shared_ptr<Item> combo(item->Combine(this->inventory[slot]));
   
   if (!combo) {
     // if that didn't work, try the reverse
@@ -69,6 +69,7 @@ Inventory::AddToInventory(const std::shared_ptr<Item> &item, InventorySlot slot)
   
   if (combo) {
     // replace existing item with combination
+    this->inventory[slot] = nullptr;
     this->Equip(combo, slot);
     return true;
   }
