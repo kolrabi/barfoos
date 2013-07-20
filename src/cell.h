@@ -108,6 +108,8 @@ struct CellProperties : public Properties {
   float useDelay;
   float breakStrength;
   float lavaDamage;
+  
+  std::string breakParticle;
 
   CellProperties(); 
   

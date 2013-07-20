@@ -11,7 +11,9 @@
 
 #include "texture.h"
   
-static std::map<std::string, CellProperties> cellProperties;
+#include <unordered_map>
+
+static std::unordered_map<std::string, CellProperties> cellProperties;
 
 CellProperties::CellProperties() :
   type("default"),
@@ -33,7 +35,8 @@ CellProperties::CellProperties() :
   onUseCascade(0),
   useDelay(0.0),
   breakStrength(1.0),
-  lavaDamage(0.0)
+  lavaDamage(0.0),
+  breakParticle("particle")
 {}
 
 void CellProperties::ParseProperty(const std::string &cmd) {
@@ -74,6 +77,7 @@ void CellProperties::ParseProperty(const std::string &cmd) {
   else if (cmd == "lavadamage")   Parse(this->lavaDamage);
   
   else if (cmd == "scale")        Parse(this->scale);
+  else if (cmd == "breakparticle")     Parse(this->breakParticle);
   
   else if (cmd == "detailbelowreplace") {
     Parse(this->detailBelowReplace);
@@ -87,7 +91,7 @@ void LoadCells() {
   for (const std::string &name : assets) {
     FILE *f = openAsset("cells/"+name);
     if (f) {
-      std::cerr << "Loading cell properties for " << name << std::endl;
+      Log("Loading cell properties for type '%s'\n", name.c_str());
       cellProperties[name].ParseFile(f);
       cellProperties[name].type = name;
       fclose(f);

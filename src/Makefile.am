@@ -18,7 +18,7 @@ endif
 
 bin_PROGRAMS=barfoos
 
-barfoos_CXXFLAGS=$(CF) --std=c++0x -Weffc++
+barfoos_CXXFLAGS=$(CF) --std=c++0x
 barfoos_CFLAGS=$(CF) --std=c99 
 barfoos_LDADD=
 barfoos_LDFLAGS=$(LDWINFLAGS)
@@ -50,9 +50,12 @@ barfoos_SOURCES=\
   \
   item.cc item.h \
   inventory.cc inventory.h \
+  effect.cc effect.h \
   \
   common.h ivector3.h space.h vector3.h \
-  random.h util.h aabb.h 2d.h \
+  random.h \
+  util.cc util.h \
+  aabb.h 2d.h \
   serializer.cc serializer.h \
   input.cc input.h \
   profile.cc profile.h \

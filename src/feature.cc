@@ -7,11 +7,14 @@
 #include "game.h"
 #include "vertex.h"
 
-static std::map<std::string, Feature> allFeatures;
+#include <unordered_map>
+#include "weighted_map.h"
+
+static std::unordered_map<std::string, Feature> allFeatures;
 
 const Feature *getFeature(const std::string &name) {
   if (allFeatures.find(name) == allFeatures.end()) {
-    std::cerr << "feature " << name << " not found" << std::endl;
+    Log("Feature of type '%s' not found\n", name.c_str());
     return nullptr;
   }
   return &allFeatures[name];
@@ -86,7 +89,6 @@ Feature::Feature(FILE *f, const std::string &name) :
       r.orig = tokens[1][0];
       r.replace = tokens[2][0];
       replacements.push_back(r);
-      std::cerr << r.conn << " " << r.orig << " " << r.replace << std::endl;
     } else if (tokens[0] == "next") {
       conns.back().nextFeatures[tokens[1]] = 1.0f;
     } else if (tokens[0] == "nextp") {
@@ -171,7 +173,7 @@ Feature::Feature(FILE *f, const std::string &name) :
       }
     }
     else if (tokens[0] != "") {
-      std::cerr << "ignoring '" << tokens[0] << "'" << std::endl;
+      Log("Ignoring unknown feature property: %s\n", tokens[0].c_str());
     }
   }
 
@@ -185,7 +187,6 @@ const IVector3 Feature::GetSize() const {
 }
 
 float Feature::GetProbability(const Game &game, const IVector3 &pos) const {
-  if (this->minY) std::cerr << pos.y << std::endl;
   if (pos.y < this->minY) {
     return 0;
   }
@@ -261,11 +262,18 @@ void Feature::SpawnEntities(Game &game, const IVector3 &pos) const {
   for (const FeatureSpawn &spawn : spawns) {
     if (game.GetRandom().Chance(spawn.probability)) {
       Entity *entity = nullptr;
+      
+      std::string type = spawn.type;
+      if (type[0] == '$') {
+        std::vector<std::string> types = GetEntitiesInGroup(type.substr(1));
+        if (type.size() == 0) continue;
+        type = types[game.GetRandom().Integer(types.size())];
+      }
 
       switch(spawn.spawnClass) {
-        case SpawnClass::MobClass:        entity = new Mob(spawn.type); break;
-        case SpawnClass::EntityClass:     entity = new Entity(spawn.type); break;
-        case SpawnClass::ItemEntityClass: entity = new ItemEntity(spawn.type); break;
+        case SpawnClass::MobClass:        entity = new Mob(type); break;
+        case SpawnClass::EntityClass:     entity = new Entity(type); break;
+        case SpawnClass::ItemEntityClass: entity = new ItemEntity(type); break;
         default: continue;
       }
       
@@ -325,6 +333,20 @@ void FeatureConnection::Resolve() {
 const Feature *FeatureConnection::GetRandomFeature(Game &game, const IVector3 &pos) const {
   if (nextFeatures.empty()) return nullptr;
   
+  weighted_map<const Feature *> wm;
+  
+  for (auto fname : nextFeatures) {
+    const Feature *f = getFeature(fname.first);
+    if (!f) continue;
+    float w = std::abs(f->GetProbability(game, pos+this->pos)*fname.second);
+    if (w <= 0.0) continue;
+    
+    wm[f] = w;
+  }
+  
+  return wm.select(game.GetRandom().Float01());
+    
+  /*
   struct W {
     const Feature *f;
     float w;
@@ -344,7 +366,6 @@ const Feature *FeatureConnection::GetRandomFeature(Game &game, const IVector3 &p
   }
   
   if (totals.size() == 0 || total == 0.0) {
-    std::cerr << "argh! " << total << " " << totals.size() << std::endl;
     return nullptr;
   }
 
@@ -355,8 +376,8 @@ const Feature *FeatureConnection::GetRandomFeature(Game &game, const IVector3 &p
     }
   }
   
-  std::cerr << "argh! " << std::endl;
   return nullptr;
+  */
 }
 
 const FeatureConnection *
@@ -393,7 +414,6 @@ LoadFeatures() {
   for (const std::string &name : assets) {
     FILE *f = openAsset("features/"+name);
     if (f) {
-      std::cerr << "loading feature " << name << std::endl;
       allFeatures[name] = Feature(f, name);
       fclose(f);
     }

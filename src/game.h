@@ -6,10 +6,13 @@
 #include "random.h"
 #include "2d.h"
 
+#include <unordered_map>
+#include "markov.h"
+
 class Game final {
 public:
 
-  Game(const std::string &seed, size_t level = 0, const Point &screenSize = Point(320, 240));
+  Game(const Point &screenSize = Point(320, 240));
   Game(const Game &game) = delete;
   Game(Game &&game) = delete;
   ~Game();
@@ -17,6 +20,7 @@ public:
   Game &operator=(Game &game) = delete;
   
   bool Init();
+  void NewGame(const std::string &seed);
   bool Frame();
   
   Gfx    &GetGfx()    const { return *this->gfx;    }
@@ -29,6 +33,8 @@ public:
   float   GetFPS()    const { return this->fps;     }
 
   int     GetLevel()  const { return level;         }
+  
+  std::string GetScrollName();
   
   // entity management
   size_t  AddEntity(Entity *entity);
@@ -46,7 +52,8 @@ public:
   // misc.
   Vector3 MoveAABB(const AABB &aabb, const Vector3 &dir, uint8_t &axis);
   
-  void Explosion(const IVector3 &pos, const IVector3 &size, float strength);
+  void Explosion(Entity &entity, const Vector3 &pos, size_t radius, float strength, float damage, Element element);
+  
   void HandleEvent(const InputEvent &event);
   
 private:
@@ -61,7 +68,7 @@ private:
   
   int     level;
   
-  std::map<size_t, Entity*> entities;
+  std::unordered_map<size_t, Entity*> entities;
   Player *player;
   size_t  nextEntityId;
   
@@ -90,6 +97,8 @@ private:
   
   void BuildWorld();
   std::vector<const Entity*> FindLightEntities(const Vector3 &pos, float radius) const;
+  
+  markov_chain<char> scrollMarkov;
 };
 
 #endif

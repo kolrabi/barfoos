@@ -22,6 +22,7 @@ public:
   virtual void OnCollide(Game &game, Entity &other) override;
   
   void ApplyForce(Game &game, const Vector3 &f);
+  void AddImpulse(const Vector3 &v)  { velocity = velocity + v / this->properties->mass; }
   void AddVelocity(const Vector3 &v) { velocity = velocity + v; }
   const Vector3 &GetVelocity() const { return velocity; }
 

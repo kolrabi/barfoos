@@ -2,6 +2,7 @@
 #define BARFOOS_SPRITE_H
 
 #include "animation.h"
+#include <list>
 
 /** A sprite. */
 struct Sprite {
@@ -51,7 +52,7 @@ struct Sprite {
     currentFrame(0),
     t(0.0),
     currentAnimation(0),
-    animations(1),
+    animations(0),
     animQueue(0)
   {}  
   

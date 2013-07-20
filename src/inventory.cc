@@ -48,7 +48,7 @@ Inventory::AddToBackpack(const std::shared_ptr<Item> &item) {
 bool
 Inventory::AddToInventory(const std::shared_ptr<Item> &item, InventorySlot slot) {
   if (!this->inventory[slot]) {
-    // target slot is not free
+    // target slot is free
     if (slot >= InventorySlot::Backpack0 || item->IsEquippable(slot)) {
       // replace item
       this->Equip(item, slot);
@@ -60,7 +60,7 @@ Inventory::AddToInventory(const std::shared_ptr<Item> &item, InventorySlot slot)
   }
 
   // combine
-  std::shared_ptr<Item> combo(item->Combine(self[slot]));
+  std::shared_ptr<Item> combo(item->Combine(this->inventory[slot]));
   
   if (!combo) {
     // if that didn't work, try the reverse
@@ -69,6 +69,7 @@ Inventory::AddToInventory(const std::shared_ptr<Item> &item, InventorySlot slot)
   
   if (combo) {
     // replace existing item with combination
+    this->inventory[slot] = nullptr;
     this->Equip(combo, slot);
     return true;
   }
@@ -99,6 +100,8 @@ Inventory::Equip(const std::shared_ptr<Item> &item, InventorySlot slot) {
   
   if (item) {
     item->SetEquipped(equip);
+    if (equip) this->equipped.push_back({slot, item});
+    else this->unequipped.push_back({slot, item});
   }
 }
 
@@ -110,6 +113,21 @@ Inventory::Update(Game &game, Entity &owner) {
     DropItem(game, owner, i);
   }
   overflow.clear();
+
+  for (auto &i:consumed) {
+    i->Consume(game, owner);
+  }
+  consumed.clear();
+  
+  for (auto &i:equipped) {
+    owner.OnEquip(game, *i.second, i.first, true);
+  }
+  equipped.clear();
+
+  for (auto &i:unequipped) {
+    owner.OnEquip(game, *i.second, i.first, false);
+  }
+  unequipped.clear();
   
   for (auto &i:inventory) {
     if (i.second) {
@@ -133,6 +151,11 @@ Inventory::Drop(Game &game, Entity &owner) {
 void 
 Inventory::DropItem(const std::shared_ptr<Item> &item) {
   overflow.push_back(item);
+}
+
+void 
+Inventory::ConsumeItem(const std::shared_ptr<Item> &item) {
+  consumed.push_back(item);
 }
 
 void

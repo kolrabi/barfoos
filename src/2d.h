@@ -14,12 +14,9 @@ struct Point {
 
   Point operator +(const Point &o) const { return Point(x+o.x, y+o.y); }
   Point operator -(const Point &o) const { return Point(x-o.x, y-o.y); }
-};
 
-static inline std::ostream & operator<< (std::ostream &out, const Point &p) {
-  out << "{" << p.x << ":" << p.y << "}";
-  return out;
-}
+  operator std::string() const;
+};
 
 /** A 2d rectangle. */
 struct Rect {
@@ -63,12 +60,9 @@ struct Rect {
     }
     return *this;
   }
+  
+  operator std::string () const;
 };
-
-static inline std::ostream & operator<< (std::ostream &out, const Rect &r) {
-  out << "{ " << r.pos << ":" << r.size << " }";
-  return out;
-}
 
 #endif
 

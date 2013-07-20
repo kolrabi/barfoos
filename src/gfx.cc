@@ -126,12 +126,12 @@ Gfx::~Gfx() {
 
 bool 
 Gfx::Init(Game &game) {
-  std::cerr << "initializing gfx" << std::endl;
+  Log("Initializing GFX\n");
 
   // Create window
   this->window = glfwCreateWindow(screenSize.x, screenSize.y, "foobar", NULL, NULL);
   if (!this->window) {
-    std::cerr << "Could not create window\n";
+    Log("Could not create window\n");
     glfwTerminate();
     return false;
   }

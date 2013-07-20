@@ -1,3 +1,5 @@
+#include <algorithm>
+
 #include "input.h"
 
 Input::Input() :

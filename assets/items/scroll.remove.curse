@@ -1,0 +1,12 @@
+tex steel
+frames 2
+
+anim 0 1 0
+
+Scroll
+IdentifiedName  Scroll
+
+NoBeatitude
+NoModifier
+
+OnCombineEffect curse.remove

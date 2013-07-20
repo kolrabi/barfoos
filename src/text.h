@@ -3,6 +3,7 @@
 
 #include "common.h"
 #include "2d.h"
+#include "vertex.h"
 
 struct Font;
 
@@ -23,6 +24,7 @@ public:
   RenderString &operator =(const std::string &text);
 
   void Draw(Gfx &gfx, float x, float y, int align = 0);
+  void Draw(Gfx &gfx, const Point &pos, int align = 0);
   
   void WrapWords(size_t width);
   

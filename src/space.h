@@ -10,14 +10,6 @@ enum Axis : int {
   Horizontal = X | Z
 };
 
-static inline std::ostream & operator<< (std::ostream &out, Axis a) {
-  out << "Axis::";
-  if (a & Axis::X) out << "X";
-  if (a & Axis::Y) out << "Y";
-  if (a & Axis::Z) out << "Z";
-  return out;
-}
-
 // ====================================================================
 
 enum Corner : int {
@@ -46,19 +38,6 @@ enum class Side : int {
   Backward    = 5,
   InvalidSide = -1
 };
-
-static inline std::ostream & operator<< (std::ostream &out, Side side) {
-  switch(side) {
-    case Side::Right:    out << "+X"; break;
-    case Side::Left:     out << "-X"; break;
-    case Side::Up:       out << "+Y"; break;
-    case Side::Down:     out << "-Y"; break;
-    case Side::Forward:  out << "+Z"; break;
-    case Side::Backward: out << "-Z"; break;
-    default:             out << "<?" "?>";
-  }
-  return out;
-}
 
 static inline Side operator-(Side side) {
   return (Side)(((int)side)^1);

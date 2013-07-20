@@ -1,15 +1,16 @@
-
-#include "GLee.h"
-#include <png.h>
-
-#include <sys/time.h>
-#include <iostream>
 #include "simplex.h"
 
 #include "texture.h"
 #include "util.h"
 
-static std::map<std::string, std::unique_ptr<Texture>> textures;
+#include "GLee.h"
+#include <png.h>
+
+#include <sys/time.h>
+#include <unordered_map>
+#include <sstream>
+
+static std::unordered_map<std::string, std::unique_ptr<Texture>> textures;
 static time_t lastUpdate = 0;
 
 Texture::Texture() :
@@ -224,10 +225,10 @@ noiseTexture(const Point &size, const Vector3 &scale, const Vector3 &offset) {
   glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
   delete [] image_data;
   
-  std::stringstream str;
-  str << "*" << size << scale << offset;
-  
-  std::string name = str.str();
+  std::string name = "*";
+  name += size;
+  name += scale;
+  name += offset;
   
   Log("Generated noise texture '%s' as %u.\n", name.c_str(), texture);
   

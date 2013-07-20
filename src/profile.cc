@@ -6,6 +6,16 @@
 #include <time.h>
 #endif
 
+#include <cstdio>
+
+#include <algorithm>
+#include <unordered_map>
+#include <sstream>
+
+#ifndef PRIu64
+  #define PRIu64 "I64u"
+#endif
+
 struct ProfileFunc {
   std::string name = "";
   uint64_t calls = 0;
@@ -13,7 +23,7 @@ struct ProfileFunc {
   uint64_t ticksPerCall = 0;
 };
 
-static std::map<std::string, ProfileFunc> funcs;
+static std::unordered_map<std::string, ProfileFunc> funcs;
 static std::vector<std::string> funcStack;
 
 static inline uint64_t measure() {
@@ -76,5 +86,5 @@ Profile::GetDump() {
 
 void 
 Profile::Dump() {
-  std::cerr << GetDump();
+  Log("%s\n", GetDump().c_str());
 }

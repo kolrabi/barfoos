@@ -10,9 +10,10 @@ class Item;
 class Particle : public Mob {
 public:
 
-  Particle();
+  Particle(const std::string &type);
   virtual ~Particle();
 
+  virtual void Start(Game &game, size_t id) override;
   virtual void Update(Game &game) override;
   
 protected:

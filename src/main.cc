@@ -5,11 +5,6 @@
 #include <png.h>
 #include <zlib.h>
 
-float Wave(float x, float z, float t, float a) {
-  return a * cos( ((x+z)*0.4+t*0.4) )
-           * cos( ((x-z)*0.6+t*0.7) );
-}
-
 static std::string credits() {
   std::string str;
 
@@ -32,35 +27,41 @@ static std::string credits() {
   return str;
 }
 
-int main() {
-  std::cerr << credits() << std::endl;
+int main(int argc, char **argv) {
   std::setlocale(LC_ALL, "en_US.utf8");
+
+  Log("%s", credits().c_str());
   
   // Set up glfw
   if (!glfwInit()) {
-    std::cerr << "Could not initialize GLFW\n";
+    Log("Could not initialize GLFW\n");
     return -1;
   }
-  std::cerr << "GLFW initialized" << std::endl;
+  Log("GLFW initialized\n");
 
-  Game *game = new Game("seed", 0);
-  std::cerr << "Game created" << std::endl;
+  Game *game = new Game();
   if (!game->Init()) {
-    std::cerr << "could not initialize game" << std::endl;
+    Log("Could not initialize game object\n");
     delete game;
     glfwTerminate();
     return -1;
   }
-
-  std::cerr << "game initialized, entering mainloop" << std::endl;
+  
+  Log("Game object initialized, new game\n");
+  if (argc == 1)
+    game->NewGame("fooobaaar");
+  else
+    game->NewGame(argv[1]);
+  
+  Log("entering mainloop\n");
   try {
     while(game->Frame()) 
       ;
   } catch (std::exception &e) {
-    std::cerr << e.what() << std::endl;
+    Log("Caught exception: %s\n", e.what());
   }
     
-  std::cerr << "shutting down" << std::endl;
+  Log("Shutting down\n");
   
   delete game;
   
@@ -76,12 +77,15 @@ int main() {
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 
+extern int __argc;
+extern char **__argv;
+
 int CALLBACK WinMain(
   HINSTANCE,
   HINSTANCE,
   LPSTR,
   int
 ) {
-  return main();
+  return main(__argc, __argv);
 }
 #endif

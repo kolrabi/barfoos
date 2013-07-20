@@ -8,6 +8,7 @@
 #include "input.h"
 #include "texture.h"
 #include "inventory.h"
+#include "text.h"
 
 InventoryGui::InventoryGui(Game &game, Entity &entity) : 
   dragItem(nullptr),
@@ -119,35 +120,50 @@ InventorySlotGui::~InventorySlotGui() {
 void InventorySlotGui::HandleEvent(const InputEvent &event) {
   this->hover = this->IsOver(event.p);
 
-  if (event.type != InputEventType::Key || event.key != InputKey::MouseLeft) return;
+  if (event.type != InputEventType::Key) return;
   if (!this->IsOver(event.p)) return;
-  
+
   Inventory &inv(entity.GetInventory());
   
-  if (event.down) {
-    std::shared_ptr<Item> item(inv[slot]);
-    if (item) {
-      parent->dragItem = item;
-      inv.Equip(nullptr, slot);
+  if (event.key == InputKey::MouseLeft) {
+    
+    if (event.down) {
+      std::shared_ptr<Item> item(inv[slot]);
+      if (item && (!item->IsCursed() || !item->IsEquipped())) {
+        parent->dragItem = item;
+        inv.Equip(nullptr, slot);
+      }
+    } else {
+      std::shared_ptr<Item> item(parent->dragItem);
+      if (!item) return;
+      if (!inv.AddToInventory(item, slot)) {
+        inv.AddToBackpack(item);
+      }
+      parent->dragItem = nullptr;
     }
-  } else {
-    std::shared_ptr<Item> item(parent->dragItem);
-    if (!item) return;
-    if (!inv.AddToInventory(item, slot)) {
-      inv.AddToBackpack(item);
-    }
-    parent->dragItem = nullptr;
+  } else if (event.key == InputKey::MouseRight) {
+    if (event.down) {
+      std::shared_ptr<Item> item(inv[slot]);
+      if (item && item->IsConsumable()) {
+        inv.ConsumeItem(item);
+        inv[slot] = nullptr;
+      }
+    } 
   }
 }
 
 void 
 InventorySlotGui::Draw(Gfx &gfx, const Point &parentPos) {
+  Gui::Draw(gfx, parentPos);
+  
   const Texture *tex = slotTex;
   Sprite sprite;
   sprite.texture = tex;
 
   Point p = rect.pos+parentPos+Point(16,16);
-  if (this->hover) p = p - Point(2,2);
+  if (this->hover) {
+    p = p - Point(2,2);
+  }
   
   gfx.DrawIcon(sprite, p);
 
@@ -157,3 +173,21 @@ InventorySlotGui::Draw(Gfx &gfx, const Point &parentPos) {
     item->DrawIcon(gfx, p);
 }
 
+void 
+InventorySlotGui::DrawTooltip(Gfx &gfx, const Point &parentPos) {
+  Gui::DrawTooltip(gfx, parentPos);
+  
+  std::shared_ptr<Item> item = entity.GetInventory()[slot];
+  Point pos(rect.pos+parentPos);
+  Point vscreen = gfx.GetVirtualScreenSize();
+  
+  if (this->hover && item) {
+    RenderString name(item->GetDisplayName());
+    RenderString stat(item->GetDisplayStats().GetToolTip(), "small");
+    
+    if (pos.x < vscreen.x / 2) pos.x += 32; else pos.x -= std::max(name.GetSize().x, stat.GetSize().x);
+  
+    name.Draw(gfx, pos);
+    stat.Draw(gfx, pos + Point(0, 8));
+  }
+}

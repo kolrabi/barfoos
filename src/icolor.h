@@ -72,12 +72,9 @@ struct IColor {
                    std::pow(g/(float)max, gamma)*max,
                    std::pow(b/(float)max, gamma)*max );
   }
+  
+  operator std::string() const;
 };
-
-static inline std::ostream & operator<< (std::ostream &out, const IColor &c) {
-  out << "{ " << c.r << " " << c.g << " " << c.b << " }";
-  return out;
-}
 
 #endif
 

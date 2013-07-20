@@ -4,16 +4,14 @@ gui
 items (entities)
   wands
   scrolls
-  armor
   rings
   amulets
   more weapons
 
+store list of identified object types
+  
 persistence
 connect maps
-
-experience
-  level up
 
 npcs
   dialogs

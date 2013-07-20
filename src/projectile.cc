@@ -35,8 +35,8 @@ Projectile::OnCollide(Game &game, Cell &cell, Side side) {
   (void)cell;
   (void)side;
   
-  std::cerr << "BAM!" << std::endl;
-  Entity::Die(game, HealthInfo());
+  Mob::Die(game, HealthInfo());
+  this->removable = true;
   
-  game.Explosion(cell.GetPosition(), IVector3(2,2,2), 0.5);
+  game.Explosion(*this, this->GetPosition(), 3, 1.0, 10, Element::Physical);
 }

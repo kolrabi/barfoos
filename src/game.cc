@@ -9,14 +9,16 @@
 #include "random.h"
 #include "item.h"
 #include "input.h"
+#include "effect.h"
 
-Game::Game(const std::string &seed, size_t level, const Point &screenSize) : 
+#include <algorithm>
+
+Game::Game(const Point &screenSize) : 
   isInit        (false),
   input         (new Input()), 
   gfx           (new Gfx(Point(1920, 32), screenSize, false)),
   world         (nullptr),
   handlerId     (this->input->AddHandler( [this](const InputEvent &event){ this->HandleEvent(event); } )),
-  level         (level),
   entities      (),
   player        (nullptr),
   nextEntityId  (1),
@@ -28,10 +30,11 @@ Game::Game(const std::string &seed, size_t level, const Point &screenSize) :
   frame         (0),
   lastFPST      (0.0),
   fps           (0.0),
-  seed          (seed), 
-  random        (seed, level),
+  seed          (""), 
+  random        (""),
   showInventory (false)
-{}
+{
+}
 
 Game::~Game() {
   if (this->isInit) this->Deinit();
@@ -46,13 +49,8 @@ bool
 Game::Init() {
   if (this->isInit) return true;
   
-  std::cerr << "initializing game" << std::endl;
+  Log("Initializing game\n");
   if (!this->gfx->Init(*this)) return false;
-  
-  LoadCells();
-  LoadFeatures();
-  LoadEntities();
-  LoadItems();
   
   this->nextEntityId = 0;
   this->showInventory = false;
@@ -63,12 +61,28 @@ Game::Init() {
   this->fps = 0;
 
   this->world = nullptr;
-  this->BuildWorld();
-
-  this->startT = this->gfx->GetTime();
 
   this->isInit = true;
   return true;
+}
+
+void
+Game::NewGame(const std::string &seed) {
+  this->level = 0;
+  this->random.Seed(seed, 0);
+
+  std::string scrolls = loadAssetAsString("text/scrolls");
+  Log("%s\n", scrolls.c_str());
+  scrollMarkov.add(0, scrolls.begin(), scrolls.end());
+  
+  LoadCells();
+  LoadFeatures();
+  LoadEntities();
+  LoadEffects();
+  LoadItems(*this);
+  
+  this->BuildWorld();
+  this->startT = this->gfx->GetTime();
 }
 
 void Game::Deinit() {
@@ -82,9 +96,6 @@ bool Game::Frame() {
   
   if (!this->gfx->Swap()) return false;
   
-  // render game
-  this->Render();
-  
   // update game (at most 0.1s at a time)
   float t = this->gfx->GetTime() - this->startT;
   while(t - this->lastT > 0.1) {
@@ -95,6 +106,9 @@ bool Game::Frame() {
   this->Update(t, t - this->lastT);
   this->lastT = t;
   
+  // render game
+  this->Render();
+
   this->gfx->Update(*this);
   
   this->frame ++;
@@ -141,10 +155,12 @@ Game::Render() const {
   // next draw gui stuff
   this->gfx->GetView().GUI();
   
+  player->DrawGUI(*this->gfx);
+  
   if (this->activeGui) {
     this->activeGui->Draw(*this->gfx, Point());
+    this->activeGui->DrawTooltip(*this->gfx, Point());
   }
-  player->DrawGUI(*this->gfx);
 }
 
 void 
@@ -236,7 +252,6 @@ void
 Game::BuildWorld() { 
   PROFILE();
 
-  random.Seed(seed, level); 
   delete this->world;
   this->world = new World(*this, IVector3(64, 64, 64));
   this->world->Build(*this);
@@ -377,10 +392,7 @@ Game::CheckEntities(const IVector3 &pos) {
 Entity *
 Game::GetEntity(size_t entityId) {
   auto iter = this->entities.find(entityId);
-  if (iter == this->entities.end()) {
-    std::cerr << "AAAAAAAAAARGH no entity by that id!" << std::endl;
-    return nullptr;
-  }
+  if (iter == this->entities.end()) return nullptr;
   return iter->second;
 }
 
@@ -489,17 +501,59 @@ Vector3 Game::MoveAABB(
 }
 
 void
-Game::Explosion(const IVector3 &pos, const IVector3 &size, float strength) {
-  Vector3 v(pos);
-  Vector3 vs(size);
+Game::Explosion(Entity &entity, const Vector3 &pos, size_t radius, float strength, float damage, Element element) {
+
+  AABB aabb(pos, radius);
   
-  IVector3(size.x*2+1, size.y*2+1, size.z*2+1).For( [&] (IVector3 p) {
-    IVector3 pp = pos - size + p;
-    Vector3 vpp(pp);
-    float d = (vpp-v).GetSquareMag()/4;
-    float prob = (vs.GetMag()/2-d) * strength / this->world->GetCell(pp).GetInfo().breakStrength;
-    if (prob > 0 && random.Chance(prob)) {
-      this->GetWorld().BreakBlock(*this, pp);
+  size_t ownerID = entity.GetOwner();
+  if (ownerID == ~0UL) ownerID = entity.GetId();
+  Entity &owner = *this->entities[ownerID];
+
+  std::vector<size_t> entIDs = this->FindEntities(aabb);
+  for (size_t entID : entIDs) {
+    Entity &ent  = *this->entities[entID];
+    Vector3 d = ent.GetPosition() - pos;
+    float dmg = damage / (1.0 + d.GetSquareMag());
+    
+    HealthInfo info = Stats::ExplosionAttack(owner, ent, dmg, element);
+    ent.AddHealth(*this, info);
+    
+    try {
+      dynamic_cast<Mob&>(ent).AddImpulse(d.Normalize() * dmg * 100);
+    } catch(const std::bad_cast &) { }
+  }
+	
+  IVector3 ivPos(pos);
+  IVector3 ivRadius(radius, radius, radius);
+  
+  IVector3(radius*2, radius*2, radius*2).For( [&] (IVector3 p) {
+    IVector3 worldCellPos    = p - ivRadius + ivPos;
+    Vector3  worldCellCenter = Vector3(worldCellPos) + 0.5;
+    Vector3  d = worldCellCenter - pos;
+    float    dsqmag = d.GetSquareMag();
+    
+    float    chance = 1.0 / dsqmag * strength / this->world->GetCell(worldCellPos).GetInfo().breakStrength;
+    if (chance > 0 && random.Chance(chance)) {
+      this->GetWorld().BreakBlock(*this, worldCellPos);
     }
   });
 }
+
+std::string 
+Game::GetScrollName() {
+  if (scrollMarkov.size() == 0) return "ERROR";
+
+  std::string name;
+  char c = 0;
+  size_t l = 0;
+  while(true) {
+    c = scrollMarkov[c].select(this->random.Float01());
+    if (c == '\n') c = ' ';
+    if (c == ' ' && l > 10) break;
+    name += c;
+    l++;
+  }
+  Log("Created scroll name '%s'\n", name.c_str());
+  return name;
+}
+

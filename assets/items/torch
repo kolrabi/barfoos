@@ -1,7 +1,7 @@
 tex torch
 frames 2
 
-anim 0 1 1
+anim 0 1 5
 anim 0 2 9
 
 equipanim 1

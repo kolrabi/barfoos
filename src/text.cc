@@ -3,6 +3,8 @@
 #include "vertex.h"
 #include "texture.h"
 
+#include <unordered_map>
+
 struct Font {
   const Texture *texture;
   Point size;
@@ -18,7 +20,7 @@ struct Font {
   {}
 };
 
-static std::map<std::string, Font> fonts;
+static std::unordered_map<std::string, Font> fonts;
 
 static const Font &loadFont(const std::string &name) {
   if (fonts.find(name) != fonts.end()) return fonts[name];
@@ -137,15 +139,19 @@ void RenderString::Draw(Gfx &gfx, float x, float y, int align) {
   gfx.GetView().Pop();
 }
 
+void RenderString::Draw(Gfx &gfx, const Point &pos, int align) { 
+  Draw(gfx, pos.x, pos.y, align);
+}
+
 void RenderString::DrawChar(float x, float y, wchar_t c, const IColor &color) {
   float u =   (c%32)/32.0;
   float v = 1-(c/32)/ 8.0;
   Point size = font.size;
 
+  this->vertices.push_back(Vertex(Vector3(x+size.x+1,      0+1-y, 0.1), IColor(), u+1.0/32.0,v));
+  this->vertices.push_back(Vertex(Vector3(x       -1,      0+1-y, 0.1), IColor(), u,v));
+  this->vertices.push_back(Vertex(Vector3(x       -1, size.y+1+y, 0.1), IColor(), u,v-1.0/8.0));
   this->vertices.push_back(Vertex(Vector3(x+size.x+1, size.y+1+y, 0.1), IColor(), u+1.0/32.0,v-1.0/8.0));
-  this->vertices.push_back(Vertex(Vector3(x       +1, size.y+1+y, 0.1), IColor(), u,v-1.0/8.0));
-  this->vertices.push_back(Vertex(Vector3(x       +1,      0+1+y, 0.1), IColor(), u,v));
-  this->vertices.push_back(Vertex(Vector3(x+size.x+1,      0+1+y, 0.1), IColor(), u+1.0/32.0,v));
 
   this->vertices.push_back(Vertex(Vector3(x+size.x,      0+y, 0), color, u+1.0/32.0,v));
   this->vertices.push_back(Vertex(Vector3(x       ,      0+y, 0), color, u,v));

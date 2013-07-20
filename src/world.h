@@ -5,6 +5,8 @@
 #include "cell.h"
 #include "icolor.h"
 
+#include <unordered_map>
+
 class World final {
 public:
 
@@ -72,8 +74,8 @@ private:
   IColor ambientLight;
   
   std::vector<Vertex> allVerts;
-  std::map<const Texture *, size_t> vertexStarts;
-  std::map<const Texture *, size_t> vertexCounts;
+  std::unordered_map<const Texture *, size_t> vertexStarts;
+  std::unordered_map<const Texture *, size_t> vertexCounts;
   unsigned int vbo;  
  
   std::vector<bool> seenFeatures;

@@ -2,6 +2,7 @@
 #define BARFOOS_VERTEX_H
 
 #include "icolor.h"
+#include "vector3.h"
 
 // GL_T2F_C4F_N3F_V3F
 struct Vertex {

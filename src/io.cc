@@ -4,6 +4,8 @@
 #include <sys/stat.h>
 #include <dirent.h>
 
+#include <cstdio>
+
 static const std::vector<const char *> assetPrefix { "../assets/", DATA_PATH "/" };
 
 static std::string getAssetPath(const std::string &name) {
@@ -28,7 +30,7 @@ FILE *openAsset(const std::string &name) {
   
   FILE *f = fopen(fullPath.c_str(), "rb");
   if (!f) {
-    std::cerr << "could not open asset file " << name << std::endl;
+    Log("Could not open asset file '%s'\n", name.c_str());
   }
   return f;
 }

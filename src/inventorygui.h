@@ -13,6 +13,7 @@ public:
   InventorySlotGui &operator=(const InventorySlotGui &) = delete;
   
   virtual void Draw(Gfx &gfx, const Point &parentPos) override;
+  virtual void DrawTooltip(Gfx &gfx, const Point &parentPos) override;
   virtual void HandleEvent(const InputEvent &event) override;
 
 private:
