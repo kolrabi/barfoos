@@ -2,7 +2,7 @@
 
 ## Build ----------------------------------------------------------
 
-CF=$(GL_CFLAGS) -Werror -Wall -Wextra -I$(top_srcdir)/src -DDATA_PATH=\"$(pkgdatadir)\" -Weffc++
+CF=$(GL_CFLAGS) -Werror -Wall -Wextra -I$(top_srcdir)/src -DDATA_PATH=\"$(pkgdatadir)\"
 
 if WINDOOF
 RESFILE=res.rc icon.ico
@@ -18,7 +18,7 @@ endif
 
 bin_PROGRAMS=barfoos
 
-barfoos_CXXFLAGS=$(CF) --std=c++0x
+barfoos_CXXFLAGS=$(CF) --std=c++0x -Weffc++
 barfoos_CFLAGS=$(CF) --std=c99 
 barfoos_LDADD=
 barfoos_LDFLAGS=$(LDWINFLAGS)

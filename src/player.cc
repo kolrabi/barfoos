@@ -336,7 +336,7 @@ Player::DrawGUI(Gfx &gfx) const {
   RenderString(tmp, "small").Draw(gfx, 0,vsize.y-32);
   snprintf(tmp, sizeof(tmp), "Effective : str %3d dex %3d agi %3d def %3d max hp %3d exp %f", this->GetEffectiveStats().str, this->GetEffectiveStats().dex, this->GetEffectiveStats().agi, this->GetEffectiveStats().def, this->GetEffectiveStats().maxHealth, this->GetEffectiveStats().exp);
   RenderString(tmp, "small").Draw(gfx, 0,vsize.y-32-16);
-  snprintf(tmp, sizeof(tmp), "Level %u %f", this->GetEffectiveStats().GetLevel(), Stats::GetExpForLevel(this->GetEffectiveStats().GetLevel() + 1) - this->GetEffectiveStats().exp);
+  snprintf(tmp, sizeof(tmp), "Level %lu %f", this->GetEffectiveStats().GetLevel(), Stats::GetExpForLevel(this->GetEffectiveStats().GetLevel() + 1) - this->GetEffectiveStats().exp);
   RenderString(tmp, "small").Draw(gfx, 0,vsize.y-32-24);
 }
 
