@@ -1,7 +1,7 @@
 tex sword2
 frames 1
 
-damage 1
+damage 10
 # durability 25
 # usedurability 1
 
@@ -9,6 +9,9 @@ cooldown 0.2
 light 64 64 64
 
 hand
+
+UnidentifiedName "Sword"
+IdentifiedName   "Iron Sword"
 
 # OnUseSpawnProjectile projectile.test
 # CanUseNothing

@@ -1,8 +1,8 @@
 tex torch
-frames 2
+frames 4
 
 anim 0 1 5
-anim 0 2 9
+anim 1 3 9
 
 equipanim 1
 
@@ -19,4 +19,11 @@ replacement sword
 cooldown 0.4
 light 512 512 255
 flicker
+
+
+NoModified
+NoBeatitude
+
+UnidentifiedName "Torch"
+IdentifiedName   "Torch"
 

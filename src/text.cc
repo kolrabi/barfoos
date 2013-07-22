@@ -148,10 +148,12 @@ void RenderString::DrawChar(float x, float y, wchar_t c, const IColor &color) {
   float v = 1-(c/32)/ 8.0;
   Point size = font.size;
 
-  this->vertices.push_back(Vertex(Vector3(x+size.x+1,      0+1-y, 0.1), IColor(), u+1.0/32.0,v));
-  this->vertices.push_back(Vertex(Vector3(x       -1,      0+1-y, 0.1), IColor(), u,v));
-  this->vertices.push_back(Vertex(Vector3(x       -1, size.y+1+y, 0.1), IColor(), u,v-1.0/8.0));
-  this->vertices.push_back(Vertex(Vector3(x+size.x+1, size.y+1+y, 0.1), IColor(), u+1.0/32.0,v-1.0/8.0));
+  for (int xx = -1; xx<2; xx++) for (int yy = -1; yy<2; yy++) {
+    this->vertices.push_back(Vertex(Vector3(x+size.x+xx,      0+yy-y, 0.1), IColor(), u+1.0/32.0,v));
+    this->vertices.push_back(Vertex(Vector3(x       +xx,      0+yy-y, 0.1), IColor(), u,v));
+    this->vertices.push_back(Vertex(Vector3(x       +xx, size.y+yy+y, 0.1), IColor(), u,v-1.0/8.0));
+    this->vertices.push_back(Vertex(Vector3(x+size.x+xx, size.y+yy+y, 0.1), IColor(), u+1.0/32.0,v-1.0/8.0));
+  }
 
   this->vertices.push_back(Vertex(Vector3(x+size.x,      0+y, 0), color, u+1.0/32.0,v));
   this->vertices.push_back(Vertex(Vector3(x       ,      0+y, 0), color, u,v));

@@ -12,7 +12,7 @@
 class Game final {
 public:
 
-  Game(const Point &screenSize = Point(320, 240));
+  Game(const Point &screenSize = Point(640, 480));
   Game(const Game &game) = delete;
   Game(Game &&game) = delete;
   ~Game();
@@ -35,6 +35,8 @@ public:
   int     GetLevel()  const { return level;         }
   
   std::string GetScrollName();
+  void SetIdentified(const std::string &name);
+  bool IsIdentified(const std::string &name) const;
   
   // entity management
   size_t  AddEntity(Entity *entity);
@@ -99,6 +101,7 @@ private:
   std::vector<const Entity*> FindLightEntities(const Vector3 &pos, float radius) const;
   
   markov_chain<char> scrollMarkov;
+  std::vector<std::string> identifiedItems;
 };
 
 #endif

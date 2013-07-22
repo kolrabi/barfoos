@@ -49,6 +49,12 @@ struct EntityProperties : public Properties {
   bool    isSolid           = false;  //< Entity is solid in collision detection.
   bool    respawn           = false;  //< Entity will automatically respawn on death.
   float   exp               = 0.0;
+
+  // stats
+  int     str               = 0;
+  int     dex               = 0;
+  int     agi               = 0;
+  int     def               = 0;
   
   /** Inventory items and their absolute probability. */
   std::vector<std::pair<std::string, float>> items = std::vector<std::pair<std::string, float>>(0);

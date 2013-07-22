@@ -61,14 +61,16 @@ bottom 1 1 0 1
 
 def L
 cell ladder.right
+onlydefault
+nolock
 
 slice 0 1
 &&&&&&&
-&#####&
-&#####&
-&##L##&
-&#####&
-&#####&
+&&&&&&&
+&&&&&&&
+&&&L&&&
+&&&&&&&
+&&&&&&&
 &&&&&&&
 
 slice 2 2

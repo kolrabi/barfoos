@@ -16,3 +16,11 @@ Inventory   0.3 helmet.1
 Inventory   0.3 armor.1
 Inventory   1.0 scroll.remove.curse
 Inventory   1.0 scroll.identify
+Inventory   1.0 scroll.identify
+Inventory   1.0 scroll.identify
+
+str 1
+agi 1
+dex 1
+def 0
+

@@ -65,6 +65,9 @@ Inventory::AddToInventory(const std::shared_ptr<Item> &item, InventorySlot slot)
   if (!combo) {
     // if that didn't work, try the reverse
     combo = self[slot]->Combine(item);
+    if (combo) DropItem(self[slot]);
+  } else {
+    DropItem(item);
   }
   
   if (combo) {
@@ -110,6 +113,7 @@ Inventory::Update(Game &game, Entity &owner) {
   this->lastT = game.GetTime();
   
   for (auto &i:overflow) {
+    i->Update(game);
     DropItem(game, owner, i);
   }
   overflow.clear();
@@ -144,7 +148,9 @@ Inventory::Update(Game &game, Entity &owner) {
 void
 Inventory::Drop(Game &game, Entity &owner) {
   for (auto &item : this->inventory) {
-    DropItem(game, owner, item.second);
+    if (item.second)
+      DropItem(game, owner, item.second);
+    item.second = nullptr;
   }
 }
 
@@ -160,7 +166,7 @@ Inventory::ConsumeItem(const std::shared_ptr<Item> &item) {
 
 void
 Inventory::DropItem(Game &game, Entity &owner, const std::shared_ptr<Item> &item) {
-  if (!item) return;
+  if (!item || item->IsRemovable()) return;
   
   ItemEntity *entity = new ItemEntity(item);
   entity->SetPosition(owner.GetPosition());

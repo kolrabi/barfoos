@@ -21,6 +21,8 @@ public:
   void Translate(const Vector3 &p);
   void Scale(const Vector3 &p);
   void Rotate(float angle, const Vector3 &p);
+
+  bool IsPointVisible(const Vector3 &p) const;
   
 private:
 
@@ -98,7 +100,7 @@ public:
   Point AlignTopLeftScreen(const Point &size, int padding = 0);
   Point AlignTopRightScreen(const Point &size, int padding = 0);
   
-  static const size_t MaxLights = 16;
+  static const size_t MaxLights = 4;
   
 private:
 

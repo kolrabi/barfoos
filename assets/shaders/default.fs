@@ -6,8 +6,7 @@ uniform vec4 u_fogColor;
 uniform vec4 u_color;
 uniform float u_fogLin;
 
-uniform vec4 u_lightColor[16];
-uniform int  u_lightPos_length;
+uniform vec4 u_lightColor[4];
 
 uniform mat4 u_matView;
 
@@ -18,9 +17,9 @@ varying vec2 v_tex;
 varying vec4 v_color;
 varying vec3 v_norm;
 
-varying vec3 v_light[16];
+varying vec3 v_light[4];
 
-const float gamma = 2.2;
+const float gamma = 1.0;
 const float contrast = 1.25;
 
 vec3 getLight(int n) {
@@ -33,9 +32,10 @@ vec3 getLight(int n) {
 
 vec3 getTotalLight() {
   vec3 light = vec3(0.0);
-  for (int i=0; i<u_lightPos_length; i++) {
-    light += getLight(i);
-  }
+  light += getLight(0);
+  light += getLight(1);
+  light += getLight(2);
+  light += getLight(3);
   return light;
 }
 
@@ -46,7 +46,7 @@ void main() {
   vec3 light = pow( v_color.rgb + getTotalLight(), vec3(gamma) ) * u_color.rgb;
   
   float fogDepth = length(v_pos)*0.1;
-  float fogIntensity = pow(max(0.0, u_fogLin * fogDepth), 0.5);
+  float fogIntensity = 0; //pow(max(0.0, u_fogLin * fogDepth), 0.5);
   
   vec3 color = mix(t0.rgb * light, u_fogColor.rgb, min(1.0, fogIntensity)) + u_fade.rgb;
  

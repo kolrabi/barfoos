@@ -225,10 +225,15 @@ void Item::Update(Game &game) {
     Log("Item is a %s %+d %s%s\n", this->beatitude == Beatitude::Normal ? "normal" : (this->beatitude == Beatitude::Blessed ? "blessed" : "cursed"), this->modifier, this->properties->name.c_str(), this->effect->name.c_str());
   }
 
+  if (!this->identified) this->identified = game.IsIdentified(this->properties->name);
+  else                   game.SetIdentified(this->properties->name);
+
   // reduce durability while equipped  
   if (this->isEquipped) { 
     this->sprite.currentAnimation = this->properties->equipAnim;
     this->durability -= this->properties->equipDurability * game.GetDeltaT() * this->effect->equipDurability;
+  } else {
+    this->sprite.currentAnimation = 0;
   }
 
   this->sprite.Update(game.GetDeltaT());
@@ -344,15 +349,15 @@ Item::ModifyStats(Stats &stats, bool forceEquipped) const {
     stats.agi += this->properties->eqAddAgi   * (1 + 0.4*this->modifier);
     stats.dex += this->properties->eqAddDex   * (1 + 0.4*this->modifier);
     stats.def += this->properties->eqAddDef   * (1 + 0.4*this->modifier);
-    stats.maxHealth = this->properties->eqAddHP * (1 + 0.4*this->modifier);
+    stats.maxHealth += this->properties->eqAddHP * (1 + 0.4*this->modifier);
   } else {
     stats.str += this->properties->uneqAddStr * (1 + 0.4*this->modifier);
     stats.agi += this->properties->uneqAddAgi * (1 + 0.4*this->modifier);
     stats.dex += this->properties->uneqAddDex * (1 + 0.4*this->modifier);
     stats.def += this->properties->uneqAddDef * (1 + 0.4*this->modifier);
-    stats.maxHealth = this->properties->uneqAddHP * (1 + 0.4*this->modifier);
+    stats.maxHealth += this->properties->uneqAddHP * (1 + 0.4*this->modifier);
   }
-  this->effect->ModifyStats(stats, this->isEquipped);
+  if (this->effect) this->effect->ModifyStats(stats, this->isEquipped);
 }
 
 std::string
@@ -395,7 +400,10 @@ Item::Combine(const std::shared_ptr<Item> &other) {
     const EffectProperties &effect = getEffect(this->properties->onCombineEffect);
     other->modifier += effect.onCombineAddModifier;
     if (effect.onCombineRemoveCurse && other->IsCursed()) other->beatitude = Beatitude::Normal;
-    if (effect.onCombineIdentify) other->identified = true;
+    if (effect.onCombineIdentify) {
+      other->identified = true;
+    }
+    this->identified = true;
     this->isRemovable = true;
     return other;
   }
@@ -412,6 +420,7 @@ Item::Consume(Game &game, Entity &user) {
       HealthInfo info(effect.onConsumeAddHealth);
       user.AddHealth(game, info);
     }
+    game.SetIdentified(this->properties->name);
   }
   
   this->isRemovable = true;
@@ -420,5 +429,10 @@ Item::Consume(Game &game, Entity &user) {
     return std::shared_ptr<Item>(new Item(this->properties->onConsumeResult));
   }
   return nullptr;
+}
+
+void
+Item::SetEquipped(bool equipped) { 
+  this->isEquipped = equipped; 
 }
 

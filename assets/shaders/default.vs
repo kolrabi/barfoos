@@ -10,14 +10,13 @@ uniform mat4 u_matView;
 uniform mat4 u_matTexture;
 uniform mat4 u_matNormal;
 
-uniform vec3 u_lightPos[16];
-uniform int  u_lightPos_length;
+uniform vec3 u_lightPos[4];
 
 varying vec3 v_pos;
 varying vec2 v_tex;
 varying vec4 v_color;
 varying vec3 v_norm;
-varying vec3 v_light[16];
+varying vec3 v_light[4];
 
 vec3 Distort(vec4 vertex) {
   float t = u_time * 2.0 * 3.14159;
@@ -40,7 +39,8 @@ void main() {
   v_tex       = (u_matTexture * gl_MultiTexCoord0).st;
   v_norm      = normalize(mat3(u_matNormal) * gl_Normal);
   
-  for (int n=0; n<u_lightPos_length; n++) {
-    v_light[n] = vec3(u_matView * vec4(u_lightPos[n], 1.0));
-  }
+  v_light[0] = vec3(u_matView * vec4(u_lightPos[0], 1.0));
+  v_light[1] = vec3(u_matView * vec4(u_lightPos[1], 1.0));
+  v_light[2] = vec3(u_matView * vec4(u_lightPos[2], 1.0));
+  v_light[3] = vec3(u_matView * vec4(u_lightPos[3], 1.0));
 }

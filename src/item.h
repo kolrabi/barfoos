@@ -45,7 +45,7 @@ struct ItemProperties : public Properties {
   float cooldown = 1.0;
   
   float durability = 10;
-  float useDurability = 1.0;
+  float useDurability = 0.0;
   float equipDurability = 0.0;
   
   bool canUseCell = false;
@@ -113,7 +113,7 @@ public:
   uint32_t GetEquippableSlots()         const { return this->properties->equippable; }
   bool IsEquipped()                     const { return isEquipped; }
   
-  void SetEquipped(bool equipped)             { this->isEquipped = equipped; }
+  void SetEquipped(bool equipped);
   bool IsCursed()                       const { return this->beatitude == Beatitude::Cursed; }
   
   std::string GetDisplayName()          const;
@@ -152,8 +152,8 @@ protected:
   float nextUseT;
  
   Beatitude beatitude;
-  int modifier;
-  
+  int modifier; 
+
   bool identified;
 };
 

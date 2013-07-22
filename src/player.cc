@@ -179,6 +179,7 @@ void Player::UpdateSelection(Game &game) {
   for (auto id : entitiesInRange) {
     Entity *entity = game.GetEntity(id);
     if (!entity || entity == this) continue;
+    if (entity->IsDead()) continue;
     if (entity->GetProperties()->nohit) continue;
 
     if (entity->GetAABB().Ray(pos, dir, hitDist, hitPos)) {
@@ -322,14 +323,14 @@ Player::DrawGUI(Gfx &gfx) const {
   gfx.DrawIcon(sprite, Point(vsize.x/2, vsize.y/2));
 
   // draw messages
-  float y = this->messageY;
+  float y = this->messageY + 4;
   for (auto &msg : this->messages) {
     float a = msg->messageTime * 4;
     if (a > 1.0) a = 1.0;
     gfx.SetColor(IColor(255,255,255), a);
     msg->text->WrapWords(vsize.x);
-    msg->text->Draw(gfx, 0, y);
-    y += msg->text->GetSize().y;
+    msg->text->Draw(gfx, 4, y);
+    y += msg->text->GetSize().y+2;
   }
 
   // draw health bar
@@ -342,16 +343,18 @@ Player::DrawGUI(Gfx &gfx) const {
     else
       strHealth << u8"\u0082";
   }
-  RenderString rsHealth(strHealth.str(), "big");
-  rsHealth.Draw(gfx, 0+4, vsize.y-4, (int)Align::HorizLeft | (int)Align::VertBottom);
+  RenderString rsHealth(strHealth.str() + " " + ToString(int(this->health)), "big");
+  rsHealth.Draw(gfx, 2, vsize.y-4, (int)Align::HorizLeft | (int)Align::VertBottom);
   
   char tmp[1024];
-  snprintf(tmp, sizeof(tmp), "Base stats: str %3d dex %3d agi %3d def %3d max hp %3d exp %f", this->baseStats.str, this->baseStats.dex, this->baseStats.agi, this->baseStats.def, this->baseStats.maxHealth, this->baseStats.exp);
-  RenderString(tmp, "small").Draw(gfx, 0,vsize.y-32);
-  snprintf(tmp, sizeof(tmp), "Effective : str %3d dex %3d agi %3d def %3d max hp %3d exp %f", this->GetEffectiveStats().str, this->GetEffectiveStats().dex, this->GetEffectiveStats().agi, this->GetEffectiveStats().def, this->GetEffectiveStats().maxHealth, this->GetEffectiveStats().exp);
-  RenderString(tmp, "small").Draw(gfx, 0,vsize.y-32-16);
-  snprintf(tmp, sizeof(tmp), "Level %lu %f", this->GetEffectiveStats().GetLevel(), Stats::GetExpForLevel(this->GetEffectiveStats().GetLevel() + 1) - this->GetEffectiveStats().exp);
-  RenderString(tmp, "small").Draw(gfx, 0,vsize.y-32-24);
+  Stats stats = this->GetEffectiveStats();
+  snprintf(tmp, sizeof(tmp), "STR: %3d DEX: %3d AGI: %3d DEF: %3d MAX HP: %3d", 
+    stats.str, stats.dex, stats.agi, stats.def, stats.maxHealth
+  );
+  RenderString(tmp, "small").Draw(gfx, 4, vsize.y-32);
+
+  snprintf(tmp, sizeof(tmp), "LVL: %3lu EXP: %4d / %4d", stats.GetLevel(), (int)stats.exp, (int)Stats::GetExpForLevel(stats.GetLevel() + 1));
+  RenderString(tmp, "small").Draw(gfx, 4, vsize.y-32-16);
 }
 
 void
@@ -379,7 +382,7 @@ void
 Player::AddHealth(Game &game, const HealthInfo &info) {
   if (info.amount < 0) {
     if (!IsContinuous(info.type) || game.GetTime() > lastHurtT[info.type] + 0.25) {
-      this->AddMessage("ouch!");
+      this->AddMessage("Ouch!");
       lastHurtT[info.type] = game.GetTime();
     }
     this->pain -= info.amount / this->properties->maxHealth;
@@ -430,7 +433,20 @@ Player::AddDeathMessage(const Entity &dead, const Entity &killer, const HealthIn
 
 std::string 
 Player::GetName() const {
-  return "<insert player name here>";
+  return "Awesome player";
+}
+
+void 
+Player::OnHealthDealt(Game &game, Entity &other, const HealthInfo &info) {
+  Mob::OnHealthDealt(game, other, info);
+
+  if (info.hitType == HitType::Miss) {
+    this->AddMessage("You miss the " + other.GetName());
+  } else if (info.hitType == HitType::Normal) {
+    this->AddMessage("You hit the " + other.GetName() + " for " + ToString(info.amount) + " hp");
+  } else if (info.hitType == HitType::Critical) {
+    this->AddMessage("You hit the " + other.GetName() + " critically for " + ToString(info.amount) + " hp"); 
+  }
 }
 
 Player::Message::Message(const std::string &txt, const std::string &font) :

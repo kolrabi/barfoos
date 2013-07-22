@@ -18,10 +18,18 @@ Stats::MeleeAttack(const Entity &attacker, const Entity &victim, const Item &ite
   Stats defStat = victim.GetEffectiveStats();
   
   // determine hit
-  HitType hit = (atkStat.dex - defStat.agi) < 0 ? HitType::Miss : (random.Chance(atkStat.dex*0.01) ? HitType::Critical : HitType::Miss);
+  int dex = random.Integer(std::max(atkStat.dex, 1));
+  int agi = random.Integer(std::max(defStat.agi, 1));
+
+  HitType hit = (dex < agi) ? HitType::Miss : HitType::Normal;
+  if (random.Chance(atkStat.dex*0.001)) hit = HitType::Critical;
+
+  info.hitType = hit;
   
-  float dmg = atkStat.str * 0.1 * item.GetDamage();
-  float amount = dmg - defStat.def * 0.1;
+  int dmg = atkStat.str * 0.1 * item.GetDamage();
+  if (dmg < 1) dmg = 1;
+
+  int amount = dmg - defStat.def * 0.1;
   if (amount < 1) amount = 1;
   
   // determine damage
@@ -61,7 +69,7 @@ Stats::ExplosionAttack(const Entity &attacker, const Entity &victim, float damag
 
 size_t 
 Stats::GetLevel() {
-  return std::log(this->exp + 1) / std::log(1.7);
+  return std::log(this->exp + 1) / std::log(1.7) + 1;
 }
 
 bool
@@ -77,7 +85,7 @@ Stats::AddExp(float exp) {
 
 float 
 Stats::GetExpForLevel(size_t lvl) {
-  return std::pow(1.7, lvl);
+  return std::pow(1.7, lvl - 1);
 }
 
 std::string

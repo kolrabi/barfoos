@@ -40,6 +40,7 @@ static InputKey MapKey(int k) {
     case GLFW_KEY_F2:         key = InputKey::DebugEntityAABB; break;
     case GLFW_KEY_F3:         key = InputKey::DebugWireframe;  break;
     case GLFW_KEY_F4:         key = InputKey::DebugNoclip;     break;
+    case GLFW_KEY_F5:         key = InputKey::DebugScreenshot; break;
     default:                  key = InputKey::Invalid;
   }
   return key;
@@ -389,10 +390,7 @@ Gfx::SetFog(float l, const IColor &color) {
 void 
 Gfx::SetLights(const std::vector<Vector3> &positions, const std::vector<IColor> &colors) {
   this->lightPositions = positions;
-  this->lightColors = colors;
-  
-  if (this->lightColors.size() > MaxLights) this->lightColors.resize(MaxLights);
-  if (this->lightPositions.size() > MaxLights) this->lightPositions.resize(MaxLights);
+  this->lightColors = colors; 
 }
 
 void 
@@ -447,6 +445,19 @@ Gfx::SetPlayer(const Player *player) {
 void 
 Gfx::SetUniforms() const {
   if (!this->activeShader) return;
+
+  std::vector<Vector3> lightPos;
+  std::vector<IColor>  lightCol;
+
+  for (size_t i=0; i<this->lightPositions.size(); i++) {
+    if (this->view.IsPointVisible(this->lightPositions[i])) {
+      lightPos.push_back(this->lightPositions[i]);
+      lightCol.push_back(this->lightColors[i]);
+    }
+  }
+
+  lightCol.resize(MaxLights);
+  lightPos.resize(MaxLights);
   
   this->view.SetUniforms(this->activeShader);
   
@@ -658,3 +669,10 @@ void GfxView::SetUniforms(const Shader *shader) const {
   shader->Uniform("u_matTexture",       this->textureStack.back());
   shader->Uniform("u_matNormal",        this->modelViewStack.back().Mat3().Inverse().Transpose());
 }
+
+bool GfxView::IsPointVisible(const Vector3 &p) const {
+  Matrix4 matProjView(this->projStack.back() * this->viewStack.back());
+  Vector3 p2 = matProjView*p;
+  return p2.x > -1 && p2.x < 1 && p2.y > -1 && p2.y < 1 && p2.z > -0.001;
+}
+

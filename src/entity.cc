@@ -78,6 +78,10 @@ EntityProperties::ParseProperty(const std::string &cmd) {
   else if (cmd == "eyeoffset")        Parse(this->eyeOffset);
   else if (cmd == "glow")             Parse(this->glow);
   else if (cmd == "exp")              Parse(this->exp);
+  else if (cmd == "str")              Parse(this->str);
+  else if (cmd == "dex")              Parse(this->dex);
+  else if (cmd == "agi")              Parse(this->agi);
+  else if (cmd == "def")              Parse(this->def);
   else if (cmd == "thinkinterval")    Parse(this->thinkInterval);
   else if (cmd == "onuseitemreplace") {
     std::pair<std::string, std::string> replace;
@@ -143,7 +147,6 @@ Entity::Entity(const std::string &type) :
   drawAABB(false),
   cellLight(0,0,0)
 {
-  this->baseStats.maxHealth = this->properties->maxHealth;
 }
 
 Entity::~Entity() {
@@ -163,6 +166,14 @@ Entity::Start(Game &game, size_t id) {
       this->GetInventory().AddToBackpack(std::shared_ptr<Item>(ii));
     }
   }
+
+  // set stats
+  this->baseStats.str = this->properties->str;
+  this->baseStats.dex = this->properties->dex;
+  this->baseStats.agi = this->properties->agi;
+  this->baseStats.def = this->properties->def;
+  this->baseStats.maxHealth = this->properties->maxHealth;
+  this->health = this->properties->maxHealth;
   
   // resolve initial collision with world
   std::vector<Vector3> verts;
@@ -205,7 +216,6 @@ Entity::Update(Game &game) {
   if (this->IsDead() && this->sprite.currentAnimation == 0) {
     if (this->properties->respawn) {
       // just respawn
-      health = this->GetEffectiveStats().maxHealth;
       SetPosition(spawnPos);
       Start(game, id);
     } else {
@@ -293,7 +303,10 @@ Entity::AddHealth(Game &game, const HealthInfo &info) {
   Entity *dealer = game.GetEntity(info.dealerId);
   if (dealer) dealer->OnHealthDealt(game, *this, info);
   
-  if (info.amount < 0) this->sprite.StartAnim(this->properties->flinchAnim);
+  if (info.amount < 0) {
+    this->sprite.StartAnim(this->properties->flinchAnim);
+    this->sprite.QueueAnim(0);
+  }
   
   if (this->health <= 0) {
     this->health = 0;
@@ -315,6 +328,7 @@ Entity::Die(Game &game, const HealthInfo &info) {
 
   this->inventory.Drop(game, *this);
   this->sprite.StartAnim(this->properties->dyingAnim);
+  this->sprite.QueueAnim(0);
 }
 
 Stats 

@@ -100,12 +100,12 @@ EffectProperties::ModifyStats(Stats &stats, bool forceEquipped) const {
     stats.agi += this->eqAddAgi;
     stats.dex += this->eqAddDex;
     stats.def += this->eqAddDef;
-    stats.maxHealth = this->eqAddHP;
+    stats.maxHealth += this->eqAddHP;
   } else {
     stats.str += this->uneqAddStr;
     stats.agi += this->uneqAddAgi;
     stats.dex += this->uneqAddDex;
     stats.def += this->uneqAddDef;
-    stats.maxHealth = this->uneqAddHP;
+    stats.maxHealth += this->uneqAddHP;
   }
 }

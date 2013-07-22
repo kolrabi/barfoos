@@ -45,6 +45,11 @@ Mob::Update(Game &game) {
 
   float deltaT = game.GetDeltaT();
   
+  if (this->IsDead()) {
+    this->move = Vector3();
+  }
+
+  
   // clip move speed
   float speed = move.GetMag();
   float maxSpeed = this->properties->maxSpeed * this->GetMoveModifier();
@@ -175,11 +180,20 @@ Mob::Update(Game &game) {
   } else if (headCell->GetInfo().lavaDamage) {
     this->AddHealth(game, HealthInfo( -headCell->GetInfo().lavaDamage * deltaT, HealthType::Lava));
   }
+
+  if (this->IsDead()) {
+    this->wantJump = false;
+  }
 }
 
 void
 Mob::Think(Game &game) {  
   Entity::Think(game);
+
+  if (this->IsDead()) {
+    validMoveTarget = false;
+    return;
+  }
   
   // walk around a bit
   if (this->properties->moveInterval != 0) {

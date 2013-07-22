@@ -11,6 +11,7 @@
 #include <algorithm>
 #include <unordered_map>
 #include <sstream>
+#include <cinttypes>
 
 #ifndef PRIu64
   #define PRIu64 "I64u"

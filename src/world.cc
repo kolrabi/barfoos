@@ -55,7 +55,7 @@ World::Build(Game &game) {
   // some basic parameters for this world
   Random &random = game.GetRandom();
   IVector3 r(random.Integer(), random.Integer(), random.Integer());
-  size_t featureCount  = random.Integer(400)+100;             // 100 - 500
+  size_t featureCount  = random.Integer(400)+400;             // 400 - 800
   float  useLastChance = 0.1 + random.Float01()*0.8;          // 0.1 - 0.9
   size_t caveLengthMin = random.Integer(20);                  //   0 -  20
   size_t caveLengthMax = caveLengthMin + random.Integer(100); //   0 - 200
@@ -97,7 +97,7 @@ World::Build(Game &game) {
   
     int loop = 0;
     do {
-      if (loop++ > 100000) break;
+      if (loop++ > 1000000) break;
 
       // select a feature from which to go
       bool useLast = random.Chance(useLastChance);
@@ -155,7 +155,7 @@ World::Build(Game &game) {
   }
 
   Log("Built world with %lu features. Level %lu.\n", instances.size(), game.GetLevel());
-  
+  /*
   for (size_t i=0; i<this->cellCount; i++) {
     IVector3 pos = GetCellPos(i);
 
@@ -169,13 +169,13 @@ World::Build(Game &game) {
     if (f < -0.2 && cells[i].GetFeatureID() > 10) {
       SetCell(pos, Cell("air"));
     }
-  }  
+  } */ 
  
   WorldEdit e(this);
   
   // create caves
   e.SetBrush(Cell("air"));
-  size_t caveCount     = instances.size()>10 ? random.Integer(instances.size()/10) : 0;
+  size_t caveCount     = 1; //instances.size()>10 ? random.Integer(instances.size()/10) : 0;
 
   for (size_t i = 0; i<caveCount; i++) {
     size_t featNum = random.Integer(instances.size());

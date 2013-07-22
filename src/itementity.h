@@ -15,6 +15,7 @@ public:
   virtual ~ItemEntity();
 
   virtual void Draw(Gfx &gfx) const override;
+  virtual void Update(Game &game) override;
   
   virtual void OnUse(Game &game, Entity &other) override;
 

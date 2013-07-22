@@ -207,10 +207,12 @@ Game::Update(float t, float deltaT) {
   for (size_t i=0; i<entityIds.size(); i++) {
     size_t e1 = entityIds[i];
     if (entities[e1]->GetProperties()->nocollideEntity) continue;
+    if (entities[e1]->IsDead()) continue;
 
     for (size_t j=i+1; j<entityIds.size(); j++) {
       size_t e2 = entityIds[j];
       if (entities[e2]->GetProperties()->nocollideEntity) continue;
+      if (entities[e2]->IsDead()) continue;
       
       // don't collide with owners if not wanted
       if (entities[e1]->GetOwner() == e2 && entities[e1]->GetProperties()->nocollideOwner) continue;
@@ -543,7 +545,7 @@ std::string
 Game::GetScrollName() {
   if (scrollMarkov.size() == 0) return "ERROR";
 
-  std::string name;
+  std::string name = "Scroll of ";
   char c = 0;
   size_t l = 0;
   while(true) {
@@ -553,7 +555,15 @@ Game::GetScrollName() {
     name += c;
     l++;
   }
-  Log("Created scroll name '%s'\n", name.c_str());
   return name;
+}
+
+void Game::SetIdentified(const std::string &name) {
+  if (this->IsIdentified(name)) return;
+  this->identifiedItems.push_back(name);
+}
+
+bool Game::IsIdentified(const std::string &name) const {
+  return std::find(this->identifiedItems.begin(), this->identifiedItems.end(), name) != this->identifiedItems.end();
 }
 

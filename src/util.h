@@ -54,5 +54,14 @@ TriangleRay(const Vector3 *tri, const Vector3 &start, const Vector3 &dir, float 
   return true;
 }
 
+#include <sstream>
+
+template<class T> 
+std::string ToString(const T &v) {
+  std::stringstream str;
+  str << v;
+  return str.str();
+}
+
 #endif
 

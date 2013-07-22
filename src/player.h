@@ -33,6 +33,8 @@ public:
   void AddMessage(const std::string &text, const std::string &font = "default");
   void AddDeathMessage(const Entity &dead, const HealthInfo &info);
   void AddDeathMessage(const Entity &dead, const Entity &killer, const HealthInfo &info);
+  
+  virtual void OnHealthDealt(Game &game, Entity &other, const HealthInfo &info) override;
 
   virtual std::string       GetName()                         const;
   float                     GetPain()                         const { return this->pain; }

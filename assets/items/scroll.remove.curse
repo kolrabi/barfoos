@@ -1,10 +1,7 @@
-tex steel
-frames 2
-
-anim 0 1 0
+tex scroll
 
 Scroll
-IdentifiedName  Scroll
+IdentifiedName  "Scroll of Remove Curse"
 
 NoBeatitude
 NoModifier

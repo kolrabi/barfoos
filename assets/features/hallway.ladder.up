@@ -18,7 +18,7 @@ conn 3 2 6 3
 next doorway_z
 next alcove_z
 
-conn 3 7 3 2
+conn 3 6 3 2
 next hallway.ladder.down
 
 mob 1 slime 1 2 2 3

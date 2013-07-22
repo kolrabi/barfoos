@@ -18,6 +18,14 @@ ItemEntity::ItemEntity(const std::shared_ptr<Item> &item) :
 ItemEntity::~ItemEntity() {
 }
 
+void ItemEntity::Update(Game &game) {
+  Mob::Update(game);
+
+  this->item->Update(game);
+  if (this->item->IsRemovable()) {
+    this->removable = true;
+  }
+}
 void ItemEntity::Draw(Gfx &gfx) const {
   Entity::Draw(gfx);
   

@@ -70,7 +70,7 @@ struct Sprite {
       t += anim.fps * deltaT;
       currentFrame = t;
       if (t > anim.frameCount + anim.firstFrame) {
-        size_t next = 0;
+        size_t next = currentAnimation;
         if (!animQueue.empty()) {
           next = animQueue.front();
           animQueue.pop_front();
