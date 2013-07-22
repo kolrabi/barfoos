@@ -32,6 +32,14 @@ struct Properties {
 
   Game *game;
   
+  bool operator==(const Properties &that) const {
+    return this == &that;
+  }
+
+  bool operator!=(const Properties &that) const {
+    return this != &that;
+  }
+  
 private:
 
   std::vector<std::string> tokens;

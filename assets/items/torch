@@ -1,25 +1,23 @@
-tex torch
-frames 4
+Tex               torch
 
-anim 0 1 5
-anim 1 3 9
+Frames            4
+Anim              0 1 5.0
+Anim              1 3 9.0
 
-equipanim 1
+EquipAnim         1
 
-hand
+Hand
 
-damage 1
+Damage            1
 
-durability 10 10
-usedurability 0
-equipdurability 1
-replacement sword
+Durability        10
+UseDurability     0
+EquipDurability   10
+Replacement       torch.burnt
 
-
-cooldown 0.4
-light 512 512 255
-flicker
-
+Cooldown          0.4
+Light             512 512 255
+Flicker
 
 NoModified
 NoBeatitude
@@ -27,3 +25,4 @@ NoBeatitude
 UnidentifiedName "Torch"
 IdentifiedName   "Torch"
 
+Stack

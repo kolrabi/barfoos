@@ -49,10 +49,9 @@ Mob::Update(Game &game) {
     this->move = Vector3();
   }
 
-  
   // clip move speed
   float speed = move.GetMag();
-  float maxSpeed = this->properties->maxSpeed * this->GetMoveModifier();
+  float maxSpeed = this->properties->maxSpeed * this->GetMoveModifier() * this->GetEffectiveStats().walkSpeed;
   if (speed > maxSpeed) move = move * (maxSpeed/speed);
 
   float gravity = 3 * 9.81 * deltaT * this->properties->gravity;

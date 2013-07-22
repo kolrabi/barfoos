@@ -6,6 +6,11 @@
 
 #include <cstdio>
 
+#ifdef WIN32
+#define WIN32_LEAN_AND_MEAN
+#include <Shlobj.h>
+#endif
+
 static const std::vector<const char *> assetPrefix { "../assets/", DATA_PATH "/" };
 
 static std::string getAssetPath(const std::string &name) {
@@ -16,6 +21,20 @@ static std::string getAssetPath(const std::string &name) {
     if (res >= 0) return fullPath;
   }
   return "";
+}
+
+static std::string getUserPath(const std::string &name) {
+  std::string base = "./";
+#ifdef WIN32
+  TCHAR szPath[MAX_PATH];
+  if (SUCCEEDED(SHGetFolderPath(nullptr, CSIDL_COMMON_APPDATA, nullptr, 0, szPath))) 
+    base = szPath;
+#else
+  if (getenv("HOME"))
+    base = getenv("HOME");
+#endif
+  if (base.back() != '/') base += "/";
+  return base + "." + PACKAGE_NAME + "/" + name;
 }
 
 static bool fileIsDir(const std::string &path) {
@@ -90,3 +109,16 @@ std::vector<std::string> findAssets(const std::string &type) {
   return assets;  
 }
 
+static void makePath(const std::string &path) {
+  size_t pos = path.find_last_of('/');
+  if (pos == std::string::npos) return;
+  mkdir(path.substr(0, pos).c_str());
+}
+
+FILE *createUserFile(const std::string &name) {
+  std::string path = getUserPath(name);
+  makePath(path);
+  
+  FILE *file = fopen(path.c_str(), "wb");
+  return file;
+}

@@ -51,6 +51,8 @@ public:
   bool Chance(float p) {
     return Float() <= p;
   }
+  
+  std::mt19937 &GetGen() { return gen; }
    
 private:
 

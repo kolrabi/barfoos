@@ -114,14 +114,6 @@ struct CellProperties : public Properties {
   CellProperties(); 
   
   virtual void ParseProperty(const std::string &name);
-  
-  bool operator==(const CellProperties &that) const {
-    return this == &that;
-  }
-
-  bool operator!=(const CellProperties &that) const {
-    return this != &that;
-  }
 };
 
 /** A cell in the world. */

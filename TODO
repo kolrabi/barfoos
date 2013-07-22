@@ -3,13 +3,10 @@ gui
 
 items (entities)
   wands
-  scrolls
   rings
   amulets
   more weapons
 
-store list of identified object types
-  
 persistence
 connect maps
 

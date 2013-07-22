@@ -81,7 +81,7 @@ void InventoryGui::HandleEvent(const InputEvent &event) {
   if (event.type == InputEventType::MouseMove) {
     mousePos = event.p;
   } else if (event.type == InputEventType::Key && event.key == InputKey::MouseLeft) {
-    if (event.down == false && this->dragItem) {
+    if (!event.down && this->dragItem) {
       this->dropItem = true;
     }
   }
@@ -128,25 +128,47 @@ void InventorySlotGui::HandleEvent(const InputEvent &event) {
   if (event.key == InputKey::MouseLeft) {
     
     if (event.down) {
+    
       std::shared_ptr<Item> item(inv[slot]);
       if (item && (!item->IsCursed() || !item->IsEquipped())) {
         parent->dragItem = item;
         inv.Equip(nullptr, slot);
       }
+      
     } else {
+    
       std::shared_ptr<Item> item(parent->dragItem);
       if (!item) return;
       if (!inv.AddToInventory(item, slot)) {
         inv.AddToBackpack(item);
       }
       parent->dragItem = nullptr;
+      
     }
+    
   } else if (event.key == InputKey::MouseRight) {
     if (event.down) {
-      std::shared_ptr<Item> item(inv[slot]);
-      if (item && item->IsConsumable()) {
-        inv.ConsumeItem(item);
-        inv[slot] = nullptr;
+      if (parent->dragItem) {
+        // combine one of the dragged items with the one under cursor
+        std::shared_ptr<Item> combineItem = parent->dragItem;
+        bool isStack = parent->dragItem->GetAmount() > 1;
+        if (isStack) {
+          combineItem = std::shared_ptr<Item>(new Item(parent->dragItem->GetProperties().name));
+          parent->dragItem->DecAmount();
+        } 
+        
+        if (!inv.AddToInventory(combineItem, slot)) {
+          if (isStack) parent->dragItem->IncAmount();
+        } else {
+          if (!isStack) parent->dragItem = nullptr;
+        }
+        
+      } else {
+      
+        std::shared_ptr<Item> item(inv[slot]);
+        if (item && item->IsConsumable()) {
+          inv.ConsumeItem(slot);
+        }
       }
     } 
   }
@@ -169,8 +191,9 @@ InventorySlotGui::Draw(Gfx &gfx, const Point &parentPos) {
 
   std::shared_ptr<Item> item = entity.GetInventory()[slot];
   
-  if (item != nullptr)
+  if (item != nullptr) {
     item->DrawIcon(gfx, p);
+  }
 }
 
 void 

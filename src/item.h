@@ -15,6 +15,8 @@ struct ItemProperties : public Properties {
   std::string identifiedName = "<item>";
   std::string unidentifiedName = "<item>";
   
+  bool isPotion = false;
+  
   // rendering
   Sprite sprite = Sprite();
   size_t equipAnim = 0;
@@ -57,6 +59,7 @@ struct ItemProperties : public Properties {
   std::string onCombineEffect = "";
   std::string onConsumeEffect = "";
   std::string onConsumeResult = "";
+  std::string onConsumeAddBuff = "";
   
   float breakBlockStrength = 0.0;
   
@@ -66,6 +69,7 @@ struct ItemProperties : public Properties {
   std::string spawnProjectile = "";
   
   weighted_map<std::string> effects = weighted_map<std::string>();
+  bool stackable = false;
  
   virtual void ParseProperty(const std::string &name) override;
 };
@@ -118,6 +122,10 @@ public:
   
   std::string GetDisplayName()          const;
   Stats GetDisplayStats()               const;
+  size_t GetAmount()                    const { return this->amount; }
+  void DecAmount()                            { if (this->amount > 1) this->amount --; }
+  void IncAmount()                            { this->amount ++; }
+  void AddAmount(int amt);
   
   bool IsConsumable()                   const { return this->properties->onConsumeEffect != "" || this->properties->onConsumeResult != ""; }
   
@@ -155,6 +163,8 @@ protected:
   int modifier; 
 
   bool identified;
+  
+  size_t amount;
 };
 
 #endif

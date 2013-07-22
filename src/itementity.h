@@ -15,6 +15,7 @@ public:
   virtual ~ItemEntity();
 
   virtual void Draw(Gfx &gfx) const override;
+  virtual void Start(Game &game, size_t id) override;
   virtual void Update(Game &game) override;
   
   virtual void OnUse(Game &game, Entity &other) override;
@@ -22,6 +23,7 @@ public:
 protected:
 
   std::shared_ptr<Item> item;
+  float yoffset;
 };
 
 #endif

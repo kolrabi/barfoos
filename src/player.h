@@ -35,6 +35,7 @@ public:
   void AddDeathMessage(const Entity &dead, const Entity &killer, const HealthInfo &info);
   
   virtual void OnHealthDealt(Game &game, Entity &other, const HealthInfo &info) override;
+  virtual void OnEquip(Game &, const Item &, InventorySlot, bool);
 
   virtual std::string       GetName()                         const;
   float                     GetPain()                         const { return this->pain; }

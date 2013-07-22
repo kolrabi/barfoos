@@ -6,8 +6,10 @@
 #include "gfx.h"
 #include "projectile.h"
 #include "texture.h"
+#include "text.h"
 
 #include <unordered_map>
+#include <algorithm>
 
 static std::unordered_map<std::string, ItemProperties> allItems;
 ItemProperties defaultItem;
@@ -18,6 +20,29 @@ const ItemProperties &getItem(const std::string &name) {
     return defaultItem;
   }
   return allItems[name];
+}
+
+static void shufflePotions(Game &game) {
+  std::vector<std::string> potionsBefore;
+  std::vector<std::string> potionsAfter, tmp;
+  for (auto &i : allItems) {
+    if (i.second.isPotion) {
+      potionsBefore.push_back(i.first);
+      tmp.push_back(i.first);
+    }
+  }
+  
+  while(tmp.size() > 0) {
+    size_t i = game.GetRandom().Integer(tmp.size());
+    potionsAfter.push_back(tmp[i]);
+    tmp.erase(tmp.begin() + i);
+  }
+  
+  for (size_t i = 0; i < potionsBefore.size(); i++) {
+    // swap appearances and descriptions
+    std::swap(allItems[potionsBefore[i]].sprite,           allItems[potionsAfter[i]].sprite);
+    std::swap(allItems[potionsBefore[i]].unidentifiedName, allItems[potionsAfter[i]].unidentifiedName);
+  }
 }
 
 void
@@ -104,6 +129,9 @@ ItemProperties::ParseProperty(const std::string &cmd) {
     this->equippable |= (1<<(size_t)InventorySlot::Greaves);
   } else if (cmd == "boots") {
     this->equippable |= (1<<(size_t)InventorySlot::Boots);
+
+  } else if (cmd == "stack") {
+    this->stackable = true;
     
   } else if (cmd == "durability") {
     Parse(this->durability);
@@ -122,14 +150,15 @@ ItemProperties::ParseProperty(const std::string &cmd) {
   } else if (cmd == "breakblockstrength") {
     Parse(this->breakBlockStrength);
 
-  } else if (cmd == "name") {
-    Parse(this->name);
   } else if (cmd == "identifiedname") {
     Parse(this->identifiedName);
   } else if (cmd == "unidentifiedname") {
     Parse(this->unidentifiedName);
+    
   } else if (cmd == "scroll") {
     this->unidentifiedName = this->game->GetScrollName();
+  } else if (cmd == "potion") {
+    this->isPotion = true;
     
   } else if (cmd == "oncombineeffect") {
     Parse(this->onCombineEffect);
@@ -137,6 +166,8 @@ ItemProperties::ParseProperty(const std::string &cmd) {
     Parse(this->onConsumeEffect);
   } else if (cmd == "onconsumeresult") {
     Parse(this->onConsumeResult);
+  } else if (cmd == "onconsumeaddbuff") {
+    Parse(this->onConsumeAddBuff);
 
   } else if (cmd == "effect") {
     float w;
@@ -168,6 +199,8 @@ LoadItems(Game &game) {
       fclose(f);
     }
   }
+  
+  shufflePotions(game);
 }
 
 Item::Item(const std::string &type) : 
@@ -183,7 +216,8 @@ Item::Item(const std::string &type) :
   nextUseT(0.0),
   beatitude(Beatitude::Normal),
   modifier(0),
-  identified(false)
+  identified(false),
+  amount(1)
 {
   if (this->sprite.animations.size() > 0) this->sprite.StartAnim(0);
 }
@@ -221,8 +255,6 @@ void Item::Update(Game &game) {
     
     this->effect = this->properties->effects.size() == 0 ? &getEffect("") : &getEffect(this->properties->effects.select(game.GetRandom().Float01()));
     this->durability *= this->effect->durability;
-    
-    Log("Item is a %s %+d %s%s\n", this->beatitude == Beatitude::Normal ? "normal" : (this->beatitude == Beatitude::Blessed ? "blessed" : "cursed"), this->modifier, this->properties->name.c_str(), this->effect->name.c_str());
   }
 
   if (!this->identified) this->identified = game.IsIdentified(this->properties->name);
@@ -335,6 +367,10 @@ void Item::DrawIcon(Gfx &gfx, const Point &p) const {
     gfx.SetTextureFrame(this->durabilityTex, 0, frame, 8);
     gfx.DrawIconQuad(p);
   }
+
+  if (amount > 1)
+    RenderString(ToString(amount), "small").Draw(gfx, p - Point(12, 12));
+  
 }
 
 void
@@ -362,7 +398,11 @@ Item::ModifyStats(Stats &stats, bool forceEquipped) const {
 
 std::string
 Item::GetDisplayName() const {
-  if (!this->identified) return this->properties->unidentifiedName;
+  std::string amountString;
+  if (this->amount > 1)
+    amountString = u8" \u00d7 " + ToString(this->amount);
+    
+  if (!this->identified) return this->properties->unidentifiedName + amountString;
 
   const char *modifierString = "";
   
@@ -394,6 +434,15 @@ Item::GetDisplayStats() const {
 
 std::shared_ptr<Item> 
 Item::Combine(const std::shared_ptr<Item> &other) {
+  if (other->properties == this->properties && this->properties->stackable) {
+    other->amount += this->amount;
+    this->isRemovable = true;
+    return other;
+  } else if (this->amount > 1 || other->amount > 1) {
+    // can only combine single items
+    return nullptr;
+  }
+
   // TODO: check combination recipies
   
   if (this->properties->onCombineEffect != "") {
@@ -415,13 +464,14 @@ std::shared_ptr<Item>
 Item::Consume(Game &game, Entity &user) {
   if (this->properties->onConsumeEffect != "") {
     const EffectProperties &effect = getEffect(this->properties->onConsumeEffect);
-    effect.ModifyStats(user.GetBaseStats(), true);
-    if (effect.onConsumeAddHealth) {
-      HealthInfo info(effect.onConsumeAddHealth);
-      user.AddHealth(game, info);
-    }
-    game.SetIdentified(this->properties->name);
+    effect.Consume(game, user);
   }
+  
+  if (this->properties->onConsumeAddBuff != "") {
+    user.AddBuff(game, this->properties->onConsumeAddBuff);
+  }
+  
+  game.SetIdentified(this->properties->name);
   
   this->isRemovable = true;
   
@@ -436,3 +486,17 @@ Item::SetEquipped(bool equipped) {
   this->isEquipped = equipped; 
 }
 
+void
+Item::AddAmount(int amt) {
+  if (amt > 0) {
+    this->amount += amt;
+    return;
+  }
+  
+  if (this->amount < (size_t)-amt) {
+    this->amount = 1; 
+  } else {
+    this->amount += amt;
+  }
+}
+  

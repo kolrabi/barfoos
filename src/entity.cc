@@ -134,6 +134,7 @@ Entity::Entity(const std::string &type) :
   removable(false),
   properties(getEntity(type)),
   nextThinkT(0.0),
+  startT(0.0),
   lastPos(),
   spawnPos(),
   angles(),
@@ -158,6 +159,7 @@ Entity::Start(Game &game, size_t id) {
   
   this->id = id;
   this->nextThinkT = game.GetTime();
+  this->startT = game.GetTime();
   
   // fill inventory with random crap
   for (auto item : this->properties->items) {
@@ -233,6 +235,16 @@ Entity::Update(Game &game) {
   this->sprite.Update(deltaT);
   this->inventory.Update(game, *this);
   this->smoothPosition.Update(deltaT);
+  
+  auto it = this->activeBuffs.begin();
+  while(it != this->activeBuffs.end()) {
+    if (t > it->effect->duration + it->startT) {
+      it = this->activeBuffs.erase(it);
+    } else {
+      it->effect->Update(game, *this);
+      it++;
+    }
+  }
   
   this->lastPos = this->aabb.center;
   this->cellPos = IVector3(aabb.center.x, aabb.center.y, aabb.center.z);
@@ -335,6 +347,9 @@ Stats
 Entity::GetEffectiveStats() const {
   Stats stats = this->baseStats;
   this->inventory.ModifyStats(stats);
+  for (auto &b : this->activeBuffs) {
+    b.effect->ModifyStats(stats, true);
+  }
   return stats;
 }
 
@@ -344,3 +359,12 @@ Entity::OnHealthDealt(Game &game, Entity &other, const HealthInfo &info) {
   (void)other;
   if (this->baseStats.AddExp(info.exp)) this->OnLevelUp(game);
 }
+
+void
+Entity::AddBuff(Game &game, const std::string &name) {
+  Buff buff;
+  buff.effect = &getEffect(name);
+  buff.startT = game.GetTime();
+  this->activeBuffs.push_back(buff);
+}
+

@@ -9,6 +9,8 @@ FILE *openAsset(const std::string &name);
 std::string loadAssetAsString(const std::string &name);
 std::vector <std::string> findAssets(const std::string &type);
 
+FILE *createUserFile(const std::string &name);
+
 time_t getFileChangeTime(const std::string &name);
 
 float Wave(float x, float z, float t, float a = 0.2);

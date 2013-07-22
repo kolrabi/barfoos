@@ -5,6 +5,8 @@
 #include "icolor.h"
 #include "inventory.h"
 
+struct EffectProperties;
+
 namespace Const {
   static constexpr float WalkSpeedFactorPerAGI   = 0.2f; // double walk speed every 5 agi points
   static constexpr float AttackSpeedFactorPerAGI = 0.2f; // double speed every 5 agi points
@@ -64,6 +66,11 @@ struct HealthInfo {
   {}
 };
 
+struct Buff {
+  const EffectProperties *effect;
+  float startT;
+};
+
 struct Stats {
   int str = 0;
   int dex = 0;
@@ -75,6 +82,7 @@ struct Stats {
   float exp = 0;
   
   size_t sp = 0;
+  float walkSpeed = 1.0;
   
   bool AddExp(float exp);
   size_t GetLevel();

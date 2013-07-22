@@ -52,6 +52,8 @@ EffectProperties::ParseProperty(const std::string &cmd) {
     Parse(this->cooldown);
   } else if (cmd == "range") {
     Parse(this->range);
+  } else if (cmd == "walkspeed") {
+    Parse(this->walkSpeed);
     
   } else if (cmd == "durability") {
     Parse(this->durability);
@@ -59,6 +61,9 @@ EffectProperties::ParseProperty(const std::string &cmd) {
     Parse(this->useDurability);
   } else if (cmd == "equipdurability") {
     Parse(this->equipDurability);
+    
+  } else if (cmd == "duration") {
+    Parse(this->duration);
     
   } else if (cmd == "breakblockstrength") {
     Parse(this->breakBlockStrength);
@@ -69,6 +74,8 @@ EffectProperties::ParseProperty(const std::string &cmd) {
     this->onCombineIdentify = true;
   } else if (cmd == "oncombineaddmodifier") {
     Parse(this->onCombineAddModifier);
+  } else if (cmd == "addhealth") {
+    Parse(this->addHealth);
     
   } else if (cmd == "name") {
     Parse(this->name);
@@ -101,11 +108,29 @@ EffectProperties::ModifyStats(Stats &stats, bool forceEquipped) const {
     stats.dex += this->eqAddDex;
     stats.def += this->eqAddDef;
     stats.maxHealth += this->eqAddHP;
+    stats.walkSpeed *= this->walkSpeed;
   } else {
     stats.str += this->uneqAddStr;
     stats.agi += this->uneqAddAgi;
     stats.dex += this->uneqAddDex;
     stats.def += this->uneqAddDef;
     stats.maxHealth += this->uneqAddHP;
+  }
+}
+
+void
+EffectProperties::Consume(Game &game, Entity &user) const {
+  this->ModifyStats(user.GetBaseStats(), true);
+  if (this->addHealth) {
+    HealthInfo info(this->addHealth);
+    user.AddHealth(game, info);
+  }
+}
+
+void 
+EffectProperties::Update(Game &game, Entity &owner) const {
+  if (this->addHealth) {
+    HealthInfo info(this->addHealth * game.GetDeltaT());
+    owner.AddHealth(game, info);
   }
 }

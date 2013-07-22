@@ -7,7 +7,8 @@
 
 ItemEntity::ItemEntity(const std::string &itemName) : 
   Mob("item"),
-  item(new Item(itemName)) {
+  item(new Item(itemName)),
+  yoffset(0.5)  {
 }
 
 ItemEntity::ItemEntity(const std::shared_ptr<Item> &item) : 
@@ -18,8 +19,15 @@ ItemEntity::ItemEntity(const std::shared_ptr<Item> &item) :
 ItemEntity::~ItemEntity() {
 }
 
+void ItemEntity::Start(Game &game, size_t id) {
+  Mob::Start(game, id);
+  this->startT += game.GetRandom().Float() * Const::pi * 2;
+}
+
 void ItemEntity::Update(Game &game) {
   Mob::Update(game);
+  
+  this->yoffset = std::cos(game.GetTime() - this->startT) * 0.125 + 0.125;
 
   this->item->Update(game);
   if (this->item->IsRemovable()) {
@@ -31,7 +39,7 @@ void ItemEntity::Draw(Gfx &gfx) const {
   
   gfx.SetColor(this->cellLight);
   
-  this->item->DrawSprite(gfx, this->aabb.center);
+  this->item->DrawSprite(gfx, this->aabb.center + Vector3(0,yoffset,0));
 }
 
 void ItemEntity::OnUse(Game &game, Entity &other) {

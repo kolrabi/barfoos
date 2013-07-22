@@ -18,3 +18,6 @@ inventory 0.5 torch
 inventory 0.5 torch
 inventory 0.1 torch
 inventory 0.4 sword
+
+inventory 1.0 potion.heal
+inventory 1.0 potion.heal

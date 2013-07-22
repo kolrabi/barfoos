@@ -353,7 +353,7 @@ Player::DrawGUI(Gfx &gfx) const {
   );
   RenderString(tmp, "small").Draw(gfx, 4, vsize.y-32);
 
-  snprintf(tmp, sizeof(tmp), "LVL: %3lu EXP: %4d / %4d", stats.GetLevel(), (int)stats.exp, (int)Stats::GetExpForLevel(stats.GetLevel() + 1));
+  snprintf(tmp, sizeof(tmp), "LVL: %3u EXP: %4d / %4d", stats.GetLevel(), (int)stats.exp, (int)Stats::GetExpForLevel(stats.GetLevel() + 1));
   RenderString(tmp, "small").Draw(gfx, 4, vsize.y-32-16);
 }
 
@@ -446,6 +446,20 @@ Player::OnHealthDealt(Game &game, Entity &other, const HealthInfo &info) {
     this->AddMessage("You hit the " + other.GetName() + " for " + ToString(info.amount) + " hp");
   } else if (info.hitType == HitType::Critical) {
     this->AddMessage("You hit the " + other.GetName() + " critically for " + ToString(info.amount) + " hp"); 
+  }
+}
+
+void 
+Player::OnEquip(Game &game, const Item &item, InventorySlot slot, bool equip) {
+  Mob::OnEquip(game, item, slot, equip);
+  
+  if (equip) {
+    this->AddMessage("You put on the " + item.GetDisplayName() + ".");
+    if (item.IsCursed()) {
+      this->AddMessage("It is freezing cold.");
+    }
+  } else {
+    this->AddMessage("You take off the " + item.GetDisplayName() + ".");
   }
 }
 

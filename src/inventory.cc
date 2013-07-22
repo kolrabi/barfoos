@@ -30,6 +30,17 @@ Inventory::operator[](InventorySlot slot) const {
 bool
 Inventory::AddToBackpack(const std::shared_ptr<Item> &item) {
   InventorySlot i = InventorySlot::Backpack0;
+  if (item->GetProperties().stackable) {
+    while(i < InventorySlot::End) {
+      if (self[i] && item->GetProperties() == self[i]->GetProperties()) {
+        self[i]->AddAmount(item->GetAmount());
+        return true;
+      }
+      i = InventorySlot((size_t)i + 1);
+    }
+    i = InventorySlot::Backpack0;
+  }
+  
   while(i < InventorySlot::End) {
     if (!self[i]) {
       self[i] = item;
@@ -47,6 +58,18 @@ Inventory::AddToBackpack(const std::shared_ptr<Item> &item) {
   */
 bool
 Inventory::AddToInventory(const std::shared_ptr<Item> &item, InventorySlot slot) {
+  if (item->GetAmount() > 1) {
+
+    std::shared_ptr<Item> rest(new Item(item->GetProperties().name));
+    rest->AddAmount(item->GetAmount() - 2);
+  
+    item->AddAmount(-item->GetAmount() + 1);
+    
+    if (!this->AddToBackpack(rest)) {
+      this->DropItem(rest);
+    }
+  }
+  
   if (!this->inventory[slot]) {
     // target slot is free
     if (slot >= InventorySlot::Backpack0 || item->IsEquippable(slot)) {
@@ -62,11 +85,7 @@ Inventory::AddToInventory(const std::shared_ptr<Item> &item, InventorySlot slot)
   // combine
   std::shared_ptr<Item> combo(item->Combine(this->inventory[slot]));
   
-  if (!combo) {
-    // if that didn't work, try the reverse
-    combo = self[slot]->Combine(item);
-    if (combo) DropItem(self[slot]);
-  } else {
+  if (combo) {
     DropItem(item);
   }
   
@@ -75,6 +94,13 @@ Inventory::AddToInventory(const std::shared_ptr<Item> &item, InventorySlot slot)
     this->inventory[slot] = nullptr;
     this->Equip(combo, slot);
     return true;
+  }
+  
+  if (self[slot]->IsCursed() && slot < InventorySlot::Backpack0) {
+    if (!this->AddToBackpack(item)) {
+      this->DropItem(item);
+    }
+    return false;
   }
 
   // try to put existing item in backpack if enough room
@@ -118,8 +144,9 @@ Inventory::Update(Game &game, Entity &owner) {
   }
   overflow.clear();
 
-  for (auto &i:consumed) {
-    i->Consume(game, owner);
+  for (auto i:consumed) {
+    if (!self[i]) continue;
+    self[i] = self[i]->Consume(game, owner);
   }
   consumed.clear();
   
@@ -148,8 +175,9 @@ Inventory::Update(Game &game, Entity &owner) {
 void
 Inventory::Drop(Game &game, Entity &owner) {
   for (auto &item : this->inventory) {
-    if (item.second)
+    if (item.second) {
       DropItem(game, owner, item.second);
+    }
     item.second = nullptr;
   }
 }
@@ -160,13 +188,18 @@ Inventory::DropItem(const std::shared_ptr<Item> &item) {
 }
 
 void 
-Inventory::ConsumeItem(const std::shared_ptr<Item> &item) {
-  consumed.push_back(item);
+Inventory::ConsumeItem(InventorySlot slot) {
+  consumed.push_back(slot);
 }
 
 void
 Inventory::DropItem(Game &game, Entity &owner, const std::shared_ptr<Item> &item) {
   if (!item || item->IsRemovable()) return;
+
+  while(item->GetAmount() > 1) {
+    DropItem(game, owner, std::shared_ptr<Item>(new Item(item->GetProperties().name)));
+    item->DecAmount();
+  }  
   
   ItemEntity *entity = new ItemEntity(item);
   entity->SetPosition(owner.GetPosition());
@@ -174,7 +207,7 @@ Inventory::DropItem(Game &game, Entity &owner, const std::shared_ptr<Item> &item
   Vector3 offset(owner.GetForward() + game.GetRandom().Vector() * owner.GetAABB().extents);
   
   entity->SetPosition(game.GetWorld().MoveAABB(entity->GetAABB(), offset + entity->GetPosition()));
-  entity->AddVelocity(game.GetRandom().Vector()*10);
+  entity->AddVelocity(game.GetRandom().Vector()*1);
   entity->AddVelocity(owner.GetForward() + Vector3(0,1,0)*10);
   
   game.AddEntity(entity);

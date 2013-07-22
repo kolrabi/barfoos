@@ -139,6 +139,8 @@ public:
   Stats &                   GetBaseStats()                          { return this->baseStats; }
   float                     GetHealth()                       const { return this->health; }
   
+  void                      AddBuff(Game &game, const std::string &name);
+  
   // rendering
   virtual IColor            GetLight()                        const { return this->properties->glow + inventory.GetLight(); }
   
@@ -148,14 +150,16 @@ protected:
   size_t id, ownerId;
   bool removable;
   const EntityProperties *properties;
-  float nextThinkT;
+  float nextThinkT, startT;
   
   // gameplay
   Smooth<Vector3> smoothPosition = Smooth<Vector3>(30.0);
   Vector3 lastPos;
   Vector3 spawnPos;
   Vector3 angles;
+  
   Stats baseStats;
+  std::vector<Buff> activeBuffs;
   
   AABB aabb;
   

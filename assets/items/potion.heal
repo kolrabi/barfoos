@@ -1,0 +1,14 @@
+Tex               potion.red
+
+Size              0.5 0.5
+
+Potion
+UnidentifiedName  "red potion"
+IdentifiedName    "healing potion"
+
+NoBeatitude
+NoModifier
+
+OnConsumeEffect   heal.low
+OnConsumeResult   potion.empty
+

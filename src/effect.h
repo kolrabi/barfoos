@@ -12,6 +12,7 @@ struct EffectProperties : public Properties {
   
   float range = 1.0;
   float damage = 1.0;
+  float walkSpeed = 1.0;
   
   int eqAddStr = 0;
   int eqAddDex = 0;
@@ -29,20 +30,24 @@ struct EffectProperties : public Properties {
   
   float durability = 1.0;
   float useDurability = 1.0;
-  float equipDurability = 0.0;
+  float equipDurability = 1.0;
   
   float breakBlockStrength = 1.0;
   
   bool onCombineRemoveCurse = false;
   bool onCombineIdentify = false;
   int onCombineAddModifier = 0;
-  float onConsumeAddHealth = 0;
+  float addHealth = 0;
+  
+  float duration = 0.0;
   
   Element element = Element::Physical;
   
   virtual void ParseProperty(const std::string &name) override;
   
   void ModifyStats(Stats &stats, bool equipped) const;
+  void Consume(Game &game, Entity &user) const;
+  void Update(Game &game, Entity &user) const;
 };
 
 void LoadEffects();
