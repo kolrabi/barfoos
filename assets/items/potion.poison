@@ -1,0 +1,14 @@
+Tex               potion.green
+
+Size              0.5 0.5
+
+Potion
+UnidentifiedName  "green potion"
+IdentifiedName    "potion of poison"
+
+NoBeatitude
+NoModifier
+
+OnConsumeAddBuff  buff.poison
+OnConsumeResult   potion.empty
+

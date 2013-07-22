@@ -1,0 +1,13 @@
+Tex               potion.blue
+
+Size              0.5 0.5
+
+Potion
+UnidentifiedName  "blue potion"
+IdentifiedName    "water"
+
+NoBeatitude
+NoModifier
+
+OnConsumeResult   potion.empty
+

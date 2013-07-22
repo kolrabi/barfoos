@@ -23,25 +23,18 @@ const ItemProperties &getItem(const std::string &name) {
 }
 
 static void shufflePotions(Game &game) {
-  std::vector<std::string> potionsBefore;
-  std::vector<std::string> potionsAfter, tmp;
+  std::vector<std::string> potions;
   for (auto &i : allItems) {
     if (i.second.isPotion) {
-      potionsBefore.push_back(i.first);
-      tmp.push_back(i.first);
+      potions.push_back(i.first);
     }
   }
   
-  while(tmp.size() > 0) {
-    size_t i = game.GetRandom().Integer(tmp.size());
-    potionsAfter.push_back(tmp[i]);
-    tmp.erase(tmp.begin() + i);
-  }
-  
-  for (size_t i = 0; i < potionsBefore.size(); i++) {
+  for (size_t i = 0; i < potions.size(); i++) {
     // swap appearances and descriptions
-    std::swap(allItems[potionsBefore[i]].sprite,           allItems[potionsAfter[i]].sprite);
-    std::swap(allItems[potionsBefore[i]].unidentifiedName, allItems[potionsAfter[i]].unidentifiedName);
+    size_t j = game.GetRandom().Integer(potions.size());
+    std::swap(allItems[potions[i]].sprite,           allItems[potions[j]].sprite);
+    std::swap(allItems[potions[i]].unidentifiedName, allItems[potions[j]].unidentifiedName);
   }
 }
 

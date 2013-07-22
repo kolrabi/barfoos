@@ -21,3 +21,9 @@ inventory 0.4 sword
 
 inventory 1.0 potion.heal
 inventory 1.0 potion.heal
+inventory 1.0 potion.heal
+inventory 1.0 potion.poison
+inventory 1.0 potion.poison
+inventory 1.0 potion.water
+
+

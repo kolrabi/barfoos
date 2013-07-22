@@ -353,7 +353,7 @@ Player::DrawGUI(Gfx &gfx) const {
   );
   RenderString(tmp, "small").Draw(gfx, 4, vsize.y-32);
 
-  snprintf(tmp, sizeof(tmp), "LVL: %3u EXP: %4d / %4d", stats.GetLevel(), (int)stats.exp, (int)Stats::GetExpForLevel(stats.GetLevel() + 1));
+  snprintf(tmp, sizeof(tmp), "LVL: %3u EXP: %4d / %4d", (unsigned int)stats.GetLevel(), (int)stats.exp, (int)Stats::GetExpForLevel(stats.GetLevel() + 1));
   RenderString(tmp, "small").Draw(gfx, 4, vsize.y-32-16);
 }
 
@@ -380,15 +380,19 @@ void Player::SetUniforms(const Shader *shader) const {
 
 void 
 Player::AddHealth(Game &game, const HealthInfo &info) {
+  int hp = this->health;
   if (info.amount < 0) {
     if (!IsContinuous(info.type) || game.GetTime() > lastHurtT[info.type] + 0.25) {
-      this->AddMessage("Ouch!");
-      lastHurtT[info.type] = game.GetTime();
     }
     this->pain -= info.amount / this->properties->maxHealth;
   }
   
   Mob::AddHealth(game, info);
+  int hp2 = this->health;
+  if (hp2 < hp) {
+    this->AddMessage("Ouch!");
+    lastHurtT[info.type] = game.GetTime();
+  }
 }
 
 void 

@@ -112,7 +112,12 @@ std::vector<std::string> findAssets(const std::string &type) {
 static void makePath(const std::string &path) {
   size_t pos = path.find_last_of('/');
   if (pos == std::string::npos) return;
+
+#ifdef WIN32
   mkdir(path.substr(0, pos).c_str());
+#else
+  mkdir(path.substr(0, pos).c_str(), 0700);
+#endif
 }
 
 FILE *createUserFile(const std::string &name) {
