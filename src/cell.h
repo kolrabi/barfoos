@@ -126,9 +126,9 @@ public:
   
   Cell &operator=(const Cell &that);
   
-  void Update(Game &game);
+  void Update(RunningState &state);
   
-  void OnUse(Game &game, Mob &user);
+  void OnUse(RunningState &state, Mob &user);
   
   void UpdateNeighbours();
   
@@ -190,7 +190,7 @@ public:
   AABB GetAABB() const;
 
   void UpdateVertices();
-  void Tick(Game &game);
+  void Tick(RunningState &state);
   
   bool Ray(const Vector3 &start, const Vector3 &dir, float &t, Vector3 &p) const;
   Cell &operator[](Side side);

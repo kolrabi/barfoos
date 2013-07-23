@@ -63,7 +63,7 @@ public:
 
   Inventory();
   
-  void Update(Game &game, Entity &owner);
+  void Update(RunningState &state, Entity &owner);
 
   std::shared_ptr<Item> &operator[](InventorySlot slot);
   const std::shared_ptr<Item> &operator[](InventorySlot slot) const;
@@ -72,7 +72,7 @@ public:
   bool AddToInventory(const std::shared_ptr<Item> &item, InventorySlot slot);
   void Equip(const std::shared_ptr<Item> &item, InventorySlot slot);
   
-  void Drop(Game &game, Entity &owner);
+  void Drop(RunningState &state, Entity &owner);
   void DropItem(const std::shared_ptr<Item> &item);
   void ConsumeItem(InventorySlot slot);
   
@@ -82,7 +82,7 @@ public:
 
 private:
 
-  void DropItem(Game &game, Entity &owner, const std::shared_ptr<Item> &item);
+  void DropItem(RunningState &state, Entity &owner, const std::shared_ptr<Item> &item);
 
   std::unordered_map<InventorySlot, std::shared_ptr<Item>> inventory;
   std::vector<std::shared_ptr<Item>> overflow;

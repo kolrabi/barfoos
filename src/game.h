@@ -2,12 +2,13 @@
 #define BARFOOS_GAME_H 
 
 #include "common.h"
-#include "feature.h"
 #include "random.h"
 #include "2d.h"
 
 #include <unordered_map>
 #include "markov.h"
+
+class GameState;
 
 class Game final {
 public:
@@ -25,38 +26,18 @@ public:
   
   Gfx    &GetGfx()    const { return *this->gfx;    }
   Input  &GetInput()  const { return *this->input;  }
-  World  &GetWorld()  const { return *this->world;  }
   Random &GetRandom()       { return random;        }
 
   float   GetTime()   const { return this->lastT;   }
   float   GetDeltaT() const { return this->deltaT;  }
   float   GetFPS()    const { return this->fps;     }
-
-  int     GetLevel()  const { return level;         }
   
   std::string GetScrollName();
   void SetIdentified(const std::string &name);
   bool IsIdentified(const std::string &name) const;
   
-  // entity management
-  size_t  AddEntity(Entity *entity);
-  Entity *GetEntity(size_t id);
-  void    RemoveEntity(size_t entity);
-  
-  size_t  AddPlayer(Player *entity);
-  Player &GetPlayer() { return *this->player; }
-  
-  bool    CheckEntities(const IVector3 &pos);
-  
-  std::vector<size_t> FindEntities(const AABB &aabb) const;
-  std::vector<size_t> FindSolidEntities(const AABB &aabb) const;
-
-  // misc.
-  Vector3 MoveAABB(const AABB &aabb, const Vector3 &dir, uint8_t &axis);
-  
-  void Explosion(Entity &entity, const Vector3 &pos, size_t radius, float strength, float damage, Element element);
-  
   void HandleEvent(const InputEvent &event);
+  void                  SetGui(const std::shared_ptr<Gui> &gui);
   
 private:
 
@@ -64,17 +45,14 @@ private:
   
   Input   *input;
   Gfx     *gfx;
-  World   *world;
   
   size_t  handlerId;
   
-  int     level;
+  GameState *activeGameState;
+  GameState *nextGameState;
   
-  std::unordered_map<size_t, Entity*> entities;
-  Player *player;
-  size_t  nextEntityId;
+  // --------------------------------------------
   
-  std::shared_ptr<InventoryGui> inventoryGui;
   std::shared_ptr<Gui> activeGui;
 
   float   startT;
@@ -88,20 +66,30 @@ private:
   std::string seed;
   Random random;
   
-  bool showInventory;
-  
-  void Deinit();
-  
   void Render() const;
   void Update(float t, float deltaT);
   
-  size_t GetNextEntityId() { return nextEntityId++; }
-  
-  void BuildWorld();
-  std::vector<const Entity*> FindLightEntities(const Vector3 &pos, float radius) const;
-  
   markov_chain<char> scrollMarkov;
   std::vector<std::string> identifiedItems;
+};
+
+class GameState {
+public:
+  GameState(Game &game) : game(game) {};
+  virtual ~GameState() {};
+  
+  virtual void          Enter ()            = 0;
+  virtual void          Leave (GameState *) = 0;
+  virtual GameState *   Update()            = 0;
+  virtual void          Render(Gfx &)       const = 0;
+  
+  Game &                GetGame()                       { return game; }
+  Random &              GetRandom()                     { return game.GetRandom(); }
+  virtual void          HandleEvent(const InputEvent &) {};
+  
+private:
+
+  Game &game;
 };
 
 #endif

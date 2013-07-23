@@ -2,7 +2,7 @@
 #include "entity.h"
 #include "world.h"
 #include "mob.h"
-#include "game.h"
+#include "runningstate.h"
 #include "gfx.h"
 #include "projectile.h"
 #include "texture.h"
@@ -218,30 +218,32 @@ Item::Item(const std::string &type) :
 Item::~Item() {
 }
 
-bool Item::CanUse(Game &game) const {
+bool Item::CanUse(RunningState &state) const {
   return (this->durability > 0 || this->properties->durability == 0.0) && 
          this->properties->cooldown >= 0.0 && 
-         this->nextUseT < game.GetTime();
+         this->nextUseT < state.GetGame().GetTime();
 }
   
-void Item::StartCooldown(Game &game, Entity &user) {
+void Item::StartCooldown(RunningState &state, Entity &user) {
   this->durability -= this->properties->useDurability * this->effect->useDurability;
-  this->nextUseT = game.GetTime() + this->GetCooldown() / (1.0 + Const::AttackSpeedFactorPerAGI*user.GetEffectiveStats().agi);
+  this->nextUseT = state.GetGame().GetTime() + this->GetCooldown() / (1.0 + Const::AttackSpeedFactorPerAGI*user.GetEffectiveStats().agi);
 }
 
-void Item::Update(Game &game) {
+void Item::Update(RunningState &state) {
+  Game &game = state.GetGame();
+  
   if (!this->initDone) {
     this->initDone = true;
     
     if (!this->properties->noModifier) {
-      this->modifier = game.GetRandom().Integer(2) + game.GetRandom().Integer(2) - 2;
+      this->modifier = state.GetRandom().Integer(2) + state.GetRandom().Integer(2) - 2;
     }
     
     if (!this->properties->noBeatitude) {
-      if (game.GetRandom().Chance(0.01)) {
+      if (state.GetRandom().Chance(0.01)) {
         this->beatitude = Beatitude::Cursed;
         this->modifier = -2;
-      } else if (game.GetRandom().Chance(0.1) && this->modifier == 2) {
+      } else if (state.GetRandom().Chance(0.1) && this->modifier == 2) {
         this->beatitude = Beatitude::Blessed;
       }
     }
@@ -281,13 +283,13 @@ void Item::Update(Game &game) {
   if (cooldownFrac < 0) cooldownFrac = 0;
 }
 
-void Item::UseOnEntity(Game &game, Mob &user, size_t id) {
-  if (!this->CanUse(game)) return;
+void Item::UseOnEntity(RunningState &state, Mob &user, size_t id) {
+  if (!this->CanUse(state)) return;
 
   if (this->properties->canUseEntity) {
-    Entity *entity = game.GetEntity(id);
+    Entity *entity = state.GetEntity(id);
     if (!entity || entity->GetProperties()->nohit) {
-      this->UseOnNothing(game, user);
+      this->UseOnNothing(state, user);
       return;
     }
     
@@ -295,34 +297,32 @@ void Item::UseOnEntity(Game &game, Mob &user, size_t id) {
     if (iter != entity->GetProperties()->onUseItemReplace.end()) {
       *this = Item(iter->second);
     } else {
-      HealthInfo healthInfo(Stats::MeleeAttack(user, *entity, *this, game.GetRandom()));
-      entity->AddHealth(game, healthInfo);
+      HealthInfo healthInfo(Stats::MeleeAttack(user, *entity, *this, state.GetRandom()));
+      entity->AddHealth(state, healthInfo);
     }
     
-    this->StartCooldown(game, user);
+    this->StartCooldown(state, user);
   } else {
-    this->UseOnNothing(game, user);
+    this->UseOnNothing(state, user);
   }
 }
 
-void Item::UseOnCell(Game &game, Mob &user, Cell *cell, Side side) {
-  (void)side;
-  
-  if (!this->CanUse(game)) return;
+void Item::UseOnCell(RunningState &state, Mob &user, Cell *cell, Side) {
+  if (!this->CanUse(state)) return;
   
   if (this->properties->canUseCell) {
-    if (this->GetBreakBlockStrength() && game.GetRandom().Chance(this->properties->breakBlockStrength / cell->GetInfo().breakStrength)) {
-      cell->GetWorld()->BreakBlock(game, cell->GetPosition());
+    if (this->GetBreakBlockStrength() && state.GetRandom().Chance(this->properties->breakBlockStrength / cell->GetInfo().breakStrength)) {
+      cell->GetWorld()->BreakBlock(cell->GetPosition());
     }
-    this->StartCooldown(game, user);
+    this->StartCooldown(state, user);
   } else {
-    this->UseOnNothing(game, user);
+    this->UseOnNothing(state, user);
   }
 }
 
-void Item::UseOnNothing(Game &game, Mob &user) {
-  if (!this->CanUse(game)) return;
-  this->StartCooldown(game, user);
+void Item::UseOnNothing(RunningState &state, Mob &user) {
+  if (!this->CanUse(state)) return;
+  this->StartCooldown(state, user);
   
   if (this->properties->spawnProjectile != "") {
     Projectile *proj = new Projectile(this->properties->spawnProjectile);
@@ -330,7 +330,7 @@ void Item::UseOnNothing(Game &game, Mob &user) {
     proj->SetAngles(user.GetAngles());
     proj->SetPosition(user.GetPosition() + Vector3(0,user.GetProperties()->eyeOffset,0));
     proj->AddVelocity(user.GetVelocity());
-    game.AddEntity(proj);
+    state.AddEntity(proj);
   }
 }
 
@@ -454,17 +454,17 @@ Item::Combine(const std::shared_ptr<Item> &other) {
 }
 
 std::shared_ptr<Item> 
-Item::Consume(Game &game, Entity &user) {
+Item::Consume(RunningState &state, Entity &user) {
   if (this->properties->onConsumeEffect != "") {
     const EffectProperties &effect = getEffect(this->properties->onConsumeEffect);
-    effect.Consume(game, user);
+    effect.Consume(state, user);
   }
   
   if (this->properties->onConsumeAddBuff != "") {
-    user.AddBuff(game, this->properties->onConsumeAddBuff);
+    user.AddBuff(state, this->properties->onConsumeAddBuff);
   }
   
-  game.SetIdentified(this->properties->name);
+  state.GetGame().SetIdentified(this->properties->name);
   
   this->isRemovable = true;
   

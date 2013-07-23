@@ -2,7 +2,7 @@
 #include "world.h"
 #include "cell.h"
 #include "util.h"
-#include "game.h"
+#include "runningstate.h"
 
 #include <cmath>
 
@@ -34,15 +34,16 @@ Mob::~Mob() {
 }
 
 void 
-Mob::Start(Game &game, size_t id) {
-  Entity::Start(game, id);
-  this->sprite.t = game.GetRandom().Float01();
+Mob::Start(RunningState &state, size_t id) {
+  Entity::Start(state, id);
+  this->sprite.t = state.GetRandom().Float01();
 }
 
 void 
-Mob::Update(Game &game) {
-  Entity::Update(game);
+Mob::Update(RunningState &state) {
+  Entity::Update(state);
 
+  Game &game = state.GetGame();
   float deltaT = game.GetDeltaT();
   
   if (this->IsDead()) {
@@ -103,7 +104,7 @@ Mob::Update(Game &game) {
   }
 
   // move
-  World &world = game.GetWorld();
+  World &world = state.GetWorld();
   uint8_t axis, axis2;
   bool movingDown = velocity.y <= 0;
   Cell *cell = nullptr;
@@ -131,18 +132,18 @@ Mob::Update(Game &game) {
     
     Vector3 newCenter = aabb.center;
     aabb.center = oldCenter;
-    aabb.center = game.MoveAABB(aabb, newCenter, axis2);
+    aabb.center = state.MoveAABB(aabb, newCenter, axis2);
     axis |= axis2;
   } else {
     onGround = false;
     Vector3 newCenter = world.MoveAABB(aabb, aabb.center + velocity*deltaT, axis, &cell, &side);
-    aabb.center = game.MoveAABB(aabb, newCenter, axis2);
+    aabb.center = state.MoveAABB(aabb, newCenter, axis2);
     axis |= axis2;
   }
   this->smoothPosition = this->aabb.center;
   
   if (cell && !this->properties->nocollideCell) {
-    ((Entity*)this)->OnCollide(game, *cell, side);
+    ((Entity*)this)->OnCollide(state, *cell, side);
   }
   
   // jump out of water
@@ -153,7 +154,7 @@ Mob::Update(Game &game) {
   // fall damage  
   if (axis & Axis::Y) {
     if (velocity.y < -15) {
-      AddHealth(game, HealthInfo( (velocity.y+15)/5, HealthType::Falling));
+      AddHealth(state, HealthInfo( (velocity.y+15)/5, HealthType::Falling));
     }
     velocity.y = 0;
     onGround |= movingDown;
@@ -175,9 +176,9 @@ Mob::Update(Game &game) {
   if (!noclip) this->SetInLiquid(footCell->GetInfo().flags & (CellFlags::Liquid | CellFlags::Ladder));
 
   if (footCell->GetInfo().lavaDamage) {
-    this->AddHealth(game, HealthInfo( -footCell->GetInfo().lavaDamage * deltaT, HealthType::Lava));
+    this->AddHealth(state, HealthInfo( -footCell->GetInfo().lavaDamage * deltaT, HealthType::Lava));
   } else if (headCell->GetInfo().lavaDamage) {
-    this->AddHealth(game, HealthInfo( -headCell->GetInfo().lavaDamage * deltaT, HealthType::Lava));
+    this->AddHealth(state, HealthInfo( -headCell->GetInfo().lavaDamage * deltaT, HealthType::Lava));
   }
 
   if (this->IsDead()) {
@@ -186,8 +187,8 @@ Mob::Update(Game &game) {
 }
 
 void
-Mob::Think(Game &game) {  
-  Entity::Think(game);
+Mob::Think(RunningState &state) {  
+  Entity::Think(state);
 
   if (this->IsDead()) {
     validMoveTarget = false;
@@ -196,9 +197,9 @@ Mob::Think(Game &game) {
   
   // walk around a bit
   if (this->properties->moveInterval != 0) {
-    if (game.GetTime() > nextMoveT) {
+    if (state.GetGame().GetTime() > nextMoveT) {
       nextMoveT += this->properties->moveInterval;
-      moveTarget = aabb.center + (Vector3(game.GetRandom().Float(), game.GetRandom().Float(), game.GetRandom().Float())) * 4.0;
+      moveTarget = aabb.center + (Vector3(state.GetRandom().Float(), state.GetRandom().Float(), state.GetRandom().Float())) * 4.0;
       validMoveTarget = true;
     }
     
@@ -220,21 +221,21 @@ Mob::SetInLiquid(bool inLiquid) {
 }
 
 void
-Mob::Die(Game &game, const HealthInfo &info) {
-  Entity::Die(game, info);
+Mob::Die(RunningState &state, const HealthInfo &info) {
+  Entity::Die(state, info);
 }
 
 void
-Mob::OnCollide(Game &game, Entity &other) {
+Mob::OnCollide(RunningState &state, Entity &other) {
   if (this->IsSolid()) return;
   Vector3 d = this->GetAABB().center - other.GetAABB().center;
   Vector3 f = d * (this->properties->mass * other.GetProperties()->mass / (1+d.GetSquareMag()));
-  this->ApplyForce(game, f);
+  this->ApplyForce(state, f);
 }
 
 void
-Mob::ApplyForce(Game &game, const Vector3 &f) {
-  velocity = velocity + f * (game.GetDeltaT() / this->properties->mass); 
+Mob::ApplyForce(RunningState &state, const Vector3 &f) {
+  velocity = velocity + f * (state.GetGame().GetDeltaT() / this->properties->mass); 
 }
 
 float

@@ -28,7 +28,7 @@ struct FeatureConnection {
     resolved(false)
   {}
 
-  const Feature *GetRandomFeature(Game &game, const IVector3 &pos) const;
+  const Feature *GetRandomFeature(RunningState &state, const IVector3 &pos) const;
 
   void Resolve();
 };
@@ -120,20 +120,20 @@ public:
   ~Feature();
   
   const IVector3 GetSize() const; 
-  float GetProbability(const Game &game, const IVector3 &pos) const;
-  FeatureInstance BuildFeature(Game &game, World &world, const IVector3 &pos, int dir, int dist, size_t id, const FeatureConnection *conn) const;
-  void SpawnEntities(Game &game, const IVector3 &pos) const;
+  float GetProbability(const RunningState &state, const IVector3 &pos) const;
+  FeatureInstance BuildFeature(RunningState &state, World &world, const IVector3 &pos, int dir, int dist, size_t id, const FeatureConnection *conn) const;
+  void SpawnEntities(RunningState &state, const IVector3 &pos) const;
   
   const std::vector<FeatureConnection> &GetConnections() const { return conns; }
 
-  const FeatureConnection *GetRandomConnection(Game &game) const;
-  const FeatureConnection *GetRandomConnection(int dir, Game &game) const;
+  const FeatureConnection *GetRandomConnection(RunningState &state) const;
+  const FeatureConnection *GetRandomConnection(int dir, RunningState &state) const;
   
   const std::string &GetName()  const { return name;  }
   const std::string &GetGroup() const { return group; }
 
   void ResolveConnections();
-  void ReplaceChars(Game &game, World &world, const IVector3 &pos, size_t connId, size_t featureId) const;
+  void ReplaceChars(RunningState &state, World &world, const IVector3 &pos, size_t connId, size_t featureId) const;
 
 protected:
 

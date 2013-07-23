@@ -13,8 +13,8 @@ public:
   Particle(const std::string &type);
   virtual ~Particle();
 
-  virtual void Start(Game &game, size_t id) override;
-  virtual void Update(Game &game) override;
+  virtual void Start(RunningState &state, size_t id) override;
+  virtual void Update(RunningState &state) override;
   
 protected:
 

@@ -10,21 +10,21 @@
 class World final {
 public:
 
-  World(Game &game, const IVector3 &size);
+  World(RunningState &state, const IVector3 &size);
   World(const World &world) = delete;
   World(World &&world) = delete;
   ~World();
   
   World &operator=(const World &) = delete;
   
-  void Build(Game &game);
+  void Build();
   
   const IVector3 &GetSize() const { return size; }
-  Game &GetGame() { return game; }
+  RunningState &GetState() const { return state; }
 
   void Draw(Gfx &gfx);
   void DrawMap(Gfx &gfx);
-  void Update(Game &game);
+  void Update(RunningState &runningState);
   
   Cell &GetCell(const IVector3 &pos) const;
   Cell &SetCell(const IVector3 &pos, const Cell &cell, bool ignoreLock = false);
@@ -52,13 +52,13 @@ public:
   bool IsDefault(const IVector3 &pos);
   
   void AddFeatureSeen(size_t f); // TODO: move to separate map class
-  void BreakBlock(Game &game, const IVector3 &pos);
+  void BreakBlock(const IVector3 &pos);
   
   void SetDirty() { this->dirty = true; }
 
 private:
 
-  Game &game;
+  RunningState &state;
   IVector3 size;
   bool dirty, firstDirty;
 

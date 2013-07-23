@@ -5,11 +5,11 @@
 #include "item.h"
 #include "itementity.h"
 #include "random.h"
-#include "game.h"
 #include "gfx.h"
 #include "input.h"
 #include "texture.h"
 #include "player.h"
+#include "runningstate.h"
 
 #include <unordered_map>
 
@@ -154,8 +154,9 @@ Entity::~Entity() {
 }
 
 void
-Entity::Start(Game &game, size_t id) {
-  World &world = game.GetWorld();
+Entity::Start(RunningState &state, size_t id) {
+  Game &game = state.GetGame();
+  World &world = state.GetWorld();
   
   this->id = id;
   this->nextThinkT = game.GetTime();
@@ -210,7 +211,8 @@ Entity::Start(Game &game, size_t id) {
 }
 
 void 
-Entity::Update(Game &game) {
+Entity::Update(RunningState &state) {
+  Game &game   = state.GetGame();
   float deltaT = game.GetDeltaT();
   float t      = game.GetTime();
   
@@ -219,7 +221,7 @@ Entity::Update(Game &game) {
     if (this->properties->respawn) {
       // just respawn
       SetPosition(spawnPos);
-      Start(game, id);
+      Start(state, id);
     } else {
       this->removable = true;
     }
@@ -229,11 +231,11 @@ Entity::Update(Game &game) {
   // think, mcfly, think
   while(properties->thinkInterval && nextThinkT < t) {
     nextThinkT += properties->thinkInterval;
-    Think(game);
+    Think(state);
   }
 
   this->sprite.Update(deltaT);
-  this->inventory.Update(game, *this);
+  this->inventory.Update(state, *this);
   this->smoothPosition.Update(deltaT);
   
   auto it = this->activeBuffs.begin();
@@ -241,7 +243,7 @@ Entity::Update(Game &game) {
     if (t > it->effect->duration + it->startT) {
       it = this->activeBuffs.erase(it);
     } else {
-      it->effect->Update(game, *this);
+      it->effect->Update(state, *this);
       it++;
     }
   }
@@ -249,7 +251,7 @@ Entity::Update(Game &game) {
   this->lastPos = this->aabb.center;
   this->cellPos = IVector3(aabb.center.x, aabb.center.y, aabb.center.z);
   
-  World &world = game.GetWorld();
+  World &world = state.GetWorld();
   Cell &cell = world.GetCell(cellPos);
   if (&cell != this->lastCell) {
     if (this->lastCell && this->properties->cellLeave != "") {
@@ -270,8 +272,7 @@ Entity::Update(Game &game) {
 }
   
 void 
-Entity::Think(Game &game) {
-  (void)game;
+Entity::Think(RunningState &) {
 }
 
 void
@@ -306,14 +307,14 @@ Entity::DrawBoundingBox(Gfx &gfx) const {
 }
 
 void
-Entity::AddHealth(Game &game, const HealthInfo &info) {
+Entity::AddHealth(RunningState &state, const HealthInfo &info) {
   // don't change health of dead or immortal entities
   if (this->health <= 0 || this->properties->maxHealth == 0) return;
   
   this->health += info.amount;
 
-  Entity *dealer = game.GetEntity(info.dealerId);
-  if (dealer) dealer->OnHealthDealt(game, *this, info);
+  Entity *dealer = state.GetEntity(info.dealerId);
+  if (dealer) dealer->OnHealthDealt(state, *this, info);
   
   if (info.amount < 0) {
     this->sprite.StartAnim(this->properties->flinchAnim);
@@ -322,23 +323,23 @@ Entity::AddHealth(Game &game, const HealthInfo &info) {
   
   if (this->health <= 0) {
     this->health = 0;
-    this->Die(game, info);
+    this->Die(state, info);
   }
 }
 
 void
-Entity::Die(Game &game, const HealthInfo &info) {
+Entity::Die(RunningState &state, const HealthInfo &info) {
   if (info.dealerId != ~0UL) {
-    game.GetPlayer().AddDeathMessage(*this, *game.GetEntity(info.dealerId), info);
+    state.GetPlayer().AddDeathMessage(*this, *state.GetEntity(info.dealerId), info);
   } else {
-    game.GetPlayer().AddDeathMessage(*this, info);
+    state.GetPlayer().AddDeathMessage(*this, info);
   }
   
   if (this->lastCell && this->properties->cellLeave != "") {
-    game.GetWorld().SetCell(this->lastCell->GetPosition(), Cell(this->properties->cellLeave));
+    state.GetWorld().SetCell(this->lastCell->GetPosition(), Cell(this->properties->cellLeave));
   }
 
-  this->inventory.Drop(game, *this);
+  this->inventory.Drop(state, *this);
   this->sprite.StartAnim(this->properties->dyingAnim);
   this->sprite.QueueAnim(0);
 }
@@ -354,17 +355,15 @@ Entity::GetEffectiveStats() const {
 }
 
 void
-Entity::OnHealthDealt(Game &game, Entity &other, const HealthInfo &info) {
-  (void)game;
-  (void)other;
-  if (this->baseStats.AddExp(info.exp)) this->OnLevelUp(game);
+Entity::OnHealthDealt(RunningState &state, Entity &, const HealthInfo &info) {
+  if (this->baseStats.AddExp(info.exp)) this->OnLevelUp(state);
 }
 
 void
-Entity::AddBuff(Game &game, const std::string &name) {
+Entity::AddBuff(RunningState &state, const std::string &name) {
   Buff buff;
   buff.effect = &getEffect(name);
-  buff.startT = game.GetTime();
+  buff.startT = state.GetGame().GetTime();
   this->activeBuffs.push_back(buff);
 }
 

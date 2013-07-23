@@ -47,7 +47,7 @@ int main(int argc, char **argv) {
     return -1;
   }
   
-  Log("Game object initialized, new game\n");
+  Log("Game object initialized %p, new game\n", game);
   if (argc == 1)
     game->NewGame("fooobaaar");
   else

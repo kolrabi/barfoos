@@ -3,15 +3,16 @@
 #include "util.h"
 #include "item.h"
 #include "itementity.h"
-#include "game.h"
 #include "gfx.h"
 #include "input.h"
 #include "texture.h"
 #include "inventory.h"
 #include "text.h"
+#include "runningstate.h"
 
-InventoryGui::InventoryGui(Game &game, Entity &entity) : 
+InventoryGui::InventoryGui(RunningState &state, Entity &entity) : 
   dragItem(nullptr),
+  state(state),
   entity(entity), 
   mousePos(),
   dropItem(false)
@@ -24,7 +25,7 @@ InventoryGui::InventoryGui(Game &game, Entity &entity) :
   //      3          x  x  x  x
   //                 x  x  x  x
 
-  Gfx &gfx = game.GetGfx();
+  Gfx &gfx = state.GetGame().GetGfx();
   Point slotDist(36, 36);
   Point topLeft  = gfx.AlignTopLeftScreen(Point(32,32), 16);
   Point topRight = gfx.AlignTopRightScreen(Point(32,32), 16);

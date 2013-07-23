@@ -2,7 +2,7 @@
 #include "entity.h"
 #include "world.h"
 #include "mob.h"
-#include "game.h"
+#include "runningstate.h"
 #include "gfx.h"
 #include "projectile.h"
 #include "texture.h"
@@ -119,18 +119,18 @@ EffectProperties::ModifyStats(Stats &stats, bool forceEquipped) const {
 }
 
 void
-EffectProperties::Consume(Game &game, Entity &user) const {
+EffectProperties::Consume(RunningState &state, Entity &user) const {
   this->ModifyStats(user.GetBaseStats(), true);
   if (this->addHealth) {
     HealthInfo info(this->addHealth);
-    user.AddHealth(game, info);
+    user.AddHealth(state, info);
   }
 }
 
 void 
-EffectProperties::Update(Game &game, Entity &owner) const {
+EffectProperties::Update(RunningState &state, Entity &owner) const {
   if (this->addHealth) {
-    HealthInfo info(this->addHealth * game.GetDeltaT());
-    owner.AddHealth(game, info);
+    HealthInfo info(this->addHealth * state.GetGame().GetDeltaT());
+    owner.AddHealth(state, info);
   }
 }

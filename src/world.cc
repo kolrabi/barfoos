@@ -13,13 +13,14 @@
 #include "worldedit.h"
 
 #include "shader.h"
-#include "game.h"
+#include "runningstate.h"
+#include "feature.h"
 #include "gfx.h"
 
 #include "vertex.h"
 
-World::World(Game &game, const IVector3 &size) : 
-  game(game),
+World::World(RunningState &state, const IVector3 &size) : 
+  state(state),
   size(size),
   dirty(true),
   firstDirty(true),
@@ -49,11 +50,12 @@ World::~World() {
 }
 
 void
-World::Build(Game &game) {
+World::Build() {
   // build features -------------------------------------------
   
   // some basic parameters for this world
-  Random &random = game.GetRandom();
+  Log("%p %p %p\n", &state, &state.GetGame(), &state.GetRandom());
+  Random &random = state.GetRandom();
   IVector3 r(random.Integer(), random.Integer(), random.Integer());
   size_t featureCount  = random.Integer(400)+400;             // 400 - 800
   float  useLastChance = 0.1 + random.Float01()*0.8;          // 0.1 - 0.9
@@ -92,7 +94,7 @@ World::Build(Game &game) {
     this->defaultMask = std::vector<bool>(this->cellCount, true);
   
     instances.clear();
-    instances.push_back(getFeature("start")->BuildFeature(game, *this, IVector3(32-4, 32-8,32-4), 0, 0, instances.size(), nullptr));
+    instances.push_back(getFeature("start")->BuildFeature(state, *this, IVector3(32-4, 32-8,32-4), 0, 0, instances.size(), nullptr));
     instances.back().prevID = ~0UL;
   
     int loop = 0;
@@ -106,15 +108,15 @@ World::Build(Game &game) {
     
       // select a random connection from the current feature
       const Feature *feature = instance.feature;
-      const FeatureConnection *conn = feature->GetRandomConnection(game);
+      const FeatureConnection *conn = feature->GetRandomConnection(state);
       if (!conn) continue;
 
       // select next feature
-      const Feature *nextFeature = conn->GetRandomFeature(game, instance.pos);
+      const Feature *nextFeature = conn->GetRandomFeature(state, instance.pos);
       if (!nextFeature) continue;
     
       // make sure both features can connect
-      const FeatureConnection *revConn = nextFeature->GetRandomConnection(-conn->dir, game);
+      const FeatureConnection *revConn = nextFeature->GetRandomConnection(-conn->dir, state);
       if (!revConn) continue;
 
       // snap both connection points together
@@ -122,10 +124,10 @@ World::Build(Game &game) {
     
       // build the next feature if possible
       this->BeginCheckOverwrite();
-      nextFeature->BuildFeature(game, *this, pos, conn->dir, instance.dist, instances.size(), nullptr);
+      nextFeature->BuildFeature(state, *this, pos, conn->dir, instance.dist, instances.size(), nullptr);
       if (this->FinishCheckOverwrite()) {
-        FeatureInstance nextInstance = nextFeature->BuildFeature(game, *this, pos, conn->dir, instance.dist, instances.size(), revConn);
-        feature->ReplaceChars(game, *this, instance.pos, conn->id, featNum);
+        FeatureInstance nextInstance = nextFeature->BuildFeature(state, *this, pos, conn->dir, instance.dist, instances.size(), revConn);
+        feature->ReplaceChars(state, *this, instance.pos, conn->id, featNum);
 
         // check if we accidentally connected properly to anything else
         for (const FeatureConnection &nextConn : nextInstance.feature->GetConnections()) {
@@ -142,8 +144,8 @@ World::Build(Game &game) {
               if (connPos != nextConnPos) continue;
               
               // do connect replacement of cells
-              inst.feature->ReplaceChars(game, *this, inst.pos, c.id, inst.featureID);
-              nextInstance.feature->ReplaceChars(game, *this, nextInstance.pos, nextConn.id, nextInstance.featureID);
+              inst.feature->ReplaceChars(state, *this, inst.pos, c.id, inst.featureID);
+              nextInstance.feature->ReplaceChars(state, *this, nextInstance.pos, nextConn.id, nextInstance.featureID);
             }
           }
         }
@@ -154,7 +156,7 @@ World::Build(Game &game) {
     } while(instances.size() < featureCount); 
   }
 
-  Log("Built world with %lu features. Level %lu.\n", instances.size(), game.GetLevel());
+  Log("Built world with %lu features. Level %lu.\n", instances.size(), state.GetLevel());
   /*
   for (size_t i=0; i<this->cellCount; i++) {
     IVector3 pos = GetCellPos(i);
@@ -200,7 +202,7 @@ World::Build(Game &game) {
   }
 
   for (auto instance : instances) {
-    instance.feature->SpawnEntities(game, instance.pos);
+    instance.feature->SpawnEntities(state, instance.pos);
   }
 
   this->Dump();
@@ -383,19 +385,19 @@ World::DrawMap(
 
 void 
 World::Update(
-  Game &game
+  RunningState &state
 ) {
   PROFILE();
   
   // update all dynamic cells
   for (size_t i : this->dynamicCells) {
-    this->cells[i].Update(game);
+    this->cells[i].Update(state);
   }
 
   // tick world
-  while (tickInterval != 0.0 && game.GetTime() > nextTickT) {
+  while (tickInterval != 0.0 && state.GetGame().GetTime() > nextTickT) {
     for (size_t i : this->dynamicCells) {
-      this->cells[i].Tick(game);
+      this->cells[i].Tick(state);
     }
     nextTickT += tickInterval;
   }
@@ -866,21 +868,21 @@ World::AddFeatureSeen(size_t f) {
 }
 
 void
-World::BreakBlock(Game &game, const IVector3 &pos) {
+World::BreakBlock(const IVector3 &pos) {
   if (this->GetCell(pos).GetInfo().type == "air") return;
   
   std::string particleType = this->GetCell(pos).GetInfo().breakParticle;
   AABB aabb = this->SetCell(pos, Cell("air")).GetAABB();
   
   if (particleType != "") {
-    Random &random = game.GetRandom();
+    Random &random = state.GetRandom();
     for (size_t i=0; i<4; i++) {
       Mob *particle = new Particle(particleType);
       Vector3 s = aabb.extents - particle->GetAABB().extents;
       Vector3 p = random.Vector() * s + aabb.center;
       particle->SetPosition(p);
       particle->AddVelocity(random.Vector() * 10);
-      game.AddEntity(particle);
+      state.AddEntity(particle);
     }
   }
 }

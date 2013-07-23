@@ -1,7 +1,7 @@
 #include "particle.h"
 #include "world.h"
 #include "random.h"
-#include "game.h"
+#include "runningstate.h"
 
 Particle::Particle(const std::string &type) : 
   Mob(type),
@@ -11,17 +11,17 @@ Particle::Particle(const std::string &type) :
 Particle::~Particle() {
 }
 
-void Particle::Start(Game &game, size_t id) {
-  Mob::Start(game, id);
+void Particle::Start(RunningState &state, size_t id) {
+  Mob::Start(state, id);
   
-  this->dieT = game.GetTime() + 2 + game.GetRandom().Float();
+  this->dieT = state.GetGame().GetTime() + 2 + state.GetRandom().Float();
 }
 
-void Particle::Update(Game &game) {
-  Mob::Update(game);
+void Particle::Update(RunningState &state) {
+  Mob::Update(state);
   
-  if (game.GetTime() > this->dieT) {
-    this->Die(game, HealthInfo());
+  if (state.GetGame().GetTime() > this->dieT) {
+    this->Die(state, HealthInfo());
     this->removable = true;
   }
 }

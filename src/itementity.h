@@ -15,10 +15,10 @@ public:
   virtual ~ItemEntity();
 
   virtual void Draw(Gfx &gfx) const override;
-  virtual void Start(Game &game, size_t id) override;
-  virtual void Update(Game &game) override;
+  virtual void Start(RunningState &state, size_t id) override;
+  virtual void Update(RunningState &state) override;
   
-  virtual void OnUse(Game &game, Entity &other) override;
+  virtual void OnUse(RunningState &state, Entity &other) override;
 
 protected:
 

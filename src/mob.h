@@ -14,14 +14,14 @@ public:
   
   Mob &operator=(const Mob &that) = delete;
 
-  virtual void Start(Game &game, size_t id) override;
-  virtual void Update(Game &game) override;
-  virtual void Think(Game &game) override;
+  virtual void Start(RunningState &state, size_t id) override;
+  virtual void Update(RunningState &state) override;
+  virtual void Think(RunningState &state) override;
   
-  virtual void Die(Game &game, const HealthInfo &info) override;
-  virtual void OnCollide(Game &game, Entity &other) override;
+  virtual void Die(RunningState &state, const HealthInfo &info) override;
+  virtual void OnCollide(RunningState &state, Entity &other) override;
   
-  void ApplyForce(Game &game, const Vector3 &f);
+  void ApplyForce(RunningState &state, const Vector3 &f);
   void AddImpulse(const Vector3 &v)  { velocity = velocity + v / this->properties->mass; }
   void AddVelocity(const Vector3 &v) { velocity = velocity + v; }
   const Vector3 &GetVelocity() const { return velocity; }

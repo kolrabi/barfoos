@@ -1,7 +1,7 @@
 #include "projectile.h"
 #include "world.h"
 #include "random.h"
-#include "game.h"
+#include "runningstate.h"
 #include "worldedit.h"
 
 Projectile::Projectile(const std::string &type) :
@@ -12,31 +12,29 @@ Projectile::Projectile(const std::string &type) :
 Projectile::~Projectile() {
 }
 
-void Projectile::Start(Game &game, size_t id) {
-  Mob::Start(game, id);
+void Projectile::Start(RunningState &state, size_t id) {
+  Mob::Start(state, id);
   
   Vector3 fwd   = (GetAngles()).EulerToVector();
-  this->SetPosition(game.GetWorld().MoveAABB(this->aabb, this->GetPosition() + fwd));
+  this->SetPosition(state.GetWorld().MoveAABB(this->aabb, this->GetPosition() + fwd));
   this->AddVelocity(fwd * this->properties->maxSpeed);
 
-  this->dieT = game.GetTime() + 10 + game.GetRandom().Float();
+  this->dieT = state.GetGame().GetTime() + 10 + state.GetRandom().Float();
 }
 
-void Projectile::Update(Game &game) {
-  Mob::Update(game);
+void Projectile::Update(RunningState &state) {
+  Mob::Update(state);
   
-  if (game.GetTime() > this->dieT) {
-    this->Die(game, HealthInfo());
+  if (state.GetGame().GetTime() > this->dieT) {
+    this->Die(state, HealthInfo());
   }
 }
 
 void 
-Projectile::OnCollide(Game &game, Cell &cell, Side side) {
-  (void)cell;
-  (void)side;
-  
-  Mob::Die(game, HealthInfo());
+Projectile::OnCollide(RunningState &state, Cell &, Side) {
+  Mob::Die(state, HealthInfo());
   this->removable = true;
   
-  game.Explosion(*this, this->GetPosition(), 3, 1.0, 10, Element::Physical);
+  // TODO: from properties
+  state.Explosion(*this, this->GetPosition(), 3, 1.0, 10, Element::Physical);
 }

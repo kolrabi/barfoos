@@ -29,7 +29,7 @@ private:
 class InventoryGui : public Gui {
 public:
   
-  InventoryGui(Game &game, Entity &entity);
+  InventoryGui(RunningState &state, Entity &entity);
   virtual ~InventoryGui();
 
   virtual void Update(Game &game) override;
@@ -42,6 +42,7 @@ public:
 
 protected:
 
+  RunningState &state;
   Entity &entity;
   Point mousePos;
   

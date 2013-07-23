@@ -87,23 +87,23 @@ public:
   
   Entity &operator=(const Entity &that) = delete;
   
-  virtual void Start(Game &game, size_t id);
-  virtual void Update(Game &game);
-  virtual void Think(Game &game);
+  virtual void Start(RunningState &state, size_t id);
+  virtual void Update(RunningState &state);
+  virtual void Think(RunningState &state);
 
   virtual void Draw(Gfx &gfx) const;
   virtual void DrawBoundingBox(Gfx &gfx) const;
   
-  virtual void AddHealth(Game &game, const HealthInfo &info); 
-  virtual void Die(Game &game, const HealthInfo &info);
+  virtual void AddHealth(RunningState &state, const HealthInfo &info); 
+  virtual void Die(RunningState &state, const HealthInfo &info);
   
-  virtual void OnCollide(Game &game, Entity &other)           { (void)game; (void)other; }
-  virtual void OnCollide(Game &game, Cell &cell, Side side)   { (void)game; (void)cell; (void)side; }
-  virtual void OnUse(Game &game, Entity &other)               { (void)game; (void)other; }
+  virtual void OnCollide(RunningState &, Entity &)            {}
+  virtual void OnCollide(RunningState &, Cell &, Side)        {}
+  virtual void OnUse(RunningState &, Entity &)                {}
   
-  virtual void OnHealthDealt(Game &game, Entity &other, const HealthInfo &info);
-  virtual void OnLevelUp(Game &game)                          { (void)game; }
-  virtual void OnEquip(Game &, const Item &, InventorySlot, bool)      {}
+  virtual void OnHealthDealt(RunningState &, Entity &other, const HealthInfo &info);
+  virtual void OnLevelUp(RunningState &)                          {}
+  virtual void OnEquip(RunningState &, const Item &, InventorySlot, bool)      {}
   
   // management
   size_t                    GetId()                           const { return id; }
@@ -139,7 +139,7 @@ public:
   Stats &                   GetBaseStats()                          { return this->baseStats; }
   float                     GetHealth()                       const { return this->health; }
   
-  void                      AddBuff(Game &game, const std::string &name);
+  void                      AddBuff(RunningState &state, const std::string &name);
   
   // rendering
   virtual IColor            GetLight()                        const { return this->properties->glow + inventory.GetLight(); }

@@ -46,8 +46,8 @@ struct EffectProperties : public Properties {
   virtual void ParseProperty(const std::string &name) override;
   
   void ModifyStats(Stats &stats, bool equipped) const;
-  void Consume(Game &game, Entity &user) const;
-  void Update(Game &game, Entity &user) const;
+  void Consume(RunningState &state, Entity &user) const;
+  void Update(RunningState &state, Entity &user) const;
 };
 
 void LoadEffects();

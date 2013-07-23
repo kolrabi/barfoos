@@ -26,6 +26,7 @@ barfoos_SOURCES=\
   gfx.cc main.cc io.cc texture.cc \
   GLee.c GLee.h \
   game.cc game.h \
+  runningstate.cc \
   simplex.cc simplex.h \
   text.cc text.h \
   shader.cc shader.h \

@@ -57,7 +57,6 @@ std::vector<std::string> Tokenize(const char *l) {
     // terminate token
     if (q) *q = 0;
     tokens.push_back(p);
-    Log("parsed token '%s'\n", p);
     
     // not end of line? then skip whitespace to next token
     if (q) { 

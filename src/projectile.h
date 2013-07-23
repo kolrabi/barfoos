@@ -11,10 +11,10 @@ public:
   Projectile(const std::string &type);
   virtual ~Projectile();
 
-  virtual void Start(Game &game, size_t id) override;
-  virtual void Update(Game &game) override;
+  virtual void Start(RunningState &state, size_t id) override;
+  virtual void Update(RunningState &state) override;
 
-  virtual void OnCollide(Game &game, Cell &cell, Side side) override;
+  virtual void OnCollide(RunningState &state, Cell &cell, Side side) override;
   
 protected:
 

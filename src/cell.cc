@@ -2,7 +2,7 @@
 #include "util.h"
 #include "world.h"
 #include "gfx.h"
-#include "game.h"
+#include "runningstate.h"
 #include "mob.h"
 
 #include "random.h"
@@ -208,12 +208,12 @@ Cell::DrawHighlight(std::vector<Vertex> &verts) const {
 
 void
 Cell::Update(
-  Game &game
+  RunningState &state
 ) {
   if (!world) return; 
  
-  float deltaT = game.GetDeltaT();
-  this->lastT = game.GetTime();
+  float deltaT = state.GetGame().GetDeltaT();
+  this->lastT = state.GetGame().GetTime();
 
   this->shared.smoothDetail = this->shared.smoothDetail + (this->shared.detail - this->shared.smoothDetail) * deltaT * 2;
 
@@ -244,23 +244,23 @@ Cell::Update(
   UpdateNeighbours();
 }
 
-void Cell::OnUse(Game &game, Mob &user) {
-  if (game.GetTime() - this->lastUseT < this->info->useDelay) return;
+void Cell::OnUse(RunningState &state, Mob &user) {
+  if (state.GetGame().GetTime() - this->lastUseT < this->info->useDelay) return;
 
-  this->lastUseT = game.GetTime();
+  this->lastUseT = state.GetGame().GetTime();
   
   if (info->onUseCascade) {
     for (int i=0; i<6; i++) {
-      if (this->info->onUseCascade & (1<<i)) this->neighbours[i]->OnUse(game, user);
+      if (this->info->onUseCascade & (1<<i)) this->neighbours[i]->OnUse(state, user);
     }
   }
   
   if (info->flags & CellFlags::OnUseReplace) {
-    this->world->SetCell(GetPosition(), Cell(info->replace)).lastUseT = game.GetTime();
+    this->world->SetCell(GetPosition(), Cell(info->replace)).lastUseT = state.GetGame().GetTime();
   }
 }
 
-void Cell::Tick(Game &game) {
+void Cell::Tick(RunningState &state) {
   this->tickPhase = (this->tickPhase + 1) % this->shared.tickInterval;
   //if (this->tickPhase) return;
 
@@ -274,7 +274,7 @@ void Cell::Tick(Game &game) {
     if (!this->Flow(Side::Down) && this->shared.detail > 1) {
       // try flowing to one random side
       Side sides[4] = { Side::Left, Side::Right, Side::Forward, Side::Backward };
-      int n = game.GetRandom().Integer(4);
+      int n = state.GetRandom().Integer(4);
       for (int i=0; i<4; i++) {
         if (this->Flow(sides[(n+i)%4])) {
           break;
@@ -297,7 +297,7 @@ void Cell::Tick(Game &game) {
     liquidNeighbours |= this->neighbours[(int)Side::Down]->info == this->info     && this->neighbours[(int)Side::Down]->shared.detail > info->detailBelowReplace;
     
     // if not connected, take a chance and replace
-    if (!liquidNeighbours && game.GetRandom().Chance(this->info->replaceChance)) {
+    if (!liquidNeighbours && state.GetRandom().Chance(this->info->replaceChance)) {
       this->world->SetCell(GetPosition(), Cell(info->replace));
       // this is no longer valid
       return;
@@ -921,7 +921,7 @@ void Cell::SetWorld(World *world, const IVector3 &pos) {
   if (info->textures.size() == 0) {
     this->SetTexture(0, info->flags & MultiSided);
   } else {
-    this->SetTexture(info->textures[world->GetGame().GetRandom().Integer(info->textures.size())], info->flags & MultiSided);
+    this->SetTexture(info->textures[world->GetState().GetRandom().Integer(info->textures.size())], info->flags & MultiSided);
   }
 
   

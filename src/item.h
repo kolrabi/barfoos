@@ -92,18 +92,18 @@ public:
   
   Item &operator=(const Item &) = default;
 
-  void Update(Game &game);
+  void Update(RunningState &state);
   
   void Draw(Gfx &gfx, bool left);
   void DrawIcon(Gfx &gfx, const Point &pos) const;
   void DrawSprite(Gfx &gfx, const Vector3 &pos) const;
   
-  bool CanUse(Game &game) const;
-  void StartCooldown(Game &game, Entity &user);
+  bool CanUse(RunningState &state) const;
+  void StartCooldown(RunningState &state, Entity &user);
   
-  void UseOnEntity(Game &game, Mob &user, size_t ent);
-  void UseOnCell(Game &game, Mob &user, Cell *cell, Side side);
-  void UseOnNothing(Game &game, Mob &user);
+  void UseOnEntity(RunningState &state, Mob &user, size_t ent);
+  void UseOnCell(RunningState &state, Mob &user, Cell *cell, Side side);
+  void UseOnNothing(RunningState &state, Mob &user);
 
   float GetRange()                      const { return this->properties->range * this->effect->range; }  
   float GetDamage()                     const { return this->properties->damage * this->effect->damage; }  
@@ -135,7 +135,7 @@ public:
   const EffectProperties &GetEffect()   const { return *this->effect; }
   
   virtual std::shared_ptr<Item> Combine(const std::shared_ptr<Item> &other);
-  virtual std::shared_ptr<Item> Consume(Game &game, Entity &user);
+  virtual std::shared_ptr<Item> Consume(RunningState &state, Entity &user);
   
   void ModifyStats(Stats &stats, bool forceEquipped = false) const;
   

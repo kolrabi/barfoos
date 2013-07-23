@@ -1,6 +1,6 @@
 #include "inventory.h"
 
-#include "game.h"
+#include "runningstate.h"
 #include "world.h"
 
 #include "entity.h"
@@ -135,34 +135,34 @@ Inventory::Equip(const std::shared_ptr<Item> &item, InventorySlot slot) {
 }
 
 void
-Inventory::Update(Game &game, Entity &owner) {
-  this->lastT = game.GetTime();
+Inventory::Update(RunningState &state, Entity &owner) {
+  this->lastT = state.GetGame().GetTime();
   
   for (auto &i:overflow) {
-    i->Update(game);
-    DropItem(game, owner, i);
+    i->Update(state);
+    DropItem(state, owner, i);
   }
   overflow.clear();
 
   for (auto i:consumed) {
     if (!self[i]) continue;
-    self[i] = self[i]->Consume(game, owner);
+    self[i] = self[i]->Consume(state, owner);
   }
   consumed.clear();
   
   for (auto &i:equipped) {
-    owner.OnEquip(game, *i.second, i.first, true);
+    owner.OnEquip(state, *i.second, i.first, true);
   }
   equipped.clear();
 
   for (auto &i:unequipped) {
-    owner.OnEquip(game, *i.second, i.first, false);
+    owner.OnEquip(state, *i.second, i.first, false);
   }
   unequipped.clear();
   
   for (auto &i:inventory) {
     if (i.second) {
-      i.second->Update(game);
+      i.second->Update(state);
       if (i.second->IsRemovable()) {
         self[i.first] = nullptr;
       }
@@ -173,10 +173,10 @@ Inventory::Update(Game &game, Entity &owner) {
 /** Drop all items on the floor. 
 */
 void
-Inventory::Drop(Game &game, Entity &owner) {
+Inventory::Drop(RunningState &state, Entity &owner) {
   for (auto &item : this->inventory) {
     if (item.second) {
-      DropItem(game, owner, item.second);
+      DropItem(state, owner, item.second);
     }
     item.second = nullptr;
   }
@@ -193,24 +193,24 @@ Inventory::ConsumeItem(InventorySlot slot) {
 }
 
 void
-Inventory::DropItem(Game &game, Entity &owner, const std::shared_ptr<Item> &item) {
+Inventory::DropItem(RunningState &state, Entity &owner, const std::shared_ptr<Item> &item) {
   if (!item || item->IsRemovable()) return;
 
   while(item->GetAmount() > 1) {
-    DropItem(game, owner, std::shared_ptr<Item>(new Item(item->GetProperties().name)));
+    DropItem(state, owner, std::shared_ptr<Item>(new Item(item->GetProperties().name)));
     item->DecAmount();
   }  
   
   ItemEntity *entity = new ItemEntity(item);
   entity->SetPosition(owner.GetPosition());
   
-  Vector3 offset(owner.GetForward() + game.GetRandom().Vector() * owner.GetAABB().extents);
+  Vector3 offset(owner.GetForward() + state.GetRandom().Vector() * owner.GetAABB().extents);
   
-  entity->SetPosition(game.GetWorld().MoveAABB(entity->GetAABB(), offset + entity->GetPosition()));
-  entity->AddVelocity(game.GetRandom().Vector()*1);
+  entity->SetPosition(state.GetWorld().MoveAABB(entity->GetAABB(), offset + entity->GetPosition()));
+  entity->AddVelocity(state.GetRandom().Vector()*1);
   entity->AddVelocity(owner.GetForward() + Vector3(0,1,0)*10);
   
-  game.AddEntity(entity);
+  state.AddEntity(entity);
 }
 
 IColor 

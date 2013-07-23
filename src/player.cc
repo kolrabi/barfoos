@@ -1,6 +1,6 @@
 #include "player.h"
 
-#include "game.h"
+#include "runningstate.h"
 #include "item.h"
 
 #include "world.h"
@@ -81,37 +81,39 @@ Player::MapView(Gfx &gfx) const {
 }
 
 void
-Player::Start(Game &game, size_t id) {
-  Mob::Start(game, id);
+Player::Start(RunningState &state, size_t id) {
+  Mob::Start(state, id);
   
   this->pain = 0;
 }
 
 void 
-Player::Update(Game &game) {
-  Mob::Update(game);
+Player::Update(RunningState &state) {
+  Mob::Update(state);
+  
+  Game &game = state.GetGame();
   
   this->fps = game.GetFPS();
   
   this->pain -= game.GetDeltaT() * 0.1;
   if (this->pain < 0) this->pain = 0;
 
-  this->UpdateInput(game);
-  this->UpdateSelection(game);
+  this->UpdateInput(state);
+  this->UpdateSelection(state);
   
-  this->rightHand->Update(game);
-  this->leftHand->Update(game);
+  this->rightHand->Update(state);
+  this->leftHand->Update(state);
   
   if (itemActiveLeft) {
     std::shared_ptr<Item> useItem = this->inventory[InventorySlot::RightHand];
     if (!useItem) useItem = this->rightHand;
   
     if (useItem->GetRange() < this->selectionRange) {
-      useItem->UseOnNothing(game, *this);
+      useItem->UseOnNothing(state, *this);
     } else if (this->selectedCell) {
-      useItem->UseOnCell(game, *this, this->selectedCell, this->selectedCellSide);
+      useItem->UseOnCell(state, *this, this->selectedCell, this->selectedCellSide);
     } else if (this->selectedEntity != ~0UL) {
-      useItem->UseOnEntity(game, *this, this->selectedEntity);
+      useItem->UseOnEntity(state, *this, this->selectedEntity);
     }
   }
   
@@ -120,17 +122,17 @@ Player::Update(Game &game) {
     if (!useItem) useItem = this->leftHand;
   
     if (useItem->GetRange() < this->selectionRange) {
-      useItem->UseOnNothing(game, *this);
+      useItem->UseOnNothing(state, *this);
     } else if (this->selectedCell) {
-      useItem->UseOnCell(game, *this, this->selectedCell, this->selectedCellSide);
+      useItem->UseOnCell(state, *this, this->selectedCell, this->selectedCellSide);
     } else if (this->selectedEntity != ~0UL) {
-      useItem->UseOnEntity(game, *this, this->selectedEntity);
+      useItem->UseOnEntity(state, *this, this->selectedEntity);
     }
   }
   
   // update map
   if (headCell) {
-    game.GetWorld().AddFeatureSeen(headCell->GetFeatureID());
+    state.GetWorld().AddFeatureSeen(headCell->GetFeatureID());
   }
 
   // update messages
@@ -154,7 +156,7 @@ Player::Update(Game &game) {
   }
 }
 
-void Player::UpdateSelection(Game &game) {
+void Player::UpdateSelection(RunningState &state) {
   // TODO: get from equipped items
   static const float range = 10.0;
   
@@ -167,7 +169,7 @@ void Player::UpdateSelection(Game &game) {
   AABB aabbRange;
   aabbRange.center = pos;
   aabbRange.extents = Vector3(range,range,range); 
-  auto entitiesInRange = game.FindEntities(aabbRange);
+  auto entitiesInRange = state.FindEntities(aabbRange);
 
   float hitDist = range;
   Vector3 hitPos;
@@ -177,7 +179,7 @@ void Player::UpdateSelection(Game &game) {
   
   // check entities in range  
   for (auto id : entitiesInRange) {
-    Entity *entity = game.GetEntity(id);
+    Entity *entity = state.GetEntity(id);
     if (!entity || entity == this) continue;
     if (entity->IsDead()) continue;
     if (entity->GetProperties()->nohit) continue;
@@ -191,7 +193,7 @@ void Player::UpdateSelection(Game &game) {
   }
   
   // check cells
-  Cell &cell = game.GetWorld().CastRayCell(pos, dir, hitDist, this->selectedCellSide);
+  Cell &cell = state.GetWorld().CastRayCell(pos, dir, hitDist, this->selectedCellSide);
   if (hitDist < dist) {
     dist = hitDist;
     this->selectedCell = &cell;
@@ -203,19 +205,20 @@ void Player::UpdateSelection(Game &game) {
 
 void
 Player::UpdateInput(
-  Game &game
+  RunningState &state
 ) {
+  Game &game = state.GetGame();
   float deltaT = game.GetDeltaT();
   
   Input &input = game.GetInput();
   
-  if (input.IsKeyDown(InputKey::DebugDie)) this->Die(game, HealthInfo());
+  if (input.IsKeyDown(InputKey::DebugDie)) this->Die(state, HealthInfo());
   
   if (input.IsKeyDown(InputKey::Use) && this->selectedEntity != ~0UL) {
-    Entity *entity = game.GetEntity(this->selectedEntity);
-    if (entity) entity->OnUse(game, *this);
+    Entity *entity = state.GetEntity(this->selectedEntity);
+    if (entity) entity->OnUse(state, *this);
   } else if (input.IsKeyDown(InputKey::Use) && this->selectedCell) {
-    this->selectedCell->OnUse(game, *this);
+    this->selectedCell->OnUse(state, *this);
   }
 
   sneak = input.IsKeyActive(InputKey::Sneak);
@@ -379,7 +382,9 @@ void Player::SetUniforms(const Shader *shader) const {
 }
 
 void 
-Player::AddHealth(Game &game, const HealthInfo &info) {
+Player::AddHealth(RunningState &state, const HealthInfo &info) {
+  Game &game = state.GetGame();
+  
   int hp = this->health;
   if (info.amount < 0) {
     if (!IsContinuous(info.type) || game.GetTime() > lastHurtT[info.type] + 0.25) {
@@ -387,7 +392,7 @@ Player::AddHealth(Game &game, const HealthInfo &info) {
     this->pain -= info.amount / this->properties->maxHealth;
   }
   
-  Mob::AddHealth(game, info);
+  Mob::AddHealth(state, info);
   int hp2 = this->health;
   if (hp2 < hp) {
     this->AddMessage("Ouch!");
@@ -441,8 +446,8 @@ Player::GetName() const {
 }
 
 void 
-Player::OnHealthDealt(Game &game, Entity &other, const HealthInfo &info) {
-  Mob::OnHealthDealt(game, other, info);
+Player::OnHealthDealt(RunningState &state, Entity &other, const HealthInfo &info) {
+  Mob::OnHealthDealt(state, other, info);
 
   if (info.hitType == HitType::Miss) {
     this->AddMessage("You miss the " + other.GetName());
@@ -454,8 +459,8 @@ Player::OnHealthDealt(Game &game, Entity &other, const HealthInfo &info) {
 }
 
 void 
-Player::OnEquip(Game &game, const Item &item, InventorySlot slot, bool equip) {
-  Mob::OnEquip(game, item, slot, equip);
+Player::OnEquip(RunningState &state, const Item &item, InventorySlot slot, bool equip) {
+  Mob::OnEquip(state, item, slot, equip);
   
   if (equip) {
     this->AddMessage("You put on the " + item.GetDisplayName() + ".");

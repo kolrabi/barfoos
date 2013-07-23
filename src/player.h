@@ -16,11 +16,11 @@ public:
 
   Player &operator=(const Player &) = delete;
 
-  virtual void Start(Game &game, size_t id) override;
-  virtual void Update(Game &game) override;
+  virtual void Start(RunningState &state, size_t id) override;
+  virtual void Update(RunningState &state) override;
   virtual void Draw(Gfx &gfx) const override;
 
-  virtual void AddHealth(Game &game, const HealthInfo &info) override; 
+  virtual void AddHealth(RunningState &state, const HealthInfo &info) override; 
   
   void View(Gfx &gfx) const;
   void MapView(Gfx &gfx) const;
@@ -34,8 +34,8 @@ public:
   void AddDeathMessage(const Entity &dead, const HealthInfo &info);
   void AddDeathMessage(const Entity &dead, const Entity &killer, const HealthInfo &info);
   
-  virtual void OnHealthDealt(Game &game, Entity &other, const HealthInfo &info) override;
-  virtual void OnEquip(Game &, const Item &, InventorySlot, bool);
+  virtual void OnHealthDealt(RunningState &state, Entity &other, const HealthInfo &info) override;
+  virtual void OnEquip(RunningState &, const Item &, InventorySlot, bool) override;
 
   virtual std::string       GetName()                         const;
   float                     GetPain()                         const { return this->pain; }
@@ -81,8 +81,8 @@ private:
   
   std::shared_ptr<Item> leftHand, rightHand;
 
-  void UpdateInput(Game &game);
-  void UpdateSelection(Game &game);
+  void UpdateInput(RunningState &state);
+  void UpdateSelection(RunningState &state);
 };
 
 

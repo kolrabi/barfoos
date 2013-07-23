@@ -1,7 +1,7 @@
 #include "itementity.h"
 #include "item.h"
 
-#include "game.h"
+#include "runningstate.h"
 #include "gfx.h"
 #include "world.h"
 
@@ -19,17 +19,17 @@ ItemEntity::ItemEntity(const std::shared_ptr<Item> &item) :
 ItemEntity::~ItemEntity() {
 }
 
-void ItemEntity::Start(Game &game, size_t id) {
-  Mob::Start(game, id);
-  this->startT += game.GetRandom().Float() * Const::pi * 2;
+void ItemEntity::Start(RunningState &state, size_t id) {
+  Mob::Start(state, id);
+  this->startT += state.GetRandom().Float() * Const::pi * 2;
 }
 
-void ItemEntity::Update(Game &game) {
-  Mob::Update(game);
+void ItemEntity::Update(RunningState &state) {
+  Mob::Update(state);
   
-  this->yoffset = std::cos(game.GetTime() - this->startT) * 0.125 + 0.125;
+  this->yoffset = std::cos(state.GetGame().GetTime() - this->startT) * 0.125 + 0.125;
 
-  this->item->Update(game);
+  this->item->Update(state);
   if (this->item->IsRemovable()) {
     this->removable = true;
   }
@@ -42,8 +42,7 @@ void ItemEntity::Draw(Gfx &gfx) const {
   this->item->DrawSprite(gfx, this->aabb.center + Vector3(0,yoffset,0));
 }
 
-void ItemEntity::OnUse(Game &game, Entity &other) {
-  (void)game;
+void ItemEntity::OnUse(RunningState &, Entity &other) {
   if (!this->removable && other.GetInventory().AddToBackpack(this->item)) {
     this->removable = true;
   }
