@@ -8,6 +8,7 @@
 #include "feature.h"
 #include "entity.h"
 #include "gui.h"
+#include "serializer.h"
 
 #include <algorithm>
 
@@ -59,6 +60,7 @@ Game::Init() {
 
 void
 Game::NewGame(const std::string &seed) {
+  this->seed = seed;
   this->random.Seed(seed, 0);
 
   std::string scrolls = loadAssetAsString("text/scrolls");
@@ -144,7 +146,6 @@ Game::Update(float t, float deltaT) {
 }
 
 void Game::HandleEvent(const InputEvent &event) {
-  Log("Game::HandleEvent: Event! %p %p\n", this->activeGui.get(), this->activeGameState);
   if (this->activeGui) {
     this->activeGui->HandleEvent(event);
   } else if (this->activeGameState) {
@@ -189,4 +190,11 @@ Game::SetGui(const std::shared_ptr<Gui> &gui) {
     this->activeGui->OnShow();
     this->gfx->IncGuiCount();
   }
+}
+
+Serializer &operator << (Serializer &ser, const Game &game) {
+  ser << game.lastT;
+  ser << game.seed;
+  ser << game.identifiedItems;
+  return ser;
 }

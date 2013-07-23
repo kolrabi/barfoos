@@ -2,6 +2,9 @@
 
 #include "2d.h"
 #include "vector3.h"
+#include "aabb.h"
+
+#include "serializer.h"
 
 #include <sstream>
 #include <cstring>
@@ -67,4 +70,8 @@ std::vector<std::string> Tokenize(const char *l) {
     if (inString) p++;
   } while(q && *p);
   return tokens;
+}
+
+Serializer &operator << (Serializer &ser, const AABB &aabb) {
+  return ser << aabb.center << aabb.extents;
 }

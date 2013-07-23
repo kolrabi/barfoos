@@ -3,6 +3,9 @@
 #include <algorithm>
 
 #include "serializer.h"
+#include "ivector3.h"
+#include "vector3.h"
+#include "icolor.h"
 
 Serializer::Serializer(
   const char *magic, 
@@ -47,14 +50,27 @@ size_t Serializer::AddString(const std::string &str) {
   return iter - strings.begin();
 }
 
-bool Serializer::WriteToFile(const std::string &fileName) {
-  FILE *f = fopen(fileName.c_str(), "wb");
+bool Serializer::WriteToFile(FILE *f) {
   if (!f) return false;
   
-  // TODO: write magic and strings
+  if (fwrite(this->magic, this->magicLen, 1, f) != 1) {
+    return false;
+  }
+
+  uint8_t len[4] = {
+    uint8_t((strings.size()    ) & 0xFF),
+    uint8_t((strings.size()>> 8) & 0xFF),
+    uint8_t((strings.size()>>16) & 0xFF),
+    uint8_t((strings.size()>>24) & 0xFF)
+  };  
+  
+  if (fwrite(len, sizeof(len), 1, f) != 1) return false;
+  
+  for (auto &s:strings) {
+    if (fwrite(s.c_str(), s.size()+1, 1, f) != 1) return false;
+  }
   
   if (fwrite(this->bytes, this->byteCount, 1, f) != 1) {
-    fclose(f);
     return false;
   }
   
@@ -62,50 +78,50 @@ bool Serializer::WriteToFile(const std::string &fileName) {
   return true;
 }
 
-Serializer &Serializer::operator << (const uint8_t &v) {
+Serializer &Serializer::operator << (uint8_t v) {
   GrowBy(1);
   this->bytes[this->byteCount++] = v;
   return *this;
 }
 
-Serializer &Serializer::operator << (const uint16_t &v) {
+Serializer &Serializer::operator << (uint16_t v) {
   GrowBy(2);
-  (*this) << (const uint8_t)((v   )&0xFF);
-  (*this) << (const uint8_t)((v>>8)&0xFF);
+  (*this) << (uint8_t)((v   )&0xFF);
+  (*this) << (uint8_t)((v>>8)&0xFF);
   return *this;
 }
 
-Serializer &Serializer::operator << (const uint32_t &v) {
+Serializer &Serializer::operator << (uint32_t v) {
   GrowBy(4);
-  (*this) << (const uint16_t)((v    )&0xFFFF);
-  (*this) << (const uint16_t)((v>>16)&0xFFFF);
+  (*this) << (uint16_t)((v    )&0xFFFF);
+  (*this) << (uint16_t)((v>>16)&0xFFFF);
   return *this;
 }
 
-Serializer &Serializer::operator << (const uint64_t &v) {
+Serializer &Serializer::operator << (uint64_t v) {
   GrowBy(8);
-  (*this) << (const uint32_t)((v    )&0xFFFFFFFF);
-  (*this) << (const uint32_t)((v>>32)&0xFFFFFFFF);
+  (*this) << (uint32_t)((v    )&0xFFFFFFFF);
+  (*this) << (uint32_t)((v>>32)&0xFFFFFFFF);
   return *this;
 }
 
-Serializer &Serializer::operator << (const int8_t &v) {
-  return (*this) << (const uint8_t)v;
+Serializer &Serializer::operator << (int8_t v) {
+  return (*this) << (uint8_t)v;
 }
 
-Serializer &Serializer::operator << (const int16_t &v) {
-  return (*this) << (const uint16_t)v;
+Serializer &Serializer::operator << (int16_t v) {
+  return (*this) << (uint16_t)v;
 }
 
-Serializer &Serializer::operator << (const int32_t &v) {
-  return (*this) << (const uint32_t)v;
+Serializer &Serializer::operator << (int32_t v) {
+  return (*this) << (uint32_t)v;
 }
 
-Serializer &Serializer::operator << (const int64_t &v) {
-  return (*this) << (const uint64_t)v;
+Serializer &Serializer::operator << (int64_t v) {
+  return (*this) << (uint64_t)v;
 }
 
-Serializer &Serializer::operator << (const float &v) {
+Serializer &Serializer::operator << (float v) {
   union {
     float f;
     uint32_t i;
@@ -118,3 +134,30 @@ Serializer &Serializer::operator << (const std::string & str) {
   return (*this) << AddString(str);
 }
 
+Serializer &Serializer::operator << (const std::vector<bool> &v) {
+  uint32_t s = v.size()/8+1;
+  
+  self << v.size();
+  for (uint32_t n = 0; n<s; n++) {
+    size_t pos = n*8;
+    uint8_t t = 0;
+    for (size_t i = 0; i<8; i++) {
+      if (i+pos < v.size() && v[i+pos]) t |= 1 << i;
+    }
+    self << t;
+  }
+  
+  return self;
+}
+
+Serializer &Serializer::operator << (const IVector3 &v) {
+  return self << v.x << v.y << v.z;
+}
+
+Serializer &Serializer::operator << (const Vector3 &v) {
+  return self << v.x << v.y << v.z;
+}
+
+Serializer &Serializer::operator << (const IColor &v) {
+  return self << v.r << v.g << v.b;
+}

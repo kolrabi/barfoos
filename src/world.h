@@ -83,8 +83,6 @@ private:
   bool checkOverwrite;
   bool checkOverwriteOK;
 
-  std::vector<FeatureInstance> instances;
-
   Shader *defaultShader;
 
   void UpdateCell(size_t i);
@@ -95,6 +93,8 @@ private:
   bool IsValidCellPosition(const IVector3 &pos) const { 
     return pos.x < size.x  && pos.y < size.y && pos.z < size.z; 
   }
+
+  friend Serializer &operator << (Serializer &ser, const World &world);
 };
 
 inline Cell &

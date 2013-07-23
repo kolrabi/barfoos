@@ -10,6 +10,7 @@
 #include "texture.h"
 #include "player.h"
 #include "runningstate.h"
+#include "serializer.h"
 
 #include <unordered_map>
 
@@ -42,7 +43,7 @@ EntityProperties::ParseProperty(const std::string &cmd) {
     Parse(this->sprite.width);
     Parse(this->sprite.height);
       
-  } else if (cmd == "name")     Parse(this->name);
+  } else if (cmd == "name")     Parse(this->displayName);
     
   else if (cmd == "flinchanim") Parse(this->flinchAnim);
   else if (cmd == "dyinganim")  Parse(this->dyingAnim);
@@ -367,3 +368,25 @@ Entity::AddBuff(RunningState &state, const std::string &name) {
   this->activeBuffs.push_back(buff);
 }
 
+void 
+Entity::Serialize(Serializer &ser) const {
+  ser << ownerId;
+  ser << nextThinkT;
+  ser << startT;
+  ser << lastPos << spawnPos << angles;
+  
+  ser << baseStats;
+  ser << activeBuffs;
+  ser << aabb;
+  
+  ser << health;
+  ser << inventory;
+  //ser << sprite;
+}
+
+Serializer &operator << (Serializer &ser, const Entity *entity) {
+  ser << (char)entity->GetSpawnClass();
+  ser << entity->properties->name;
+  entity->Serialize(ser);
+  return ser;
+}

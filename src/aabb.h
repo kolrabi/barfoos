@@ -16,7 +16,7 @@ struct AABB {
     extents()
   {}
 
-  AABB(const Vector3 &extents) : 
+  explicit AABB(const Vector3 &extents) : 
     center(),
     extents(extents)
   {}
@@ -159,6 +159,8 @@ struct AABB {
   }
   
   operator std::string() const;
+
+  friend Serializer &operator << (Serializer &ser, const AABB &aabb);
 };
 
 #endif

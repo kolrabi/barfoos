@@ -99,6 +99,8 @@ struct Sprite {
     }
     this->animQueue.push_back(anim);
   }
+  
+  friend Serializer &operator << (Serializer &ser, const Sprite &sprite);
 };
 
 #endif

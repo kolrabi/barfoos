@@ -52,8 +52,15 @@ private:
   bool showInventory;
   std::shared_ptr<InventoryGui> inventoryGui;
   
+  float lastSaveT;
+  
   std::vector<const Entity*> FindLightEntities(const Vector3 &pos, float radius) const;
   void BuildWorld();
+  
+  volatile bool saving;
+  void Save();
+  
+  friend Serializer &operator << (Serializer &ser, const RunningState &state);
 };
 
 #endif

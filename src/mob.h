@@ -46,6 +46,8 @@ protected:
 
   void SetInLiquid(bool inLiquid);
   float GetMoveModifier() const;
+
+  virtual SpawnClass GetSpawnClass() const override { return SpawnClass::MobClass; }
 };
 
 

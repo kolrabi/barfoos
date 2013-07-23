@@ -9,6 +9,8 @@
 
 #include "simplex.h"
 
+#include "serializer.h"
+
 Inventory::Inventory() :
   inventory(),
   overflow(0),
@@ -238,3 +240,17 @@ Inventory::ModifyStats(Stats &stats) const {
     item.second->ModifyStats(stats);
   }
 }
+
+Serializer &operator << (Serializer &ser, const Inventory &inventory) {
+  size_t count = 0;
+  for (auto item : inventory.inventory) {
+    if (item.second) count ++;
+  }
+  
+  ser << count;
+  for (auto item : inventory.inventory) {
+    if (item.second) ser << *item.second;
+  }
+  return ser;
+}
+

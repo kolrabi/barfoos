@@ -11,6 +11,8 @@
 #include <Shlobj.h>
 #endif
 
+#include <cerrno>
+
 static const std::vector<const char *> assetPrefix { "../assets/", DATA_PATH "/" };
 
 static std::string getAssetPath(const std::string &name) {
@@ -27,13 +29,16 @@ static std::string getUserPath(const std::string &name) {
   std::string base = "./";
 #ifdef WIN32
   TCHAR szPath[MAX_PATH];
-  if (SUCCEEDED(SHGetFolderPath(nullptr, CSIDL_COMMON_APPDATA, nullptr, 0, szPath))) 
+  if (SUCCEEDED(SHGetFolderPath(nullptr, CSIDL_LOCAL_APPDATA, nullptr, 0, szPath))) 
     base = szPath;
 #else
   if (getenv("HOME"))
     base = getenv("HOME");
 #endif
   if (base.back() != '/') base += "/";
+  
+  Log("%s\n", (base + "." + PACKAGE_NAME + "/" + name).c_str());
+
   return base + "." + PACKAGE_NAME + "/" + name;
 }
 
@@ -125,5 +130,6 @@ FILE *createUserFile(const std::string &name) {
   makePath(path);
   
   FILE *file = fopen(path.c_str(), "wb");
+  perror(path.c_str());
   return file;
 }

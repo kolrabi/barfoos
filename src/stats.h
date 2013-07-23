@@ -69,6 +69,7 @@ struct HealthInfo {
 struct Buff {
   const EffectProperties *effect;
   float startT;
+  friend Serializer &operator << (Serializer &ser, const Buff &buff);
 };
 
 struct Stats {
@@ -92,6 +93,8 @@ struct Stats {
   static HealthInfo MeleeAttack(const Entity &attacker, const Entity &victim, const Item &item, Random &random);
   static HealthInfo ExplosionAttack(const Entity &attacker, const Entity &victim, float damage, Element element);
   static float GetExpForLevel(size_t lvl);
+  
+  friend Serializer &operator << (Serializer &ser, const Stats &stats);
 };
 
 #endif

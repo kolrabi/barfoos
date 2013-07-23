@@ -2,7 +2,7 @@
 
 ## Build ----------------------------------------------------------
 
-CF=$(GL_CFLAGS) -Werror -Wall -Wextra -I$(top_srcdir)/src -DDATA_PATH=\"$(pkgdatadir)\"
+CF=$(GL_CFLAGS) -Werror -Wall -Wextra -I$(top_srcdir)/src -DDATA_PATH=\"$(pkgdatadir)\" -pthread
 
 if WINDOOF
 RESFILE=res.rc icon.ico

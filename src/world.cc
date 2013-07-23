@@ -39,7 +39,6 @@ World::World(RunningState &state, const IVector3 &size) :
   seenFeatures(0),
   checkOverwrite(false),
   checkOverwriteOK(true),
-  instances(0),
   defaultShader(new Shader("default"))
 {  
   glGenBuffers(1, &this->vbo);
@@ -63,6 +62,8 @@ World::Build() {
   size_t caveLengthMax = caveLengthMin + random.Integer(100); //   0 - 200
   size_t caveRepeat    = random.Integer(20)+1;                //   1 -  21
 
+  std::vector<FeatureInstance> instances;
+  
   // try 10 times to build a world with at least 50 features
   for (size_t tries=0; tries < 10 && instances.size() < 50; tries++) {
     
@@ -359,7 +360,7 @@ World::DrawMap(
   Gfx &gfx
 ) {
   PROFILE();
-  
+/*  
   std::vector<Vertex> verts;
 
   for (size_t i=0; i<this->instances.size(); i++) {
@@ -381,6 +382,8 @@ World::DrawMap(
     verts.push_back(Vertex(pos,                          IColor(255,255,255), 0, 0));
   }
   gfx.DrawQuads(verts);
+  */
+  (void)gfx;
 }
 
 void 
@@ -854,7 +857,8 @@ World::AddFeatureSeen(size_t f) {
   }
   
   seenFeatures[f] = true;
- 
+
+/*  
   // mark neighbouring features as seen as well
   if (instances[f].prevID != ~0UL) {
     seenFeatures[instances[f].prevID] = true;
@@ -865,6 +869,7 @@ World::AddFeatureSeen(size_t f) {
       seenFeatures[i] = true;
     }
   }
+  */
 }
 
 void
@@ -885,4 +890,15 @@ World::BreakBlock(const IVector3 &pos) {
       state.AddEntity(particle);
     }
   }
+}
+
+Serializer &operator << (Serializer &ser, const World &world) {
+  ser << world.size;
+  ser << world.cells;
+  ser << world.defaultMask;
+  ser << world.nextTickT;
+  ser << world.tickInterval;
+  ser << world.ambientLight;
+  ser << world.seenFeatures;
+  return ser;
 }

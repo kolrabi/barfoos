@@ -3,6 +3,8 @@
 
 #include "common.h"
 
+#include <unordered_map>
+
 class Serializer {
 public:
 
@@ -13,20 +15,39 @@ public:
   
   Serializer &operator=(const Serializer &) = delete;
 
-  Serializer &operator << (const uint8_t &);
-  Serializer &operator << (const uint16_t &);
-  Serializer &operator << (const uint32_t &);
-  Serializer &operator << (const uint64_t &);
+  Serializer &operator << (uint8_t);
+  Serializer &operator << (uint16_t);
+  Serializer &operator << (uint32_t);
+  Serializer &operator << (uint64_t);
 
-  Serializer &operator << (const int8_t &);
-  Serializer &operator << (const int16_t &);
-  Serializer &operator << (const int32_t &);
-  Serializer &operator << (const int64_t &);
-
-  Serializer &operator << (const float &);
+  Serializer &operator << (int8_t);
+  Serializer &operator << (int16_t);
+  Serializer &operator << (int32_t);
+  Serializer &operator << (int64_t);
+  
+  Serializer &operator << (float);
   Serializer &operator << (const std::string &str);
+  Serializer &operator << (const IVector3 &v);
+  Serializer &operator << (const Vector3 &v);
+  Serializer &operator << (const IColor &v);
+  
+  template<class T>
+  Serializer &operator << (const std::vector<T> &v) {
+    self << v.size();
+    for (auto &e:v) self << e;
+    return *this;
+  }
 
-  bool WriteToFile(const std::string &fileName);
+  template<class S, class T>
+  Serializer &operator << (const std::unordered_map<S, T> &v) {
+    self << v.size();
+    for (auto &e:v) self << e.first << e.second;
+    return *this;
+  }
+  
+  Serializer &operator << (const std::vector<bool> &v);
+
+  bool WriteToFile(FILE *file);
   
 private:
 

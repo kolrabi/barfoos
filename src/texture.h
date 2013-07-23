@@ -11,6 +11,8 @@ struct Texture {
   Texture(Texture &&);
   ~Texture();
   
+  std::string name;
+  
   /** OpenGL Handle of the texture. */
   unsigned int handle;
   

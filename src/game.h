@@ -56,8 +56,10 @@ private:
   std::shared_ptr<Gui> activeGui;
 
   float   startT;
+  
   float   lastT;
   float   deltaT;
+  
   size_t  frame;
   float   lastFPST;
   
@@ -71,6 +73,8 @@ private:
   
   markov_chain<char> scrollMarkov;
   std::vector<std::string> identifiedItems;
+  
+  friend Serializer &operator << (Serializer &ser, const Game &game);
 };
 
 class GameState {

@@ -10,6 +10,15 @@
 #include <unordered_map>
 #include "weighted_map.h"
 
+FeatureSpawn::FeatureSpawn() :
+  type(""),
+  spawnClass(SpawnClass::EntityClass),
+  attach(0),
+  probability(0.0),
+  pos(0,0,0)
+{}
+
+
 static std::unordered_map<std::string, Feature> allFeatures;
 
 const Feature *getFeature(const std::string &name) {

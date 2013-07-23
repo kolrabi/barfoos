@@ -91,6 +91,8 @@ private:
   std::vector<InventorySlot> consumed;
 
   float lastT;
+  
+  friend Serializer &operator << (Serializer &ser, const Inventory &inventory);
 };
 
 #endif

@@ -239,8 +239,6 @@ protected:
     uint32_t detail;
     float smoothDetail;
     
-    uint32_t nextDetail;
-    
     SharedInfo(const CellProperties *info) :
       tickInterval( info->flags & CellFlags::Viscous ? 32 : 5 ),
       isLocked(false),
@@ -254,8 +252,7 @@ protected:
       u { 0,0,0,0 },
       v { 0,0,0,0 },
       detail( info->flags & CellFlags::Liquid ? 15 : 0 ),
-      smoothDetail( detail ),
-      nextDetail( detail )
+      smoothDetail( detail )
     { }
   } shared;
   

@@ -61,26 +61,14 @@ struct FeatureInstance {
   {}
 };
 
-enum class SpawnClass : size_t {
-  EntityClass, 
-  MobClass, 
-  ItemEntityClass
-};
-
 struct FeatureSpawn {
   std::string type;
   SpawnClass spawnClass;
   int attach;
   float probability;
   Vector3 pos;
-  
-  FeatureSpawn() :
-    type(""),
-    spawnClass(SpawnClass::EntityClass),
-    attach(0),
-    probability(0.0),
-    pos(0,0,0)
-  {}
+
+  FeatureSpawn();
 };
 
 struct FeatureReplacement {

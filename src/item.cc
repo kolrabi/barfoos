@@ -7,6 +7,7 @@
 #include "projectile.h"
 #include "texture.h"
 #include "text.h"
+#include "serializer.h"
 
 #include <unordered_map>
 #include <algorithm>
@@ -493,3 +494,16 @@ Item::AddAmount(int amt) {
   }
 }
   
+Serializer &operator << (Serializer &ser, const Item &item) {
+  ser << item.properties->name;
+  ser << (item.effect?item.effect->name:"");
+  // ser << item.sprite;
+  ser << item.cooldownFrac;
+  ser << item.durability;
+  ser << item.nextUseT;
+  
+  ser << (int8_t)item.beatitude << item.modifier;
+  ser << item.amount;
+  
+  return ser;
+}

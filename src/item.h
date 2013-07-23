@@ -77,7 +77,7 @@ struct ItemProperties : public Properties {
 void LoadItems(Game &game);
 const ItemProperties &getItem(const std::string &name);
 
-enum class Beatitude : int {
+enum class Beatitude : int8_t {
   Normal = 0,
   Cursed = -1,
   Blessed = 1
@@ -165,6 +165,8 @@ protected:
   bool identified;
   
   size_t amount;
+  
+  friend Serializer &operator << (Serializer &ser, const Item &item);
 };
 
 #endif

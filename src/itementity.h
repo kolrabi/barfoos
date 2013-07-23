@@ -24,6 +24,8 @@ protected:
 
   std::shared_ptr<Item> item;
   float yoffset;
+  
+  virtual SpawnClass GetSpawnClass() const override { return SpawnClass::ItemEntityClass; }
 };
 
 #endif

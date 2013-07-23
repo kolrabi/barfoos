@@ -47,6 +47,7 @@ const Texture *loadTexture(const std::string &name, const Texture * tex) {
     
     textures[name] = std::unique_ptr<Texture>(new Texture());
     textures[name]->handle = textureHandle;
+    textures[name]->name = name;
     
     Log("Loading texture %s as %u\n", name.c_str(), textureHandle);
   }

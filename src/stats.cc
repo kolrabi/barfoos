@@ -3,6 +3,8 @@
 #include "entity.h"
 #include "random.h"
 
+#include "serializer.h"
+
 HealthInfo 
 Stats::MeleeAttack(const Entity &attacker, const Entity &victim, const Item &item, Random &random) {
   HealthInfo info;
@@ -119,3 +121,16 @@ Stats::GetToolTip() const {
   }
   return tooltip;
 }
+
+Serializer &operator << (Serializer &ser, const Stats &stats) {
+  ser << stats.str;
+  ser << stats.dex << stats.agi << stats.def;
+  ser << stats.maxHealth << stats.exp << stats.sp << stats.walkSpeed;
+  return ser;
+}
+
+Serializer &operator << (Serializer &ser, const Buff &buff) {
+  ser << buff.effect->name << buff.startT;
+  return ser;
+}
+

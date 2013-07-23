@@ -83,9 +83,8 @@ private:
 
   void UpdateInput(RunningState &state);
   void UpdateSelection(RunningState &state);
+  
+  virtual SpawnClass GetSpawnClass() const override { return SpawnClass::PlayerClass; }
 };
 
-
-
 #endif
-

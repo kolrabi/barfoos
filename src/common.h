@@ -37,6 +37,7 @@
 enum        Axis          : int;
 enum        Corner        : int;
 enum class  Side          : int;
+enum class  SpawnClass    : char;
 enum class  InventorySlot : size_t;
 enum class  Element       : size_t;
 

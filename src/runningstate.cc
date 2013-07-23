@@ -9,6 +9,8 @@
 #include "gfx.h"
 #include "input.h"
 
+#include "serializer.h"
+
 #include <algorithm>
 
 RunningState::RunningState(Game &game) :
@@ -18,7 +20,9 @@ RunningState::RunningState(Game &game) :
   nextEntityId(1),
   player(nullptr),
   showInventory(false),
-  inventoryGui(nullptr)
+  inventoryGui(nullptr),
+  lastSaveT(0.0),
+  saving(false)
 {
   Log("+RunningState() %p %p %p %p\n", this, &GetRandom(), &game, &GetGame());
 }
@@ -37,6 +41,7 @@ RunningState::Enter() {
 
 void
 RunningState::Leave(GameState *) {
+  this->Save();
 }
 
 void
@@ -162,6 +167,12 @@ RunningState::Update() {
       }
     }
   }
+  
+/*  if (GetGame().GetTime() > this->lastSaveT + 5.0) {
+    this->lastSaveT += 5.0;
+    Save();
+  }
+  */
   return this;
 }
 
@@ -170,7 +181,6 @@ RunningState::BuildWorld() {
 }
 
 void RunningState::HandleEvent(const InputEvent &event) {
-  Log("RunningState::HandleEvent: Event! %p\n", this->player);
   if (this->player) this->player->HandleEvent(event);
 }
 
@@ -438,3 +448,41 @@ RunningState::Explosion(Entity &entity, const Vector3 &pos, size_t radius, float
     }
   });
 }
+
+void 
+RunningState::Save() {
+  PROFILE();
+  Log("Saving...\n");
+  this->saving = true;
+  
+  FILE *f;
+  
+  Serializer serGame("GAME");
+  serGame << GetGame();
+  serGame << self;
+  
+  f = createUserFile("game");
+  if (f) serGame.WriteToFile(f);
+  fclose(f);
+  
+  Serializer serLevel("LEVL");
+  serLevel << *world;
+  
+  f = createUserFile("level." + ToString(level));
+  
+  //std::thread([=](){
+    if (f) serLevel.WriteToFile(f);
+    fclose(f);
+
+    this->saving = false;
+  //}).detach();
+}
+
+Serializer &operator << (Serializer &ser, const RunningState &state) {
+  ser << state.level;
+  ser << state.nextEntityId;
+  ser << state.player->GetId();
+  ser << state.entities;
+  return ser;
+}
+

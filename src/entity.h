@@ -14,6 +14,15 @@
 
 #include "properties.h"
 
+enum class SpawnClass : char {
+  EntityClass = 'E', 
+  MobClass    = 'M', 
+  ItemEntityClass = 'I',
+  PlayerClass = 'P',
+  ParticleClass = 'A',
+  ProjectileClass = 'R'
+};
+
 struct EntityDrawBox {
   const Texture *texture = nullptr;
   AABB aabb = AABB();
@@ -66,8 +75,9 @@ struct EntityProperties : public Properties {
   std::string cellLeave     = "";
   
   /** Display name of entity. */
-  std::string name          = "";
+  std::string displayName   = "";
 
+  std::string name          = "";
   std::string group         = "";
   
   std::unordered_map<std::string, std::string> onUseItemReplace;
@@ -109,7 +119,7 @@ public:
   size_t                    GetId()                           const { return id; }
   bool                      IsRemovable()                     const { return removable; }
   const EntityProperties *  GetProperties()                   const { return properties; }
-  virtual std::string       GetName()                         const { return properties->name; }
+  virtual std::string       GetName()                         const { return properties->displayName; }
 
   size_t                    GetOwner()                        const { return ownerId; }
   void                      SetOwner(const Entity &owner)           { this->ownerId = owner.id; }
@@ -143,6 +153,8 @@ public:
   
   // rendering
   virtual IColor            GetLight()                        const { return this->properties->glow + inventory.GetLight(); }
+
+  virtual void              Serialize(Serializer &ser)        const;
   
 protected:
 
@@ -174,6 +186,8 @@ protected:
   bool drawAABB;
   IColor cellLight;
   
+  virtual SpawnClass GetSpawnClass() const { return SpawnClass::EntityClass; }
+  friend Serializer &operator << (Serializer &ser, const Entity *entity);
 };
 
 #endif

@@ -904,14 +904,22 @@ bool Cell::CheckSideSolid(Side side, const Vector3 &org) const {
 
 Serializer &operator << (Serializer &ser, const Cell &cell) {
   ser << cell.info->type;
-  /*
-  ser << cell.lightLevel.r;
-  ser << cell.lightLevel.g;
-  ser << cell.lightLevel.b;
-  ser << cell.visibility << cell.visibilityOverride;
-  ser << cell.topHeights[0] << cell.topHeights[1] << cell.topHeights[2] << cell.topHeights[3];
-  ser << cell.bottomHeights[0] << cell.bottomHeights[1] << cell.bottomHeights[2] << cell.bottomHeights[3];
-  */
+  ser << (cell.texture?cell.texture->name:"") << cell.uscale;
+  ser << cell.lastT << cell.tickPhase << cell.lastUseT;
+  ser << cell.lightLevel;
+  
+  ser << cell.shared.tickInterval;
+  ser << cell.shared.featureID;
+  ser << ((cell.shared.reversedTop ? 1 : 0) | (cell.shared.reversedBottom ? 2 : 0));
+  
+  for (int i=0; i<4; i++) {
+    ser << cell.shared.topHeights[i];
+    ser << cell.shared.bottomHeights[i];
+    ser << cell.shared.u[i];
+    ser << cell.shared.v[i];
+  }
+  
+  ser << cell.shared.detail << cell.shared.smoothDetail;
   return ser;
 }
 
