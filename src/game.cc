@@ -3,12 +3,13 @@
 #include "item.h"
 #include "input.h"
 #include "effect.h"
-#include "runningstate.h"
 #include "cell.h"
 #include "feature.h"
 #include "entity.h"
 #include "gui.h"
 #include "serializer.h"
+
+#include "mainmenustate.h"
 
 #include <algorithm>
 
@@ -72,9 +73,8 @@ Game::NewGame(const std::string &seed) {
   LoadEffects();
   LoadItems(*this);
   
-  RunningState *state = new RunningState(*this);
+  MainMenuState *state = new MainMenuState(*this);
   nextGameState = state;
-  state->NewGame();
   
   this->startT = this->gfx->GetTime();
 }
@@ -83,6 +83,9 @@ bool Game::Frame() {
   PROFILE();
   
   if (!this->gfx->Swap()) return false;
+  
+  this->gfx->ClearColor(IColor());
+  this->gfx->ClearDepth(1.0);
 
   if (nextGameState != activeGameState) {
     if (activeGameState) activeGameState->Leave(nextGameState);

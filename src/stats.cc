@@ -5,6 +5,8 @@
 
 #include "serializer.h"
 
+#include <cstring>
+
 HealthInfo 
 Stats::MeleeAttack(const Entity &attacker, const Entity &victim, const Item &item, Random &random) {
   HealthInfo info;
@@ -134,3 +136,6 @@ Serializer &operator << (Serializer &ser, const Buff &buff) {
   return ser;
 }
 
+bool Stats::operator==(const Stats &o) {
+  return ::memcmp(&o, this, sizeof(*this)) == 0;
+}

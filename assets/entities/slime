@@ -31,3 +31,5 @@ Glow         0 64   0
 Name   	        "Cute little slime"
 
 Inventory       0.5 gold
+
+aggro 1 3 10 1 sword

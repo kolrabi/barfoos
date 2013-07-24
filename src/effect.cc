@@ -1,10 +1,8 @@
 #include "effect.h"
 #include "entity.h"
 #include "world.h"
-#include "mob.h"
 #include "runningstate.h"
 #include "gfx.h"
-#include "projectile.h"
 #include "texture.h"
 
 #include <unordered_map>

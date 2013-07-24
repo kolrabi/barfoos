@@ -83,8 +83,6 @@ private:
   bool checkOverwrite;
   bool checkOverwriteOK;
 
-  Shader *defaultShader;
-
   void UpdateCell(size_t i);
   void UpdateCell(const IVector3 &pos);
   

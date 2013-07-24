@@ -1,11 +1,11 @@
 tex sword2
 frames 1
 
-damage 10
+damage 1
 # durability 25
 # usedurability 1
 
-cooldown 0.2
+cooldown 1
 light 64 64 64
 
 hand
@@ -17,5 +17,5 @@ IdentifiedName   "Iron Sword"
 # CanUseNothing
 CanUseEntity
 
-Effect  0.5 ""
-Effect  0.5 "strength"
+Effect  0.9 ""
+Effect  0.1 "strength"

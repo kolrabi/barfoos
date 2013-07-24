@@ -407,6 +407,12 @@ Item::GetDisplayName() const {
     case  1: modifierString = "good "; break;
     case  2: modifierString = "excellent "; break;
   }
+
+  if (this->modifier < 0) {  
+    Stats statsA, statsB;
+    ModifyStats(statsA);
+    if (statsA == statsB) modifierString = "useless ";
+  }
   
   char tmp[1024];
   snprintf(tmp, sizeof(tmp), "%s%s%s", this->beatitude == Beatitude::Normal ? "" : (this->beatitude == Beatitude::Blessed ? "blessed " : "cursed "), modifierString, this->properties->identifiedName.c_str());

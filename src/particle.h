@@ -18,7 +18,6 @@ public:
   
 protected:
 
-  float dieT;
   virtual SpawnClass GetSpawnClass() const override { return SpawnClass::ParticleClass; }
 };
 

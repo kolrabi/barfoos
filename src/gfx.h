@@ -10,6 +10,14 @@
 
 #include <unordered_map>
 
+struct NinePatch {
+  const Texture *texture;
+  Rect srcRects[9];
+  
+  NinePatch(const std::string &name, const Rect &innerRect);
+  std::vector<Vertex> GetVerts(const Rect &rect) const;
+};
+
 class GfxView final {
 public:
 
@@ -43,7 +51,7 @@ private:
     textureStack(1)
   {}
   
-  void SetUniforms(const Shader *shader) const;
+  void SetUniforms(const std::shared_ptr<Shader> shader) const;
 };
 
 class Gfx final {
@@ -72,7 +80,7 @@ public:
   void ClearDepth(float depth) const;
   bool Swap();
 
-  void SetShader(const Shader *shader);
+  void SetShader(const std::string &shader);
   void SetTextureFrame(const Texture *texture, size_t stage = 0, size_t currentFrame = 0, size_t frameCount = 1);
   void SetFog(float l, const IColor &color);
   void SetColor(const IColor &color, float alpha = 1.0);
@@ -94,6 +102,9 @@ public:
   void DrawSprite(const Sprite &sprite, const Vector3 &pos, bool billboard = true);
   void DrawIcon(const Sprite &sprite, const Point &pos, const Point &size = Point(32, 32));
   void DrawIconQuad(const Point &pos, const Point &size = Point(32, 32));
+  void DrawStretched(const Texture *tex, const Rect &src, const Rect &dest);
+//  void DrawSubTex(const Point &pos, const Point &size, const Point &srcPos, const Texture *tex);
+//  void DrawNinePatch(const NinePatch &patch, const Rect &rect);
 
   Point AlignBottomLeftScreen(const Point &size, int padding = 0);
   Point AlignBottomRightScreen(const Point &size, int padding = 0);
@@ -134,7 +145,8 @@ private:
   std::vector<Vertex> quadVerts;
 
   // render state
-  const Shader *activeShader;
+  std::unordered_map<std::string, std::shared_ptr<Shader>> shaders;
+  std::shared_ptr<Shader> activeShader;
   GfxView view;
   IColor color;
   float alpha;

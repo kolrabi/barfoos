@@ -41,7 +41,7 @@ RunningState::Enter() {
 
 void
 RunningState::Leave(GameState *) {
-  this->Save();
+  //this->Save();
 }
 
 void

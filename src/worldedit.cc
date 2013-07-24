@@ -1,7 +1,6 @@
 #include "worldedit.h"
 #include "world.h"
 #include "random.h"
-#include "vertex.h"
 
 WorldEdit::WorldEdit(World *world) : world(world), brush("default") {}
 WorldEdit::WorldEdit(const std::shared_ptr<World> &world) : WorldEdit(world.get()) {}

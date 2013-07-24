@@ -17,6 +17,8 @@ enum class Align {
   VertBottom = 8
 };
 
+static inline Align operator|(Align a, Align b) { return Align(int(a) | int(b)); }
+
 class RenderString {
 public:
 

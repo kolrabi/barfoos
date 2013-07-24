@@ -85,12 +85,15 @@ struct Stats {
   size_t sp = 0;
   float walkSpeed = 1.0;
   
+  bool operator==(const Stats &o);
+  
   bool AddExp(float exp);
   size_t GetLevel();
   
   std::string GetToolTip() const;
   
   static HealthInfo MeleeAttack(const Entity &attacker, const Entity &victim, const Item &item, Random &random);
+  static HealthInfo MeleeAttack(const Entity &attacker, const Entity &victim, Random &random);
   static HealthInfo ExplosionAttack(const Entity &attacker, const Entity &victim, float damage, Element element);
   static float GetExpForLevel(size_t lvl);
   

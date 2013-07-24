@@ -1,21 +1,29 @@
 #include "gui.h"
-#include "util.h"
 #include "gfx.h"
 #include "game.h"
 #include "input.h"
+#include "text.h"
+
+#include "texture.h"
 
 Gui::Gui() :
   rect(),
-  bottomRight(),
   children(0),
   gravN(true), 
   gravE(false), 
   gravS(false), 
   gravW(true),
-  updateGravity(true)
+  updateGravity(true),
+  text(new RenderString("")),
+  hover(false)
 {}
 
 Gui::~Gui() {
+  delete text;
+  
+  for (auto c:children) {
+    delete c;
+  }
 }
 
 void 
@@ -27,33 +35,58 @@ Gui::Update(Game &game) {
   const Point &vsize = game.GetGfx().GetVirtualScreenSize();
 
   if (this->updateGravity) {
-    bottomRight = vsize - (rect.pos + rect.size);
+    lastVSize = vsize;
     this->updateGravity = false;
   }
   
+  Point diff( vsize - lastVSize );
+  
+  if (diff.x || diff.y) Log("%d %d\n", diff.x, diff.y);
+  
   if (gravE) {
-    int oldRight = rect.pos.x + rect.size.x;
-    int newRight = vsize.x - bottomRight.x;
     if (gravW) {
-      rect.size.x += newRight-oldRight;
+      rect.size.x += diff.x;
     } else {
-      rect.pos.x += newRight-oldRight;
+      rect.pos.x  += diff.x;
     }
+  } else if (!gravW) {
+    rect.pos.x += diff.x / 2;
   }
 
   if (gravS) {
-    int oldBottom = rect.pos.y + rect.size.y;
-    int newBottom = vsize.y - bottomRight.y;
     if (gravN) {
-      rect.size.y += newBottom-oldBottom;
+      rect.size.y += diff.y;
     } else {
-      rect.pos.y += newBottom-oldBottom;
+      rect.pos.y  += diff.y;
     }
+  } else if (!gravN) {
+    rect.pos.y += diff.y / 2;
   }
+  
+  lastVSize = vsize;
 }
 
 void 
 Gui::Draw(Gfx &gfx, const Point &parentPos) {
+  if (hover) {
+    gfx.SetColor(IColor(255,255,0));
+  } else {
+    gfx.SetColor(IColor(192,192,192));
+  }
+  
+  Rect r = rect;
+  r.pos = rect.pos + parentPos;
+
+  // TODO: set texture
+  std::vector<Vertex> verts;
+  verts.push_back(Vertex(Vector3(r.pos.x,          r.pos.y+r.size.y,  0), IColor(255,255,255), 0,1, Vector3( 0, 0, 1)));
+  verts.push_back(Vertex(Vector3(r.pos.x+r.size.x, r.pos.y+r.size.y,  0), IColor(255,255,255), 1,1, Vector3( 0, 0, 1)));
+  verts.push_back(Vertex(Vector3(r.pos.x+r.size.x, r.pos.y,           0), IColor(255,255,255), 1,0, Vector3( 0, 0, 1)));
+  verts.push_back(Vertex(Vector3(r.pos.x,          r.pos.y,           0), IColor(255,255,255), 0,0, Vector3( 0, 0, 1)));
+  gfx.DrawQuads(verts);
+  
+  this->text->Draw(gfx, (parentPos.x + rect.pos.x)+rect.size.x*0.5, (parentPos.y + rect.pos.y)+rect.size.y*0.5, int(Align::HorizCenter | Align::VertMiddle));
+  
   gfx.SetColor(IColor(255,255,255));
   for (auto c : children) {
     c->Draw(gfx, parentPos+rect.pos);
@@ -75,12 +108,24 @@ Gui::HandleEvent(const InputEvent &event) {
     event2.p = event.p - c->rect.pos;
     c->HandleEvent(event2);
   }
+  
+  if (event.type == InputEventType::Key && !event.down && event.key == InputKey::MouseLeft && onActivate) {
+    if (IsOver(event.p) && !GetChildAt(event.p)) onActivate(this);
+  }
+  
+  if (event.type == InputEventType::MouseMove) {
+    hover = IsOver(event.p);
+  }
 }
 
 bool Gui::IsOver(const Point &p) const { 
   if (p.x < 0 || p.y < 0) return false;
   if (p.x >= rect.size.x || p.y >= rect.size.x) return false;
   return true;
+}
+
+void Gui::AddChild(Gui *child) {
+  this->children.push_back(child);
 }
 
 Gui *Gui::GetChildAt(const Point &p) {
@@ -94,15 +139,20 @@ Gui *Gui::GetChildAt(const Point &p) {
 }
 
 void 
+Gui::SetSize(const Point &s) {
+  rect.size = s;
+  SetGravity(gravN, gravE, gravS, gravW);
+}
+
+void 
 Gui::SetPosition(const Point &p) {
   rect.pos = p;
   SetGravity(gravN, gravE, gravS, gravW);
 }
 
 void 
-Gui::SetSize(const Point &s) {
-  rect.size = s;
-  SetGravity(gravN, gravE, gravS, gravW);
+Gui::SetCenter(const Point &p) {
+  SetPosition(p - rect.size / 2);
 }
 
 void 
@@ -113,4 +163,9 @@ Gui::SetGravity(bool gravN, bool gravE, bool gravS, bool gravW) {
   this->gravW = gravW;
 
   this->updateGravity = true;
+}
+
+void 
+Gui::SetText(const std::string &str) {
+  *this->text = str;
 }

@@ -1,5 +1,6 @@
-gui
-  main menu
+
+monster open doors
+ninepatch buttons
 
 items (entities)
   wands
@@ -14,5 +15,3 @@ npcs
   dialogs
   shops
   more monsters
-
-

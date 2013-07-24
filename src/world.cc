@@ -2,9 +2,7 @@
 
 #include "world.h"
 #include "cell.h"
-#include "util.h"
 #include "mob.h"
-#include "player.h"
 #include "simplex.h"
 #include "particle.h"
 
@@ -12,7 +10,6 @@
 #include "serializer.h"
 #include "worldedit.h"
 
-#include "shader.h"
 #include "runningstate.h"
 #include "feature.h"
 #include "gfx.h"
@@ -38,8 +35,7 @@ World::World(RunningState &state, const IVector3 &size) :
   vbo(0),
   seenFeatures(0),
   checkOverwrite(false),
-  checkOverwriteOK(true),
-  defaultShader(new Shader("default"))
+  checkOverwriteOK(true)
 {  
   glGenBuffers(1, &this->vbo);
 }
@@ -327,10 +323,8 @@ World::Draw(Gfx &gfx) {
     dirty = false;
   }
 
-  gfx.SetShader(this->defaultShader);
+  gfx.SetShader("default");
   gfx.SetColor(IColor(255,255,255));
-  this->defaultShader->Uniform("u_texture", 0);
-  this->defaultShader->Uniform("u_texture2", 1);
   
   for (auto &s : this->vertexStarts) {
     gfx.SetTextureFrame(s.first);

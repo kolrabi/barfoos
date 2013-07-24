@@ -22,8 +22,6 @@ Player::Player() :
   // rendering
   crosshairTex      (loadTexture("gui/crosshair")),
   slotTex           (loadTexture("gui/slot")),
-  defaultShader     (std::unique_ptr<Shader>(new Shader("default"))),
-  guiShader         (std::unique_ptr<Shader>(new Shader("gui"))),
   
   bobPhase          (0.0),
   bobAmplitude      (0.0),
@@ -261,7 +259,7 @@ Player::UpdateInput(
 }
 
 void Player::Draw(Gfx &gfx) const {
-  gfx.SetShader(this->defaultShader.get());
+  gfx.SetShader("default");
 
   if (this->selectedCell) {
     std::vector<Vertex> verts;
@@ -274,7 +272,7 @@ void Player::Draw(Gfx &gfx) const {
 
 void 
 Player::DrawWeapons(Gfx &gfx) const {
-  gfx.SetShader(this->defaultShader.get());
+  gfx.SetShader("default");
   
   Vector3 fwd(0,0,1);
   Vector3 right(1,0,0);
@@ -299,7 +297,7 @@ Player::DrawWeapons(Gfx &gfx) const {
 
 void 
 Player::DrawGUI(Gfx &gfx) const {
-  gfx.SetShader(this->guiShader.get());
+  gfx.SetShader("gui");
   gfx.SetColor(IColor(255,255,255));
   
   Point itemPos = gfx.AlignBottomRightScreen(Point(32,32), 4);
@@ -377,7 +375,7 @@ Player::HandleEvent(const InputEvent &event) {
   }
 }
 
-void Player::SetUniforms(const Shader *shader) const {
+void Player::SetUniforms(const std::shared_ptr<Shader> &shader) const {
   shader->Uniform("u_fade", IColor(std::sqrt(this->pain)*255, 0, 0));
 }
 
@@ -397,6 +395,17 @@ Player::AddHealth(RunningState &state, const HealthInfo &info) {
   if (hp2 < hp) {
     this->AddMessage("Ouch!");
     lastHurtT[info.type] = game.GetTime();
+  }
+  
+  Entity *other = state.GetEntity(info.dealerId);
+  if (other) {
+    if (info.hitType == HitType::Miss) {
+      this->AddMessage("The " + other->GetName() + " misses");
+    } else if (info.hitType == HitType::Normal) {
+      this->AddMessage("The " + other->GetName() + " hits you for " + ToString(info.amount) + " hp");
+    } else if (info.hitType == HitType::Critical) {
+      this->AddMessage("The " + other->GetName() + " hits you critically for " + ToString(info.amount) + " hp"); 
+    }
   }
 }
 

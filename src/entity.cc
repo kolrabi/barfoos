@@ -11,6 +11,7 @@
 #include "player.h"
 #include "runningstate.h"
 #include "serializer.h"
+#include "particle.h"
 
 #include <unordered_map>
 
@@ -47,6 +48,7 @@ EntityProperties::ParseProperty(const std::string &cmd) {
     
   else if (cmd == "flinchanim") Parse(this->flinchAnim);
   else if (cmd == "dyinganim")  Parse(this->dyingAnim);
+  else if (cmd == "attackanim") Parse(this->attackAnim);
       
   else if (cmd == "respawn")          this->respawn         = true;
   else if (cmd == "vert")             this->sprite.vertical = true;
@@ -64,6 +66,7 @@ EntityProperties::ParseProperty(const std::string &cmd) {
   else if (cmd == "move")             Parse(this->moveInterval);
   else if (cmd == "speed")            Parse(this->maxSpeed);
   else if (cmd == "health")           Parse(this->maxHealth);
+  else if (cmd == "lifetime")         Parse(this->lifetime);
   else if (cmd == "extents") {
     Parse(this->extents);
     this->sprite.width = this->extents.x;
@@ -74,6 +77,24 @@ EntityProperties::ParseProperty(const std::string &cmd) {
     Parse(box.aabb.center);
     Parse(box.aabb.extents);
     this->drawBoxes.push_back(box);
+    
+  } else if (cmd == "emitter") {
+    ParticleEmitter emitter;
+    Parse(emitter.name);
+    Parse(emitter.rate);
+    Parse(emitter.velocity);
+    Parse(emitter.aabb.center);
+    Parse(emitter.aabb.extents);
+    emitter.state = 0.0;
+    this->emitters.push_back(emitter);
+    
+  } else if (cmd == "aggro") {
+    this->aggressive      = true;
+    Parse(this->attackInterval);
+    Parse(this->aggroRangeNear);
+    Parse(this->aggroRangeFar);
+    Parse(this->meleeAttackRange);
+    Parse(this->attackItem);
   
   } else if (cmd == "gravity")        Parse(this->gravity);
   else if (cmd == "eyeoffset")        Parse(this->eyeOffset);
@@ -136,6 +157,7 @@ Entity::Entity(const std::string &type) :
   properties(getEntity(type)),
   nextThinkT(0.0),
   startT(0.0),
+  dieT(0.0),
   lastPos(),
   spawnPos(),
   angles(),
@@ -147,7 +169,8 @@ Entity::Entity(const std::string &type) :
   inventory(),
   sprite(this->properties->sprite),
   drawAABB(false),
-  cellLight(0,0,0)
+  cellLight(0,0,0),
+  emitters(this->properties->emitters)
 {
 }
 
@@ -162,6 +185,10 @@ Entity::Start(RunningState &state, size_t id) {
   this->id = id;
   this->nextThinkT = game.GetTime();
   this->startT = game.GetTime();
+  
+  if (this->properties->lifetime) {
+    this->dieT = game.GetTime() + this->properties->lifetime; // TODO: variance
+  }
   
   // fill inventory with random crap
   for (auto item : this->properties->items) {
@@ -229,6 +256,11 @@ Entity::Update(RunningState &state) {
     return;
   }
 
+  if (this->dieT && state.GetGame().GetTime() > this->dieT) {
+    this->Die(state, HealthInfo());
+    return;
+  }
+  
   // think, mcfly, think
   while(properties->thinkInterval && nextThinkT < t) {
     nextThinkT += properties->thinkInterval;
@@ -238,6 +270,22 @@ Entity::Update(RunningState &state) {
   this->sprite.Update(deltaT);
   this->inventory.Update(state, *this);
   this->smoothPosition.Update(deltaT);
+  
+  if (!this->IsDead()) {
+    for (auto &e:emitters) {
+      e.state += e.rate * deltaT;
+      
+      for (int n = 0; n<int(e.state); n++) {
+        Mob *particle = new Particle(e.name);
+        Vector3 p = state.GetRandom().Vector() * e.aabb.extents + e.aabb.center + this->aabb.center;
+        particle->SetPosition(p);
+        particle->AddVelocity(e.velocity);
+        state.AddEntity(particle);
+      }
+      
+      e.state -= int(e.state);
+    }
+  }
   
   auto it = this->activeBuffs.begin();
   while(it != this->activeBuffs.end()) {
@@ -341,8 +389,13 @@ Entity::Die(RunningState &state, const HealthInfo &info) {
   }
 
   this->inventory.Drop(state, *this);
-  this->sprite.StartAnim(this->properties->dyingAnim);
-  this->sprite.QueueAnim(0);
+  
+  if (this->properties->dyingAnim != ~0UL) {
+    this->sprite.StartAnim(this->properties->dyingAnim);
+    this->sprite.QueueAnim(0);
+  } else {
+    this->sprite.StartAnim(0);
+  }
 }
 
 Stats 
@@ -366,6 +419,18 @@ Entity::AddBuff(RunningState &state, const std::string &name) {
   buff.effect = &getEffect(name);
   buff.startT = state.GetGame().GetTime();
   this->activeBuffs.push_back(buff);
+}
+
+bool
+Entity::CanSee(RunningState &state, const Vector3 &pos) {
+  Vector3 start = GetPosition()+Vector3(0,properties->eyeOffset,0);
+  Vector3 dir = pos - start;
+  
+  float dist;
+  Side side;
+  
+  state.GetWorld().CastRayCell(start, dir.Normalize(), dist, side);
+  return dist >= dir.GetMag();
 }
 
 void 

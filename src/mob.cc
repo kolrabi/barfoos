@@ -3,6 +3,7 @@
 #include "cell.h"
 #include "util.h"
 #include "runningstate.h"
+#include "item.h"
 
 #include <cmath>
 
@@ -25,6 +26,9 @@ Mob::Mob(const std::string &propertyName) :
   moveTarget      (0,0,0),
   validMoveTarget (false),
   
+  attackTarget    (~0UL),
+  nextAttackT     (0.0),
+  
   headCell        (nullptr),
   footCell        (nullptr),
   groundCell      (nullptr)
@@ -37,6 +41,10 @@ void
 Mob::Start(RunningState &state, size_t id) {
   Entity::Start(state, id);
   this->sprite.t = state.GetRandom().Float01();
+  if (properties->attackItem != "") {
+    this->attackItem = std::shared_ptr<Item>(new Item(properties->attackItem));
+    this->attackItem->Update(state);
+  }
 }
 
 void 
@@ -49,6 +57,8 @@ Mob::Update(RunningState &state) {
   if (this->IsDead()) {
     this->move = Vector3();
   }
+  
+  if (this->attackItem) this->attackItem->Update(state);
 
   // clip move speed
   float speed = move.GetMag();
@@ -195,8 +205,59 @@ Mob::Think(RunningState &state) {
     return;
   }
   
-  // walk around a bit
-  if (this->properties->moveInterval != 0) {
+  if (this->attackTarget != ~0UL) {
+    Entity *enemy = state.GetEntity(this->attackTarget);
+    if (enemy) {
+      float dist = (enemy->GetPosition() - GetPosition()).GetMag();
+      if (dist > this->properties->aggroRangeFar) {
+        // out of range? -> unset attack target
+        this->attackTarget = ~0UL;
+      } else if (!CanSee(state, enemy->GetPosition())) {
+        // not visible? -> set move target to last known location, unset attack target
+        this->validMoveTarget = true;
+        this->moveTarget = enemy->GetPosition();
+        this->attackTarget = ~0UL;
+      } else if (dist < this->properties->meleeAttackRange && state.GetGame().GetTime() > nextAttackT) {
+        this->sprite.StartAnim(this->properties->attackAnim);
+        nextAttackT += this->properties->attackInterval;
+        
+        if (this->attackItem) this->attackItem->UseOnEntity(state, *this, this->attackTarget);
+      }
+    } else {
+      this->attackTarget = ~0UL;
+    }
+  }
+  
+  if (this->attackTarget == ~0UL && this->properties->aggressive) {
+    // find enitites in aggroRange
+    std::vector<size_t> ents = state.FindEntities(AABB(aabb.center, Vector3(this->properties->aggroRangeNear)));
+    Entity *enemy = nullptr;
+    for (size_t e:ents) {
+      Entity *entity = state.GetEntity(e);
+      if (!entity) continue;
+      
+      // suitable? -> set attack target
+      if (entity->GetProperties()->name == "player" && CanSee(state, entity->GetPosition())) {
+        enemy = entity;
+        break;
+      }
+    }
+    
+    if (enemy) {
+      this->attackTarget = enemy->GetId();
+    }
+  }
+  
+  if (this->attackTarget != ~0UL) {
+    // walk toward enemy
+    Entity *enemy = state.GetEntity(this->attackTarget);
+    if (enemy) {
+      move = (enemy->GetPosition() - GetPosition()).Horiz().Normalize() * this->properties->maxSpeed;
+    } else {
+      this->attackTarget = ~0UL;
+    }
+  } else if (this->attackTarget == ~0UL && this->properties->moveInterval != 0) {
+    // walk around a bit
     if (state.GetGame().GetTime() > nextMoveT) {
       nextMoveT += this->properties->moveInterval;
       moveTarget = aabb.center + (Vector3(state.GetRandom().Float(), state.GetRandom().Float(), state.GetRandom().Float())) * 4.0;

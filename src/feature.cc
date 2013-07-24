@@ -1,4 +1,4 @@
-#include "util.h"
+#include "common.h"
 #include "feature.h"
 #include "world.h"
 #include "cell.h"

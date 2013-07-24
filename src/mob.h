@@ -41,6 +41,10 @@ protected:
   float nextMoveT;
   Vector3 moveTarget;
   bool validMoveTarget;
+  
+  size_t attackTarget;
+  float nextAttackT;
+  std::shared_ptr<Item> attackItem;
 
   Cell *headCell, *footCell, *groundCell;
 

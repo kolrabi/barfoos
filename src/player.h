@@ -40,7 +40,7 @@ public:
   virtual std::string       GetName()                         const;
   float                     GetPain()                         const { return this->pain; }
   
-  void SetUniforms(const Shader *shader) const;
+  void SetUniforms(const std::shared_ptr<Shader> &shader) const;
   
 private:
 
@@ -58,8 +58,6 @@ private:
   // rendering
   const Texture *crosshairTex;
   const Texture *slotTex;
-  std::unique_ptr<Shader> defaultShader;
-  std::unique_ptr<Shader> guiShader;
   float bobPhase;
   float bobAmplitude;
   

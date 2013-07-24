@@ -28,6 +28,14 @@ struct EntityDrawBox {
   AABB aabb = AABB();
 };
 
+struct ParticleEmitter {
+  AABB aabb;
+  std::string name;
+  Vector3 velocity;
+  float rate;
+  float state;
+};
+
 struct EntityProperties : public Properties {
 
   // rendering
@@ -36,7 +44,9 @@ struct EntityProperties : public Properties {
   IColor  glow              = IColor(0,0,0);
   size_t  flinchAnim        = ~0UL;   //< Animation to play when hurt.
   size_t  dyingAnim         = ~0UL;   //< Animation to play on death.
+  size_t  attackAnim        = ~0UL;   //< Animation to play on death.
   std::vector<EntityDrawBox> drawBoxes = std::vector<EntityDrawBox>(0);
+  std::vector<ParticleEmitter> emitters = std::vector<ParticleEmitter>(0);
   
   // movement
   float   stepHeight        = 0.5;    //< Allow entity to climb stairs.
@@ -50,6 +60,7 @@ struct EntityProperties : public Properties {
   float   eyeOffset         = 0.0;    //< Offset from the center.
   float   thinkInterval     = 0.0;    //< Time interval beetween calls to Entity::Think().
   float   maxHealth         = 5;      //< Health of entity after spawn.
+  float   lifetime          = 0.0;
   bool    nohit             = false;  //< Entity has no hitbox/selection box.
   bool    nocollideEntity   = false;  //< Entity does not collide with other entities.
   bool    nocollideCell     = false;  //< Don't call OnCollideCell.
@@ -57,6 +68,12 @@ struct EntityProperties : public Properties {
   bool    noFriction        = false;  //< Entity is unaffected by friction.
   bool    isSolid           = false;  //< Entity is solid in collision detection.
   bool    respawn           = false;  //< Entity will automatically respawn on death.
+  bool    aggressive        = false;
+  float   attackInterval    = 0.0;
+  float   aggroRangeNear    = 0.0;
+  float   aggroRangeFar     = 0.0;
+  float   meleeAttackRange  = 0.0;
+  std::string attackItem    = "";
   float   exp               = 0.0;
 
   // stats
@@ -149,6 +166,8 @@ public:
   Stats &                   GetBaseStats()                          { return this->baseStats; }
   float                     GetHealth()                       const { return this->health; }
   
+  bool                      CanSee(RunningState &state, const Vector3 &pos);
+  
   void                      AddBuff(RunningState &state, const std::string &name);
   
   // rendering
@@ -165,6 +184,7 @@ protected:
   float nextThinkT, startT;
   
   // gameplay
+  float dieT;
   Smooth<Vector3> smoothPosition = Smooth<Vector3>(30.0);
   Vector3 lastPos;
   Vector3 spawnPos;
@@ -185,6 +205,7 @@ protected:
   Sprite sprite;
   bool drawAABB;
   IColor cellLight;
+  std::vector<ParticleEmitter> emitters = std::vector<ParticleEmitter>(0);
   
   virtual SpawnClass GetSpawnClass() const { return SpawnClass::EntityClass; }
   friend Serializer &operator << (Serializer &ser, const Entity *entity);

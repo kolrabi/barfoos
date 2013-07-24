@@ -14,6 +14,8 @@ struct Point {
 
   Point operator +(const Point &o) const { return Point(x+o.x, y+o.y); }
   Point operator -(const Point &o) const { return Point(x-o.x, y-o.y); }
+  Point operator *(const int    o) const { return Point(x*o,   y*o); }
+  Point operator /(const int    o) const { return Point(x/o,   y/o); }
 
   operator std::string() const;
 };

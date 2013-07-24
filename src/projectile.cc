@@ -5,8 +5,7 @@
 #include "worldedit.h"
 
 Projectile::Projectile(const std::string &type) :
-  Mob(type),
-  dieT(0.0)
+  Mob(type)
 {}
 
 Projectile::~Projectile() {
@@ -18,16 +17,10 @@ void Projectile::Start(RunningState &state, size_t id) {
   Vector3 fwd   = (GetAngles()).EulerToVector();
   this->SetPosition(state.GetWorld().MoveAABB(this->aabb, this->GetPosition() + fwd));
   this->AddVelocity(fwd * this->properties->maxSpeed);
-
-  this->dieT = state.GetGame().GetTime() + 10 + state.GetRandom().Float();
 }
 
 void Projectile::Update(RunningState &state) {
   Mob::Update(state);
-  
-  if (state.GetGame().GetTime() > this->dieT) {
-    this->Die(state, HealthInfo());
-  }
 }
 
 void 
