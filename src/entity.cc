@@ -244,30 +244,33 @@ Entity::Update(RunningState &state) {
   float deltaT = game.GetDeltaT();
   float t      = game.GetTime();
   
+  if (this->dieT && state.GetGame().GetTime() > this->dieT) {
+    this->Die(state, HealthInfo());
+    Log("%s expired %d %u\n", this->properties->name.c_str(), IsDead(), this->sprite.currentAnimation);
+  }
+  
   // bring out your dead
   if (this->IsDead() && this->sprite.currentAnimation == 0) {
     if (this->properties->respawn) {
       // just respawn
       SetPosition(spawnPos);
       Start(state, id);
+      Log("respawning %s\n", this->properties->name.c_str());
     } else {
+      Log("marking %s as removable\n", this->properties->name.c_str());
       this->removable = true;
     }
     return;
   }
-
-  if (this->dieT && state.GetGame().GetTime() > this->dieT) {
-    this->Die(state, HealthInfo());
-    return;
-  }
   
+  this->sprite.Update(deltaT);
+
   // think, mcfly, think
   while(properties->thinkInterval && nextThinkT < t) {
     nextThinkT += properties->thinkInterval;
     Think(state);
   }
 
-  this->sprite.Update(deltaT);
   this->inventory.Update(state, *this);
   this->smoothPosition.Update(deltaT);
   

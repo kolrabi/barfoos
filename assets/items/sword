@@ -13,7 +13,7 @@ hand
 UnidentifiedName "Sword"
 IdentifiedName   "Iron Sword"
 
-# OnUseSpawnProjectile projectile.test
+OnUseSpawnProjectile projectile.test
 # CanUseNothing
 CanUseEntity
 
