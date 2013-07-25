@@ -8,7 +8,8 @@
 class Mob : public Entity {
 public:
 
-  Mob(const std::string &entityPropertyName);
+  Mob(const std::string &type);
+  Mob(const std::string &type, Deserializer &deser);
   Mob(const Mob &that) = delete;
   virtual ~Mob();
   
@@ -26,6 +27,8 @@ public:
   void AddVelocity(const Vector3 &v) { velocity = velocity + v; }
   const Vector3 &GetVelocity() const { return velocity; }
 
+  virtual void              Serialize(Serializer &ser)        const;
+  
 protected:
 
   Vector3 velocity, move;

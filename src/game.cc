@@ -7,7 +7,9 @@
 #include "feature.h"
 #include "entity.h"
 #include "gui.h"
+
 #include "serializer.h"
+#include "deserializer.h"
 
 #include "mainmenustate.h"
 
@@ -200,4 +202,25 @@ Serializer &operator << (Serializer &ser, const Game &game) {
   ser << game.seed;
   ser << game.identifiedItems;
   return ser;
+}
+
+Deserializer &operator >> (Deserializer &deser, Game &game) {
+  deser >> game.lastT;
+  deser >> game.seed;
+  deser >> game.identifiedItems;
+
+  game.startT = game.GetGfx().GetTime()-game.lastT;
+  game.random.Seed(game.seed, 0);
+
+  std::string scrolls = loadAssetAsString("text/scrolls");
+  game.scrollMarkov.clear();
+  game.scrollMarkov.add(0, scrolls.begin(), scrolls.end());
+  
+  LoadCells();
+  LoadFeatures();
+  LoadEntities();
+  LoadEffects();
+  LoadItems(game);
+  
+  return deser;
 }

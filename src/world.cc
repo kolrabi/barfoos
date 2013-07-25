@@ -4,10 +4,8 @@
 #include "cell.h"
 #include "mob.h"
 #include "simplex.h"
-#include "particle.h"
 
 #include "random.h"
-#include "serializer.h"
 #include "worldedit.h"
 
 #include "runningstate.h"
@@ -15,6 +13,9 @@
 #include "gfx.h"
 
 #include "vertex.h"
+
+#include "serializer.h"
+#include "deserializer.h"
 
 World::World(RunningState &state, const IVector3 &size) : 
   state(state),
@@ -38,6 +39,34 @@ World::World(RunningState &state, const IVector3 &size) :
   checkOverwriteOK(true)
 {  
   glGenBuffers(1, &this->vbo);
+}
+
+World::World(RunningState &state, Deserializer &deser) : 
+  state(state),
+  dirty(true),
+  firstDirty(true),
+  defaultCell("default"),
+  dynamicCells(0),
+  allVerts(0),
+  vertexStarts(),
+  vertexCounts(),
+  vbo(0),
+  checkOverwrite(false),
+  checkOverwriteOK(true)
+{
+  deser >> this->size;
+  cellCount = size.x * size.y * size.z;
+
+  this->cells.resize(cellCount);
+  for (size_t i = 0; i<cellCount; i++) {
+    deser >> this->cells[i];
+  }
+    
+  deser >> this->defaultMask;
+  deser >> this->nextTickT;
+  deser >> this->tickInterval;
+  deser >> this->ambientLight;
+  deser >> this->seenFeatures;
 }
 
 World::~World() {
@@ -876,7 +905,7 @@ World::BreakBlock(const IVector3 &pos) {
   if (particleType != "") {
     Random &random = state.GetRandom();
     for (size_t i=0; i<4; i++) {
-      Mob *particle = new Particle(particleType);
+      Mob *particle = new Mob(particleType);
       Vector3 s = aabb.extents - particle->GetAABB().extents;
       Vector3 p = random.Vector() * s + aabb.center;
       particle->SetPosition(p);
@@ -888,7 +917,10 @@ World::BreakBlock(const IVector3 &pos) {
 
 Serializer &operator << (Serializer &ser, const World &world) {
   ser << world.size;
-  ser << world.cells;
+  
+  for (auto &c:world.cells)
+    ser << c;
+    
   ser << world.defaultMask;
   ser << world.nextTickT;
   ser << world.tickInterval;

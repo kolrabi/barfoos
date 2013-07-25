@@ -19,6 +19,7 @@ public:
   
   void ExitGame();
   void NewGame();
+  void ContinueGame();
 
 private:
 

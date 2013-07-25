@@ -26,6 +26,7 @@ public:
   Serializer &operator << (int64_t);
   
   Serializer &operator << (float);
+  Serializer &operator << (bool);
   Serializer &operator << (const std::string &str);
   Serializer &operator << (const IVector3 &v);
   Serializer &operator << (const Vector3 &v);
@@ -33,6 +34,13 @@ public:
   
   template<class T>
   Serializer &operator << (const std::vector<T> &v) {
+    self << v.size();
+    for (auto &e:v) self << e;
+    return *this;
+  }
+  
+  template<class T>
+  Serializer &operator << (const std::list<T> &v) {
     self << v.size();
     for (auto &e:v) self << e;
     return *this;

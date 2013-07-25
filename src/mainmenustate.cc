@@ -47,3 +47,10 @@ void MainMenuState::NewGame() {
   
   nextState = runningState;
 }
+
+void MainMenuState::ContinueGame() {
+  RunningState *runningState = new RunningState(GetGame());
+  runningState->ContinueGame();
+  
+  nextState = runningState;
+}

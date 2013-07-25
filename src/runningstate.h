@@ -16,6 +16,7 @@ public:
   virtual void          HandleEvent(const InputEvent &) override;
 
   void                  NewGame();
+  void                  ContinueGame();
   
   World  &              GetWorld()                  const { return *this->world;  }
   int                   GetLevel()                  const { return this->level;   }
@@ -38,6 +39,9 @@ public:
   
   void                  Explosion(Entity &entity, const Vector3 &pos, size_t radius, float strength, float damage, Element element);
   
+  void                  SaveLevel();
+  void                  LoadLevel();
+  
 private:
 
   int    level;
@@ -59,8 +63,10 @@ private:
   
   volatile bool saving;
   void Save();
+  void Load();
   
   friend Serializer &operator << (Serializer &ser, const RunningState &state);
+  friend Deserializer &operator >> (Deserializer &deser, RunningState &state);
 };
 
 #endif

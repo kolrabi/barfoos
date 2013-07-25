@@ -11,6 +11,7 @@ class World final {
 public:
 
   World(RunningState &state, const IVector3 &size);
+  World(RunningState &state, Deserializer &deser);
   World(const World &world) = delete;
   World(World &&world) = delete;
   ~World();

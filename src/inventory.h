@@ -93,6 +93,7 @@ private:
   float lastT;
   
   friend Serializer &operator << (Serializer &ser, const Inventory &inventory);
+  friend Deserializer &operator >> (Deserializer &ser, Inventory &inventory);
 };
 
 #endif

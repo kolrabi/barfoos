@@ -17,6 +17,7 @@
 
 // containers
 #include <vector>
+#include <list>
 
 // ====================================================================================
 
@@ -57,6 +58,7 @@ struct Vector3;
 struct Vertex;
 
 class Cell;
+class Deserializer;
 class Entity;
 class Game;
 class GameState;

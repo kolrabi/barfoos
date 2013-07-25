@@ -43,7 +43,6 @@ barfoos_SOURCES=\
   mob.cc mob.h \
   player.cc player.h \
   itementity.cc itementity.h \
-  particle.cc particle.h \
   projectile.cc projectile.h \
   \
   cell.cc cell.h \
@@ -60,6 +59,7 @@ barfoos_SOURCES=\
   util.cc util.h \
   aabb.h 2d.h \
   serializer.cc serializer.h \
+  deserializer.cc deserializer.h \
   input.cc input.h \
   profile.cc profile.h \
   log.cc log.h \

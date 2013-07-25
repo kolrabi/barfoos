@@ -167,6 +167,8 @@ protected:
   size_t amount;
   
   friend Serializer &operator << (Serializer &ser, const Item &item);
+  friend Deserializer &operator >> (Deserializer &ser, Item *&item);
+  friend Deserializer &operator >> (Deserializer &ser, Inventory &inventory);
 };
 
 #endif

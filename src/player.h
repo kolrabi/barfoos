@@ -11,6 +11,7 @@ class Player final : public Mob {
 public:
 
   Player();
+  Player(Deserializer &deser);
   Player(const Player &) = delete;
   virtual ~Player();
 
@@ -42,6 +43,8 @@ public:
   
   void SetUniforms(const std::shared_ptr<Shader> &shader) const;
   
+  virtual void              Serialize(Serializer &ser)        const;
+  
 private:
 
   struct Message {
@@ -49,11 +52,19 @@ private:
     float messageTime;
 
     Message(const std::string &text, const std::string &font);
-    Message(const Message &) = default;
+    Message(Message &&other) {
+      this->text = other.text;
+      this->messageTime = other.messageTime;
+      other.text = nullptr;
+    }
+    
     ~Message();
     
     Message &operator=(const Message &) = default;
   };
+  
+  friend Serializer &operator << (Serializer &ser, const Message *msg);
+  friend Deserializer &operator >> (Deserializer &ser, Message *&msg);
 
   // rendering
   const Texture *crosshairTex;
@@ -69,7 +80,7 @@ private:
 
   bool itemActiveLeft, itemActiveRight;
   
-  std::unordered_map<HealthType, float> lastHurtT;
+  std::unordered_map<size_t, float> lastHurtT;
   float pain;
 
   // display

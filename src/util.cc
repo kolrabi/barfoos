@@ -5,6 +5,7 @@
 #include "aabb.h"
 
 #include "serializer.h"
+#include "deserializer.h"
 
 #include <sstream>
 #include <cstring>
@@ -74,4 +75,8 @@ std::vector<std::string> Tokenize(const char *l) {
 
 Serializer &operator << (Serializer &ser, const AABB &aabb) {
   return ser << aabb.center << aabb.extents;
+}
+
+Deserializer &operator >> (Deserializer &deser, AABB &aabb) {
+  return deser >> aabb.center >> aabb.extents;
 }

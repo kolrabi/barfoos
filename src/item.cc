@@ -7,7 +7,9 @@
 #include "projectile.h"
 #include "texture.h"
 #include "text.h"
+
 #include "serializer.h"
+#include "deserializer.h"
 
 #include <unordered_map>
 #include <algorithm>
@@ -513,3 +515,26 @@ Serializer &operator << (Serializer &ser, const Item &item) {
   
   return ser;
 }
+
+Deserializer &operator >> (Deserializer &deser, Item *&item) {
+  Log("deser item\n");
+  
+  std::string type, effect;
+  deser >> type >> effect;
+
+  item = new Item(type);
+  item->initDone = true; 
+
+  item->effect = &getEffect(effect);
+
+  // deser << item->sprite;
+  deser >> item->cooldownFrac;
+  deser >> item->durability;
+  deser >> item->nextUseT;
+
+  deser >> (int8_t&)item->beatitude >> item->modifier;
+  deser >> item->amount;
+
+  return deser;
+}
+

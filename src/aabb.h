@@ -161,6 +161,7 @@ struct AABB {
   operator std::string() const;
 
   friend Serializer &operator << (Serializer &ser, const AABB &aabb);
+  friend Deserializer &operator >> (Deserializer &deser, AABB &aabb);
 };
 
 #endif

@@ -9,10 +9,9 @@ class Projectile : public Mob {
 public:
 
   Projectile(const std::string &type);
-  virtual ~Projectile();
+  Projectile(const std::string &type, Deserializer &deser);
 
   virtual void Start(RunningState &state, size_t id) override;
-  virtual void Update(RunningState &state) override;
 
   virtual void OnCollide(RunningState &state, Cell &cell, Side side) override;
   

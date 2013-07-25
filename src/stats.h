@@ -69,7 +69,9 @@ struct HealthInfo {
 struct Buff {
   const EffectProperties *effect;
   float startT;
+  
   friend Serializer &operator << (Serializer &ser, const Buff &buff);
+  friend Deserializer &operator >> (Deserializer &deser, Buff &buff);
 };
 
 struct Stats {
@@ -98,6 +100,7 @@ struct Stats {
   static float GetExpForLevel(size_t lvl);
   
   friend Serializer &operator << (Serializer &ser, const Stats &stats);
+  friend Deserializer &operator >> (Deserializer &deser, Stats &stats);
 };
 
 #endif

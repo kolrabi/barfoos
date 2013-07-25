@@ -16,6 +16,12 @@ ItemEntity::ItemEntity(const std::shared_ptr<Item> &item) :
   item(item) {
 }
 
+ItemEntity::ItemEntity(Deserializer &deser) : Mob("item", deser) {
+  Item *item;
+  deser >> item;
+  this->item = std::shared_ptr<Item>(item);
+}
+
 ItemEntity::~ItemEntity() {
 }
 
@@ -46,4 +52,9 @@ void ItemEntity::OnUse(RunningState &, Entity &other) {
   if (!this->removable && other.GetInventory().AddToBackpack(this->item)) {
     this->removable = true;
   }
+}
+
+void ItemEntity::Serialize(Serializer &ser) const {
+  Mob::Serialize(ser);
+  ser << *this->item;
 }

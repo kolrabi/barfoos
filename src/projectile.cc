@@ -8,7 +8,7 @@ Projectile::Projectile(const std::string &type) :
   Mob(type)
 {}
 
-Projectile::~Projectile() {
+Projectile::Projectile(const std::string &type, Deserializer &deser) : Mob(type, deser) {
 }
 
 void Projectile::Start(RunningState &state, size_t id) {
@@ -17,10 +17,6 @@ void Projectile::Start(RunningState &state, size_t id) {
   Vector3 fwd   = (GetAngles()).EulerToVector();
   this->SetPosition(state.GetWorld().MoveAABB(this->aabb, this->GetPosition() + fwd));
   this->AddVelocity(fwd * this->properties->maxSpeed);
-}
-
-void Projectile::Update(RunningState &state) {
-  Mob::Update(state);
 }
 
 void 

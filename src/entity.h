@@ -108,7 +108,8 @@ std::vector<std::string> GetEntitiesInGroup(const std::string &group);
 
 class Entity {
 public:
-  Entity(const std::string &visualName);
+  Entity(const std::string &type);
+  Entity(const std::string &type, Deserializer &deser);
   Entity(const Entity &that) = delete;
   virtual ~Entity();
   
@@ -144,7 +145,7 @@ public:
   // gameplay
   
   bool                      IsSolid()                         const { return properties->isSolid; }
-  bool                      IsDead()                          const { return this->health <= 0 && this->properties->maxHealth != 0;}
+  bool                      IsDead()                          const { return this->isDead; }
   Inventory &               GetInventory()                          { return this->inventory; }
   
   void                      SetSpawnPos(const Vector3  &p)          { this->spawnPos = p; }
@@ -185,6 +186,7 @@ protected:
   
   // gameplay
   float dieT;
+  bool isDead;
   Smooth<Vector3> smoothPosition = Smooth<Vector3>(30.0);
   Vector3 lastPos;
   Vector3 spawnPos;
@@ -208,7 +210,9 @@ protected:
   std::vector<ParticleEmitter> emitters = std::vector<ParticleEmitter>(0);
   
   virtual SpawnClass GetSpawnClass() const { return SpawnClass::EntityClass; }
+  
   friend Serializer &operator << (Serializer &ser, const Entity *entity);
+  friend Deserializer &operator >> (Deserializer &deser, Entity *&entity);
 };
 
 #endif

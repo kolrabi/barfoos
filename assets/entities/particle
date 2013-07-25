@@ -16,5 +16,5 @@ extents 0.1 0.1 0.1
 nohit
 nocollideentity
 
-lifetime 5
+lifetime 0.5
 

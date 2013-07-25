@@ -5,6 +5,9 @@
 #include "runningstate.h"
 #include "item.h"
 
+#include "serializer.h"
+#include "deserializer.h"
+
 #include <cmath>
 
 Mob::Mob(const std::string &propertyName) : 
@@ -34,13 +37,33 @@ Mob::Mob(const std::string &propertyName) :
   groundCell      (nullptr)
 {}
 
+Mob::Mob(const std::string &type, Deserializer &deser) : Entity(type, deser),
+  wantJump        (false),
+  
+  inWater         (false),
+  underWater      (false),
+  
+  headCell        (nullptr),
+  footCell        (nullptr),
+  groundCell      (nullptr)
+{
+  deser >> velocity;
+  deser >> lastJumpT;
+  deser >> onGround;
+  deser >> noclip;
+  deser >> sneak;
+  
+  deser >> nextMoveT >> moveTarget >> validMoveTarget;
+  
+  deser >> attackTarget >> nextAttackT;
+}
+
 Mob::~Mob() {
 }
 
 void 
 Mob::Start(RunningState &state, size_t id) {
   Entity::Start(state, id);
-  this->sprite.t = state.GetRandom().Float01();
   if (properties->attackItem != "") {
     this->attackItem = std::shared_ptr<Item>(new Item(properties->attackItem));
     this->attackItem->Update(state);
@@ -305,4 +328,19 @@ Mob::GetMoveModifier() const {
   if (sneak) mod *= 0.5;
   if (this->footCell) mod *= this->footCell->GetInfo().speedModifier;
   return mod * (1.0 + GetEffectiveStats().agi * Const::WalkSpeedFactorPerAGI);
+}
+
+void
+Mob::Serialize(Serializer &ser) const {
+  Entity::Serialize(ser);
+  
+  ser << velocity;
+  ser << lastJumpT;
+  ser << onGround;
+  ser << noclip;
+  ser << sneak;
+  
+  ser << nextMoveT << moveTarget << validMoveTarget;
+  
+  ser << attackTarget << nextAttackT;
 }

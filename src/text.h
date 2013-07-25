@@ -31,11 +31,15 @@ public:
   void WrapWords(size_t width);
   
   const Font & GetFont()  const { return font; }
+  const std::string & GetFontName()  const;
   const Point &GetSize();
+  
+  const std::string &GetText() const { return mbString; }
 
 private:
 
   const Font &font;
+  std::string mbString;
   std::wstring text;
   std::wstring wrappedText;
   size_t dirty;

@@ -23,6 +23,14 @@ MainMenuGui::MainMenuGui(MainMenuState &state) :
   btnNewGame->SetText("New Game");
   btnNewGame->SetOnActivate([&](Gui*){state.NewGame();});
   this->AddChild(btnNewGame);
+
+  Gui *btnContinue = new Gui();
+  btnContinue->SetSize(Point(128, 32));
+  btnContinue->SetCenter(vscreen/2 + Point(64, 0));
+  btnContinue->SetGravity(false, false, false, false);
+  btnContinue->SetText("Continue");
+  btnContinue->SetOnActivate([&](Gui*){state.ContinueGame();});
+  this->AddChild(btnContinue);
 }
 
 MainMenuGui::~MainMenuGui() {

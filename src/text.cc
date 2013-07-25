@@ -9,6 +9,8 @@ struct Font {
   const Texture *texture;
   Point size;
   
+  std::string name;  
+  
   Font() :
     texture(0),
     size(0,0)
@@ -16,7 +18,8 @@ struct Font {
   
   Font(const std::string &name) :
     texture(loadTexture("gui/font."+name)),
-    size( texture->size.x / 32, texture->size.y / 8 )
+    size( texture->size.x / 32, texture->size.y / 8 ),
+    name(name)
   {}
 };
 
@@ -100,6 +103,7 @@ decode_error:
 
 RenderString::RenderString(const std::string &text, const std::string &fontName) : 
   font(loadFont(fontName)), 
+  mbString(""),
   text(L""),
   wrappedText(L""),
   dirty(true),
@@ -225,6 +229,10 @@ RenderString::GetSize() {
   return size;
 }
 
+const std::string &RenderString::GetFontName() const {
+  return this->font.name;
+}
+
 void 
 RenderString::WrapWords(size_t width) {
   this->dirty = true;
@@ -270,6 +278,7 @@ RenderString::WrapWords(size_t width) {
 void
 RenderString::SetText(const std::string &text) {
   const char *p = text.c_str();
+  this->mbString = text;
 
   while (*p) {
     // convert utf8 to wchar_t

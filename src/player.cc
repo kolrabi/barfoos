@@ -14,6 +14,9 @@
 
 #include "input.h"
 
+#include "serializer.h"
+#include "deserializer.h"
+
 #include <sstream>
 
 Player::Player() : 
@@ -53,6 +56,36 @@ Player::Player() :
   this->inventory.Equip(std::make_shared<Item>(Item("torch")), InventorySlot::LeftHand);
   this->inventory.AddToBackpack(std::make_shared<Item>(Item("torch")));
   
+}
+
+Player::Player(Deserializer &deser) : Mob("player", deser),
+  // rendering
+  crosshairTex      (loadTexture("gui/crosshair")),
+  slotTex           (loadTexture("gui/slot")),
+  
+  bobPhase          (0.0),
+  bobAmplitude      (0.0),
+  
+  // gameplay
+  selectedEntity    (~0UL),
+  selectedCell      (nullptr),
+  selectedCellSide  (Side::Forward),
+  selectionRange    (0.0),
+
+  itemActiveLeft    (false),
+  itemActiveRight   (false),
+  lastHurtT         (),
+  pain              (0.0),
+
+  // display
+  fps               (0.0),
+  
+  leftHand          (new Item("barehand.player")),
+  rightHand         (new Item("barehand.player"))
+{
+  deser >> pain;
+  deser >> messages >> messageY >> messageVY;
+  deser >> lastHurtT;
 }
 
 Player::~Player() {
@@ -385,8 +418,8 @@ Player::AddHealth(RunningState &state, const HealthInfo &info) {
   
   int hp = this->health;
   if (info.amount < 0) {
-    if (!IsContinuous(info.type) || game.GetTime() > lastHurtT[info.type] + 0.25) {
-    }
+    //if (!IsContinuous(info.type) || game.GetTime() > lastHurtT[(size_t)info.type] + 0.25) {
+    //}
     this->pain -= info.amount / this->properties->maxHealth;
   }
   
@@ -394,7 +427,7 @@ Player::AddHealth(RunningState &state, const HealthInfo &info) {
   int hp2 = this->health;
   if (hp2 < hp) {
     this->AddMessage("Ouch!");
-    lastHurtT[info.type] = game.GetTime();
+    lastHurtT[(size_t)info.type] = game.GetTime();
   }
   
   Entity *other = state.GetEntity(info.dealerId);
@@ -481,6 +514,15 @@ Player::OnEquip(RunningState &state, const Item &item, InventorySlot slot, bool 
   }
 }
 
+void 
+Player::Serialize(Serializer &ser) const {
+  Mob::Serialize(ser);
+  
+  ser << pain;
+  ser << messages << messageY << messageVY;
+  ser << lastHurtT;
+}
+
 Player::Message::Message(const std::string &txt, const std::string &font) :
   text(new RenderString(txt, font)),
   messageTime(5)
@@ -490,3 +532,18 @@ Player::Message::~Message() {
   delete text;
 }
 
+Serializer &operator << (Serializer &ser, const Player::Message *msg) {
+  return ser << msg->text->GetText() << msg->text->GetFontName() << msg->messageTime;
+}
+
+Deserializer &operator >> (Deserializer &deser, Player::Message *&msg) {
+  std::string str, font;
+  float t;
+  deser >> str >> font >> t;
+  
+  msg = new Player::Message(str, font);
+  msg->messageTime = t;
+  
+  return deser;
+  
+}

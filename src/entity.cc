@@ -9,9 +9,11 @@
 #include "input.h"
 #include "texture.h"
 #include "player.h"
+#include "projectile.h"
 #include "runningstate.h"
+
 #include "serializer.h"
-#include "particle.h"
+#include "deserializer.h"
 
 #include <unordered_map>
 
@@ -158,6 +160,7 @@ Entity::Entity(const std::string &type) :
   nextThinkT(0.0),
   startT(0.0),
   dieT(0.0),
+  isDead(false),
   lastPos(),
   spawnPos(),
   angles(),
@@ -172,6 +175,21 @@ Entity::Entity(const std::string &type) :
   cellLight(0,0,0),
   emitters(this->properties->emitters)
 {
+}
+
+Entity::Entity(const std::string &type, Deserializer &deser) : Entity(type) {
+  deser >> ownerId;
+  deser >> nextThinkT;
+  deser >> startT;
+  deser >> lastPos >> spawnPos >> angles;
+  
+  deser >> baseStats;
+  deser >> activeBuffs;
+  deser >> aabb;
+  
+  deser >> health;
+  deser >> inventory;
+  //deser >> sprite;
 }
 
 Entity::~Entity() {
@@ -253,6 +271,7 @@ Entity::Update(RunningState &state) {
   if (this->IsDead() && this->sprite.currentAnimation == 0) {
     if (this->properties->respawn) {
       // just respawn
+      this->isDead = false;
       SetPosition(spawnPos);
       Start(state, id);
       Log("respawning %s\n", this->properties->name.c_str());
@@ -279,7 +298,7 @@ Entity::Update(RunningState &state) {
       e.state += e.rate * deltaT;
       
       for (int n = 0; n<int(e.state); n++) {
-        Mob *particle = new Particle(e.name);
+        Mob *particle = new Mob(e.name);
         Vector3 p = state.GetRandom().Vector() * e.aabb.extents + e.aabb.center + this->aabb.center;
         particle->SetPosition(p);
         particle->AddVelocity(e.velocity);
@@ -381,6 +400,8 @@ Entity::AddHealth(RunningState &state, const HealthInfo &info) {
 
 void
 Entity::Die(RunningState &state, const HealthInfo &info) {
+  this->isDead = true;
+  
   if (info.dealerId != ~0UL) {
     state.GetPlayer().AddDeathMessage(*this, *state.GetEntity(info.dealerId), info);
   } else {
@@ -453,8 +474,29 @@ Entity::Serialize(Serializer &ser) const {
 }
 
 Serializer &operator << (Serializer &ser, const Entity *entity) {
-  ser << (char)entity->GetSpawnClass();
+  ser << (uint8_t)entity->GetSpawnClass();
   ser << entity->properties->name;
   entity->Serialize(ser);
   return ser;
+}
+
+Deserializer &operator >> (Deserializer &deser, Entity *&entity) {
+  Log("deser Entity\n");
+  
+  uint8_t cl;
+  deser >> cl;
+  
+  std::string type;
+  deser >> type;
+  
+  switch(SpawnClass(cl)) {
+    case SpawnClass::EntityClass:     entity = new Entity(type, deser); break;
+    case SpawnClass::MobClass:        entity = new Mob(type, deser);    break;
+    case SpawnClass::ItemEntityClass: entity = new ItemEntity(deser); break;
+    case SpawnClass::PlayerClass:     entity = new Player(deser); break;
+    case SpawnClass::ProjectileClass: entity = new Projectile(type, deser); break;
+    default: entity = nullptr;
+  }
+  
+  return deser;
 }

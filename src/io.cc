@@ -133,3 +133,10 @@ FILE *createUserFile(const std::string &name) {
   perror(path.c_str());
   return file;
 }
+
+FILE *openUserFile(const std::string &name) {
+  std::string path = getUserPath(name);
+  FILE *file = fopen(path.c_str(), "rb");
+  perror(path.c_str());
+  return file;
+}

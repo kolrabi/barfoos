@@ -10,6 +10,7 @@
 #include "simplex.h"
 
 #include "serializer.h"
+#include "deserializer.h"
 
 Inventory::Inventory() :
   inventory(),
@@ -249,8 +250,26 @@ Serializer &operator << (Serializer &ser, const Inventory &inventory) {
   
   ser << count;
   for (auto item : inventory.inventory) {
-    if (item.second) ser << *item.second;
+    if (item.second) ser << (uint32_t)item.first << *item.second;
   }
   return ser;
 }
 
+Deserializer &operator >> (Deserializer &deser, Inventory &inventory) {
+  inventory.inventory.clear();
+  
+  size_t count;
+  deser >> count;
+  
+  for (size_t i = 0; i<count; i++) {
+    uint32_t slot;
+    deser >> slot;
+    
+    Item *item;
+    deser >> item;
+    
+    inventory.inventory[(InventorySlot)slot] = std::shared_ptr<Item>(item);
+    item->isEquipped = slot < (int)InventorySlot::Backpack0;
+  }
+  return deser;
+}

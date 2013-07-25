@@ -75,6 +75,7 @@ private:
   std::vector<std::string> identifiedItems;
   
   friend Serializer &operator << (Serializer &ser, const Game &game);
+  friend Deserializer &operator >> (Deserializer &deser, Game &game);
 };
 
 class GameState {

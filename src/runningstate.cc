@@ -10,6 +10,7 @@
 #include "input.h"
 
 #include "serializer.h"
+#include "deserializer.h"
 
 #include <algorithm>
 
@@ -41,7 +42,7 @@ RunningState::Enter() {
 
 void
 RunningState::Leave(GameState *) {
-  //this->Save();
+  this->Save();
 }
 
 void
@@ -60,6 +61,11 @@ RunningState::NewGame() {
   Entity *entity = new Entity("box");
   entity->SetPosition(IVector3(32,24,32));
   this->AddEntity(entity);
+}
+
+void
+RunningState::ContinueGame() {
+  Load();
 }
 
 void
@@ -456,34 +462,82 @@ RunningState::Save() {
   Log("Saving...\n");
   this->saving = true;
   
-  FILE *f;
-  
   Serializer serGame("GAME");
   serGame << GetGame();
   serGame << self;
   
-  f = createUserFile("game");
+  FILE *f = createUserFile("game");
   if (f) serGame.WriteToFile(f);
   fclose(f);
   
-  Serializer serLevel("LEVL");
-  serLevel << *world;
+  SaveLevel();
   
-  f = createUserFile("level." + ToString(level));
+  this->saving = false;
+}
+
+void 
+RunningState::SaveLevel() {
+  Serializer ser("LEVL");
+  ser << *world;
+  ser << this->nextEntityId;
+  ser << this->player->GetId();
+  ser << this->entities;
+  
+  FILE *f = createUserFile("level." + ToString(level));
   
   //std::thread([=](){
-    if (f) serLevel.WriteToFile(f);
+    if (f) ser.WriteToFile(f);
     fclose(f);
-
-    this->saving = false;
   //}).detach();
+}
+
+void 
+RunningState::LoadLevel() {
+  FILE *f = openUserFile("level." + ToString(level));
+  
+  Deserializer deser;
+  deser.LoadFromFile(f, "LEVL");
+  fclose(f);
+  
+  delete world;
+  world = new World(*this, deser);
+
+  size_t playerId;
+  deser >> playerId;
+  
+  deser >> this->entities;
+  
+  this->player = dynamic_cast<Player*>(this->entities[playerId]);
+  GetGame().GetGfx().SetPlayer(this->player);
+  
+  for (auto &e:this->entities) {
+    e.second->Start(*this, e.first);
+  }
+  
 }
 
 Serializer &operator << (Serializer &ser, const RunningState &state) {
   ser << state.level;
-  ser << state.nextEntityId;
-  ser << state.player->GetId();
-  ser << state.entities;
   return ser;
 }
 
+void 
+RunningState::Load() {
+  PROFILE();
+  Log("Loading...\n");
+  
+  Deserializer deser;
+  FILE *f = openUserFile("game");
+  deser.LoadFromFile(f, "GAME");
+  deser >> GetGame();
+  deser >> self;
+  
+  LoadLevel();
+}
+
+Deserializer &operator >> (Deserializer &deser, RunningState &state) {
+  deser >> state.level;
+  deser >> state.nextEntityId;
+  
+  return deser;
+}

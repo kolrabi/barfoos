@@ -6,11 +6,13 @@
 #include "mob.h"
 
 #include "random.h"
-#include "serializer.h"
 #include "vertex.h"
 
 #include "texture.h"
-  
+ 
+#include "serializer.h"
+#include "deserializer.h"
+ 
 #include <unordered_map>
 
 static std::unordered_map<std::string, CellProperties> cellProperties;
@@ -902,27 +904,6 @@ bool Cell::CheckSideSolid(Side side, const Vector3 &org) const {
   return (clipIn && heightCheck) || clipOut;
 }
 
-Serializer &operator << (Serializer &ser, const Cell &cell) {
-  ser << cell.info->type;
-  ser << (cell.texture?cell.texture->name:"") << cell.uscale;
-  ser << cell.lastT << cell.tickPhase << cell.lastUseT;
-  ser << cell.lightLevel;
-  
-  ser << cell.shared.tickInterval;
-  ser << cell.shared.featureID;
-  ser << ((cell.shared.reversedTop ? 1 : 0) | (cell.shared.reversedBottom ? 2 : 0));
-  
-  for (int i=0; i<4; i++) {
-    ser << cell.shared.topHeights[i];
-    ser << cell.shared.bottomHeights[i];
-    ser << cell.shared.u[i];
-    ser << cell.shared.v[i];
-  }
-  
-  ser << cell.shared.detail << cell.shared.smoothDetail;
-  return ser;
-}
-
 void Cell::SetWorld(World *world, const IVector3 &pos) { 
   this->world = world; 
   
@@ -984,4 +965,59 @@ Cell::Ray(const Vector3 &start, const Vector3 &dir, float &t, Vector3 &p) const 
   }
   
   return hit;
+}
+
+
+Serializer &operator << (Serializer &ser, const Cell &cell) {
+  ser << cell.info->type;
+  ser << (cell.texture?cell.texture->name:"") << cell.uscale;
+  ser << cell.lastT << cell.tickPhase << cell.lastUseT;
+  ser << cell.lightLevel;
+  
+  ser << cell.shared.tickInterval;
+  ser << cell.shared.featureID;
+  ser << uint8_t((cell.shared.reversedTop ? 1 : 0) | (cell.shared.reversedBottom ? 2 : 0));
+  
+  for (int i=0; i<4; i++) {
+    ser << cell.shared.topHeights[i];
+    ser << cell.shared.bottomHeights[i];
+    ser << cell.shared.u[i];
+    ser << cell.shared.v[i];
+  }
+  
+  ser << cell.shared.detail << cell.shared.smoothDetail;
+  return ser;
+}
+
+Deserializer &operator >> (Deserializer &deser, Cell &cell) {
+  std::string cellType;
+  deser >> cellType;
+  
+  cell = Cell(cellType);
+  
+  std::string textureName;
+  deser >> textureName;
+  if (textureName != "") cell.texture = loadTexture(textureName);
+  
+  deser >> cell.uscale;
+  deser >> cell.lastT >> cell.tickPhase >> cell.lastUseT;
+  deser >> cell.lightLevel;
+  
+  deser >> cell.shared.tickInterval;
+  deser >> cell.shared.featureID;
+  
+  uint8_t flags;
+  deser >> flags;
+  cell.shared.reversedTop = flags & 1;
+  cell.shared.reversedBottom = flags & 2;
+  
+  for (int i=0; i<4; i++) {
+    deser >> cell.shared.topHeights[i];
+    deser >> cell.shared.bottomHeights[i];
+    deser >> cell.shared.u[i];
+    deser >> cell.shared.v[i];
+  }
+  
+  deser >> cell.shared.detail >> cell.shared.smoothDetail;
+  return deser;
 }

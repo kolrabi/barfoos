@@ -69,6 +69,15 @@ bool Serializer::WriteToFile(FILE *f) {
   for (auto &s:strings) {
     if (fwrite(s.c_str(), s.size()+1, 1, f) != 1) return false;
   }
+
+  uint8_t count[4] = {
+    uint8_t((this->byteCount    ) & 0xFF),
+    uint8_t((this->byteCount>> 8) & 0xFF),
+    uint8_t((this->byteCount>>16) & 0xFF),
+    uint8_t((this->byteCount>>24) & 0xFF)
+  };  
+  
+  if (fwrite(count, sizeof(count), 1, f) != 1) return false;
   
   if (fwrite(this->bytes, this->byteCount, 1, f) != 1) {
     return false;
@@ -130,12 +139,18 @@ Serializer &Serializer::operator << (float v) {
   return (*this) << u.i;
 }
 
+Serializer &Serializer::operator << (bool v) {
+  return self << uint8_t(v?0xAA:0);
+}
+
 Serializer &Serializer::operator << (const std::string & str) {
   return (*this) << AddString(str);
 }
 
 Serializer &Serializer::operator << (const std::vector<bool> &v) {
   uint32_t s = v.size()/8+1;
+  
+  Log("ser vector<bool>: %u bits %u bytes\n", v.size(), s);
   
   self << v.size();
   for (uint32_t n = 0; n<s; n++) {

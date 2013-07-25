@@ -12,6 +12,7 @@ public:
 
   ItemEntity(const std::string &itemName);
   ItemEntity(const std::shared_ptr<Item> &item);
+  ItemEntity(Deserializer &deser);
   virtual ~ItemEntity();
 
   virtual void Draw(Gfx &gfx) const override;
@@ -20,6 +21,8 @@ public:
   
   virtual void OnUse(RunningState &state, Entity &other) override;
 
+  virtual void              Serialize(Serializer &ser)        const;
+  
 protected:
 
   std::shared_ptr<Item> item;

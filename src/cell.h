@@ -266,6 +266,7 @@ protected:
   bool Flow(Side side);
   
   friend Serializer &operator << (Serializer &ser, const Cell &cell);
+  friend Deserializer &operator >> (Deserializer &deser, Cell &cell);
 };
 
 Serializer &operator << (Serializer &ser, const Cell &);

@@ -4,6 +4,7 @@
 #include "random.h"
 
 #include "serializer.h"
+#include "deserializer.h"
 
 #include <cstring>
 
@@ -134,6 +135,22 @@ Serializer &operator << (Serializer &ser, const Stats &stats) {
 Serializer &operator << (Serializer &ser, const Buff &buff) {
   ser << buff.effect->name << buff.startT;
   return ser;
+}
+
+Deserializer &operator >> (Deserializer &deser, Stats &stats) {
+  deser >> stats.str;
+  deser >> stats.dex >> stats.agi >> stats.def;
+  deser >> stats.maxHealth >> stats.exp >> stats.sp >> stats.walkSpeed;
+  return deser;
+}
+
+Deserializer &operator >> (Deserializer &deser, Buff &buff) {
+  std::string effectName;
+  deser >> effectName;
+  buff.effect = &getEffect(effectName);
+  
+  deser >> buff.startT;
+  return deser;
 }
 
 bool Stats::operator==(const Stats &o) {
