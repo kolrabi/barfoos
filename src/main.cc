@@ -54,13 +54,8 @@ int main(int argc, char **argv) {
     game->NewGame(argv[1]);
   
   Log("entering mainloop\n");
-  try {
     while(game->Frame()) 
       ;
-  } catch (std::exception &e) {
-    Log("Caught exception: %s\n", e.what());
-  }
-    
   Log("Shutting down\n");
   
   delete game;

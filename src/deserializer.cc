@@ -29,7 +29,7 @@ bool Deserializer::LoadFromFile(FILE *f, const char *magic, size_t magiclen) {
   if (!fread(magic2, magiclen, 1, f)) return false;
   if (memcmp(magic2, magic, magiclen)) return false;
   
-  size_t stringCount = fgetc(f) | (fgetc(f) << 8) | (fgetc(f) << 16) | (fgetc(f) << 24);
+  uint32_t stringCount = fgetc(f) | (fgetc(f) << 8) | (fgetc(f) << 16) | (fgetc(f) << 24);
   if (feof(f)) return false;
   
   std::string str;

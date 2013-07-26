@@ -16,6 +16,7 @@ public:
   Mob &operator=(const Mob &that) = delete;
 
   virtual void Start(RunningState &state, size_t id) override;
+  virtual void Continue(RunningState &state, size_t id) override;
   virtual void Update(RunningState &state) override;
   virtual void Think(RunningState &state) override;
   
