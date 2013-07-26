@@ -67,6 +67,11 @@ World::World(RunningState &state, Deserializer &deser) :
   deser >> this->tickInterval;
   deser >> this->ambientLight;
   deser >> this->seenFeatures;
+  
+  for (size_t i = 0; i<cellCount; i++) {
+    this->cells[i].SetWorld(this, GetCellPos(i));
+  }
+  glGenBuffers(1, &this->vbo);
 }
 
 World::~World() {

@@ -116,6 +116,7 @@ public:
   Entity &operator=(const Entity &that) = delete;
   
   virtual void Start(RunningState &state, size_t id);
+  virtual void Continue(RunningState &state, size_t id);
   virtual void Update(RunningState &state);
   virtual void Think(RunningState &state);
 

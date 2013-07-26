@@ -256,6 +256,11 @@ Entity::Start(RunningState &state, size_t id) {
   this->SetPosition(aabb.center + offset);
 }
 
+void
+Entity::Continue(RunningState &, size_t id) {
+  this->id = id;
+}
+
 void 
 Entity::Update(RunningState &state) {
   Game &game   = state.GetGame();

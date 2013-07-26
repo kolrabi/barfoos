@@ -205,9 +205,13 @@ Serializer &operator << (Serializer &ser, const Game &game) {
 }
 
 Deserializer &operator >> (Deserializer &deser, Game &game) {
+  Log("lastt %08x\n", deser.GetPos());
   deser >> game.lastT;
+  Log("seed %08x\n", deser.GetPos());
   deser >> game.seed;
+  Log("iditems %08x\n", deser.GetPos());
   deser >> game.identifiedItems;
+  Log("-- %08x\n", deser.GetPos());
 
   game.startT = game.GetGfx().GetTime()-game.lastT;
   game.random.Seed(game.seed, 0);

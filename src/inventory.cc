@@ -23,8 +23,9 @@ Inventory::operator[](InventorySlot slot) {
   return inventory[slot]; 
 }
 
-const std::shared_ptr<Item> &
+std::shared_ptr<Item> 
 Inventory::operator[](InventorySlot slot) const {
+  if (inventory.find(slot) == inventory.end()) return std::shared_ptr<Item>(nullptr);
   return inventory.at(slot);
 }
 

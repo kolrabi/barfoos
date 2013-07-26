@@ -467,8 +467,11 @@ RunningState::Save() {
   serGame << self;
   
   FILE *f = createUserFile("game");
-  if (f) serGame.WriteToFile(f);
-  fclose(f);
+  if (f) {
+    serGame.WriteToFile(f);
+    fclose(f); 
+    f = nullptr;
+  }
   
   SaveLevel();
   
@@ -479,7 +482,6 @@ void
 RunningState::SaveLevel() {
   Serializer ser("LEVL");
   ser << *world;
-  ser << this->nextEntityId;
   ser << this->player->GetId();
   ser << this->entities;
   
@@ -504,20 +506,21 @@ RunningState::LoadLevel() {
 
   size_t playerId;
   deser >> playerId;
-  
   deser >> this->entities;
   
   this->player = dynamic_cast<Player*>(this->entities[playerId]);
+  this->inventoryGui = std::shared_ptr<InventoryGui>(new InventoryGui(*this, *player));
   GetGame().GetGfx().SetPlayer(this->player);
   
   for (auto &e:this->entities) {
-    e.second->Start(*this, e.first);
+    e.second->Continue(*this, e.first);
   }
   
 }
 
 Serializer &operator << (Serializer &ser, const RunningState &state) {
   ser << state.level;
+  ser << state.nextEntityId;
   return ser;
 }
 
@@ -529,15 +532,20 @@ RunningState::Load() {
   Deserializer deser;
   FILE *f = openUserFile("game");
   deser.LoadFromFile(f, "GAME");
+
+  Log("game %08x\n", deser.GetPos());
   deser >> GetGame();
+  
+  Log("runningstate %08x\n", deser.GetPos());
   deser >> self;
   
   LoadLevel();
 }
 
 Deserializer &operator >> (Deserializer &deser, RunningState &state) {
-  deser >> state.level;
+  deser >> state.level; 
+  Log("%u\n", state.level);
   deser >> state.nextEntityId;
-  
+  Log("%u\n", state.nextEntityId);
   return deser;
 }

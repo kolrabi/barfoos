@@ -44,7 +44,7 @@ public:
   
 private:
 
-  int    level;
+  int32_t level;
   World *world;
   
   size_t nextEntityId;

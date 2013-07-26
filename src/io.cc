@@ -136,6 +136,7 @@ FILE *createUserFile(const std::string &name) {
 
 FILE *openUserFile(const std::string &name) {
   std::string path = getUserPath(name);
+  Log("%s\n", path.c_str());
   FILE *file = fopen(path.c_str(), "rb");
   perror(path.c_str());
   return file;

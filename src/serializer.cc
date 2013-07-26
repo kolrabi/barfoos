@@ -41,7 +41,7 @@ void Serializer::GrowBy(size_t n) {
   this->byteCapacity = newCapacity;
 }
 
-size_t Serializer::AddString(const std::string &str) {
+uint32_t Serializer::AddString(const std::string &str) {
   auto iter = std::find(strings.begin(), strings.end(), str);
   if (iter == strings.end()) {
     strings.push_back(str);
@@ -82,8 +82,6 @@ bool Serializer::WriteToFile(FILE *f) {
   if (fwrite(this->bytes, this->byteCount, 1, f) != 1) {
     return false;
   }
-  
-  fclose(f);
   return true;
 }
 
@@ -152,7 +150,7 @@ Serializer &Serializer::operator << (const std::vector<bool> &v) {
   
   Log("ser vector<bool>: %u bits %u bytes\n", v.size(), s);
   
-  self << v.size();
+  self << (uint32_t)v.size();
   for (uint32_t n = 0; n<s; n++) {
     size_t pos = n*8;
     uint8_t t = 0;

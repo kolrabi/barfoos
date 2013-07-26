@@ -71,6 +71,15 @@ Mob::Start(RunningState &state, size_t id) {
 }
 
 void 
+Mob::Continue(RunningState &state, size_t id) {
+  Entity::Continue(state, id);
+  if (properties->attackItem != "") {
+    this->attackItem = std::shared_ptr<Item>(new Item(properties->attackItem));
+    this->attackItem->Update(state);
+  }
+}
+
+void 
 Mob::Update(RunningState &state) {
   Entity::Update(state);
 

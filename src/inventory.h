@@ -66,7 +66,7 @@ public:
   void Update(RunningState &state, Entity &owner);
 
   std::shared_ptr<Item> &operator[](InventorySlot slot);
-  const std::shared_ptr<Item> &operator[](InventorySlot slot) const;
+  std::shared_ptr<Item> operator[](InventorySlot slot) const;
 
   bool AddToBackpack(const std::shared_ptr<Item> &item);
   bool AddToInventory(const std::shared_ptr<Item> &item, InventorySlot slot);

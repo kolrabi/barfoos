@@ -34,21 +34,21 @@ public:
   
   template<class T>
   Serializer &operator << (const std::vector<T> &v) {
-    self << v.size();
+    self << (uint32_t)v.size();
     for (auto &e:v) self << e;
     return *this;
   }
   
   template<class T>
   Serializer &operator << (const std::list<T> &v) {
-    self << v.size();
+    self << (uint32_t)v.size();
     for (auto &e:v) self << e;
     return *this;
   }
 
   template<class S, class T>
   Serializer &operator << (const std::unordered_map<S, T> &v) {
-    self << v.size();
+    self << (uint32_t)v.size();
     for (auto &e:v) self << e.first << e.second;
     return *this;
   }
@@ -68,7 +68,7 @@ private:
   size_t magicLen;
 
   void GrowBy(size_t n);
-  size_t AddString(const std::string &str);
+  uint32_t AddString(const std::string &str);
 };
 
 #endif

@@ -34,8 +34,9 @@ public:
   
   template<class T>
   Deserializer &operator >> (std::vector<T> &v) {
-    size_t size;
+    uint32_t size;
     self >> size;
+    Log("vector: %u\n", size);
     for (size_t i = 0; i<size; i++) {
       T data;
       self >> data;
@@ -46,7 +47,7 @@ public:
 
   template<class T>
   Deserializer &operator >> (std::list<T> &v) {
-    size_t size;
+    uint32_t size;
     self >> size;
     for (size_t i = 0; i<size; i++) {
       T data;
@@ -58,7 +59,7 @@ public:
   
   template<class S, class T>
   Deserializer &operator >> (std::unordered_map<S, T> &v) {
-    size_t size;
+    uint32_t size;
     self >> size;
     for (size_t i = 0; i<size; i++) {
       S s; 
@@ -72,7 +73,7 @@ public:
 
   template<class S, class T>
   Deserializer &operator >> (std::unordered_map<S, T*> &v) {
-    size_t size;
+    uint32_t size;
     self >> size;
     for (size_t i = 0; i<size; i++) {
       S s; 
@@ -87,6 +88,7 @@ public:
   Deserializer &operator >> (std::vector<bool> &v);
 
   bool LoadFromFile(FILE *f, const char *magic, size_t magiclen = 4);
+  size_t GetPos() const { return bytePos; }
   
 private:
 
