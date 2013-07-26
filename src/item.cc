@@ -64,6 +64,8 @@ ItemProperties::ParseProperty(const std::string &cmd) {
     Parse(this->sprite.height);
   } else if (cmd == "damage") {
     Parse(this->damage);
+  } else if (cmd == "knockback") {
+    Parse(this->knockback);
     
   } else if (cmd == "eqstr") {
     Parse(this->eqAddStr);
@@ -227,8 +229,9 @@ bool Item::CanUse(RunningState &state) const {
          this->nextUseT < state.GetGame().GetTime();
 }
   
-void Item::StartCooldown(RunningState &state, Entity &user) {
-  this->durability -= this->properties->useDurability * this->effect->useDurability;
+void Item::StartCooldown(RunningState &state, Entity &user, bool damage) {
+  if (damage) this->durability -= this->properties->useDurability * this->effect->useDurability;
+  
   this->nextUseT = state.GetGame().GetTime() + this->GetCooldown() / (1.0 + Const::AttackSpeedFactorPerAGI*user.GetEffectiveStats().agi);
 }
 
@@ -296,6 +299,11 @@ void Item::UseOnEntity(RunningState &state, Mob &user, size_t id) {
       return;
     }
     
+    Mob *mob = dynamic_cast<Mob*>(entity);
+    if (mob) {
+      mob->AddImpulse(user.GetForward() * this->GetKnockback());
+    }
+    
     auto iter = entity->GetProperties()->onUseItemReplace.find(this->properties->name);
     if (iter != entity->GetProperties()->onUseItemReplace.end()) {
       *this = Item(iter->second);
@@ -325,7 +333,6 @@ void Item::UseOnCell(RunningState &state, Mob &user, Cell *cell, Side) {
 
 void Item::UseOnNothing(RunningState &state, Mob &user) {
   if (!this->CanUse(state)) return;
-  this->StartCooldown(state, user);
   
   if (this->properties->spawnProjectile != "") {
     Projectile *proj = new Projectile(this->properties->spawnProjectile);
@@ -334,6 +341,9 @@ void Item::UseOnNothing(RunningState &state, Mob &user) {
     proj->SetPosition(user.GetPosition() + Vector3(0,user.GetProperties()->eyeOffset,0));
     proj->AddVelocity(user.GetVelocity());
     state.AddEntity(proj);
+    this->StartCooldown(state, user);
+  } else {
+    this->StartCooldown(state, user, false);
   }
 }
 

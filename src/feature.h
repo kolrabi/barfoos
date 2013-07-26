@@ -86,6 +86,12 @@ struct FeatureCharDef {
   bool ignoreLock;
   bool ignoreWrite;
   bool onlydefault;
+  float topNoise;
+  float bottomNoise;
+  float topFreq;
+  float bottomFreq;
+  float topDisplace;
+  float bottomDisplace;
   
   FeatureCharDef() :
     type(""),
@@ -97,7 +103,13 @@ struct FeatureCharDef {
     lockCell(true),
     ignoreLock(false),
     ignoreWrite(false),
-    onlydefault(false)
+    onlydefault(false),
+    topNoise(0.0),
+    bottomNoise(0.0),
+    topFreq(0.0),
+    bottomFreq(0.0),
+    topDisplace(0.0),
+    bottomDisplace(0.0)
   {}
 };
 

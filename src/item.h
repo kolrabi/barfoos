@@ -26,6 +26,7 @@ struct ItemProperties : public Properties {
   // gameplay
   float range = 5.0;
   float damage = 1.0;
+  float knockback = 0.0;
   
   int eqAddStr = 0;
   int eqAddDex = 0;
@@ -99,7 +100,7 @@ public:
   void DrawSprite(Gfx &gfx, const Vector3 &pos) const;
   
   bool CanUse(RunningState &state) const;
-  void StartCooldown(RunningState &state, Entity &user);
+  void StartCooldown(RunningState &state, Entity &user, bool damage = true);
   
   void UseOnEntity(RunningState &state, Mob &user, size_t ent);
   void UseOnCell(RunningState &state, Mob &user, Cell *cell, Side side);
@@ -110,6 +111,7 @@ public:
   Element GetElement()                  const { return this->effect->element; }  
   float GetCooldown()                   const { return this->properties->cooldown * this->effect->cooldown; }
   float GetBreakBlockStrength()         const { return this->properties->breakBlockStrength * this->effect->breakBlockStrength; }
+  float GetKnockback()                  const { return this->properties->knockback * this->effect->knockback; }
   
   bool IsTwoHanded()                    const { return this->properties->twoHanded; }
   

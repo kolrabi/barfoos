@@ -156,6 +156,9 @@ Mob::Update(RunningState &state) {
     aabb.center = aabb.center + velocity * deltaT;
   } else if (movingDown) {
     // when moving down and pushing use step height
+    //Vector3 vhoriz = velocity.Horiz() * deltaT;
+    //Vector3 vvert  = velocity.Vert()  * deltaT;
+    
     Vector3 oldCenter = aabb.center;
     
     Vector3 step(0, move.GetMag()!=0 ? this->properties->stepHeight : 0, 0);
@@ -172,10 +175,12 @@ Mob::Update(RunningState &state) {
     axis |= axis2;
     if (!downStep) aabb.center = aabb.center + step*0.25;
     
+    // check collision with entities
     Vector3 newCenter = aabb.center;
+    uint8_t axisEntities = 0;
     aabb.center = oldCenter;
-    aabb.center = state.MoveAABB(aabb, newCenter, axis2);
-    axis |= axis2;
+    aabb.center = state.MoveAABB(aabb, newCenter, axisEntities);
+    axis |= axisEntities;
   } else {
     onGround = false;
     Vector3 newCenter = world.MoveAABB(aabb, aabb.center + velocity*deltaT, axis, &cell, &side);
@@ -193,6 +198,11 @@ Mob::Update(RunningState &state) {
     wantJump = true;
   }
 
+  // open doors
+  if (axis & Axis::Horizontal && cell && properties->onCollideUseCell) {
+    cell->OnUse(state, *this);
+  }
+  
   // fall damage  
   if (axis & Axis::Y) {
     if (velocity.y < -15) {

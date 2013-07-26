@@ -6,6 +6,7 @@
 #include "itementity.h"
 #include "runningstate.h"
 #include "vertex.h"
+#include "simplex.h"
 
 #include <unordered_map>
 #include "weighted_map.h"
@@ -131,6 +132,16 @@ Feature::Feature(FILE *f, const std::string &name) :
     } else if (tokens[0] == "trev") {
       defs[lastDef].topRev = true;
       defs[lastDef].revRand = false;
+    } else if (tokens[0] == "topnoise") {
+      defs[lastDef].topNoise = std::atof(tokens[1].c_str());
+      defs[lastDef].topFreq = std::atof(tokens[2].c_str());
+    } else if (tokens[0] == "bottomnoise") {
+      defs[lastDef].bottomNoise = std::atof(tokens[1].c_str());
+      defs[lastDef].bottomFreq = std::atof(tokens[2].c_str());
+    } else if (tokens[0] == "topdisplace") {
+      defs[lastDef].topDisplace = std::atof(tokens[1].c_str());
+    } else if (tokens[0] == "bottomdisplace") {
+      defs[lastDef].bottomDisplace = std::atof(tokens[1].c_str());
     } else if (tokens[0] == "mob") {
       FeatureSpawn spawn;
       spawn.spawnClass = SpawnClass::MobClass;
@@ -166,8 +177,26 @@ Feature::Feature(FILE *f, const std::string &name) :
           for (size_t y=y0; y<=y1; y++) {
             Cell cell(def.type);
             
-            cell.SetYOffsets(def.top[0],def.top[1],def.top[2],def.top[3]);
-            cell.SetYOffsetsBottom(def.bot[0],def.bot[1],def.bot[2],def.bot[3]);
+            float dispT = simplexNoise( Vector3(x,y,z) + 0.5 ) * def.topDisplace;
+            
+            float ofsT[4] = {
+              def.topNoise * simplexNoise( Vector3(x,y,z) * def.topFreq ) + dispT,
+              def.topNoise * simplexNoise( Vector3(x,y,z+1) * def.topFreq ) + dispT,
+              def.topNoise * simplexNoise( Vector3(x+1,y,z+1) * def.topFreq ) + dispT,
+              def.topNoise * simplexNoise( Vector3(x+1,y,z) * def.topFreq ) + dispT
+            };
+            
+            float dispB = simplexNoise( Vector3(x,y,z) + 0.5 ) * def.bottomDisplace;
+            
+            float ofsB[4] = {
+              def.bottomNoise * simplexNoise( Vector3(x,y,z) * def.bottomFreq ) + dispB,
+              def.bottomNoise * simplexNoise( Vector3(x,y,z+1) * def.bottomFreq ) + dispB,
+              def.bottomNoise * simplexNoise( Vector3(x+1,y,z+1) * def.bottomFreq ) + dispB,
+              def.bottomNoise * simplexNoise( Vector3(x+1,y,z) * def.bottomFreq ) + dispB
+            };
+            
+            cell.SetYOffsets(def.top[0]+ofsT[0],def.top[1]+ofsT[1],def.top[2]+ofsT[2],def.top[3]+ofsT[3]);
+            cell.SetYOffsetsBottom(def.bot[0]+ofsB[0],def.bot[1]+ofsB[1],def.bot[2]+ofsB[2],def.bot[3]+ofsB[3]);
             cell.SetOrder(def.topRev, def.botRev);
             cell.SetLocked(def.lockCell);
             cell.SetIgnoreLock(def.ignoreLock);

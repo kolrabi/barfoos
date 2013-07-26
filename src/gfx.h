@@ -10,14 +10,6 @@
 
 #include <unordered_map>
 
-struct NinePatch {
-  const Texture *texture;
-  Rect srcRects[9];
-  
-  NinePatch(const std::string &name, const Rect &innerRect);
-  std::vector<Vertex> GetVerts(const Rect &rect) const;
-};
-
 class GfxView final {
 public:
 

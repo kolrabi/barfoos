@@ -62,6 +62,7 @@ EntityProperties::ParseProperty(const std::string &cmd) {
   else if (cmd == "nocollidecell")    this->nocollideCell   = true;
   else if (cmd == "nocollideowner")   this->nocollideOwner  = true;
   else if (cmd == "nofriction")       this->noFriction      = true;
+  else if (cmd == "oncollideusecell") this->onCollideUseCell = true;
 
   else if (cmd == "step")             Parse(this->stepHeight);
   else if (cmd == "mass")             Parse(this->mass);

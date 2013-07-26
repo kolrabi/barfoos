@@ -13,6 +13,7 @@ struct EffectProperties : public Properties {
   float range = 1.0;
   float damage = 1.0;
   float walkSpeed = 1.0;
+  float knockback = 1.0;
   
   int eqAddStr = 0;
   int eqAddDex = 0;

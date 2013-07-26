@@ -263,6 +263,20 @@ void Cell::OnUse(RunningState &state, Mob &user) {
 }
 
 void Cell::Tick(RunningState &state) {
+
+  if ((this->info->flags & CellFlags::Liquid) && this->neighbours[(size_t)Side::Up]->info == this->info) {
+    if (this->shared.detail < 16) {
+      size_t diff = 16-this->shared.detail;
+      if (this->neighbours[(size_t)Side::Up]->shared.detail > diff) {
+        this->shared.detail = 16;
+        this->neighbours[(size_t)Side::Up]->shared.detail -= diff;
+      } else {
+        this->shared.detail += this->neighbours[(size_t)Side::Up]->shared.detail;
+        this->world->SetCell(this->neighbours[(size_t)Side::Up]->pos,       Cell("air"));
+      }
+    }
+  }
+
   this->tickPhase = (this->tickPhase + 1) % this->shared.tickInterval;
   //if (this->tickPhase) return;
 

@@ -69,6 +69,7 @@ struct EntityProperties : public Properties {
   bool    isSolid           = false;  //< Entity is solid in collision detection.
   bool    respawn           = false;  //< Entity will automatically respawn on death.
   bool    aggressive        = false;
+  bool    onCollideUseCell  = false;
   float   attackInterval    = 0.0;
   float   aggroRangeNear    = 0.0;
   float   aggroRangeFar     = 0.0;

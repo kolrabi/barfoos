@@ -130,7 +130,7 @@ World::Build() {
   
     int loop = 0;
     do {
-      if (loop++ > 1000000) break;
+      if (loop++ > 1000) break;
 
       // select a feature from which to go
       bool useLast = random.Chance(useLastChance);

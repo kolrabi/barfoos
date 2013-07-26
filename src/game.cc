@@ -84,7 +84,7 @@ Game::NewGame(const std::string &seed) {
 bool Game::Frame() {
   PROFILE();
   
-  if (!this->gfx->Swap()) return false;
+  if (!this->gfx->Swap()) nextGameState = nullptr;
   
   this->gfx->ClearColor(IColor());
   this->gfx->ClearDepth(1.0);

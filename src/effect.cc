@@ -52,6 +52,8 @@ EffectProperties::ParseProperty(const std::string &cmd) {
     Parse(this->range);
   } else if (cmd == "walkspeed") {
     Parse(this->walkSpeed);
+  } else if (cmd == "knockback") {
+    Parse(this->knockback);
     
   } else if (cmd == "durability") {
     Parse(this->durability);

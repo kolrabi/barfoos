@@ -233,7 +233,7 @@ protected:
     bool reversedTop;
     bool reversedBottom;
     
-    int8_t topHeights[4], bottomHeights[4];
+    int16_t topHeights[4], bottomHeights[4];
     float u[4], v[4];
 
     uint32_t detail;

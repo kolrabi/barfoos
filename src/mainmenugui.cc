@@ -14,6 +14,7 @@ MainMenuGui::MainMenuGui(MainMenuState &state) :
   btnExit->SetGravity(false, false, false, false);
   btnExit->SetText("Exit");
   btnExit->SetOnActivate([&](Gui*){state.ExitGame();});
+  btnExit->SetBackground(NinePatch("gui/button", Rect(Point(8,8), Point(16,16))));
   this->AddChild(btnExit);
 
   Gui *btnNewGame = new Gui();
@@ -22,14 +23,16 @@ MainMenuGui::MainMenuGui(MainMenuState &state) :
   btnNewGame->SetGravity(false, false, false, false);
   btnNewGame->SetText("New Game");
   btnNewGame->SetOnActivate([&](Gui*){state.NewGame();});
+  btnNewGame->SetBackground(NinePatch("gui/button", Rect(Point(8,8), Point(16,16))));
   this->AddChild(btnNewGame);
 
   Gui *btnContinue = new Gui();
   btnContinue->SetSize(Point(128, 32));
-  btnContinue->SetCenter(vscreen/2 + Point(64, 0));
+  btnContinue->SetCenter(vscreen/2 + Point(0, 0));
   btnContinue->SetGravity(false, false, false, false);
   btnContinue->SetText("Continue");
   btnContinue->SetOnActivate([&](Gui*){state.ContinueGame();});
+  btnContinue->SetBackground(NinePatch("gui/button", Rect(Point(8,8), Point(16,16))));
   this->AddChild(btnContinue);
 }
 

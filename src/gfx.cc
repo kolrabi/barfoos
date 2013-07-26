@@ -11,69 +11,6 @@
 #include "sprite.h"
 #include "vertex.h"
 
-
-static void ninePatchStretch(const Texture *tex, const Rect &src, const Rect &dest, std::vector<Vertex> &verts) {
-  if (!tex) return;
-  
-  float u1 = float(src.pos.x)/tex->size.x;
-  float u2 = float(src.pos.x + src.size.x)/tex->size.x;
-  float v1 = float(src.pos.y)/tex->size.y;
-  float v2 = float(src.pos.y + src.size.y)/tex->size.y;
-  
-  verts.push_back(Vertex(Vector3(dest.pos.x,             dest.pos.y+dest.size.y,  0), IColor(255,255,255), u1, v1, Vector3( 0, 0, 1)));
-  verts.push_back(Vertex(Vector3(dest.pos.x+dest.size.x, dest.pos.y+dest.size.y,  0), IColor(255,255,255), u2, v1, Vector3( 0, 0, 1)));
-  verts.push_back(Vertex(Vector3(dest.pos.x+dest.size.x, dest.pos.y,              0), IColor(255,255,255), u2, v2, Vector3( 0, 0, 1)));
-  verts.push_back(Vertex(Vector3(dest.pos.x,             dest.pos.y,              0), IColor(255,255,255), u1, v2, Vector3( 0, 0, 1)));
-}
-
-NinePatch::NinePatch(const std::string &name, const Rect &innerRect) {
-  texture = loadTexture(name);
-  
-  srcRects[0].pos = Point(0,                                  0); 
-  srcRects[1].pos = Point(innerRect.pos.x,                    0); 
-  srcRects[2].pos = Point(innerRect.pos.x + innerRect.size.x, 0); 
-  
-  srcRects[3].pos = Point(0,                                  innerRect.pos.y);
-  srcRects[4].pos = Point(innerRect.pos.x,                    innerRect.pos.y);
-  srcRects[5].pos = Point(innerRect.pos.x + innerRect.size.x, innerRect.pos.y); 
-
-  srcRects[6].pos = Point(0,                                  innerRect.pos.y + innerRect.size.y);
-  srcRects[7].pos = Point(innerRect.pos.x,                    innerRect.pos.y + innerRect.size.y);
-  srcRects[8].pos = Point(innerRect.pos.x + innerRect.size.x, innerRect.pos.y + innerRect.size.y); 
-  
-  srcRects[0].size = Point(innerRect.pos.x,                     innerRect.pos.y);
-  srcRects[1].size = Point(innerRect.size.x,                    innerRect.pos.y);
-  srcRects[2].size = Point(texture->size.x - srcRects[2].pos.x, innerRect.pos.y);
-
-  srcRects[3].size = Point(innerRect.pos.x,                     innerRect.size.y);
-  srcRects[4].size = Point(innerRect.size.x,                    innerRect.size.y);
-  srcRects[5].size = Point(texture->size.x - srcRects[2].pos.x, innerRect.size.y);
-
-  srcRects[6].size = Point(innerRect.pos.x,                     texture->size.y - srcRects[6].pos.y);
-  srcRects[7].size = Point(innerRect.size.x,                    texture->size.y - srcRects[7].pos.y);
-  srcRects[8].size = Point(texture->size.x - srcRects[2].pos.x, texture->size.y - srcRects[8].pos.y);
-}
-
-std::vector<Vertex> NinePatch::GetVerts(const Rect &rect) const {
-  std::vector<Vertex> verts;
-  Point p1 = srcRects[0].size;
-  Point p2 = rect.size - srcRects[8].size;
-  
-  ninePatchStretch(texture, srcRects[0], Rect(rect.pos + Point(   0,    0), srcRects[0].size),                     verts);
-  ninePatchStretch(texture, srcRects[1], Rect(rect.pos + Point(p1.x,    0), Point(p2.x-p1.x, srcRects[1].size.y)), verts);
-  ninePatchStretch(texture, srcRects[2], Rect(rect.pos + Point(p2.x,    0), srcRects[2].size),                     verts);
-  
-  ninePatchStretch(texture, srcRects[3], Rect(rect.pos + Point(   0, p1.y), Point(srcRects[3].size.x, p2.y-p1.y)), verts);
-  ninePatchStretch(texture, srcRects[4], Rect(rect.pos + Point(p1.x, p1.y), p2-p1),                                verts);
-  ninePatchStretch(texture, srcRects[5], Rect(rect.pos + Point(p2.x, p1.y), Point(srcRects[5].size.x, p2.y-p1.y)), verts);
-
-  ninePatchStretch(texture, srcRects[6], Rect(rect.pos + Point(   0, p2.y), srcRects[6].size),                     verts);
-  ninePatchStretch(texture, srcRects[7], Rect(rect.pos + Point(p1.x, p2.y), Point(p2.x-p1.x, srcRects[7].size.y)), verts);
-  ninePatchStretch(texture, srcRects[8], Rect(rect.pos + Point(p2.x, p2.y), srcRects[8].size),                     verts);
-  
-  return verts;
-}
-
 static InputKey MapMouseButton(int b) {
   InputKey key;
   

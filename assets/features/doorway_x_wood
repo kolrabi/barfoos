@@ -3,11 +3,11 @@ level 0 -1 20
 
 conn 1 1 2 -1
 next $room
-nextp doorway_x 0.5
+nextp doorway_x 0.2
 
 conn 1 1 2 1
 next $room
-nextp doorway_x 0.5
+nextp doorway_x 0.2
 
 def #
 cell carpet.red
