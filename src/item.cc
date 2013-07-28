@@ -166,6 +166,12 @@ ItemProperties::ParseProperty(const std::string &cmd) {
     Parse(this->onConsumeResult);
   } else if (cmd == "onconsumeaddbuff") {
     Parse(this->onConsumeAddBuff);
+  } else if (cmd == "onhitaddbuff") {
+    std::string effect;
+    Parse(effect);
+    float prob;
+    Parse(prob);
+    this->onHitAddBuff[effect] = prob;
 
   } else if (cmd == "effect") {
     float w;
@@ -310,6 +316,8 @@ void Item::UseOnEntity(RunningState &state, Mob &user, size_t id) {
     } else {
       HealthInfo healthInfo(Stats::MeleeAttack(user, *entity, *this, state.GetRandom()));
       entity->AddHealth(state, healthInfo);
+      std::string effect = this->properties->onHitAddBuff.select(state.GetRandom().Float01());
+      entity->AddBuff(state, effect);
     }
     
     this->StartCooldown(state, user);
@@ -349,7 +357,6 @@ void Item::UseOnNothing(RunningState &state, Mob &user) {
 
 void Item::Draw(Gfx &gfx, bool left) {
   gfx.GetView().Push();
-  gfx.SetBackfaceCulling(false);
   gfx.GetView().Scale(Vector3(left ? 1 : -1, 1, 1));
   gfx.GetView().Translate(Vector3(1, -2, 4));
   
@@ -359,8 +366,7 @@ void Item::Draw(Gfx &gfx, bool left) {
   gfx.GetView().Rotate(cooldownFrac*60-60, Vector3(0,0,1));
   gfx.GetView().Translate(Vector3(-1,1,0));
   gfx.GetView().Scale(Vector3(2,2,2));
-  gfx.DrawSprite(this->sprite, Vector3(0,0,0), false);
-  gfx.SetBackfaceCulling(true);
+  gfx.DrawSprite(this->sprite, Vector3(0,0,0), left, false);
   gfx.GetView().Pop();
 }
 
@@ -403,7 +409,7 @@ Item::ModifyStats(Stats &stats, bool forceEquipped) const {
 }
 
 std::string
-Item::GetDisplayName() const {
+Item::GetDisplayName(bool capitalize) const {
   std::string amountString;
   if (this->amount > 1)
     amountString = u8" \u00d7 " + ToString(this->amount);
@@ -431,6 +437,8 @@ Item::GetDisplayName() const {
   
   std::string name = tmp;
   if (this->effect) { name += this->effect->name; }
+
+  if (capitalize && name != "") name[0] = ::toupper(name[0]);
   
   return name;
 }
@@ -477,6 +485,7 @@ Item::Consume(RunningState &state, Entity &user) {
   if (this->properties->onConsumeEffect != "") {
     const EffectProperties &effect = getEffect(this->properties->onConsumeEffect);
     effect.Consume(state, user);
+    user.OnBuffAdded(state, effect);
   }
   
   if (this->properties->onConsumeAddBuff != "") {

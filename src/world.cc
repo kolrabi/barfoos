@@ -130,7 +130,7 @@ World::Build() {
   
     int loop = 0;
     do {
-      if (loop++ > 1000) break;
+      if (loop++ > 1000000) break;
 
       // select a feature from which to go
       bool useLast = random.Chance(useLastChance);
@@ -231,7 +231,7 @@ World::Build() {
       }
     }
   }
-
+  
   for (auto instance : instances) {
     instance.feature->SpawnEntities(state, instance.pos);
   }
@@ -311,6 +311,12 @@ World::Draw(Gfx &gfx) {
     if (firstDirty) {
       for (size_t i=0; i<this->cellCount; i++) {
         this->cells[i].UpdateNeighbours();
+      }
+
+      for (size_t i=0; i<this->cellCount; i++) {
+        if (this->cells[i].IsLiquid() && this->cells[i][Side::Up].GetInfo() == this->cells[i].GetInfo()) {
+          this->cells[i].SetDetail(16);
+        } 
       }
       firstDirty = false;
     }

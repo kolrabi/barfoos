@@ -23,6 +23,8 @@ public:
   void Rotate(float angle, const Vector3 &p);
 
   bool IsPointVisible(const Vector3 &p) const;
+ 
+  const Vector3 &GetRight() const { return right; }
   
 private:
 
@@ -32,6 +34,8 @@ private:
   std::vector<Matrix4> viewStack;
   std::vector<Matrix4> modelViewStack;
   std::vector<Matrix4> textureStack;
+
+  Vector3 right;
 
   friend class Gfx;
   
@@ -91,7 +95,7 @@ public:
   
   void DrawUnitCube();
   void DrawAABB(const AABB &aabb);
-  void DrawSprite(const Sprite &sprite, const Vector3 &pos, bool billboard = true);
+  void DrawSprite(const Sprite &sprite, const Vector3 &pos, bool flip = false, bool billboard = true);
   void DrawIcon(const Sprite &sprite, const Point &pos, const Point &size = Point(32, 32));
   void DrawIconQuad(const Point &pos, const Point &size = Point(32, 32));
   void DrawStretched(const Texture *tex, const Rect &src, const Rect &dest);

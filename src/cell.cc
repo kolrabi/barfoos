@@ -38,6 +38,7 @@ CellProperties::CellProperties() :
   useDelay(0.0),
   breakStrength(1.0),
   lavaDamage(0.0),
+  useChance(1.0),
   breakParticle("particle")
 {}
 
@@ -72,6 +73,7 @@ void CellProperties::ParseProperty(const std::string &cmd) {
   
   else if (cmd == "onusecascade") ParseSideMask(this->onUseCascade);
   else if (cmd == "usedelay")     Parse(this->useDelay);
+  else if (cmd == "usechance")    Parse(this->useChance); 
   
   else if (cmd == "replace")      Parse(this->replace);
 
@@ -81,10 +83,8 @@ void CellProperties::ParseProperty(const std::string &cmd) {
   else if (cmd == "scale")        Parse(this->scale);
   else if (cmd == "breakparticle")     Parse(this->breakParticle);
   
-  else if (cmd == "detailbelowreplace") {
-    Parse(this->detailBelowReplace);
-    Parse(this->replaceChance);
-  } 
+  else if (cmd == "detailbelowreplace") Parse(this->detailBelowReplace);
+  else if (cmd == "replacechance") Parse(this->replaceChance); 
   else SetError("Ignoring '" + cmd + "'\n");
 }
 
@@ -246,37 +246,24 @@ Cell::Update(
   UpdateNeighbours();
 }
 
-void Cell::OnUse(RunningState &state, Mob &user) {
+void Cell::OnUse(RunningState &state, Mob &user, bool force) {
   if (state.GetGame().GetTime() - this->lastUseT < this->info->useDelay) return;
+  if (!force && !state.GetRandom().Chance(this->info->useChance)) return;
 
   this->lastUseT = state.GetGame().GetTime();
-  
-  if (info->onUseCascade) {
-    for (int i=0; i<6; i++) {
-      if (this->info->onUseCascade & (1<<i)) this->neighbours[i]->OnUse(state, user);
-    }
-  }
-  
+
+  const CellProperties *info = this->info;
   if (info->flags & CellFlags::OnUseReplace) {
     this->world->SetCell(GetPosition(), Cell(info->replace)).lastUseT = state.GetGame().GetTime();
+  }
+  
+  for (int i=0; i<6; i++) {
+    if (info->onUseCascade & (1<<i) && this->neighbours[i]->info == info) 
+      this->neighbours[i]->OnUse(state, user, true);
   }
 }
 
 void Cell::Tick(RunningState &state) {
-
-  if ((this->info->flags & CellFlags::Liquid) && this->neighbours[(size_t)Side::Up]->info == this->info) {
-    if (this->shared.detail < 16) {
-      size_t diff = 16-this->shared.detail;
-      if (this->neighbours[(size_t)Side::Up]->shared.detail > diff) {
-        this->shared.detail = 16;
-        this->neighbours[(size_t)Side::Up]->shared.detail -= diff;
-      } else {
-        this->shared.detail += this->neighbours[(size_t)Side::Up]->shared.detail;
-        this->world->SetCell(this->neighbours[(size_t)Side::Up]->pos,       Cell("air"));
-      }
-    }
-  }
-
   this->tickPhase = (this->tickPhase + 1) % this->shared.tickInterval;
   //if (this->tickPhase) return;
 
@@ -323,6 +310,8 @@ void Cell::Tick(RunningState &state) {
 
 bool
 Cell::Flow(Side side) {
+  if ((this->info->flags & CellFlags::Liquid) == 0) return false;
+
   Cell *cell = this->neighbours[(int)side];
   
   if (cell->IsSolid()) return false;

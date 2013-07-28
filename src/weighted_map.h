@@ -9,6 +9,8 @@ class weighted_map : public std::unordered_map<T, float> {
 public:
 
   T select(float index) const {
+    if (this->size() == 0) return T();
+    if (this->size() == 1) return this->begin()->first;
     std::vector<weighted_object> totals;
     float total = 0;
     for (auto &entry : *this) {

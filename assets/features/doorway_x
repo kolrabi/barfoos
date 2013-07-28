@@ -1,36 +1,36 @@
-size 3 5 5
-level 0 -1 20
+Size     3  5  5
+Level    0 -1 20.0
 
-conn 1 1 2 -1
-next $hallway
-next $stairs_x
-next $room
+Conn     1  1  2   -1
+  Next   $hallway
+  Next   $stairs_x
+  Next   $room
 
-conn 1 1 2 1
-next $hallway
-next $stairs_x
-next $room
+Conn     1  1  2    1
+  Next   $hallway
+  Next   $stairs_x
+  Next   $room
 
-def #
-cell brick
+Def      #
+  Cell   brick
 
-def . 
-cell air
+Def      .
+  Cell   air
 
-def \
-cell step
-bottom 1 0 0 1
+Def      \
+  Cell   step
+  Bottom 1 0 0 1
 
-def /
-cell step
-bottom 0 1 1 0
+Def /
+  Cell   step
+  Bottom 0 1 1 0
 
-def &
-cell brick
-nolock
-onlydefault
+Def &
+  Cell   brick
+  NoLock
+  OnlyDefault
 
-slice 0 0
+Slice    0 0
 &#&
 &#&
 &#&

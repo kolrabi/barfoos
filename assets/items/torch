@@ -10,9 +10,9 @@ Hand
 
 Damage            1
 
-Durability        10
+Durability        300
 UseDurability     0
-EquipDurability   10
+EquipDurability   1
 Replacement       torch.burnt
 
 Cooldown          0.4
@@ -22,7 +22,7 @@ Flicker
 NoModifier
 NoBeatitude
 
-UnidentifiedName "Torch"
-IdentifiedName   "Torch"
+UnidentifiedName "torch"
+IdentifiedName   "torch"
 
 Stack

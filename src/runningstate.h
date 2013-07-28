@@ -54,7 +54,6 @@ private:
   Player *player;
 
   bool showInventory;
-  std::shared_ptr<InventoryGui> inventoryGui;
   
   float lastSaveT;
   

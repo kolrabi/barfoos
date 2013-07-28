@@ -21,7 +21,6 @@ public:
     T prev(initial);
     
     for (I i = from; i!=to; ++i) {
-      Log("%c -> %c : %f \n", prev, *i, self[prev][*i]);
       self[prev][*i] ++;
       prev = *i;
     }

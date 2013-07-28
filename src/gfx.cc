@@ -349,6 +349,13 @@ Gfx::Update(Game &game) {
 
     mouseDelta = Point();
   }
+
+  if (game.GetInput().IsKeyDown(InputKey::DebugScreenshot)) {
+    uint8_t *data = new uint8_t[screenSize.x*screenSize.y*3];
+    glReadPixels(0,0,screenSize.x, screenSize.y, GL_RGB, GL_UNSIGNED_BYTE, data);
+    saveImage("screenshot.png", screenSize.x, screenSize.y, data); 
+    delete [] data;
+  }
 }
 
 bool
@@ -531,7 +538,7 @@ void Gfx::DrawAABB(const AABB &aabb) {
   this->view.Pop();
 }
 
-void Gfx::DrawSprite(const Sprite &sprite, const Vector3 &pos, bool billboard) {
+void Gfx::DrawSprite(const Sprite &sprite, const Vector3 &pos, bool flip, bool billboard) {
   this->SetTextureFrame(sprite.texture, 0, sprite.currentFrame, sprite.totalFrames);
 
   this->view.Push();
@@ -539,7 +546,7 @@ void Gfx::DrawSprite(const Sprite &sprite, const Vector3 &pos, bool billboard) {
 
   // TODO: move to GfxView::Billboard(vertical);
   if (billboard) {
-    this->view.modelViewStack.back()(0,0) = 1; 
+    this->view.modelViewStack.back()(0,0) = flip?-1:1; 
     this->view.modelViewStack.back()(0,1) = 0;
     this->view.modelViewStack.back()(0,2) = 0;
 
@@ -557,8 +564,9 @@ void Gfx::DrawSprite(const Sprite &sprite, const Vector3 &pos, bool billboard) {
   }
   
   this->view.Scale(Vector3(sprite.width/2, sprite.height/2, 1));
- 
+  SetBackfaceCulling(!flip); 
   this->DrawQuads(this->quadVerts);
+  SetBackfaceCulling(true); 
 
   this->view.Pop();
 }
@@ -649,6 +657,8 @@ Gfx::AlignTopRightScreen(const Point &size, int padding) {
 
 void GfxView::Look(const Vector3 &pos, const Vector3 &forward, float fovY, const Vector3 &up) {
   float aspect = (float)gfx.viewportSize.x / (float)gfx.viewportSize.y;
+
+  this->right = forward.Cross(up);
   
   if (fovY > 0.0) {
     this->projStack.back() = Matrix4::Perspective(fovY, aspect, 0.0015f, 64.0f);

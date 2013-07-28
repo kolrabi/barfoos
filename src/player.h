@@ -37,9 +37,12 @@ public:
   
   virtual void OnHealthDealt(RunningState &state, Entity &other, const HealthInfo &info) override;
   virtual void OnEquip(RunningState &, const Item &, InventorySlot, bool) override;
+  virtual void OnLevelUp(RunningState &) override;
+  virtual void OnBuffAdded(RunningState &, const EffectProperties &) override;
 
   virtual std::string       GetName()                         const;
   float                     GetPain()                         const { return this->pain; }
+  size_t                    GetSelectedEntity()               const { return this->selectedEntity; }
   
   void SetUniforms(const std::shared_ptr<Shader> &shader) const;
   
@@ -87,6 +90,8 @@ private:
   std::list<Message*> messages;
   float messageY, messageVY;
   float fps;
+  RenderString *bigMessage;
+  float bigMessageT;
   
   std::shared_ptr<Item> leftHand, rightHand;
 

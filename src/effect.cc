@@ -23,6 +23,9 @@ void
 EffectProperties::ParseProperty(const std::string &cmd) {
   if (cmd == "damage") {
     Parse(this->damage);
+  
+  } else if (cmd == "feeling") { 
+    Parse(this->feeling);
     
   } else if (cmd == "eqstr") {
     Parse(this->eqAddStr);
@@ -64,6 +67,8 @@ EffectProperties::ParseProperty(const std::string &cmd) {
     
   } else if (cmd == "duration") {
     Parse(this->duration);
+  } else if (cmd == "extend") {
+    this->extend = true;
     
   } else if (cmd == "breakblockstrength") {
     Parse(this->breakBlockStrength);
@@ -78,7 +83,7 @@ EffectProperties::ParseProperty(const std::string &cmd) {
     Parse(this->addHealth);
     
   } else if (cmd == "name") {
-    Parse(this->name);
+    Parse(this->displayName);
     
   } else if (cmd != "") {
     this->SetError("ignoring '" + cmd + "'");

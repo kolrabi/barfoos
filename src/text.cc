@@ -153,8 +153,8 @@ void RenderString::DrawChar(float x, float y, wchar_t c, const IColor &color) {
   Point size = font.size;
 
   for (int xx = -1; xx<2; xx++) for (int yy = -1; yy<2; yy++) {
-    this->vertices.push_back(Vertex(Vector3(x+size.x+xx,      0+yy-y, 0.1), IColor(), u+1.0/32.0,v));
-    this->vertices.push_back(Vertex(Vector3(x       +xx,      0+yy-y, 0.1), IColor(), u,v));
+    this->vertices.push_back(Vertex(Vector3(x+size.x+xx,      0+yy+y, 0.1), IColor(), u+1.0/32.0,v));
+    this->vertices.push_back(Vertex(Vector3(x       +xx,      0+yy+y, 0.1), IColor(), u,v));
     this->vertices.push_back(Vertex(Vector3(x       +xx, size.y+yy+y, 0.1), IColor(), u,v-1.0/8.0));
     this->vertices.push_back(Vertex(Vector3(x+size.x+xx, size.y+yy+y, 0.1), IColor(), u+1.0/32.0,v-1.0/8.0));
   }
@@ -279,6 +279,7 @@ void
 RenderString::SetText(const std::string &text) {
   const char *p = text.c_str();
   this->mbString = text;
+  this->text = L"";
 
   while (*p) {
     // convert utf8 to wchar_t

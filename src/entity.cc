@@ -63,8 +63,11 @@ EntityProperties::ParseProperty(const std::string &cmd) {
   else if (cmd == "nocollideowner")   this->nocollideOwner  = true;
   else if (cmd == "nofriction")       this->noFriction      = true;
   else if (cmd == "oncollideusecell") this->onCollideUseCell = true;
+  else if (cmd == "swim")             this->swim = true;
+  else if (cmd == "flipleft")         this->flipLeft = true;
 
   else if (cmd == "step")             Parse(this->stepHeight);
+  else if (cmd == "jump")             Parse(this->jumpSpeed);
   else if (cmd == "mass")             Parse(this->mass);
   else if (cmd == "move")             Parse(this->moveInterval);
   else if (cmd == "speed")            Parse(this->maxSpeed);
@@ -100,6 +103,8 @@ EntityProperties::ParseProperty(const std::string &cmd) {
     Parse(this->attackItem);
   
   } else if (cmd == "gravity")        Parse(this->gravity);
+  else if (cmd == "attackforwardstep") Parse(this->attackForwardStep);
+  else if (cmd == "attackjump")       Parse(this->attackJump);
   else if (cmd == "eyeoffset")        Parse(this->eyeOffset);
   else if (cmd == "glow")             Parse(this->glow);
   else if (cmd == "exp")              Parse(this->exp);
@@ -313,15 +318,16 @@ Entity::Update(RunningState &state) {
       
       e.state -= int(e.state);
     }
-  }
-  
-  auto it = this->activeBuffs.begin();
-  while(it != this->activeBuffs.end()) {
-    if (t > it->effect->duration + it->startT) {
-      it = this->activeBuffs.erase(it);
-    } else {
-      it->effect->Update(state, *this);
-      it++;
+ 
+    auto it = this->activeBuffs.begin();
+    while(it != this->activeBuffs.end()) {
+      if (t > it->effect->duration + it->startT) {
+        it = this->activeBuffs.erase(it);
+      } else {
+        it->effect->Update(state, *this);
+        if (this->isDead) return;
+        it++;
+      }
     }
   }
   
@@ -368,7 +374,7 @@ Entity::Draw(Gfx &gfx) const {
     gfx.SetTextureFrame(this->properties->sprite.texture,0,0,8);
     gfx.DrawAABB(this->aabb);
   } else {
-    gfx.DrawSprite(this->sprite, this->aabb.center);
+    gfx.DrawSprite(this->sprite, this->aabb.center, gfx.GetView().GetRight().Dot(GetForward())<0);
   }
   
   if (this->drawAABB) {
@@ -407,6 +413,8 @@ Entity::AddHealth(RunningState &state, const HealthInfo &info) {
 void
 Entity::Die(RunningState &state, const HealthInfo &info) {
   this->isDead = true;
+
+  this->activeBuffs.clear();
   
   if (info.dealerId != ~0UL) {
     state.GetPlayer().AddDeathMessage(*this, *state.GetEntity(info.dealerId), info);
@@ -445,10 +453,25 @@ Entity::OnHealthDealt(RunningState &state, Entity &, const HealthInfo &info) {
 
 void
 Entity::AddBuff(RunningState &state, const std::string &name) {
+  if (name == "") return;
+
   Buff buff;
   buff.effect = &getEffect(name);
   buff.startT = state.GetGame().GetTime();
+
+  for (auto &b:this->activeBuffs) {
+    if (b.effect == buff.effect) {
+      if (b.effect->extend) {  
+        b.startT += b.effect->duration;
+      } else {
+        b.startT = buff.startT;
+      }
+      return;
+    }
+  } 
+
   this->activeBuffs.push_back(buff);
+  this->OnBuffAdded(state, *buff.effect);
 }
 
 bool

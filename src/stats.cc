@@ -83,6 +83,7 @@ Stats::AddExp(float exp) {
   this->exp += exp;
   if (this->GetLevel() != lvl) {
     this->sp ++;
+    this->maxHealth ++;
     return true;
   }
   return false;

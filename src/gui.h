@@ -12,6 +12,7 @@ struct NinePatch {
   Rect srcRects[9];
   
   NinePatch() : texture(nullptr) {}
+  NinePatch(const std::string &name);
   NinePatch(const std::string &name, const Rect &innerRect);
   std::vector<Vertex> GetVerts(const Rect &rect) const;
 };

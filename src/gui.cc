@@ -231,6 +231,36 @@ NinePatch::NinePatch(const std::string &name, const Rect &innerRect) {
   srcRects[8].size = Point(texture->size.x - srcRects[2].pos.x, texture->size.y - srcRects[8].pos.y);
 }
 
+NinePatch::NinePatch(const std::string &name) {
+  texture = loadTexture(name);
+
+  Rect innerRect(texture->size/4, texture->size/2);
+  
+  srcRects[0].pos = Point(0,                                  0); 
+  srcRects[1].pos = Point(innerRect.pos.x,                    0); 
+  srcRects[2].pos = Point(innerRect.pos.x + innerRect.size.x, 0); 
+  
+  srcRects[3].pos = Point(0,                                  innerRect.pos.y);
+  srcRects[4].pos = Point(innerRect.pos.x,                    innerRect.pos.y);
+  srcRects[5].pos = Point(innerRect.pos.x + innerRect.size.x, innerRect.pos.y); 
+
+  srcRects[6].pos = Point(0,                                  innerRect.pos.y + innerRect.size.y);
+  srcRects[7].pos = Point(innerRect.pos.x,                    innerRect.pos.y + innerRect.size.y);
+  srcRects[8].pos = Point(innerRect.pos.x + innerRect.size.x, innerRect.pos.y + innerRect.size.y); 
+  
+  srcRects[0].size = Point(innerRect.pos.x,                     innerRect.pos.y);
+  srcRects[1].size = Point(innerRect.size.x,                    innerRect.pos.y);
+  srcRects[2].size = Point(texture->size.x - srcRects[2].pos.x, innerRect.pos.y);
+
+  srcRects[3].size = Point(innerRect.pos.x,                     innerRect.size.y);
+  srcRects[4].size = Point(innerRect.size.x,                    innerRect.size.y);
+  srcRects[5].size = Point(texture->size.x - srcRects[2].pos.x, innerRect.size.y);
+
+  srcRects[6].size = Point(innerRect.pos.x,                     texture->size.y - srcRects[6].pos.y);
+  srcRects[7].size = Point(innerRect.size.x,                    texture->size.y - srcRects[7].pos.y);
+  srcRects[8].size = Point(texture->size.x - srcRects[2].pos.x, texture->size.y - srcRects[8].pos.y);
+}
+
 std::vector<Vertex> NinePatch::GetVerts(const Rect &rect) const {
   std::vector<Vertex> verts;
   Point p1 = srcRects[0].size;

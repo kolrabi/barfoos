@@ -15,9 +15,9 @@ InventoryGui::InventoryGui(RunningState &state, Entity &entity) :
   state(state),
   entity(entity), 
   mousePos(),
-  dropItem(false)
+  dropItem(false),
+  name("Equipment")
 {
-
   //                 x  x  x  x
   //   8  0          x  x  x  x
   //   4  1  5       x  x  x  x
@@ -26,26 +26,93 @@ InventoryGui::InventoryGui(RunningState &state, Entity &entity) :
   //                 x  x  x  x
 
   Gfx &gfx = state.GetGame().GetGfx();
-  Point slotDist(36, 36);
-  Point topLeft  = gfx.AlignTopLeftScreen(Point(32,32), 16);
-  Point topRight = gfx.AlignTopRightScreen(Point(32,32), 16);
+  Point vsize = gfx.GetVirtualScreenSize();
 
-  AddSlotGui(topLeft+Point(slotDist.x*0, slotDist.y*0), InventorySlot::Amulet);
-  AddSlotGui(topLeft+Point(slotDist.x*1, slotDist.y*0), InventorySlot::Helmet);
-  AddSlotGui(topLeft+Point(slotDist.x*0, slotDist.y*1), InventorySlot::LeftRing);
-  AddSlotGui(topLeft+Point(slotDist.x*1, slotDist.y*1), InventorySlot::Armor);
-  AddSlotGui(topLeft+Point(slotDist.x*2, slotDist.y*1), InventorySlot::RightRing);
-  AddSlotGui(topLeft+Point(slotDist.x*0, slotDist.y*2), InventorySlot::LeftHand);
-  AddSlotGui(topLeft+Point(slotDist.x*1, slotDist.y*2), InventorySlot::Greaves);
-  AddSlotGui(topLeft+Point(slotDist.x*2, slotDist.y*2), InventorySlot::RightHand);
-  AddSlotGui(topLeft+Point(slotDist.x*1, slotDist.y*3), InventorySlot::Boots);
+  Point slotDist(36, 36);
+  Point topLeft  = gfx.AlignTopLeftScreen(Point(32,32), 16)  + Point(0, 16);
+  Point topRight = gfx.AlignTopRightScreen(Point(32,32), 16) + Point(0, 16);
+
+  Gui *bg = new Gui();
+  bg->SetPosition(Point(8,24));
+  bg->SetSize(Point(124, 172));
+  bg->SetBackground(NinePatch("gui/button"));
+  this->children.push_back(bg);
+  
+  bg = new Gui();
+  bg->SetPosition(Point(vsize.x - (8+156),24));
+  bg->SetSize(Point(156, 172));
+  bg->SetBackground(NinePatch("gui/button"));
+  bg->SetGravity(true, true, false, false);
+  this->children.push_back(bg);
+
+  AddSlotGui(entity, topLeft+Point(slotDist.x*0, slotDist.y*0), InventorySlot::Amulet);
+  AddSlotGui(entity, topLeft+Point(slotDist.x*1, slotDist.y*0), InventorySlot::Helmet);
+  AddSlotGui(entity, topLeft+Point(slotDist.x*0, slotDist.y*1), InventorySlot::LeftRing);
+  AddSlotGui(entity, topLeft+Point(slotDist.x*1, slotDist.y*1), InventorySlot::Armor);
+  AddSlotGui(entity, topLeft+Point(slotDist.x*2, slotDist.y*1), InventorySlot::RightRing);
+  AddSlotGui(entity, topLeft+Point(slotDist.x*0, slotDist.y*2), InventorySlot::LeftHand);
+  AddSlotGui(entity, topLeft+Point(slotDist.x*1, slotDist.y*2), InventorySlot::Greaves);
+  AddSlotGui(entity, topLeft+Point(slotDist.x*2, slotDist.y*2), InventorySlot::RightHand);
+  AddSlotGui(entity, topLeft+Point(slotDist.x*1, slotDist.y*3), InventorySlot::Boots);
 
   InventorySlot slot = InventorySlot::Backpack0;
   while (slot < InventorySlot::End) {
     size_t index = (size_t)slot;
     int x = index%4 -3;
     int y = (index - (size_t)InventorySlot::Backpack0)/4;
-    AddSlotGui(topRight+Point(slotDist.x*x, slotDist.y*y), slot)->SetGravity(true, true, false, false);
+    AddSlotGui(entity, topRight+Point(slotDist.x*x, slotDist.y*y), slot)->SetGravity(true, true, false, false);
+    
+    slot = InventorySlot(index + 1);
+  }
+  
+  this->dragItem = nullptr;
+  this->dropItem = false;
+}
+
+InventoryGui::InventoryGui(RunningState &state, Entity &entity, Entity &other) : 
+  dragItem(nullptr),
+  state(state),
+  entity(entity), 
+  mousePos(),
+  dropItem(false),
+  name(other.GetName())
+{
+  Gfx &gfx = state.GetGame().GetGfx();
+  Point vsize = gfx.GetVirtualScreenSize();
+
+  Point slotDist(36, 36);
+  Point topLeft  = gfx.AlignTopLeftScreen(Point(32,32), 16)  + Point(0, 16);
+  Point topRight = gfx.AlignTopRightScreen(Point(32,32), 16) + Point(0, 16);
+
+  Gui *bg = new Gui();
+  bg->SetPosition(Point(8,24));
+  bg->SetSize(Point(156, 172));
+  bg->SetBackground(NinePatch("gui/button"));
+  this->children.push_back(bg);
+  
+  bg = new Gui();
+  bg->SetPosition(Point(vsize.x - (8+156),24));
+  bg->SetSize(Point(156, 172));
+  bg->SetBackground(NinePatch("gui/button"));
+  bg->SetGravity(true, true, false, false);
+  this->children.push_back(bg);
+  
+  InventorySlot slot = InventorySlot::Backpack0;
+  while (slot < InventorySlot::End) {
+    size_t index = (size_t)slot;
+    int x = index%4;
+    int y = (index - (size_t)InventorySlot::Backpack0)/4;
+    AddSlotGui(other, topLeft+Point(slotDist.x*x, slotDist.y*y), slot)->SetGravity(false, false, true, true);
+    
+    slot = InventorySlot(index + 1);
+  }
+
+  slot = InventorySlot::Backpack0;
+  while (slot < InventorySlot::End) {
+    size_t index = (size_t)slot;
+    int x = index%4 -3;
+    int y = (index - (size_t)InventorySlot::Backpack0)/4;
+    AddSlotGui(entity, topRight+Point(slotDist.x*x, slotDist.y*y), slot)->SetGravity(true, true, false, false);
     
     slot = InventorySlot(index + 1);
   }
@@ -74,6 +141,11 @@ void InventoryGui::Draw(Gfx &gfx, const Point &parentPos) {
   if (dragItem != nullptr) {
     dragItem->DrawIcon(gfx, mousePos);
   }
+
+  Point vsize = gfx.GetVirtualScreenSize();
+
+  RenderString(this->name).Draw(gfx, Point(16,180));
+  RenderString(this->entity.GetName()).Draw(gfx, Point(vsize.x-16,180), int(Align::HorizRight));
 }
 
 void InventoryGui::HandleEvent(const InputEvent &event) {
@@ -88,7 +160,7 @@ void InventoryGui::HandleEvent(const InputEvent &event) {
   }
 }
 
-Gui *InventoryGui::AddSlotGui(const Point &p, InventorySlot slot) {
+Gui *InventoryGui::AddSlotGui(Entity &entity, const Point &p, InventorySlot slot) {
   Gui *gui = new InventorySlotGui(this, entity, slot);
   gui->SetPosition(p - Point(16,16));
   gui->SetSize(Point(32,32));
@@ -168,7 +240,7 @@ void InventorySlotGui::HandleEvent(const InputEvent &event) {
       
         std::shared_ptr<Item> item(inv[slot]);
         if (item && item->IsConsumable()) {
-          inv.ConsumeItem(slot);
+          inv.ConsumeItem(slot, parent->GetEntity());
         }
       }
     } 

@@ -21,6 +21,10 @@ next doorway_z
 next alcove_z
 
 entity 0.1 torch 1 3 2 3
+mob 0.5 spider 0 3 2 3
+mob 0.5 spider 0 3 2 3
+mob 0.5 spider 0 3 2 3
+mob 0.5 spider 0 3 2 3
 
 def . 
 cell air

@@ -1,3 +1,7 @@
-AddHealth -0.1
+AddHealth -0.5
 Duration 5.0
+
+Feeling "sick"
+Name    "Poison "
+Extend
 

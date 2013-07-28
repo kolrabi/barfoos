@@ -10,4 +10,4 @@ NoBeatitude
 NoModifier
 
 OnConsumeResult   potion.empty
-
+OnConsumeEffect   potion.water

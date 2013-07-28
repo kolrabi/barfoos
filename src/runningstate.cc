@@ -21,7 +21,6 @@ RunningState::RunningState(Game &game) :
   nextEntityId(1),
   player(nullptr),
   showInventory(false),
-  inventoryGui(nullptr),
   lastSaveT(0.0),
   saving(false)
 {
@@ -112,7 +111,12 @@ RunningState::Update() {
   // show or hide inventory
   if (GetGame().GetInput().IsKeyActive(InputKey::Inventory)) {
     if (!this->showInventory) {
-      GetGame().SetGui(this->inventoryGui);
+      size_t ent = this->player->GetSelectedEntity();
+      if (ent == ~0UL) {
+        GetGame().SetGui(std::shared_ptr<Gui>(new InventoryGui(*this, *player)));
+      } else {
+        GetGame().SetGui(std::shared_ptr<Gui>(new InventoryGui(*this, *player, *entities[ent])));
+      }
     }
     this->showInventory = true;
   } else {
@@ -211,7 +215,6 @@ RunningState::AddEntity(Entity *entity) {
 size_t
 RunningState::AddPlayer(Player *player) {
   this->player = player;
-  this->inventoryGui = std::shared_ptr<InventoryGui>(new InventoryGui(*this, *player));
   GetGame().GetGfx().SetPlayer(player);
   return this->AddEntity(player);
 }
@@ -509,7 +512,6 @@ RunningState::LoadLevel() {
   deser >> this->entities;
   
   this->player = dynamic_cast<Player*>(this->entities[playerId]);
-  this->inventoryGui = std::shared_ptr<InventoryGui>(new InventoryGui(*this, *player));
   GetGame().GetGfx().SetPlayer(this->player);
   
   for (auto &e:this->entities) {

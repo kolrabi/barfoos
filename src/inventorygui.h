@@ -30,6 +30,7 @@ class InventoryGui : public Gui {
 public:
   
   InventoryGui(RunningState &state, Entity &entity);
+  InventoryGui(RunningState &state, Entity &entity, Entity &other);
   virtual ~InventoryGui();
 
   virtual void Update(Game &game) override;
@@ -37,6 +38,8 @@ public:
   virtual void OnHide();
 
   virtual void Draw(Gfx &gfx, const Point &parentPos) override;  
+
+  Entity &GetEntity() { return entity; }
 
   std::shared_ptr<Item> dragItem;
 
@@ -47,10 +50,11 @@ protected:
   Point mousePos;
   
   bool dropItem;
+  std::string name;
 
 private:
 
-  Gui* AddSlotGui(const Point &p, InventorySlot slot);
+  Gui* AddSlotGui(Entity &entity, const Point &p, InventorySlot slot);
 };
 
 #endif

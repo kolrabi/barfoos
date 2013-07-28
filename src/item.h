@@ -61,6 +61,8 @@ struct ItemProperties : public Properties {
   std::string onConsumeEffect = "";
   std::string onConsumeResult = "";
   std::string onConsumeAddBuff = "";
+
+  weighted_map<std::string> onHitAddBuff;
   
   float breakBlockStrength = 0.0;
   
@@ -122,7 +124,7 @@ public:
   void SetEquipped(bool equipped);
   bool IsCursed()                       const { return this->beatitude == Beatitude::Cursed; }
   
-  std::string GetDisplayName()          const;
+  std::string GetDisplayName(bool capitalize = false)          const;
   Stats GetDisplayStats()               const;
   size_t GetAmount()                    const { return this->amount; }
   void DecAmount()                            { if (this->amount > 1) this->amount --; }

@@ -9,6 +9,8 @@
 
 struct EffectProperties : public Properties {
   std::string name = "";
+  std::string feeling = "";
+  std::string displayName = "";
   
   float range = 1.0;
   float damage = 1.0;
@@ -41,6 +43,7 @@ struct EffectProperties : public Properties {
   float addHealth = 0;
   
   float duration = 0.0;
+  bool extend = false;
   
   Element element = Element::Physical;
   

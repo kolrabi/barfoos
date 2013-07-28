@@ -108,6 +108,7 @@ struct CellProperties : public Properties {
   float useDelay;
   float breakStrength;
   float lavaDamage;
+  float useChance;
   
   std::string breakParticle;
 
@@ -128,7 +129,7 @@ public:
   
   void Update(RunningState &state);
   
-  void OnUse(RunningState &state, Mob &user);
+  void OnUse(RunningState &state, Mob &user, bool force = false);
   
   void UpdateNeighbours();
   
@@ -194,6 +195,8 @@ public:
   
   bool Ray(const Vector3 &start, const Vector3 &dir, float &t, Vector3 &p) const;
   Cell &operator[](Side side);
+
+  bool Flow(Side side);
   
 protected:
 
@@ -262,9 +265,7 @@ protected:
   IColor SideCornerColor(Side side, size_t corner) const;
   void SideColors(Side side, IColor *colors) const;
   void SideVerts(Side side, std::vector<Vertex> &verts, bool reverse = false) const;
-
-  bool Flow(Side side);
-  
+ 
   friend Serializer &operator << (Serializer &ser, const Cell &cell);
   friend Deserializer &operator >> (Deserializer &deser, Cell &cell);
 };

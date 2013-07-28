@@ -2,7 +2,7 @@
 EyeOffset   0.7
 Step        0.6
 Mass      100.0
-Speed      10.0
+Speed       5.0
 
 Health     10.0
 
@@ -22,4 +22,5 @@ Inventory   1.0 scroll.identify
 str 1
 agi 1
 dex 1
-def 0
+def 10
+

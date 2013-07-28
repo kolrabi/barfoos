@@ -315,22 +315,35 @@ void Feature::SpawnEntities(RunningState &state, const IVector3 &pos) const {
         default: continue;
       }
       
-      Vector3 spawnPos = Vector3(pos)+spawn.pos+Vector3(0.5,0.5,0.5);
+      Vector3 spawnPos = Vector3(pos)+spawn.pos;
       if (spawn.attach) {
+        spawnPos = spawnPos + Vector3(0.5,0.5,0.5);
         IVector3 cellPos = spawnPos;
+        Side side = Side::InvalidSide;
         
         if (spawn.attach == -2) {
+          side = Side::Down;
           spawnPos.y = cellPos.y + entity->GetAABB().extents.y + 0.001;
         } else if (spawn.attach == 2) {
+          side = Side::Up;
           spawnPos.y = cellPos.y + 1-entity->GetAABB().extents.y - 0.001;
         } else if (spawn.attach == 1) {
+          side = Side::Right;
           spawnPos.x = cellPos.x + 1-entity->GetAABB().extents.x - 0.001;
         } else if (spawn.attach == -1) {
+          side = Side::Left;
           spawnPos.x = cellPos.x + entity->GetAABB().extents.x + 0.001;
         } else if (spawn.attach == 3) {
+          side = Side::Forward;
           spawnPos.z = cellPos.z + 1-entity->GetAABB().extents.z - 0.001;
         } else if (spawn.attach == -3) {
+          side = Side::Backward;
           spawnPos.z = cellPos.z + entity->GetAABB().extents.z + 0.001;
+        }
+        
+        if (!state.GetWorld().GetCell(cellPos[side]).IsSolid()) {
+          delete entity;
+          continue;
         }
       }
       

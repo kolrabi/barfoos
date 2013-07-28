@@ -74,7 +74,7 @@ public:
   
   void Drop(RunningState &state, Entity &owner);
   void DropItem(const std::shared_ptr<Item> &item);
-  void ConsumeItem(InventorySlot slot);
+  void ConsumeItem(InventorySlot slot, Entity &user);
   
   IColor GetLight() const;
   
@@ -88,7 +88,7 @@ private:
   std::vector<std::shared_ptr<Item>> overflow;
   std::vector<std::pair<InventorySlot, std::shared_ptr<Item>>> equipped;
   std::vector<std::pair<InventorySlot, std::shared_ptr<Item>>> unequipped;
-  std::vector<InventorySlot> consumed;
+  std::vector<std::pair<InventorySlot, size_t>> consumed;
 
   float lastT;
   

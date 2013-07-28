@@ -117,7 +117,7 @@ Mob::Update(RunningState &state) {
       tvy = 0;
     }
   } else if (inWater) { 
-    if (wantJump) {
+    if (wantJump || properties->swim) {
       tvy = 3 * friction;
       wantJump = false;
     } else {
@@ -127,7 +127,7 @@ Mob::Update(RunningState &state) {
     tvy = velocity.y -= gravity;
     if (wantJump && onGround) {
       if (game.GetTime() - lastJumpT > 0.5) {
-        tvy = velocity.y = 8;
+        tvy = velocity.y = properties->jumpSpeed;
         lastJumpT = game.GetTime();
       }
     }
@@ -236,6 +236,11 @@ Mob::Update(RunningState &state) {
   if (this->IsDead()) {
     this->wantJump = false;
   }
+
+  if (this->properties->flipLeft) {
+    Vector3 vhoriz = velocity.Horiz().Normalize();
+    angles.x = std::atan2(vhoriz.z, vhoriz.x); 
+  }
 }
 
 void
@@ -261,9 +266,14 @@ Mob::Think(RunningState &state) {
         this->attackTarget = ~0UL;
       } else if (dist < this->properties->meleeAttackRange && state.GetGame().GetTime() > nextAttackT) {
         this->sprite.StartAnim(this->properties->attackAnim);
-        nextAttackT += this->properties->attackInterval;
-        
-        if (this->attackItem) this->attackItem->UseOnEntity(state, *this, this->attackTarget);
+
+        if (this->properties->attackForwardStep) {
+          this->AddVelocity((enemy->GetPosition() - GetPosition()).Horiz().Normalize() * this->properties->attackForwardStep);
+        } else {
+          if (this->attackItem) this->attackItem->UseOnEntity(state, *this, this->attackTarget);
+        }
+        this->velocity.y += this->properties->attackJump;
+        nextAttackT = state.GetGame().GetTime() + this->properties->attackInterval;
       }
     } else {
       this->attackTarget = ~0UL;
@@ -294,7 +304,12 @@ Mob::Think(RunningState &state) {
     // walk toward enemy
     Entity *enemy = state.GetEntity(this->attackTarget);
     if (enemy) {
-      move = (enemy->GetPosition() - GetPosition()).Horiz().Normalize() * this->properties->maxSpeed;
+      Vector3 dhoriz = (enemy->GetPosition() - GetPosition()).Horiz();
+      if (dhoriz.GetMag() > this->properties->meleeAttackRange) {
+        move = dhoriz.Normalize() * this->properties->maxSpeed;
+      } else {
+        move = Vector3();
+      }
     } else {
       this->attackTarget = ~0UL;
     }
@@ -331,6 +346,13 @@ Mob::Die(RunningState &state, const HealthInfo &info) {
 void
 Mob::OnCollide(RunningState &state, Entity &other) {
   if (this->IsSolid()) return;
+
+  if (this->properties->attackForwardStep && other.GetId() == this->attackTarget) {
+     this->AddVelocity(-(other.GetPosition() - GetPosition()).Horiz().Normalize() * this->properties->attackForwardStep);
+     if (this->attackItem) this->attackItem->UseOnEntity(state, *this, other.GetId());
+     return;
+  }
+
   Vector3 d = this->GetAABB().center - other.GetAABB().center;
   Vector3 f = d * (this->properties->mass * other.GetProperties()->mass / (1+d.GetSquareMag()));
   this->ApplyForce(state, f);

@@ -1,12 +1,18 @@
-# do 1 base damage per hit
-Damage      1
+# do 0.5 base damage per hit
+Damage      0.5
 
 # never expire
 Durability  0
 
 # 1 hit/second
-Cooldown    1.0
+Cooldown    5.0
 
 CanUseNothing
 CanUseEntity
 CanUseCell
+
+Knockback 100
+
+
+OnHitAddBuff buff.poison 1.0
+

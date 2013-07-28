@@ -48,6 +48,9 @@ Player::Player() :
   
   fps               (0.0),
   
+  bigMessage        (new RenderString("", "big")),
+  bigMessageT       (0.0),
+  
   leftHand          (new Item("barehand.player")),
   rightHand         (new Item("barehand.player"))
 {
@@ -89,6 +92,7 @@ Player::Player(Deserializer &deser) : Mob("player", deser),
 }
 
 Player::~Player() {
+  delete this->bigMessage;
 }
 
 void
@@ -178,6 +182,8 @@ Player::Update(RunningState &state) {
       iter++;
     }
   }
+  this->bigMessageT -= game.GetDeltaT();
+  if (this->bigMessageT < 0.0f) this->bigMessageT = 0.0f;
 
   messageY += messageVY * game.GetDeltaT();
   messageVY -= game.GetDeltaT() * 100;
@@ -366,6 +372,8 @@ Player::DrawGUI(Gfx &gfx) const {
     msg->text->Draw(gfx, 4, y);
     y += msg->text->GetSize().y+2;
   }
+  gfx.SetColor(IColor(255,255,255), this->bigMessageT);
+  bigMessage->Draw(gfx, vsize/2 + Point(0,-100+this->bigMessageT*50), (int)(Align::HorizCenter | Align::VertMiddle));
 
   // draw health bar
   gfx.SetColor(IColor(255,255,255));
@@ -388,7 +396,13 @@ Player::DrawGUI(Gfx &gfx) const {
   RenderString(tmp, "small").Draw(gfx, 4, vsize.y-32);
 
   snprintf(tmp, sizeof(tmp), "LVL: %3u EXP: %4d / %4d", (unsigned int)stats.GetLevel(), (int)stats.exp, (int)Stats::GetExpForLevel(stats.GetLevel() + 1));
-  RenderString(tmp, "small").Draw(gfx, 4, vsize.y-32-16);
+  RenderString(tmp, "small").Draw(gfx, 4, vsize.y-32-12);
+
+  std::string buffstring;
+  for (auto &b:activeBuffs) {
+    buffstring += "\n" + b.effect->displayName;
+  }
+  RenderString(buffstring).Draw(gfx, vsize - Point(4,40), int(Align::HorizRight|Align::VertBottom));
 }
 
 void
@@ -512,6 +526,16 @@ Player::OnEquip(RunningState &state, const Item &item, InventorySlot slot, bool 
   } else {
     this->AddMessage("You take off the " + item.GetDisplayName() + ".");
   }
+}
+
+void Player::OnLevelUp(RunningState &) {
+  this->health ++;
+  *this->bigMessage = "Level Up!";
+  this->bigMessageT = 2.0;
+}
+
+void Player::OnBuffAdded(RunningState &, const EffectProperties &effect) {
+  this->AddMessage("You feel "+effect.feeling);
 }
 
 void 

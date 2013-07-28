@@ -70,11 +70,16 @@ struct EntityProperties : public Properties {
   bool    respawn           = false;  //< Entity will automatically respawn on death.
   bool    aggressive        = false;
   bool    onCollideUseCell  = false;
+  bool    swim              = false;
+  bool    flipLeft          = false;
+  float   jumpSpeed         = 8.0;
   float   attackInterval    = 0.0;
   float   aggroRangeNear    = 0.0;
   float   aggroRangeFar     = 0.0;
   float   meleeAttackRange  = 0.0;
   std::string attackItem    = "";
+  float   attackForwardStep = 0.0;
+  float   attackJump        = 0.0;
   float   exp               = 0.0;
 
   // stats
@@ -134,6 +139,7 @@ public:
   virtual void OnHealthDealt(RunningState &, Entity &other, const HealthInfo &info);
   virtual void OnLevelUp(RunningState &)                          {}
   virtual void OnEquip(RunningState &, const Item &, InventorySlot, bool)      {}
+  virtual void OnBuffAdded(RunningState &, const EffectProperties &)      {}
   
   // management
   size_t                    GetId()                           const { return id; }

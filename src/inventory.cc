@@ -148,9 +148,12 @@ Inventory::Update(RunningState &state, Entity &owner) {
   }
   overflow.clear();
 
-  for (auto i:consumed) {
-    if (!self[i]) continue;
-    self[i] = self[i]->Consume(state, owner);
+  for (auto &i:consumed) {
+    if (!self[i.first]) continue;
+    Entity *user = state.GetEntity(i.second);
+    if (!user) continue;
+
+    self[i.first] = self[i.first]->Consume(state, *user);
   }
   consumed.clear();
   
@@ -192,8 +195,8 @@ Inventory::DropItem(const std::shared_ptr<Item> &item) {
 }
 
 void 
-Inventory::ConsumeItem(InventorySlot slot) {
-  consumed.push_back(slot);
+Inventory::ConsumeItem(InventorySlot slot, Entity &user) {
+  consumed.push_back(std::pair<InventorySlot, size_t>(slot, user.GetId()));
 }
 
 void
