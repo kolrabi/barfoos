@@ -495,13 +495,15 @@ Gfx::BindVertexPointer(const Vertex *ptr) {
 
 void 
 Gfx::DrawTriangles(const std::vector<Vertex> &vertices) {
+  if (vertices.size() == 0) return;
   this->SetUniforms();
   this->BindVertexPointer(&vertices[0]);
   glDrawArrays(GL_TRIANGLES, 0, vertices.size());
 }
 
 void 
-Gfx::DrawQuads(const std::vector<Vertex> &vertices) {
+Gfx::DrawQuads(const std::vector<Vertex> &vertices) { 
+  if (vertices.size() == 0) return;
   this->SetUniforms();
   this->BindVertexPointer(&vertices[0]);
   glDrawArrays(GL_QUADS, 0, vertices.size());
@@ -509,6 +511,8 @@ Gfx::DrawQuads(const std::vector<Vertex> &vertices) {
 
 void 
 Gfx::DrawTriangles(unsigned int vbo, size_t first, size_t vertexCount) {
+  if (!vertexCount) return;
+
   this->SetUniforms();
 
   glBindBuffer(GL_ARRAY_BUFFER, vbo);
@@ -519,6 +523,8 @@ Gfx::DrawTriangles(unsigned int vbo, size_t first, size_t vertexCount) {
 
 void 
 Gfx::DrawQuads(unsigned int vbo, size_t first, size_t vertexCount) {
+  if (!vertexCount) return;
+
   this->SetUniforms();
   glBindBuffer(GL_ARRAY_BUFFER, vbo);
   this->BindVertexPointer(nullptr);

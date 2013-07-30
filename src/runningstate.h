@@ -20,6 +20,7 @@ public:
   
   World  &              GetWorld()                  const { return *this->world;  }
   int                   GetLevel()                  const { return this->level;   }
+  bool 	                IsShowingInventory()        const { return this->showInventory; }
 
   // entity management
   size_t                AddEntity(Entity *entity);

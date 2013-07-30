@@ -5,7 +5,7 @@
 #include "util.h"
 #include "cell.h"
 
-#include <unordered_map>
+#include <map>
 
 class Feature;
 
@@ -16,7 +16,7 @@ struct FeatureConnection {
   size_t id;
 
   // possible features that can be connected here
-  std::unordered_map<std::string, float> nextFeatures;
+  std::map<std::string, float> nextFeatures;
   
   bool resolved;
 
@@ -137,7 +137,7 @@ public:
 
 protected:
 
-  std::unordered_map<char, FeatureCharDef> defs;
+  std::map<char, FeatureCharDef> defs;
   std::vector<FeatureConnection> conns;
   std::vector<FeatureSpawn> spawns;
   std::vector<FeatureReplacement> replacements;

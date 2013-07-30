@@ -155,5 +155,6 @@ Deserializer &operator >> (Deserializer &deser, Buff &buff) {
 }
 
 bool Stats::operator==(const Stats &o) {
-  return ::memcmp(&o, this, sizeof(*this)) == 0;
+  return str == o.str && dex == o.dex && agi == o.agi && def == o.def &&
+         walkSpeed == o.walkSpeed && maxHealth == o.maxHealth;
 }

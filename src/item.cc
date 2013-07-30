@@ -393,17 +393,17 @@ Item::DrawSprite(Gfx &gfx, const Vector3 &pos) const {
 void 
 Item::ModifyStats(Stats &stats, bool forceEquipped) const {
   if (this->isEquipped || forceEquipped) {
-    stats.str += this->properties->eqAddStr   * (1 + 0.4*this->modifier);
-    stats.agi += this->properties->eqAddAgi   * (1 + 0.4*this->modifier);
-    stats.dex += this->properties->eqAddDex   * (1 + 0.4*this->modifier);
-    stats.def += this->properties->eqAddDef   * (1 + 0.4*this->modifier);
-    stats.maxHealth += this->properties->eqAddHP * (1 + 0.4*this->modifier);
+    stats.str += this->properties->eqAddStr   * (1 + 0.5*this->modifier);
+    stats.agi += this->properties->eqAddAgi   * (1 + 0.5*this->modifier);
+    stats.dex += this->properties->eqAddDex   * (1 + 0.5*this->modifier);
+    stats.def += this->properties->eqAddDef   * (1 + 0.5*this->modifier);
+    stats.maxHealth += this->properties->eqAddHP * (1 + 0.5*this->modifier);
   } else {
-    stats.str += this->properties->uneqAddStr * (1 + 0.4*this->modifier);
-    stats.agi += this->properties->uneqAddAgi * (1 + 0.4*this->modifier);
-    stats.dex += this->properties->uneqAddDex * (1 + 0.4*this->modifier);
-    stats.def += this->properties->uneqAddDef * (1 + 0.4*this->modifier);
-    stats.maxHealth += this->properties->uneqAddHP * (1 + 0.4*this->modifier);
+    stats.str += this->properties->uneqAddStr * (1 + 0.5*this->modifier);
+    stats.agi += this->properties->uneqAddAgi * (1 + 0.5*this->modifier);
+    stats.dex += this->properties->uneqAddDex * (1 + 0.5*this->modifier);
+    stats.def += this->properties->uneqAddDef * (1 + 0.5*this->modifier);
+    stats.maxHealth += this->properties->uneqAddHP * (1 + 0.5*this->modifier);
   }
   if (this->effect) this->effect->ModifyStats(stats, this->isEquipped);
 }

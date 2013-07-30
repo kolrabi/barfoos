@@ -135,7 +135,7 @@ public:
   
   bool IsConsumable()                   const { return this->properties->onConsumeEffect != "" || this->properties->onConsumeResult != ""; }
   
-  bool IsRemovable()                    const { return isRemovable; }
+  bool IsRemovable()                    const { return isRemovable || this->amount == 0; }
   
   const ItemProperties &GetProperties() const { return *this->properties; }
   const EffectProperties &GetEffect()   const { return *this->effect; }

@@ -538,6 +538,7 @@ Cell::UpdateNeighbours(
   // update this cell and neighbours recursively until nothing changes anymore
   // FIXME: change return type to void, we don't need to recurse
   if (this->SetLightLevel(color) || this->visibility != oldvis) {
+    Log("%d %d %d: %d\n", color.r, color.g, color.b, this->visibility != oldvis);
     updated = true;
     for (size_t i=0; i<6; i++) {
       Cell &cell = *this->neighbours[i];

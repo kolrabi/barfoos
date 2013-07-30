@@ -227,14 +227,11 @@ void InventorySlotGui::HandleEvent(const InputEvent &event) {
         if (isStack) {
           combineItem = std::shared_ptr<Item>(new Item(parent->dragItem->GetProperties().name));
           parent->dragItem->DecAmount();
-        } 
-        
-        if (!inv.AddToInventory(combineItem, slot)) {
-          if (isStack) parent->dragItem->IncAmount();
         } else {
-          if (!isStack) parent->dragItem = nullptr;
+          parent->dragItem = nullptr;
         }
         
+        inv.AddToInventory(combineItem, slot);
       } else {
       
         std::shared_ptr<Item> item(inv[slot]);

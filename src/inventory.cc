@@ -59,7 +59,7 @@ Inventory::AddToBackpack(const std::shared_ptr<Item> &item) {
 /** Add item to given slot if possible, or first free one.
   * Equips item if slot is not a backpack slot. Combines items if possible.
   */
-bool
+void
 Inventory::AddToInventory(const std::shared_ptr<Item> &item, InventorySlot slot) {
   Log("AddToInventory %s %u\n", item->GetDisplayName().c_str(), item->GetAmount());
   
@@ -68,11 +68,12 @@ Inventory::AddToInventory(const std::shared_ptr<Item> &item, InventorySlot slot)
     if (slot >= InventorySlot::Backpack0 || item->IsEquippable(slot)) {
       // replace item
       this->Equip(item, slot);
-      return true;
+      return;
     }
 
     // put somewhere
-    return this->AddToBackpack(item);
+    this->AddToBackpack(item);
+    return;
   }
 
   // try stacking them together
@@ -80,7 +81,7 @@ Inventory::AddToInventory(const std::shared_ptr<Item> &item, InventorySlot slot)
     Log("Can Stack!\n");
     self[slot]->AddAmount(item->GetAmount());
     item->SetAmount(0);
-    return true;
+    return;
   } else if (item->GetAmount() > 1) {
     Log("Cannot Stack!\n");
     // can't be stacked, put all but one from stack into backpack
@@ -104,7 +105,7 @@ Inventory::AddToInventory(const std::shared_ptr<Item> &item, InventorySlot slot)
     Log("Combined to %s\n", combo->GetDisplayName().c_str());
     this->inventory[slot] = nullptr;
     this->Equip(combo, slot);
-    return true;
+    return;
   }
   
   if (self[slot]->IsCursed() && slot < InventorySlot::Backpack0) {
@@ -112,7 +113,7 @@ Inventory::AddToInventory(const std::shared_ptr<Item> &item, InventorySlot slot)
     if (!this->AddToBackpack(item)) {
       this->DropItem(item);
     }
-    return false;
+    return;
   }
 
   // try to put existing item in backpack if enough room
@@ -120,7 +121,7 @@ Inventory::AddToInventory(const std::shared_ptr<Item> &item, InventorySlot slot)
   std::shared_ptr<Item> oldItem = self[slot];
   self[slot] = nullptr;
   this->Equip(item, slot);
-  return this->AddToBackpack(oldItem);
+  this->AddToBackpack(oldItem);
 }
 
 /** Put item in the given slot, move any existing item to backpack.

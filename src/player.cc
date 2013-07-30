@@ -251,13 +251,14 @@ Player::UpdateInput(
   
   if (input.IsKeyDown(InputKey::DebugDie)) this->Die(state, HealthInfo());
   
-  if (input.IsKeyDown(InputKey::Use) && this->selectedEntity != ~0UL) {
-    Entity *entity = state.GetEntity(this->selectedEntity);
-    if (entity) entity->OnUse(state, *this);
-  } else if (input.IsKeyDown(InputKey::Use) && this->selectedCell) {
-    this->selectedCell->OnUse(state, *this);
+  if (!state.IsShowingInventory()) {
+    if (input.IsKeyDown(InputKey::Use) && this->selectedEntity != ~0UL) {
+      Entity *entity = state.GetEntity(this->selectedEntity);
+      if (entity) entity->OnUse(state, *this);
+    } else if (input.IsKeyDown(InputKey::Use) && this->selectedCell) {
+      this->selectedCell->OnUse(state, *this);
+    }
   }
-
   sneak = input.IsKeyActive(InputKey::Sneak);
 
   if (angles.y >  89_deg) angles.y =  89_deg;

@@ -112,7 +112,7 @@ RunningState::Update() {
   if (GetGame().GetInput().IsKeyActive(InputKey::Inventory)) {
     if (!this->showInventory) {
       size_t ent = this->player->GetSelectedEntity();
-      if (ent == ~0UL) {
+      if (ent == ~0UL /*|| !entities[ent]->GetProperties()->CanOpenInventory() TODO */) {
         GetGame().SetGui(std::shared_ptr<Gui>(new InventoryGui(*this, *player)));
       } else {
         GetGame().SetGui(std::shared_ptr<Gui>(new InventoryGui(*this, *player, *entities[ent])));
