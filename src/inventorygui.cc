@@ -170,6 +170,7 @@ Gui *InventoryGui::AddSlotGui(Entity &entity, const Point &p, InventorySlot slot
 
 void InventoryGui::OnHide() {
   if (dragItem) {
+    Log("InventoryGui::OnHide putting back %s %u\n", dragItem->GetDisplayName().c_str(), dragItem->GetAmount());
     entity.GetInventory().AddToBackpack(dragItem);
     this->dragItem = nullptr;
   }
@@ -212,11 +213,9 @@ void InventorySlotGui::HandleEvent(const InputEvent &event) {
     
       std::shared_ptr<Item> item(parent->dragItem);
       if (!item) return;
-      if (!inv.AddToInventory(item, slot)) {
-        inv.AddToBackpack(item);
-      }
+      Log("InventoryGui::HandleEvent putting item %s %u in slot %u\n", item->GetDisplayName().c_str(), item->GetAmount(), slot);
+      inv.AddToInventory(item, slot);
       parent->dragItem = nullptr;
-      
     }
     
   } else if (event.key == InputKey::MouseRight) {

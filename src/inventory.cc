@@ -33,18 +33,17 @@ Inventory::operator[](InventorySlot slot) const {
   */
 bool
 Inventory::AddToBackpack(const std::shared_ptr<Item> &item) {
+  Log("AddToBackpack %s %u\n", item->GetDisplayName().c_str(), item->GetAmount());
   InventorySlot i = InventorySlot::Backpack0;
-  if (item->GetProperties().stackable) {
-    while(i < InventorySlot::End) {
-      if (self[i] && item->GetProperties() == self[i]->GetProperties()) {
-        self[i]->AddAmount(item->GetAmount());
-        return true;
-      }
-      i = InventorySlot((size_t)i + 1);
+  while(i < InventorySlot::End) {
+    if (self[i] && self[i]->CanStack(*item)) {
+      self[i]->AddAmount(item->GetAmount());
+      return true;
     }
-    i = InventorySlot::Backpack0;
+    i = InventorySlot((size_t)i + 1);
   }
-  
+
+  i = InventorySlot::Backpack0;
   while(i < InventorySlot::End) {
     if (!self[i]) {
       self[i] = item;
@@ -62,45 +61,54 @@ Inventory::AddToBackpack(const std::shared_ptr<Item> &item) {
   */
 bool
 Inventory::AddToInventory(const std::shared_ptr<Item> &item, InventorySlot slot) {
-  if (item->GetAmount() > 1) {
-
-    std::shared_ptr<Item> rest(new Item(item->GetProperties().name));
-    rest->AddAmount(item->GetAmount() - 2);
+  Log("AddToInventory %s %u\n", item->GetDisplayName().c_str(), item->GetAmount());
   
-    item->AddAmount(-item->GetAmount() + 1);
-    
-    if (!this->AddToBackpack(rest)) {
-      this->DropItem(rest);
-    }
-  }
-  
-  if (!this->inventory[slot]) {
+  if (!self[slot]) {
     // target slot is free
     if (slot >= InventorySlot::Backpack0 || item->IsEquippable(slot)) {
       // replace item
       this->Equip(item, slot);
       return true;
-    } else {
-      // put somewhere
-      return this->AddToBackpack(item);
     }
+
+    // put somewhere
+    return this->AddToBackpack(item);
   }
 
+  // try stacking them together
+  if (self[slot]->CanStack(*item)) {
+    Log("Can Stack!\n");
+    self[slot]->AddAmount(item->GetAmount());
+    item->SetAmount(0);
+    return true;
+  } else if (item->GetAmount() > 1) {
+    Log("Cannot Stack!\n");
+    // can't be stacked, put all but one from stack into backpack
+    std::shared_ptr<Item> rest(new Item(item->GetProperties().name));
+    rest->SetAmount(item->GetAmount()-1);
+    item->SetAmount(1);
+
+    Log("%u %u\n", item->GetAmount(), rest->GetAmount());
+    
+    Log("Putting %u back into backpack\n", rest->GetAmount());
+    if (!this->AddToBackpack(rest)) {
+      this->DropItem(rest);
+    }
+  }
+  
   // combine
   std::shared_ptr<Item> combo(item->Combine(this->inventory[slot]));
   
   if (combo) {
-    DropItem(item);
-  }
-  
-  if (combo) {
     // replace existing item with combination
+    Log("Combined to %s\n", combo->GetDisplayName().c_str());
     this->inventory[slot] = nullptr;
     this->Equip(combo, slot);
     return true;
   }
   
   if (self[slot]->IsCursed() && slot < InventorySlot::Backpack0) {
+    Log("Target is cursed, putting item in backpack\n");
     if (!this->AddToBackpack(item)) {
       this->DropItem(item);
     }
@@ -108,12 +116,11 @@ Inventory::AddToInventory(const std::shared_ptr<Item> &item, InventorySlot slot)
   }
 
   // try to put existing item in backpack if enough room
-  if (this->AddToBackpack(self[slot])) {
-    self[slot] = nullptr;
-    this->Equip(item, slot);
-    return true;
-  }
-  return false;
+  Log("Putting existing item in the backpack\n");
+  std::shared_ptr<Item> oldItem = self[slot];
+  self[slot] = nullptr;
+  this->Equip(item, slot);
+  return this->AddToBackpack(oldItem);
 }
 
 /** Put item in the given slot, move any existing item to backpack.
@@ -131,7 +138,7 @@ Inventory::Equip(const std::shared_ptr<Item> &item, InventorySlot slot) {
   }
   self[slot] = item;
   
-  if (item) {
+  if (item && item->IsEquipped() != equip) {
     item->SetEquipped(equip);
     if (equip) this->equipped.push_back({slot, item});
     else this->unequipped.push_back({slot, item});

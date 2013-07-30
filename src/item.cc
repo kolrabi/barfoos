@@ -454,11 +454,7 @@ Item::GetDisplayStats() const {
 
 std::shared_ptr<Item> 
 Item::Combine(const std::shared_ptr<Item> &other) {
-  if (other->properties == this->properties && this->properties->stackable) {
-    other->amount += this->amount;
-    this->isRemovable = true;
-    return other;
-  } else if (this->amount > 1 || other->amount > 1) {
+  if (this->amount > 1 || other->amount > 1) {
     // can only combine single items
     return nullptr;
   }
@@ -519,6 +515,13 @@ Item::AddAmount(int amt) {
   } else {
     this->amount += amt;
   }
+}
+
+bool 
+Item::CanStack(const Item &other) const {
+  return properties == this->properties && properties->stackable && 
+         durability == other.durability && beatitude == other.beatitude && 
+         modifier == other.modifier;
 }
   
 Serializer &operator << (Serializer &ser, const Item &item) {

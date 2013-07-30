@@ -123,6 +123,7 @@ public:
   
   void SetEquipped(bool equipped);
   bool IsCursed()                       const { return this->beatitude == Beatitude::Cursed; }
+  bool CanStack(const Item &other)      const;
   
   std::string GetDisplayName(bool capitalize = false)          const;
   Stats GetDisplayStats()               const;
@@ -130,6 +131,7 @@ public:
   void DecAmount()                            { if (this->amount > 1) this->amount --; }
   void IncAmount()                            { this->amount ++; }
   void AddAmount(int amt);
+  void SetAmount(int amt)                     { this->amount = amt; }
   
   bool IsConsumable()                   const { return this->properties->onConsumeEffect != "" || this->properties->onConsumeResult != ""; }
   
