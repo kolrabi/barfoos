@@ -5,6 +5,8 @@
 #include "icolor.h"
 #include "ivector3.h"
 
+#include <map>
+
 /** Optional flags of a cell. */
 enum CellFlags {
   /** Enable collision detection. */
@@ -112,6 +114,9 @@ struct CellProperties : public Properties {
   
   std::string breakParticle;
 
+  std::map<std::string, std::string> onFlowOntoReplaceTarget;
+  std::map<std::string, std::string> onFlowOntoReplaceSelf;
+
   CellProperties(); 
   
   virtual void ParseProperty(const std::string &name);
@@ -182,6 +187,8 @@ public:
 
   size_t GetFeatureID() const;
   void SetFeatureID(size_t f);
+
+  bool IsSeen() const;
   
   bool HasSolidSides() const;
   bool CheckSideSolid(Side side, const Vector3 &org) const;

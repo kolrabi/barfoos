@@ -12,6 +12,7 @@ public:
 
   InventorySlotGui &operator=(const InventorySlotGui &) = delete;
   
+  virtual void Update(Game &game) override;
   virtual void Draw(Gfx &gfx, const Point &parentPos) override;
   virtual void DrawTooltip(Gfx &gfx, const Point &parentPos) override;
   virtual void HandleEvent(const InputEvent &event) override;
@@ -24,6 +25,9 @@ private:
   bool hover;
 
   const Texture *slotTex;
+
+  float lastT;
+  float lastClickT;
 };
 
 class InventoryGui : public Gui {

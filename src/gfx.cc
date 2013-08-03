@@ -113,10 +113,10 @@ Gfx::Gfx(const Point &pos, const Point &size, bool fullscreen) :
   this->cubeVerts.push_back(Vertex(Vector3(-1,-1,  1), IColor(255,255,255), 5,0, Vector3( 0,-1, 0)));
 
   // quad
-  this->quadVerts.push_back(Vertex(Vector3(-1,-1,  0), IColor(255,255,255), 0,0, Vector3( 0, 0, 1)));
-  this->quadVerts.push_back(Vertex(Vector3( 1,-1,  0), IColor(255,255,255), 1,0, Vector3( 0, 0, 1)));
-  this->quadVerts.push_back(Vertex(Vector3( 1, 1,  0), IColor(255,255,255), 1,1, Vector3( 0, 0, 1)));
-  this->quadVerts.push_back(Vertex(Vector3(-1, 1,  0), IColor(255,255,255), 0,1, Vector3( 0, 0, 1)));
+  this->quadVerts.push_back(Vertex(Vector3(-1,-1,  0), IColor(255,255,255), 0,0, Vector3( 0, 0, 0)));
+  this->quadVerts.push_back(Vertex(Vector3( 1,-1,  0), IColor(255,255,255), 1,0, Vector3( 0, 0, 0)));
+  this->quadVerts.push_back(Vertex(Vector3( 1, 1,  0), IColor(255,255,255), 1,1, Vector3( 0, 0, 0)));
+  this->quadVerts.push_back(Vertex(Vector3(-1, 1,  0), IColor(255,255,255), 0,1, Vector3( 0, 0, 0)));
 }
 
 Gfx::~Gfx() {
@@ -351,11 +351,17 @@ Gfx::Update(Game &game) {
   }
 
   if (game.GetInput().IsKeyDown(InputKey::DebugScreenshot)) {
-    uint8_t *data = new uint8_t[screenSize.x*screenSize.y*3];
-    glReadPixels(0,0,screenSize.x, screenSize.y, GL_RGB, GL_UNSIGNED_BYTE, data);
-    saveImage("screenshot.png", screenSize.x, screenSize.y, data); 
-    delete [] data;
+    SaveScreen("screenshot.png");
   }
+}
+
+void
+Gfx::SaveScreen(const std::string &name) {
+  uint8_t *data = new uint8_t[screenSize.x*screenSize.y*3];
+  glReadPixels(0,0,screenSize.x, screenSize.y, GL_RGB, GL_UNSIGNED_BYTE, data);
+  saveImage(name, screenSize.x, screenSize.y, data); 
+  delete [] data;
+  Log("%s saved\n", name.c_str());
 }
 
 bool
@@ -460,13 +466,13 @@ Gfx::SetUniforms() const {
   std::vector<IColor>  lightCol;
 
   for (size_t i=0; i<this->lightPositions.size(); i++) {
-    if (this->view.IsPointVisible(this->lightPositions[i])) {
+//    if (this->view.IsPointVisible(this->lightPositions[i])) {
       lightPos.push_back(this->lightPositions[i]);
       lightCol.push_back(this->lightColors[i]);
-    }
+//    }
   }
 
-  lightCol.resize(MaxLights);
+  lightCol.resize(MaxLights, IColor(0,0,0));
   lightPos.resize(MaxLights);
   
   this->view.SetUniforms(this->activeShader);
@@ -476,8 +482,8 @@ Gfx::SetUniforms() const {
   this->activeShader->Uniform("u_time",     this->GetTime());
   this->activeShader->Uniform("u_color",    this->color, this->alpha);
   
-  this->activeShader->Uniform("u_lightPos",   this->lightPositions);
-  this->activeShader->Uniform("u_lightColor", this->lightColors);
+  this->activeShader->Uniform("u_lightPos",   lightPos);
+  this->activeShader->Uniform("u_lightColor", lightCol);
   
   this->activeShader->Uniform("u_texture", 0);
   this->activeShader->Uniform("u_texture2", 1);
@@ -550,22 +556,8 @@ void Gfx::DrawSprite(const Sprite &sprite, const Vector3 &pos, bool flip, bool b
   this->view.Push();
   this->view.Translate(pos);
 
-  // TODO: move to GfxView::Billboard(vertical);
   if (billboard) {
-    this->view.modelViewStack.back()(0,0) = flip?-1:1; 
-    this->view.modelViewStack.back()(0,1) = 0;
-    this->view.modelViewStack.back()(0,2) = 0;
-
-    if (!sprite.vertical) {
-      this->view.modelViewStack.back()(1,0) = 0; 
-      this->view.modelViewStack.back()(1,1) = 1;
-      this->view.modelViewStack.back()(1,2) = 0;
-    }
-    
-    this->view.modelViewStack.back()(2,0) = 0; 
-    this->view.modelViewStack.back()(2,1) = 0;
-    this->view.modelViewStack.back()(2,2) = 1;
-    
+    this->view.Billboard(flip, sprite.vertical);
     this->view.Translate(Vector3(sprite.offsetX, sprite.offsetY, 0));
   }
   
@@ -720,6 +712,22 @@ void GfxView::Scale(const Vector3 &p) {
 
 void GfxView::Rotate(float angle, const Vector3 &p)  {
   this->modelViewStack.back() = this->modelViewStack.back() * Matrix4::Rotate(angle, p);
+}
+  
+void GfxView::Billboard(bool flip, bool vertical) {
+  this->modelViewStack.back()(0,0) = flip?-1:1; 
+  this->modelViewStack.back()(0,1) = 0;
+  this->modelViewStack.back()(0,2) = 0;
+
+  if (!vertical) {
+    this->modelViewStack.back()(1,0) = 0; 
+    this->modelViewStack.back()(1,1) = 1;
+    this->modelViewStack.back()(1,2) = 0;
+  }
+    
+  this->modelViewStack.back()(2,0) = 0; 
+  this->modelViewStack.back()(2,1) = 0;
+  this->modelViewStack.back()(2,2) = 1;
 }
 
 void GfxView::SetUniforms(const std::shared_ptr<Shader> shader) const {

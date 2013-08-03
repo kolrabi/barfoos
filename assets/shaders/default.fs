@@ -19,8 +19,8 @@ varying vec3 v_norm;
 
 varying vec3 v_light[4];
 
-const float gamma = 2.2;
-const float contrast = 1.25;
+const float gamma = 1.8;
+const float contrast = 2.5;
 
 vec3 getLight(int n) {
   vec3 ld = v_light[n] - v_pos;
@@ -43,7 +43,7 @@ void main() {
   vec4 t0 = texture2D(u_texture, v_tex);
   if (t0.a == 0.0) discard;
   
-  vec3 light = pow( v_color.rgb + getTotalLight(), vec3(gamma) ) * u_color.rgb + vec3(0.2,0.2,0.3);
+  vec3 light = pow( v_color.rgb + getTotalLight(), vec3(gamma) ) * u_color.rgb * contrast + vec3(0.2, 0.2, 0.3);
   
   float fogDepth = length(v_pos)*0.1;
   float fogIntensity = 0; //pow(max(0.0, u_fogLin * fogDepth), 0.5);

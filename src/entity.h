@@ -47,6 +47,7 @@ struct EntityProperties : public Properties {
   size_t  attackAnim        = ~0UL;   //< Animation to play on death.
   std::vector<EntityDrawBox> drawBoxes = std::vector<EntityDrawBox>(0);
   std::vector<ParticleEmitter> emitters = std::vector<ParticleEmitter>(0);
+  bool    createBubbles     = false;
   
   // movement
   float   stepHeight        = 0.5;    //< Allow entity to climb stairs.
@@ -81,6 +82,15 @@ struct EntityProperties : public Properties {
   float   attackForwardStep = 0.0;
   float   attackJump        = 0.0;
   float   exp               = 0.0;
+
+  size_t  onDieExplodeRadius = 0;
+  float   onDieExplodeStrength = 0.0;
+  float   onDieExplodeDamage = 0.0;
+  Element onDieExplodeElement = Element::Physical;
+
+  size_t  onDieParticles    = 0;
+  float   onDieParticleSpeed = 0.0;
+  std::string onDieParticleType = "";
 
   // stats
   int     str               = 0;
@@ -191,6 +201,8 @@ protected:
   bool removable;
   const EntityProperties *properties;
   float nextThinkT, startT;
+
+  std::unordered_map<std::string, Regular> regulars;
   
   // gameplay
   float dieT;

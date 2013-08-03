@@ -40,8 +40,9 @@ Inventory       0.5 gold
 # Inventory       0.05 gem.water
 # Inventory       0.05 gem.life
 
-aggro 1 10 15 3 barehand.1
+# Aggro 1 10 15 3 barehand.1
 
+Bubble
 Swim
 Jump 0.0
 

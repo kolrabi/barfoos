@@ -39,6 +39,7 @@ public:
   Vector3               MoveAABB(const AABB &aabb, const Vector3 &dir, uint8_t &axis);
   
   void                  Explosion(Entity &entity, const Vector3 &pos, size_t radius, float strength, float damage, Element element);
+  size_t                SpawnMobInAABB(const std::string &type, const AABB &aabb, const Vector3 &velocity = Vector3());
   
   void                  SaveLevel();
   void                  LoadLevel();

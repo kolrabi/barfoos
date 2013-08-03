@@ -25,19 +25,19 @@ const ItemProperties &getItem(const std::string &name) {
   return allItems[name];
 }
 
-static void shufflePotions(Game &game) {
-  std::vector<std::string> potions;
+static void shuffleItems(Game &game, std::function<bool(ItemProperties&)> doShuffleFn) {
+  std::vector<std::string> items;
   for (auto &i : allItems) {
-    if (i.second.isPotion) {
-      potions.push_back(i.first);
+    if (doShuffleFn(i.second)) {
+      items.push_back(i.first);
     }
   }
   
-  for (size_t i = 0; i < potions.size(); i++) {
+  for (size_t i = 0; i < items.size(); i++) {
     // swap appearances and descriptions
-    size_t j = game.GetRandom().Integer(potions.size());
-    std::swap(allItems[potions[i]].sprite,           allItems[potions[j]].sprite);
-    std::swap(allItems[potions[i]].unidentifiedName, allItems[potions[j]].unidentifiedName);
+    size_t j = game.GetRandom().Integer(items.size());
+    std::swap(allItems[items[i]].sprite,           allItems[items[j]].sprite);
+    std::swap(allItems[items[i]].unidentifiedName, allItems[items[j]].unidentifiedName);
   }
 }
 
@@ -157,7 +157,11 @@ ItemProperties::ParseProperty(const std::string &cmd) {
     this->unidentifiedName = this->game->GetScrollName();
   } else if (cmd == "potion") {
     this->isPotion = true;
+  } else if (cmd == "wand") {
+    this->isWand = true;
     
+  } else if (cmd == "onuseidentify") {
+    this->onUseIdentify = true;
   } else if (cmd == "oncombineeffect") {
     Parse(this->onCombineEffect);
   } else if (cmd == "onconsumeeffect") {
@@ -204,7 +208,8 @@ LoadItems(Game &game) {
     }
   }
   
-  shufflePotions(game);
+  shuffleItems(game, [](ItemProperties &p){return p.isPotion;});
+  shuffleItems(game, [](ItemProperties &p){return p.isWand;});
 }
 
 Item::Item(const std::string &type) : 
@@ -229,6 +234,18 @@ Item::Item(const std::string &type) :
 Item::~Item() {
 }
 
+void Item::ReplaceWith(const std::string &type) {
+  this->initDone = false;
+  this->properties = &getItem(type);
+  this->isRemovable = false;
+  this->sprite = this->properties->sprite;
+  this->cooldownFrac = 0;
+  this->durability = this->properties->durability;
+  this->nextUseT = 0.0;
+  this->identified = false;
+  if (this->sprite.animations.size() > 0) this->sprite.StartAnim(0);
+}
+
 bool Item::CanUse(RunningState &state) const {
   return (this->durability > 0 || this->properties->durability == 0.0) && 
          this->properties->cooldown >= 0.0 && 
@@ -239,6 +256,7 @@ void Item::StartCooldown(RunningState &state, Entity &user, bool damage) {
   if (damage) this->durability -= this->properties->useDurability * this->effect->useDurability;
   
   this->nextUseT = state.GetGame().GetTime() + this->GetCooldown() / (1.0 + Const::AttackSpeedFactorPerAGI*user.GetEffectiveStats().agi);
+  if (this->properties->onUseIdentify) this->identified = true;
 }
 
 void Item::Update(RunningState &state) {
@@ -281,9 +299,7 @@ void Item::Update(RunningState &state) {
   if (this->durability <= 0 && this->properties->durability != 0.0) {
     std::string replacement = this->properties->replacement;
     if (replacement != "") {
-      bool isEquipped = this->isEquipped;
-      *this = Item(replacement);
-      this->isEquipped = isEquipped;
+      this->ReplaceWith(replacement);
       return;
     } else {
       this->isRemovable = true;
@@ -341,6 +357,7 @@ void Item::UseOnCell(RunningState &state, Mob &user, Cell *cell, Side) {
 
 void Item::UseOnNothing(RunningState &state, Mob &user) {
   if (!this->CanUse(state)) return;
+  if (!this->properties->canUseNothing) return;
   
   if (this->properties->spawnProjectile != "") {
     Projectile *proj = new Projectile(this->properties->spawnProjectile);
@@ -519,7 +536,7 @@ Item::AddAmount(int amt) {
 
 bool 
 Item::CanStack(const Item &other) const {
-  return properties == this->properties && properties->stackable && 
+  return properties == other.properties && properties->stackable && 
          durability == other.durability && beatitude == other.beatitude && 
          modifier == other.modifier;
 }

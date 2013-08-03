@@ -64,8 +64,8 @@ AH_TEMPLATE(X11, [define if compiling for X11])
 
 #CFLAGS="-O0 -ggdb"
 #CXXFLAGS="-O0 -ggdb"
-CFLAGS="-O2 -ggdb -pg"
-CXXFLAGS="-O2 -ggdb -pg"
+CFLAGS="-O2 -ggdb"
+CXXFLAGS="-O2 -ggdb"
 
 AC_CONFIG_FILES([Makefile 
                  src/Makefile

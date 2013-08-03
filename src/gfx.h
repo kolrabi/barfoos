@@ -25,6 +25,8 @@ public:
   bool IsPointVisible(const Vector3 &p) const;
  
   const Vector3 &GetRight() const { return right; }
+
+  void Billboard(bool flip = false, bool vertical = false);
   
 private:
 
@@ -63,6 +65,7 @@ public:
   
   float GetTime() const;
   void Update(Game &game);
+  void SaveScreen(const std::string &name);
   
   const Point &GetScreenSize()        const { return screenSize; }
   const Point &GetVirtualScreenSize() const { return virtualScreenSize; }

@@ -22,8 +22,9 @@ void Projectile::Start(RunningState &state, size_t id) {
 void 
 Projectile::OnCollide(RunningState &state, Cell &, Side) {
   Mob::Die(state, HealthInfo());
-  this->removable = true;
-  
-  // TODO: from properties
-  state.Explosion(*this, this->GetPosition(), 3, 1.0, 10, Element::Physical);
+}
+
+void 
+Projectile::OnCollide(RunningState &state, Entity &) {
+  Mob::Die(state, HealthInfo());
 }

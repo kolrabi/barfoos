@@ -118,7 +118,7 @@ RenderString& RenderString::operator =(const std::string &text) {
   this->dirty = true;
   return *this;
 }
-
+  
 void RenderString::Draw(Gfx &gfx, float x, float y, int align) {
   if (dirty) { 
     this->DrawString();

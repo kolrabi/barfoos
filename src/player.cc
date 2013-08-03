@@ -321,7 +321,7 @@ Player::DrawWeapons(Gfx &gfx) const {
   Vector3 pos = Vector3(0,0,-1)+bob;
   
   gfx.GetView().Look(pos, fwd);
-  gfx.SetColor(this->GetLight() + this->cellLight);
+  gfx.SetColor(this->cellLight);
 
   if (this->inventory[InventorySlot::RightHand]) {
     this->inventory[InventorySlot::RightHand]->Draw(gfx, false);
@@ -354,7 +354,7 @@ Player::DrawGUI(Gfx &gfx) const {
   if (this->inventory[InventorySlot::LeftHand]) {
     this->inventory[InventorySlot::LeftHand]->DrawIcon(gfx, itemPos - Point(36,0));
   } else {
-    this->leftHand->DrawIcon(gfx, itemPos);
+    this->leftHand->DrawIcon(gfx, itemPos - Point(36, 0));
   }
   
   // draw crosshair
@@ -446,7 +446,7 @@ Player::AddHealth(RunningState &state, const HealthInfo &info) {
   }
   
   Entity *other = state.GetEntity(info.dealerId);
-  if (other) {
+  if (other && other != this) {
     if (info.hitType == HitType::Miss) {
       this->AddMessage("The " + other->GetName() + " misses");
     } else if (info.hitType == HitType::Normal) {
@@ -506,12 +506,15 @@ void
 Player::OnHealthDealt(RunningState &state, Entity &other, const HealthInfo &info) {
   Mob::OnHealthDealt(state, other, info);
 
+  if (other.GetName() == "") return;
+  if (std::abs(info.amount) < 1.0) return;
+
   if (info.hitType == HitType::Miss) {
     this->AddMessage("You miss the " + other.GetName());
   } else if (info.hitType == HitType::Normal) {
-    this->AddMessage("You hit the " + other.GetName() + " for " + ToString(info.amount) + " hp");
+    this->AddMessage("You hit the " + other.GetName() + " for " + ToString(int(info.amount)) + " hp");
   } else if (info.hitType == HitType::Critical) {
-    this->AddMessage("You hit the " + other.GetName() + " critically for " + ToString(info.amount) + " hp"); 
+    this->AddMessage("You hit the " + other.GetName() + " critically for " + ToString(int(info.amount)) + " hp"); 
   }
 }
 

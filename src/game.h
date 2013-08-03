@@ -60,7 +60,7 @@ private:
   float   lastT;
   float   deltaT;
   
-  size_t  frame;
+  size_t  frame, realFrame;
   float   lastFPST;
   
   float   fps;

@@ -5,6 +5,7 @@
 #include "vector3.h"
 #include "ivector3.h"
 #include "util.h"
+#include "stats.h"
 
 #include <cstdio>
 #include <cstring>
@@ -115,6 +116,30 @@ Properties::Parse(std::string &str) {
   }
   str = tokens[0];
   tokens.erase(tokens.begin());
+}
+
+void 
+Properties::Parse(Element &e) {
+  std::string elementString = "physical";
+  Parse(elementString);
+  
+  for (auto &c:elementString) c = ::tolower(c);
+  
+  if (elementString == "physical") {
+    e = Element::Physical;
+  } else if (elementString == "fire") {
+    e = Element::Fire;
+  } else if (elementString == "water") {
+    e = Element::Water;
+  } else if (elementString == "earth") {
+    e = Element::Earth;
+  } else if (elementString == "air") {
+    e = Element::Air;
+  } else if (elementString == "life") {  
+    e = Element::Life;
+  } else {
+    SetError("Unknown element name: "+elementString);
+  }
 }
 
 void 

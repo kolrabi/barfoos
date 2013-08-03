@@ -14,6 +14,7 @@ public:
   virtual void Start(RunningState &state, size_t id) override;
 
   virtual void OnCollide(RunningState &state, Cell &cell, Side side) override;
+  virtual void OnCollide(RunningState &state, Entity &) override;
   
 protected:
 

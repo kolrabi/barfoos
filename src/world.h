@@ -53,6 +53,7 @@ public:
   bool IsDefault(const IVector3 &pos);
   
   void AddFeatureSeen(size_t f); // TODO: move to separate map class
+  bool IsFeatureSeen(size_t id) const;
   void BreakBlock(const IVector3 &pos);
   
   void SetDirty() { this->dirty = true; }

@@ -42,7 +42,8 @@ enum class Element : size_t {
   Fire,
   Water,
   Earth,
-  Wind
+  Air,
+  Life
 };
 
 struct HealthInfo {

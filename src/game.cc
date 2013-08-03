@@ -54,10 +54,15 @@ Game::Init() {
   this->lastT = 0;
   this->deltaT = 0;
   this->frame = 0;
+  this->realFrame = 0;
   this->lastFPST = 0;
   this->fps = 0;
 
   this->isInit = true;
+  
+  MainMenuState *state = new MainMenuState(*this);
+  nextGameState = state;
+  
   return true;
 }
 
@@ -74,10 +79,7 @@ Game::NewGame(const std::string &seed) {
   LoadEntities();
   LoadEffects();
   LoadItems(*this);
-  
-  MainMenuState *state = new MainMenuState(*this);
-  nextGameState = state;
-  
+
   this->startT = this->gfx->GetTime();
 }
 
@@ -96,21 +98,30 @@ bool Game::Frame() {
   }
   
   // update game (at most 0.1s at a time)
+  float t = lastT + 1.0/25.0;
+  
+/*
   float t = this->gfx->GetTime() - this->startT;
   while(t - this->lastT > 0.1) {
     this->lastT += 0.1;
     this->Update(lastT, 0.1);
     this->input->Update();
   }
+*/
   this->Update(t, t - this->lastT);
   this->lastT = t;
   
   // render game
   this->Render();
 
+  char tmp[32];
+  snprintf(tmp, sizeof(tmp), "frame%04u.png", (unsigned int)this->realFrame);
+  this->gfx->SaveScreen(tmp);
+
   this->gfx->Update(*this);
   
   this->frame ++;
+  this->realFrame++;
   if (t - this->lastFPST >= 1.0) {
     this->fps = this->frame / (t-this->lastFPST);
     this->frame = 0;
@@ -163,7 +174,7 @@ Game::GetScrollName() {
   if (scrollMarkov.size() == 0) return "ERROR";
 
   std::string name = "Scroll of ";
-  char c = 0;
+  char c = ' ';
   size_t l = 0;
   while(true) {
     c = scrollMarkov[c].select(this->random.Float01());

@@ -27,7 +27,7 @@ static std::string credits() {
   return str;
 }
 
-int main(int argc, char **argv) {
+int main(int, char **) {
   std::setlocale(LC_ALL, "en_US.utf8");
 
   Log("%s", credits().c_str());
@@ -48,10 +48,6 @@ int main(int argc, char **argv) {
   }
   
   Log("Game object initialized %p, new game\n", game);
-  if (argc == 1)
-    game->NewGame("fooobaaar");
-  else
-    game->NewGame(argv[1]);
   
   Log("entering mainloop\n");
     while(game->Frame()) 

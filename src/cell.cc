@@ -39,7 +39,7 @@ CellProperties::CellProperties() :
   breakStrength(1.0),
   lavaDamage(0.0),
   useChance(1.0),
-  breakParticle("particle")
+  breakParticle("particle.rock")
 {}
 
 void CellProperties::ParseProperty(const std::string &cmd) {
@@ -85,6 +85,14 @@ void CellProperties::ParseProperty(const std::string &cmd) {
   
   else if (cmd == "detailbelowreplace") Parse(this->detailBelowReplace);
   else if (cmd == "replacechance") Parse(this->replaceChance); 
+  else if (cmd == "onflowontoreplacetarget") {
+    std::string from, to, own;
+    Parse(from);
+    Parse(to);
+    Parse(own);
+    this->onFlowOntoReplaceTarget[from] = to;
+    this->onFlowOntoReplaceSelf[from] = own;
+  }
   else SetError("Ignoring '" + cmd + "'\n");
 }
 
@@ -269,7 +277,6 @@ void Cell::Tick(RunningState &state) {
 
   if (this->neighbours[0] == nullptr) return;
   
-  // TODO: make it pressure, flowrate based, maybe?
   if ((this->info->flags & CellFlags::Liquid) && this->shared.detail > 0) {
     if (self[Side::Up].info == self.info && self.shared.detail < 16) return;
     
@@ -318,10 +325,9 @@ Cell::Flow(Side side) {
   
   if (cell->info->flags & CellFlags::Liquid) {
     // combine lava and water to rock
-    // TODO: make this data based
-    if (cell->info->type == "water" && this->info->type == "lava") {
-      this->world->SetCell(this->pos[side], Cell("rock"));
-      this->world->SetCell(this->pos,       Cell("air"));
+    if (this->info->onFlowOntoReplaceTarget.find(cell->info->type) != this->info->onFlowOntoReplaceTarget.end()) {
+      this->world->SetCell(this->pos[side], this->info->onFlowOntoReplaceSelf.at(cell->info->type));
+      this->world->SetCell(this->pos,       this->info->onFlowOntoReplaceTarget.at(cell->info->type));
       return true;
     }
     
@@ -538,7 +544,6 @@ Cell::UpdateNeighbours(
   // update this cell and neighbours recursively until nothing changes anymore
   // FIXME: change return type to void, we don't need to recurse
   if (this->SetLightLevel(color) || this->visibility != oldvis) {
-    Log("%d %d %d: %d\n", color.r, color.g, color.b, this->visibility != oldvis);
     updated = true;
     for (size_t i=0; i<6; i++) {
       Cell &cell = *this->neighbours[i];
@@ -940,6 +945,12 @@ AABB Cell::GetAABB() const {
   aabb.center = Vector3(this->pos) + Vector3(0.5,0.5,0.5);
   aabb.extents = Vector3(0.5,0.5,0.5);
   return aabb;
+}
+  
+bool Cell::IsSeen() const {
+  if (!this->world) return false;
+  if (this->GetFeatureID() == ~0UL) return false;
+  return this->world->IsFeatureSeen(this->GetFeatureID());
 }
 
 bool 

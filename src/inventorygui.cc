@@ -185,10 +185,18 @@ InventorySlotGui::InventorySlotGui(
   parent(parent),
   slot(slot),
   hover(false),
-  slotTex(loadTexture("gui/slot"))
+  slotTex(loadTexture("gui/slot")),
+  lastT(0.0),
+  lastClickT(0.0)
 {}
 
 InventorySlotGui::~InventorySlotGui() {
+}
+
+void InventorySlotGui::Update(Game &game) {
+  Gui::Update(game);
+
+  this->lastT = game.GetTime();
 }
   
 void InventorySlotGui::HandleEvent(const InputEvent &event) {
@@ -202,11 +210,21 @@ void InventorySlotGui::HandleEvent(const InputEvent &event) {
   if (event.key == InputKey::MouseLeft) {
     
     if (event.down) {
-    
-      std::shared_ptr<Item> item(inv[slot]);
-      if (item && (!item->IsCursed() || !item->IsEquipped())) {
-        parent->dragItem = item;
-        inv.Equip(nullptr, slot);
+
+      if (lastT - this->lastClickT < 0.2) {
+        std::shared_ptr<Item> item(inv[slot]);
+        if (item && (!item->IsCursed() || !item->IsEquipped())) {
+          inv[slot] = nullptr;
+          parent->GetEntity().GetInventory().AddToBackpack(item);
+        }
+      } else {     
+        this->lastClickT = this->lastT;
+
+        std::shared_ptr<Item> item(inv[slot]);
+        if (item && (!item->IsCursed() || !item->IsEquipped())) {
+          parent->dragItem = item;
+          inv.Equip(nullptr, slot);
+        }
       }
       
     } else {
@@ -275,7 +293,12 @@ InventorySlotGui::DrawTooltip(Gfx &gfx, const Point &parentPos) {
   
   if (this->hover && item) {
     RenderString name(item->GetDisplayName());
-    RenderString stat(item->GetDisplayStats().GetToolTip(), "small");
+    
+    std::string statString = item->GetDisplayStats().GetToolTip();
+    if (item->GetProperties().isWand) {
+      statString = ToString(item->GetDurability()) + " charges\n" + statString;
+    }
+    RenderString stat(statString, "small");
     
     if (pos.x < vscreen.x / 2) pos.x += 32; else pos.x -= std::max(name.GetSize().x, stat.GetSize().x);
   

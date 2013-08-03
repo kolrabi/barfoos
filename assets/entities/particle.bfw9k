@@ -1,0 +1,23 @@
+tex particle.bfw9k
+frames 2
+
+anim 0 2 10
+dyinganim 0
+
+Name ""
+
+step 0
+mass 1
+move 0
+speed 0
+health 0
+
+extents 0.1 0.1 0.1
+nohit
+nocollideentity
+
+lifetime 0.5
+gravity 0
+
+Glow 0 1 0
+

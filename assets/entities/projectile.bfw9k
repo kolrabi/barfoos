@@ -1,0 +1,22 @@
+tex projectile.bfw9k
+frames 2
+Anim 0 2 20
+
+Name ""
+
+mass 20
+speed 20
+health 0
+
+extents 0.2 0.2 0.2
+size 1 1
+gravity 0.0
+NoCollideOwner
+NoHit
+NoFriction
+
+Glow 64 512 64
+
+OnDieExplode 3.0 1.0 10.0 physical 
+OnDieParticles 100 10.0 particle.bfw9k
+

@@ -15,8 +15,6 @@ Stats::MeleeAttack(const Entity &attacker, const Entity &victim, const Item &ite
   info.skill = item.GetProperties().weaponClass;
   info.type = HealthType::Melee;
   info.element = item.GetElement();
-
-  // TODO: buffs
   
   // get stats
   Stats atkStat = attacker.GetEffectiveStats();

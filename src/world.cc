@@ -13,6 +13,7 @@
 #include "gfx.h"
 
 #include "vertex.h"
+#include "texture.h"
 
 #include "serializer.h"
 #include "deserializer.h"
@@ -130,7 +131,7 @@ World::Build() {
   
     int loop = 0;
     do {
-      if (loop++ > 1000000) break;
+      if (loop++ > 100000) break;
 
       // select a feature from which to go
       bool useLast = random.Chance(useLastChance);
@@ -394,29 +395,67 @@ World::DrawMap(
   Gfx &gfx
 ) {
   PROFILE();
-/*  
-  std::vector<Vertex> verts;
+/*  std::vector<Vertex> verts;
 
-  for (size_t i=0; i<this->instances.size(); i++) {
-    if (i >= this->seenFeatures.size() || !this->seenFeatures[i]) continue;
+  uint8_t types[size.x*size.z];
 
-    const FeatureInstance &inst = this->instances[i];
+  for (size_t x=0; x<size.x; x++) {
+    for (size_t z=0; z<size.z; z++) {
+      bool unSolid = false;
+      size_t lastId = ~0UL;
+      types[x+z*size.x] = 0;
+      for (size_t y=0; y<size.y; y++) {
+        IVector3 pos(x,y,z);
+        Cell &cell = this->GetCell(pos);
 
-    Vector3 pos(inst.pos);
-    Vector3 size(inst.feature->GetSize());
-    pos.x += 0.5;
-    pos.z += 0.5;
-    pos.y += size.y*0.5;
-    size.x -= 1.0;
-    size.z -= 1.0;
+        bool seen = cell.IsSeen() || 
+                    cell[Side::Right].IsSeen() ||
+                    cell[Side::Left].IsSeen() ||
+                    cell[Side::Forward].IsSeen() ||
+                    cell[Side::Backward].IsSeen();
+        if (!seen) continue;
 
-    verts.push_back(Vertex(pos+Vector3(size.x,0,     0), IColor(255,255,255), 1, 0));
-    verts.push_back(Vertex(pos+Vector3(size.x,0,size.z), IColor(255,255,255), 1, 1));
-    verts.push_back(Vertex(pos+Vector3(     0,0,size.z), IColor(255,255,255), 0, 1));
-    verts.push_back(Vertex(pos,                          IColor(255,255,255), 0, 0));
+        if (cell.GetFeatureID() != lastId && cell.GetFeatureID() != ~0UL) {
+          lastId = cell.GetFeatureID();
+          unSolid = false;
+        }
+
+        bool solid = !cell.IsTransparent();
+
+        if (!solid) {
+          unSolid = true;
+        }
+ 
+        if (unSolid) {
+          types[x+z*size.x] = 2;
+          continue;
+        }
+        types[x+z*size.x] = 1;
+      }
+    }
   }
-  gfx.DrawQuads(verts);
-  */
+        
+  Vector3 vsize(1,0,1);
+  for (size_t x=0; x<size.x; x++) {
+    for (size_t z=0; z<size.z; z++) {
+      IColor color;
+      switch(types[x+z*size.x]) {
+        case 0: continue;
+        case 1: color = IColor(192,192,192); break;
+        case 2: color = IColor(128,128,128); break;
+      }
+
+      Vector3 vpos(x,0,z);
+    
+      verts.push_back(Vertex(vpos,                            color, 0, 0));
+      verts.push_back(Vertex(vpos+Vector3(      0,0,vsize.z), color, 0, 1));
+      verts.push_back(Vertex(vpos+Vector3(vsize.x,0,vsize.z), color, 1, 1));
+      verts.push_back(Vertex(vpos+Vector3(vsize.x,0,      0), color, 1, 0));
+    }
+  }
+*/
+  //gfx.SetTextureFrame(loadTexture("gui/white"));
+  //gfx.DrawQuads(verts);
   (void)gfx;
 }
 
@@ -495,6 +534,8 @@ World::CastRayYUp(const Vector3 &org) {
   size_t y = org.y; // start cell y
   size_t z = org.z; // start cell z
   
+  if (org.y < 0) return 0;
+  
   if (GetCell(IVector3(x,y,z)).IsSolid() && y > GetCell(IVector3(x,y,z)).GetHeightBottom(org.x, org.z)) return y;
   
   while (y < this->size.y) {
@@ -518,6 +559,8 @@ World::CastRayYDown(const Vector3 &org) {
   size_t x = org.x; // start cell x
   size_t y = org.y; // start cell y
   size_t z = org.z; // start cell z
+
+  if (y >= this->size.y) return this->size.y;
 
   if (GetCell(IVector3(x,y,z)).IsSolid() && y < GetCell(IVector3(x,y,z)).GetHeight(org.x, org.z)) return y-1;
   
@@ -905,6 +948,12 @@ World::AddFeatureSeen(size_t f) {
   }
   */
 }
+  
+bool 
+World::IsFeatureSeen(size_t id) const {
+  if (id == ~0UL || id >= seenFeatures.size()) return false;
+  return seenFeatures[id];
+}
 
 void
 World::BreakBlock(const IVector3 &pos) {
@@ -916,12 +965,7 @@ World::BreakBlock(const IVector3 &pos) {
   if (particleType != "") {
     Random &random = state.GetRandom();
     for (size_t i=0; i<4; i++) {
-      Mob *particle = new Mob(particleType);
-      Vector3 s = aabb.extents - particle->GetAABB().extents;
-      Vector3 p = random.Vector() * s + aabb.center;
-      particle->SetPosition(p);
-      particle->AddVelocity(random.Vector() * 10);
-      state.AddEntity(particle);
+      state.SpawnMobInAABB(particleType, aabb, random.Vector()*10);
     }
   }
 }

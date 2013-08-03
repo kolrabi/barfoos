@@ -1,5 +1,11 @@
+traps
+teleports
+
+locked doors/chests
+  keys
+  lockpicks
+
 items (entities)
-  wands
   rings
   amulets
   more weapons
@@ -10,3 +16,5 @@ npcs
   dialogs
   shops
   more monsters
+  quests
+

@@ -48,6 +48,9 @@ void
 RunningState::NewGame() {
   this->level = 0;
 
+  std::string seed = ToString(time(nullptr));
+  GetGame().NewGame(seed);
+
   delete this->world;
   this->world = new World(*this, IVector3(64, 64, 64));
   this->world->Build();
@@ -97,6 +100,9 @@ RunningState::Render(Gfx &gfx) const {
   
   gfx.ClearDepth(1.0);
   player->DrawWeapons(gfx);
+  
+  player->MapView(gfx);
+  world->DrawMap(gfx);
 
   // next draw gui stuff
   gfx.GetView().GUI();
@@ -457,6 +463,20 @@ RunningState::Explosion(Entity &entity, const Vector3 &pos, size_t radius, float
       this->GetWorld().BreakBlock(worldCellPos);
     }
   });
+}
+
+size_t
+RunningState::SpawnMobInAABB(
+  const std::string &type,
+  const AABB &aabb,
+  const Vector3 &velocity
+) {
+  Mob *mob = new Mob(type);
+  Vector3 s = aabb.extents - mob->GetAABB().extents;
+  Vector3 p = GetRandom().Vector() * s + aabb.center;
+  mob->SetPosition(p);
+  mob->AddVelocity(velocity);
+  return AddEntity(mob);
 }
 
 void 

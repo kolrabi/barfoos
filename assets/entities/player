@@ -18,9 +18,12 @@ Inventory   1.0 scroll.remove.curse
 Inventory   1.0 scroll.identify
 Inventory   1.0 scroll.identify
 Inventory   1.0 scroll.identify
+Inventory   1.0 wand.black
 
 str 1
 agi 1
 dex 1
 def 10
+
+Bubble
 

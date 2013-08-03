@@ -66,5 +66,30 @@ std::string ToString(const T &v) {
   return str.str();
 }
 
+class Regular {
+public:
+  Regular() {}
+
+  Regular(float interval, std::function<void()> func) :
+    interval(interval),
+    func(func),
+    t(0.0)
+  {}
+  
+  void Update(float deltaT) {
+    t += deltaT;
+    while(t > interval) {
+      t -= interval;
+      func();
+    }
+  }
+
+private:
+
+  float interval;
+  std::function<void()> func;
+  float t;
+};
+
 #endif
 

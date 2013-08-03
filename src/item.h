@@ -16,6 +16,7 @@ struct ItemProperties : public Properties {
   std::string unidentifiedName = "<item>";
   
   bool isPotion = false;
+  bool isWand   = false;
   
   // rendering
   Sprite sprite = Sprite();
@@ -61,6 +62,8 @@ struct ItemProperties : public Properties {
   std::string onConsumeEffect = "";
   std::string onConsumeResult = "";
   std::string onConsumeAddBuff = "";
+
+  bool onUseIdentify = false;
 
   weighted_map<std::string> onHitAddBuff;
   
@@ -108,6 +111,7 @@ public:
   void UseOnCell(RunningState &state, Mob &user, Cell *cell, Side side);
   void UseOnNothing(RunningState &state, Mob &user);
 
+  size_t GetDurability()                const { return this->durability; }
   float GetRange()                      const { return this->properties->range * this->effect->range; }  
   float GetDamage()                     const { return this->properties->damage * this->effect->damage; }  
   Element GetElement()                  const { return this->effect->element; }  
@@ -144,6 +148,8 @@ public:
   virtual std::shared_ptr<Item> Consume(RunningState &state, Entity &user);
   
   void ModifyStats(Stats &stats, bool forceEquipped = false) const;
+
+  void ReplaceWith(const std::string &type);
   
 protected:
 

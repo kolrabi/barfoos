@@ -177,8 +177,9 @@ Gui::SetGravity(bool gravN, bool gravE, bool gravS, bool gravW) {
 }
 
 void 
-Gui::SetText(const std::string &str) {
-  *this->text = str;
+Gui::SetText(const std::string &str, const std::string &font) {
+  delete this->text;
+  this->text = new RenderString(str, font);
 }
 
 void 

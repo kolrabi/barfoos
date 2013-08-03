@@ -68,6 +68,13 @@ Mob::Start(RunningState &state, size_t id) {
     this->attackItem = std::shared_ptr<Item>(new Item(properties->attackItem));
     this->attackItem->Update(state);
   }
+
+  if (this->properties->createBubbles) {
+    this->regulars["bubble"] = Regular(0.2, [&]() {
+      if (this->footCell && this->footCell->IsLiquid()) 
+        state.SpawnMobInAABB("particle.bubble", this->footCell->GetAABB());
+    });
+  }
 }
 
 void 
@@ -76,6 +83,13 @@ Mob::Continue(RunningState &state, size_t id) {
   if (properties->attackItem != "") {
     this->attackItem = std::shared_ptr<Item>(new Item(properties->attackItem));
     this->attackItem->Update(state);
+  }
+
+  if (this->properties->createBubbles) {
+    this->regulars["bubble"] = Regular(0.2, [&]() {
+      if (this->footCell && this->footCell->IsLiquid()) 
+        state.SpawnMobInAABB("particle.bubble", this->footCell->GetAABB());
+    });
   }
 }
 
@@ -121,7 +135,7 @@ Mob::Update(RunningState &state) {
       tvy = 3 * friction;
       wantJump = false;
     } else {
-      tvy = -3 * friction;
+      tvy = -3 * friction * this->properties->gravity;
     }
   } else {
     tvy = velocity.y -= gravity;
@@ -137,8 +151,7 @@ Mob::Update(RunningState &state) {
   velocity.x += (tvx-velocity.x) * groundFriction * deltaT * 10;
   velocity.y += (tvy-velocity.y) * groundFriction * deltaT * 10;
   velocity.z += (tvz-velocity.z) * groundFriction * deltaT * 10;
-  
-
+ 
   if (!this->properties->noFriction) {
     velocity.x = velocity.x * friction;
     if (this->inWater) velocity.y = velocity.y * friction;
@@ -212,7 +225,7 @@ Mob::Update(RunningState &state) {
     onGround |= movingDown;
   }
   
-  IVector3 footPos(aabb.center.x, aabb.center.y - aabb.extents.y + this->properties->stepHeight, aabb.center.z);
+  IVector3 footPos(aabb.center.x, aabb.center.y - aabb.extents.y, aabb.center.z);
   IVector3 headPos(aabb.center.x, aabb.center.y + aabb.extents.y, aabb.center.z);
   
   footCell = &world.GetCell(footPos);
@@ -224,7 +237,7 @@ Mob::Update(RunningState &state) {
     groundCell = nullptr;
   }
 
-  underWater = headCell->GetInfo().flags & CellFlags::Liquid;
+  underWater = headCell->IsLiquid();
   if (!noclip) this->SetInLiquid(footCell->GetInfo().flags & (CellFlags::Liquid | CellFlags::Ladder));
 
   if (footCell->GetInfo().lavaDamage) {
@@ -235,11 +248,6 @@ Mob::Update(RunningState &state) {
 
   if (this->IsDead()) {
     this->wantJump = false;
-  }
-
-  if (this->properties->flipLeft) {
-    Vector3 vhoriz = velocity.Horiz().Normalize();
-    angles.x = std::atan2(vhoriz.z, vhoriz.x); 
   }
 }
 
@@ -322,7 +330,11 @@ Mob::Think(RunningState &state) {
     }
     
     Vector3 tmove = (moveTarget - aabb.center).Horiz();
-    if (tmove.GetMag() < 0.1) validMoveTarget = false;
+    if (tmove.GetMag() < 0.1) {
+      validMoveTarget = false;
+    } else {
+      angles.x = std::atan2(tmove.z, tmove.x); 
+    }
     if (validMoveTarget) move = tmove.Normalize() * this->properties->maxSpeed;
   }
 }

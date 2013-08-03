@@ -65,6 +65,7 @@ EntityProperties::ParseProperty(const std::string &cmd) {
   else if (cmd == "oncollideusecell") this->onCollideUseCell = true;
   else if (cmd == "swim")             this->swim = true;
   else if (cmd == "flipleft")         this->flipLeft = true;
+  else if (cmd == "bubble")           this->createBubbles   = true;
 
   else if (cmd == "step")             Parse(this->stepHeight);
   else if (cmd == "jump")             Parse(this->jumpSpeed);
@@ -118,6 +119,17 @@ EntityProperties::ParseProperty(const std::string &cmd) {
     Parse(replace.first);
     Parse(replace.second);
     this->onUseItemReplace[replace.first] = replace.second;
+
+  } else if (cmd == "ondieexplode") {
+    Parse(this->onDieExplodeRadius);
+    Parse(this->onDieExplodeStrength);
+    Parse(this->onDieExplodeDamage);
+    Parse(this->onDieExplodeElement);
+
+  } else if (cmd == "ondieparticles") {
+    Parse(this->onDieParticles);
+    Parse(this->onDieParticleSpeed);
+    Parse(this->onDieParticleType);
     
   } else if (cmd == "inventory") {
     float prob;
@@ -293,6 +305,7 @@ Entity::Update(RunningState &state) {
     return;
   }
   
+  for (auto &r:this->regulars) r.second.Update(deltaT);
   this->sprite.Update(deltaT);
 
   // think, mcfly, think
@@ -360,7 +373,11 @@ Entity::Think(RunningState &) {
 
 void
 Entity::Draw(Gfx &gfx) const {
-  gfx.SetColor(this->cellLight + this->GetLight(), 1.0);
+  if (this->GetLight().IsBlack()) {
+    gfx.SetColor(this->cellLight, 1.0);
+  } else {
+    gfx.SetColor(IColor(255,255,255), 1.0);
+  }
   
   for (auto &box : this->properties->drawBoxes) {
     AABB aabb = box.aabb;
@@ -424,6 +441,15 @@ Entity::Die(RunningState &state, const HealthInfo &info) {
   
   if (this->lastCell && this->properties->cellLeave != "") {
     state.GetWorld().SetCell(this->lastCell->GetPosition(), Cell(this->properties->cellLeave));
+  }
+
+  if (this->properties->onDieExplodeRadius) {
+    state.Explosion(*this, this->GetPosition(), this->properties->onDieExplodeRadius, this->properties->onDieExplodeStrength, this->properties->onDieExplodeDamage, this->properties->onDieExplodeElement);
+  }
+
+  if (this->properties->onDieParticles) {
+    for (size_t i=0; i<this->properties->onDieParticles; i++)
+      state.SpawnMobInAABB(this->properties->onDieParticleType, this->aabb, state.GetRandom().Vector()*this->properties->onDieParticleSpeed);
   }
 
   this->inventory.Drop(state, *this);

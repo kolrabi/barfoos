@@ -52,7 +52,7 @@ public:
   void SetCenter(const Point &p);
   void SetGravity(bool gravN, bool gravE, bool gravS, bool gravW);
 
-  void SetText(const std::string &str);
+  void SetText(const std::string &str, const std::string &font = "default");
   
   std::function<void(Gui *)> GetOnActivate() { return onActivate; }
   void SetOnActivate(std::function<void(Gui *)> func) { onActivate = func; }
