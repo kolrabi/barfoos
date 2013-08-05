@@ -13,10 +13,13 @@ ItemEntity::ItemEntity(const std::string &itemName) :
 
 ItemEntity::ItemEntity(const std::shared_ptr<Item> &item) : 
   Mob("item"),
-  item(item) {
+  item(item),
+  yoffset(0.5) {
 }
 
-ItemEntity::ItemEntity(Deserializer &deser) : Mob("item", deser) {
+ItemEntity::ItemEntity(Deserializer &deser) : 
+  Mob("item", deser),
+  yoffset(0.5) {
   Item *item;
   deser >> item;
   this->item = std::shared_ptr<Item>(item);

@@ -970,6 +970,44 @@ World::BreakBlock(const IVector3 &pos) {
   }
 }
 
+bool 
+World::IsCellWalkable(const IVector3 &pos) const {
+  const Cell &cell = GetCell(pos);
+  const Cell &cell2 = cell[Side::Up];
+  const Cell &cell3 = cell2[Side::Up];
+  return cell.IsSolid() && !cell2.IsSolid() && !cell2.IsLiquid() && !cell3.IsSolid() && !cell3.IsLiquid();
+}
+
+bool 
+World::IsCellValidTeleportTarget(const IVector3 &pos) const {
+  return IsCellWalkable(pos) && ( 
+    IsCellWalkable(pos[Side::Right]) ||
+    IsCellWalkable(pos[Side::Left]) ||
+    IsCellWalkable(pos[Side::Forward]) ||
+    IsCellWalkable(pos[Side::Backward]));
+}
+
+IVector3 
+World::FindSolidBelow(const IVector3 &pos) const {
+  IVector3 p(pos);
+  while(!GetCell(p).IsSolid()) 
+    p = p[Side::Down];
+
+  return p;
+}
+
+IVector3 
+World::GetRandomTeleportTarget(Random &random) const {
+  IVector3 pos;
+  do {
+    pos.x = random.Integer(size.x);
+    pos.y = random.Integer(size.y);
+    pos.z = random.Integer(size.z);
+    pos = FindSolidBelow(pos);
+  } while(!IsCellValidTeleportTarget(pos));
+  return pos;
+}
+
 Serializer &operator << (Serializer &ser, const World &world) {
   ser << world.size;
   

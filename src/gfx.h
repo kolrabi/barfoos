@@ -49,7 +49,7 @@ private:
     textureStack(1)
   {}
   
-  void SetUniforms(const std::shared_ptr<Shader> shader) const;
+  void SetUniforms(const std::shared_ptr<Shader> &shader) const;
 };
 
 class Gfx final {

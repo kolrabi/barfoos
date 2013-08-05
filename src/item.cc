@@ -228,7 +228,7 @@ Item::Item(const std::string &type) :
   identified(false),
   amount(1)
 {
-  if (this->sprite.animations.size() > 0) this->sprite.StartAnim(0);
+  if (!this->sprite.animations.empty()) this->sprite.StartAnim(0);
 }
 
 Item::~Item() {
@@ -243,7 +243,7 @@ void Item::ReplaceWith(const std::string &type) {
   this->durability = this->properties->durability;
   this->nextUseT = 0.0;
   this->identified = false;
-  if (this->sprite.animations.size() > 0) this->sprite.StartAnim(0);
+  if (!this->sprite.animations.empty()) this->sprite.StartAnim(0);
 }
 
 bool Item::CanUse(RunningState &state) const {
@@ -444,7 +444,8 @@ Item::GetDisplayName(bool capitalize) const {
   }
 
   if (this->modifier < 0) {  
-    Stats statsA, statsB;
+    Stats statsA = Stats();
+    Stats statsB = Stats();
     ModifyStats(statsA);
     if (statsA == statsB) modifierString = "useless ";
   }

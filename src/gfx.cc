@@ -501,7 +501,7 @@ Gfx::BindVertexPointer(const Vertex *ptr) {
 
 void 
 Gfx::DrawTriangles(const std::vector<Vertex> &vertices) {
-  if (vertices.size() == 0) return;
+  if (vertices.empty()) return;
   this->SetUniforms();
   this->BindVertexPointer(&vertices[0]);
   glDrawArrays(GL_TRIANGLES, 0, vertices.size());
@@ -509,7 +509,7 @@ Gfx::DrawTriangles(const std::vector<Vertex> &vertices) {
 
 void 
 Gfx::DrawQuads(const std::vector<Vertex> &vertices) { 
-  if (vertices.size() == 0) return;
+  if (vertices.empty()) return;
   this->SetUniforms();
   this->BindVertexPointer(&vertices[0]);
   glDrawArrays(GL_QUADS, 0, vertices.size());
@@ -730,7 +730,7 @@ void GfxView::Billboard(bool flip, bool vertical) {
   this->modelViewStack.back()(2,2) = 1;
 }
 
-void GfxView::SetUniforms(const std::shared_ptr<Shader> shader) const {
+void GfxView::SetUniforms(const std::shared_ptr<Shader> &shader) const {
   shader->Uniform("u_matProjection",    this->projStack.back());
   shader->Uniform("u_matModelView",     this->modelViewStack.back());
   shader->Uniform("u_matView",          this->viewStack.back());

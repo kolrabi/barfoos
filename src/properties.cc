@@ -19,7 +19,7 @@ Properties::ParseFile(FILE *f) {
   while(fgets(line, 256, f) && !feof(f)) {
     l++;
     tokens = Tokenize(line);
-    if (tokens.size() == 0) continue;
+    if (tokens.empty()) continue;
     
     std::string cmd = tokens[0];
     for (auto &c:cmd) c = ::tolower(c);
@@ -37,7 +37,7 @@ Properties::ParseFile(FILE *f) {
   
 void 
 Properties::Parse(int &i) {
-  if (tokens.size() == 0) {
+  if (tokens.empty()) {
     this->SetError("unexpected end of line, expecting int");
     return;
   }
@@ -47,7 +47,7 @@ Properties::Parse(int &i) {
 
 void 
 Properties::Parse(size_t &i) {
-  if (tokens.size() == 0) {
+  if (tokens.empty()) {
     this->SetError("unexpected end of line, expecting uint");
     return;
   }
@@ -57,7 +57,7 @@ Properties::Parse(size_t &i) {
 
 void 
 Properties::Parse(float &f) {
-  if (tokens.size() == 0) {
+  if (tokens.empty()) {
     this->SetError("unexpected end of line, expecting float");
     return;
   }
@@ -92,7 +92,7 @@ Properties::Parse(IColor &c) {
 
 void 
 Properties::Parse(const std::string &prefix, const Texture *&t) {
-  if (tokens.size() == 0) {
+  if (tokens.empty()) {
     this->SetError("unexpected end of line, expecting texture name");
     return;
   }
@@ -110,7 +110,7 @@ Properties::Parse(const std::string &prefix, std::vector<const Texture *> &t) {
 
 void 
 Properties::Parse(std::string &str) {
-  if (tokens.size() == 0) {
+  if (tokens.empty()) {
     this->SetError("unexpected end of line, expecting string");
     return;
   }
@@ -150,7 +150,7 @@ Properties::SetError(const std::string &error) {
 
 void
 Properties::ParseSideMask(size_t &sides) {
-  if (tokens.size() == 0) {
+  if (tokens.empty()) {
     this->SetError("unexpected end of line, expecting string");
     return;
   }

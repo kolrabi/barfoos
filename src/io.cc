@@ -13,7 +13,10 @@
 
 #include <cerrno>
 
-static const std::vector<const char *> assetPrefix { "../assets/", DATA_PATH "/" };
+static const std::vector<const char *> assetPrefix { 
+  "../assets/", 
+  DATA_PATH "/" 
+};
 
 static std::string getAssetPath(const std::string &name) {
   for (std::string prefix : assetPrefix) {

@@ -58,6 +58,11 @@ public:
   
   void SetDirty() { this->dirty = true; }
 
+  bool IsCellWalkable(const IVector3 &pos) const;
+  bool IsCellValidTeleportTarget(const IVector3 &pos) const;
+  IVector3 FindSolidBelow(const IVector3 &pos) const;
+  IVector3 GetRandomTeleportTarget(Random &random) const;
+
 private:
 
   RunningState &state;

@@ -83,6 +83,9 @@ Player::Player(Deserializer &deser) : Mob("player", deser),
   // display
   fps               (0.0),
   
+  bigMessage        (new RenderString("", "big")),
+  bigMessageT       (0.0),
+  
   leftHand          (new Item("barehand.player")),
   rightHand         (new Item("barehand.player"))
 {

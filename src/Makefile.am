@@ -46,6 +46,8 @@ barfoos_SOURCES=\
   projectile.cc projectile.h \
   \
   cell.cc cell.h \
+  cellproperties.cc cellproperties.h \
+  cellrender.cc \
   feature.cc feature.h \
   world.cc world.h \
   worldedit.cc worldedit.h \

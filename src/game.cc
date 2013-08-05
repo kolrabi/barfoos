@@ -27,6 +27,7 @@ Game::Game(const Point &screenSize) :
   lastT         (0.0),
   deltaT        (0.0),
   frame         (0),
+  realFrame     (0),
   lastFPST      (0.0),
   fps           (0.0),
   seed          (""), 
@@ -98,25 +99,27 @@ bool Game::Frame() {
   }
   
   // update game (at most 0.1s at a time)
-  float t = lastT + 1.0/25.0;
+//  float t = lastT + 1.0/25.0;
   
-/*
+
   float t = this->gfx->GetTime() - this->startT;
   while(t - this->lastT > 0.1) {
     this->lastT += 0.1;
     this->Update(lastT, 0.1);
     this->input->Update();
   }
-*/
+
   this->Update(t, t - this->lastT);
   this->lastT = t;
   
   // render game
   this->Render();
 
+  /*
   char tmp[32];
   snprintf(tmp, sizeof(tmp), "frame%04u.png", (unsigned int)this->realFrame);
   this->gfx->SaveScreen(tmp);
+  */
 
   this->gfx->Update(*this);
   

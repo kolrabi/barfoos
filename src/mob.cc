@@ -203,7 +203,8 @@ Mob::Update(RunningState &state) {
   this->smoothPosition = this->aabb.center;
   
   if (cell && !this->properties->nocollideCell) {
-    ((Entity*)this)->OnCollide(state, *cell, side);
+    Entity *e = this; // WTF? GCC bug?
+    e->OnCollide(state, *cell, side);
   }
   
   // jump out of water
@@ -231,10 +232,15 @@ Mob::Update(RunningState &state) {
   footCell = &world.GetCell(footPos);
   headCell = &world.GetCell(headPos);
 
+  Cell *newGroundCell = nullptr;
   if (onGround) {
-    groundCell = &world.GetCell(footPos[Side::Down]);
-  } else {
-    groundCell = nullptr;
+    newGroundCell = &world.GetCell(footPos[Side::Down]);
+  }
+
+  if (newGroundCell != groundCell) {
+    if (groundCell) groundCell->OnStepOff(state, *this);
+    groundCell = newGroundCell;
+    if (groundCell) groundCell->OnStepOn(state, *this);
   }
 
   underWater = headCell->IsLiquid();
@@ -343,11 +349,13 @@ void
 Mob::SetInLiquid(bool inLiquid) {
   if (inLiquid == this->inWater) return;
   this->inWater = inLiquid;
+  /*
   if (inLiquid) {
     // enter liquid
   } else {
     // exit liquid
   }
+  */
 }
 
 void

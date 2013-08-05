@@ -10,6 +10,7 @@
 Deserializer::Deserializer() :
   strings(),
   byteCount(0),
+  bytePos(0),
   bytes(nullptr)
 {
 }

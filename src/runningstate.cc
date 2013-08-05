@@ -511,8 +511,10 @@ RunningState::SaveLevel() {
   FILE *f = createUserFile("level." + ToString(level));
   
   //std::thread([=](){
-    if (f) ser.WriteToFile(f);
-    fclose(f);
+    if (f) {
+      ser.WriteToFile(f);
+      fclose(f);
+    }
   //}).detach();
 }
 

@@ -5,125 +5,10 @@
 #include "icolor.h"
 #include "ivector3.h"
 
-#include <map>
-
-/** Optional flags of a cell. */
-enum CellFlags {
-  /** Enable collision detection. */
-  Solid       = (1<<0),
-  
-  /** Pass light through and always draw adjacent cells sides. */
-  Transparent = (1<<1),
-  
-  /** Don't put cell in static vertex buffer, it's vertices will change. */
-  Dynamic     = (1<<2),
-  
-  /** Don't bother rendering this cell. */
-  DoNotRender = (1<<3),
-  
-  /** Cell behaves like a liquid and flows, detail is amount of liquid in cell. */
-  Liquid      = (1<<4),
-  
-  /** If liquid, make the cell flow slower. */
-  Viscous     = (1<<5),
-  
-  /** Use a different part of the texture for each side. 
-    * Texture must contain eight parts, one for each side from left to right:
-    * Left, Right, Back, Front, Top, Bottom, and 2 unused.
-    */    
-  MultiSided  = (1<<6),
-  
-  /** Apply a turbulence effect on the texture coordinates of the cell. */
-  UVTurb      = (1<<7),
-  
-  /** Make the top surface wave. */
-  Waving      = (1<<8),
-  
-  DoubleSided = (1<<9),
-  Pickable    = (1<<10),
-  OnUseReplace = (1<<11),
-  
-  Ladder = (1<<12)
-};
-
-#include "properties.h"
-
-/** Information about a cell shared by cells of same type. */
-struct CellProperties : public Properties {
-  /** Name of cell type. */
-  std::string type;
-  
-  /** An array of textures to randomly choose from on cell creation. */
-  std::vector<const Texture *> textures;
-  
-  /** Light emission from this kind of cell. 
-    * Default: Black, no light is emitted. 
-    */
-  IColor light;
-  
-  /** Default flags for cell. @see CellFlags.
-    * Default: Nonsolid, nontransparent, render.
-    */
-  uint32_t flags;
-  
-  /** Light attenuation factor of light passing through this cell. 
-    * This is only used for transparent cells. Nontransparent cells 
-    * always have a factor of 0.
-    * Default: 85%.
-    */
-  float lightFactor;
-  
-  /** Light reduction value. This value is subtracted from all components of light passing through. 
-    * Default: 0, don't reduce light.
-    */
-  int lightFade;
-
-  /** Name of cell type with which to replace this cell under certain conditions. 
-    * Default: "", don't replace.
-    */
-  std::string replace;
-  
-  /** If nonzero, the chance per tick to replace this cell. 
-    * Default: 0.0, don't replace.
-    */
-  float replaceChance;
-  
-  /** If nonzero, replace this cell when cell detail goes below this value. 
-    * Default: 0, don't replace.
-    */
-  size_t detailBelowReplace;
-  
-  /** Rendering scale of this cell. Has no effect on collision detection. 
-    * Default: [1,1,1], don't change size.
-    */
-  Vector3 scale;
-  
-  float speedModifier;
-  float friction;
-
-  size_t showSides;
-  size_t hideSides;
-  size_t clipSidesIn;  // default: don't clip movement into cell from all sides when solid
-  size_t clipSidesOut; // default: don't clip movement out of cell to all sides when solid
-  
-  size_t onUseCascade;
-  float useDelay;
-  float breakStrength;
-  float lavaDamage;
-  float useChance;
-  
-  std::string breakParticle;
-
-  std::map<std::string, std::string> onFlowOntoReplaceTarget;
-  std::map<std::string, std::string> onFlowOntoReplaceSelf;
-
-  CellProperties(); 
-  
-  virtual void ParseProperty(const std::string &name);
-};
+#include "cellrender.h"
 
 /** A cell in the world. */
-class Cell final {
+class Cell final : public CellRender {
 public:
 
   Cell(const std::string &type = "default");
@@ -134,16 +19,8 @@ public:
   
   void Update(RunningState &state);
   
-  void OnUse(RunningState &state, Mob &user, bool force = false);
-  
   void UpdateNeighbours();
   
-  void Draw(std::vector<Vertex> &vertices) const;
-  void DrawHighlight(std::vector<Vertex> &vertices) const;
-  
-  const std::string &GetType() const;
-  const CellProperties &GetInfo() const;
-
   uint8_t GetVisibility() const;
   void SetVisibility(uint8_t visibility);
 
@@ -156,9 +33,6 @@ public:
   float GetHeightBottom(float x, float z) const;
   float GetHeightClamp(float x, float z) const;
   float GetHeightBottomClamp(float x, float z) const;
-
-  Cell &SetTexture(const Texture *tex, bool multi = false);
-  const Texture *GetTexture() const;
 
   bool IsTopFlat() const;
   bool IsBottomFlat() const;
@@ -192,87 +66,31 @@ public:
   
   bool HasSolidSides() const;
   bool CheckSideSolid(Side side, const Vector3 &org) const;
-  
+   
   void SetDirty() { dirty = true; }
-  
   AABB GetAABB() const;
 
-  void UpdateVertices();
   void Tick(RunningState &state);
   
   bool Ray(const Vector3 &start, const Vector3 &dir, float &t, Vector3 &p) const;
   Cell &operator[](Side side);
+  const Cell &operator[](Side side) const;
 
   bool Flow(Side side);
+
+  void OnUse(RunningState &state, Mob &user, bool force = false);
+  void OnStepOn(RunningState &state, Mob &mob);
+  void OnStepOff(RunningState &state, Mob &mob);
   
 protected:
 
-  static const int OffsetScale = 127;
-
   // unique information, that will change after assignment from different cell
-  const CellProperties *info;
-  World *world;
-  IVector3 pos;
-  bool dirty;
   
   size_t tickPhase;
   IColor lightLevel;
-  float lastT;
-  
-  uint8_t visibility;
-  bool reversedSides;
-  Vector3 corners[8];
-  std::vector<Vertex> verts;
-  Cell *neighbours[6];
-  const Texture *texture;
-  float uscale;
   
   float lastUseT;
 
-  // shared information, that will stay the same after assignment from different cell
-  struct SharedInfo {
-    size_t tickInterval;
-    
-    // map generation
-    bool isLocked;    // disallow modification via World::SetCell...
-    bool ignoreLock;  // ..unless this is true
-    bool ignoreWrite; // World::SetCell will only pretend to succeed
-    size_t featureID;
-
-    // rendering  
-    bool reversedTop;
-    bool reversedBottom;
-    
-    int16_t topHeights[4], bottomHeights[4];
-    float u[4], v[4];
-
-    uint32_t detail;
-    float smoothDetail;
-    
-    SharedInfo(const CellProperties *info) :
-      tickInterval( info->flags & CellFlags::Viscous ? 32 : 5 ),
-      isLocked(false),
-      ignoreLock(false),
-      ignoreWrite(false),
-      featureID(~0UL),
-      reversedTop(false),
-      reversedBottom(false),
-      topHeights { OffsetScale, OffsetScale, OffsetScale, OffsetScale },
-      bottomHeights { 0, 0, 0, 0 },
-      u { 0,0,0,0 },
-      v { 0,0,0,0 },
-      detail( info->flags & CellFlags::Liquid ? 15 : 0 ),
-      smoothDetail( detail )
-    { }
-  } shared;
-  
-  float YOfs(size_t n)  const { return this->shared.topHeights[n]/(float)OffsetScale; }
-  float YOfsb(size_t n) const { return this->shared.bottomHeights[n]/(float)OffsetScale; }
-  
-  IColor SideCornerColor(Side side, size_t corner) const;
-  void SideColors(Side side, IColor *colors) const;
-  void SideVerts(Side side, std::vector<Vertex> &verts, bool reverse = false) const;
- 
   friend Serializer &operator << (Serializer &ser, const Cell &cell);
   friend Deserializer &operator >> (Deserializer &deser, Cell &cell);
 };
@@ -287,24 +105,12 @@ inline IVector3 Cell::GetPosition() const {
   return this->pos; 
 }
 
-inline const CellProperties &Cell::GetInfo() const { 
-  return *this->info; 
-}
-
-inline const std::string &Cell::GetType() const { 
-  return this->info->type; 
-}
-
 inline uint8_t Cell::GetVisibility() const {
   return this->visibility; 
 }
 
 inline void Cell::SetVisibility(uint8_t visibility) { 
   this->visibility = visibility; 
-}
-
-inline const Texture *Cell::GetTexture() const { 
-  return this->texture; 
 }
 
 inline bool Cell::IsTopFlat() const {
@@ -386,7 +192,9 @@ inline Cell &Cell::operator[](Side side) {
   return *this->neighbours[(int)side];
 }
 
-void LoadCells();
+inline const Cell &Cell::operator[](Side side) const {
+  return *this->neighbours[(int)side];
+}
 
 #endif
 

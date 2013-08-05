@@ -68,7 +68,7 @@ Feature::Feature(FILE *f, const std::string &name) :
   
   while(fgets(line, 256, f) && !feof(f)) {
     std::vector<std::string> tokens = Tokenize(line);
-    if (tokens.size() == 0) continue;
+    if (tokens.empty()) continue;
     
     for (auto &c:tokens[0]) c = ::tolower(c);
     
@@ -402,7 +402,7 @@ const FeatureConnection *
 Feature::GetRandomConnection(
   RunningState &state
 ) const {
-  if (conns.size()==0) return nullptr;
+  if (conns.empty()) return nullptr;
   return &conns[state.GetRandom().Integer(conns.size())];
 }
 
@@ -415,7 +415,7 @@ Feature::GetRandomConnection(
   for (const FeatureConnection &c : conns) {
     if (c.dir == dir) cs.push_back(&c);
   }
-  if (cs.size()==0) return nullptr;
+  if (cs.empty()) return nullptr;
   return cs[state.GetRandom().Integer(cs.size())];
 }
 
