@@ -6,7 +6,7 @@ uniform vec4 u_fogColor;
 uniform vec4 u_color;
 uniform float u_fogLin;
 
-uniform vec4 u_lightColor[4];
+uniform vec4 u_lightColor[8];
 
 uniform mat4 u_matView;
 
@@ -17,7 +17,7 @@ varying vec2 v_tex;
 varying vec4 v_color;
 varying vec3 v_norm;
 
-varying vec3 v_light[4];
+varying vec3 v_light[8];
 
 const float gamma = 1.8;
 const float contrast = 2.5;
@@ -27,7 +27,7 @@ vec3 getLight(int n) {
   vec3 L = normalize(ld);
   float d = length(ld);
 
-  return u_lightColor[n].rgb * max(0.0, dot(v_norm, L)) / (1.0 + d);
+  return u_lightColor[n].rgb * max(0.0, dot(v_norm, L)) / (1.0 + d*d);
 }
 
 vec3 getTotalLight() {
@@ -36,6 +36,10 @@ vec3 getTotalLight() {
   light += getLight(1);
   light += getLight(2);
   light += getLight(3);
+  light += getLight(4);
+  light += getLight(5);
+  light += getLight(6);
+  light += getLight(7);
   return light;
 }
 

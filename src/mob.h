@@ -22,7 +22,7 @@ public:
   
   virtual void Die(RunningState &state, const HealthInfo &info) override;
   virtual void OnCollide(RunningState &state, Entity &other) override;
-  
+
   void ApplyForce(RunningState &state, const Vector3 &f);
   void AddImpulse(const Vector3 &v)  { velocity = velocity + v / this->properties->mass; }
   void AddVelocity(const Vector3 &v) { velocity = velocity + v; }

@@ -19,6 +19,10 @@ Inventory   1.0 scroll.identify
 Inventory   1.0 scroll.identify
 Inventory   1.0 scroll.identify
 Inventory   1.0 wand.black
+Inventory   1.0 scroll.teleport
+Inventory   1.0 scroll.teleport
+Inventory   1.0 scroll.teleport
+Inventory   1.0 scroll.teleport
 
 str 1
 agi 1

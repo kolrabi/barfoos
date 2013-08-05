@@ -74,6 +74,7 @@ EntityProperties::ParseProperty(const std::string &cmd) {
   else if (cmd == "speed")            Parse(this->maxSpeed);
   else if (cmd == "health")           Parse(this->maxHealth);
   else if (cmd == "lifetime")         Parse(this->lifetime);
+  else if (cmd == "lifetimerand")     Parse(this->lifetimeRand);
   else if (cmd == "extents") {
     Parse(this->extents);
     this->sprite.width = this->extents.x;
@@ -223,7 +224,7 @@ Entity::Start(RunningState &state, size_t id) {
   this->startT = game.GetTime();
   
   if (this->properties->lifetime) {
-    this->dieT = game.GetTime() + this->properties->lifetime; // TODO: variance
+    this->dieT = game.GetTime() + this->properties->lifetime + state.GetRandom().Float() * this->properties->lifetimeRand;
   }
   
   // fill inventory with random crap
@@ -287,7 +288,7 @@ Entity::Update(RunningState &state) {
   
   if (this->dieT && state.GetGame().GetTime() > this->dieT) {
     this->Die(state, HealthInfo());
-    Log("%s expired %d %u\n", this->properties->name.c_str(), IsDead(), this->sprite.currentAnimation);
+    //Log("%s expired %d %u\n", this->properties->name.c_str(), IsDead(), this->sprite.currentAnimation);
   }
   
   // bring out your dead
@@ -299,7 +300,7 @@ Entity::Update(RunningState &state) {
       Start(state, id);
       Log("respawning %s\n", this->properties->name.c_str());
     } else {
-      Log("marking %s as removable\n", this->properties->name.c_str());
+      //Log("marking %s as removable\n", this->properties->name.c_str());
       this->removable = true;
     }
     return;
@@ -511,6 +512,22 @@ Entity::CanSee(RunningState &state, const Vector3 &pos) {
   state.GetWorld().CastRayCell(start, dir.Normalize(), dist, side);
   return dist >= dir.GetMag();
 }
+
+void 
+Entity::Teleport(RunningState &state, const Vector3 &target) {
+  AABB aabb = GetAABB();
+  aabb.extents.x += 0.5;
+  aabb.extents.z += 0.5;
+  for (size_t i=0; i<5; i++) {    
+    state.SpawnMobInAABB("particle.teleport", aabb, Vector3(0, state.GetRandom().Float()*0.3, 0));
+  }
+  SetPosition(Vector3(0.5, 1.0 + aabb.extents.y, 0.5) + Vector3(target));
+  aabb.center = GetPosition();
+  for (size_t i=0; i<25; i++) {    
+    state.SpawnMobInAABB("particle.teleport", aabb, Vector3(0, state.GetRandom().Float()*0.3, 0));
+  }
+}
+
 
 void 
 Entity::Serialize(Serializer &ser) const {

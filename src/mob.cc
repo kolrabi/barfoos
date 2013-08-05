@@ -390,7 +390,7 @@ Mob::GetMoveModifier() const {
   if (this->footCell) mod *= this->footCell->GetInfo().speedModifier;
   return mod * (1.0 + GetEffectiveStats().agi * Const::WalkSpeedFactorPerAGI);
 }
-
+  
 void
 Mob::Serialize(Serializer &ser) const {
   Entity::Serialize(ser);

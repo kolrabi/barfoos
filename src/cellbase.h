@@ -9,6 +9,8 @@ public:
   const std::string &GetType() const;
   const CellProperties &GetInfo() const;
 
+  void SetTeleportTarget(const IVector3 &target);
+
 protected:
 
   CellBase(const std::string &type);
@@ -19,6 +21,7 @@ protected:
   Cell *neighbours[6];
   bool dirty;
   float lastT;
+  float nextActivationT;
  
   static const int OffsetScale = 127;
 
@@ -41,6 +44,9 @@ protected:
 
     uint32_t detail;
     float smoothDetail;
+
+    bool teleport;
+    IVector3 teleportTarget;
     
     SharedInfo(const CellProperties *info) :
       tickInterval( info->flags & CellFlags::Viscous ? 32 : 5 ),
@@ -55,7 +61,9 @@ protected:
       u { 0,0,0,0 },
       v { 0,0,0,0 },
       detail( info->flags & CellFlags::Liquid ? 15 : 0 ),
-      smoothDetail( detail )
+      smoothDetail( detail ),
+      teleport(false),
+      teleportTarget()
     { }
   } shared;
   
@@ -71,6 +79,12 @@ inline const std::string &CellBase::GetType() const {
 inline const CellProperties &CellBase::GetInfo() const { 
   return *this->info; 
 }
+
+inline void CellBase::SetTeleportTarget(const IVector3 &target) {
+  this->shared.teleport = true;
+  this->shared.teleportTarget = target;
+}
+
 
 #endif
 

@@ -1,0 +1,10 @@
+tex scroll
+
+Scroll
+IdentifiedName  "Scroll of Teleport"
+
+NoBeatitude
+NoModifier
+
+OnConsumeTeleport
+

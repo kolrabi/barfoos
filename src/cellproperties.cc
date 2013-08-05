@@ -20,6 +20,7 @@ static std::unordered_map<std::string, CellProperties> cellProperties;
 CellProperties::CellProperties() :
   type("default"),
   textures(0),
+  activeTexture(""),
   light(0,0,0),
   flags(0),
   lightFactor(0.85),
@@ -44,6 +45,7 @@ CellProperties::CellProperties() :
 
 void CellProperties::ParseProperty(const std::string &cmd) {
   if (cmd == "tex")               Parse("cells/texture/", this->textures);
+  else if (cmd == "activetex")    Parse(this->activeTexture);
   
   else if (cmd == "light")        Parse(this->light);
   else if (cmd == "lightscale")   { float f; Parse(f); this->light = this->light * f; }

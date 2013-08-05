@@ -170,6 +170,8 @@ ItemProperties::ParseProperty(const std::string &cmd) {
     Parse(this->onConsumeResult);
   } else if (cmd == "onconsumeaddbuff") {
     Parse(this->onConsumeAddBuff);
+  } else if (cmd == "onconsumeteleport") {
+    this->onConsumeTeleport = true;
   } else if (cmd == "onhitaddbuff") {
     std::string effect;
     Parse(effect);
@@ -504,6 +506,10 @@ Item::Consume(RunningState &state, Entity &user) {
   
   if (this->properties->onConsumeAddBuff != "") {
     user.AddBuff(state, this->properties->onConsumeAddBuff);
+  }
+
+  if (this->properties->onConsumeTeleport) {
+    user.Teleport(state, Vector3(state.GetWorld().GetRandomTeleportTarget(state.GetRandom())));
   }
   
   state.GetGame().SetIdentified(this->properties->name);

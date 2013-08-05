@@ -176,7 +176,7 @@ RunningState::Update() {
     auto entityIter = this->entities.begin();
     while(entityIter != this->entities.end()) {
       if (!entityIter->second || entityIter->second->IsRemovable()) {
-        Log("removing %s\n", entityIter->second->GetProperties()->name.c_str());
+//        Log("removing %s\n", entityIter->second->GetProperties()->name.c_str());
         delete entityIter->second;
         entityIter = this->entities.erase(entityIter);
       } else {

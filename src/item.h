@@ -62,6 +62,7 @@ struct ItemProperties : public Properties {
   std::string onConsumeEffect = "";
   std::string onConsumeResult = "";
   std::string onConsumeAddBuff = "";
+  bool onConsumeTeleport = false;
 
   bool onUseIdentify = false;
 
@@ -137,7 +138,7 @@ public:
   void AddAmount(int amt);
   void SetAmount(int amt)                     { this->amount = amt; }
   
-  bool IsConsumable()                   const { return this->properties->onConsumeEffect != "" || this->properties->onConsumeResult != ""; }
+  bool IsConsumable()                   const { return this->properties->onConsumeEffect != "" || this->properties->onConsumeResult != "" || this->properties->onConsumeTeleport; }
   
   bool IsRemovable()                    const { return isRemovable || this->amount == 0; }
   

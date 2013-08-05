@@ -10,13 +10,13 @@ uniform mat4 u_matView;
 uniform mat4 u_matTexture;
 uniform mat4 u_matNormal;
 
-uniform vec3 u_lightPos[4];
+uniform vec3 u_lightPos[8];
 
 varying vec3 v_pos;
 varying vec2 v_tex;
 varying vec4 v_color;
 varying vec3 v_norm;
-varying vec3 v_light[4];
+varying vec3 v_light[8];
 
 vec3 Distort(vec4 vertex) {
   float t = u_time * 2.0 * 3.14159;
@@ -43,4 +43,8 @@ void main() {
   v_light[1] = vec3(u_matView * vec4(u_lightPos[1], 1.0));
   v_light[2] = vec3(u_matView * vec4(u_lightPos[2], 1.0));
   v_light[3] = vec3(u_matView * vec4(u_lightPos[3], 1.0));
+  v_light[4] = vec3(u_matView * vec4(u_lightPos[4], 1.0));
+  v_light[5] = vec3(u_matView * vec4(u_lightPos[5], 1.0));
+  v_light[6] = vec3(u_matView * vec4(u_lightPos[6], 1.0));
+  v_light[7] = vec3(u_matView * vec4(u_lightPos[7], 1.0));
 }

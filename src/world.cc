@@ -92,6 +92,8 @@ World::Build() {
   size_t caveLengthMin = random.Integer(20);                  //   0 -  20
   size_t caveLengthMax = caveLengthMin + random.Integer(100); //   0 - 200
   size_t caveRepeat    = random.Integer(20)+1;                //   1 -  21
+ 
+  size_t teleportCount = random.Integer(10)+50;
 
   std::vector<FeatureInstance> instances;
   
@@ -186,6 +188,15 @@ World::Build() {
         instances.back().prevID = featNum;
       }
     } while(instances.size() < featureCount); 
+  }
+    
+  for (size_t i=0; i<teleportCount; i++) {
+    IVector3 a = GetRandomTeleportTarget(random);
+    IVector3 b = GetRandomTeleportTarget(random);
+    while (a == b) b = GetRandomTeleportTarget(random);
+
+    SetCell(a, Cell("teleport")).SetTeleportTarget(b);
+    SetCell(b, Cell("teleport")).SetTeleportTarget(a);
   }
 
   Log("Built world with %lu features. Level %lu.\n", instances.size(), state.GetLevel());

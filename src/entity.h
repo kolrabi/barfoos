@@ -62,6 +62,7 @@ struct EntityProperties : public Properties {
   float   thinkInterval     = 0.0;    //< Time interval beetween calls to Entity::Think().
   float   maxHealth         = 5;      //< Health of entity after spawn.
   float   lifetime          = 0.0;
+  float   lifetimeRand      = 0.0;
   bool    nohit             = false;  //< Entity has no hitbox/selection box.
   bool    nocollideEntity   = false;  //< Entity does not collide with other entities.
   bool    nocollideCell     = false;  //< Don't call OnCollideCell.
@@ -150,7 +151,7 @@ public:
   virtual void OnLevelUp(RunningState &)                          {}
   virtual void OnEquip(RunningState &, const Item &, InventorySlot, bool)      {}
   virtual void OnBuffAdded(RunningState &, const EffectProperties &)      {}
-  
+    
   // management
   size_t                    GetId()                           const { return id; }
   bool                      IsRemovable()                     const { return removable; }
@@ -174,6 +175,8 @@ public:
   const Vector3 &           GetSmoothPosition()               const { return this->smoothPosition; }
   const Vector3             GetEyePosition()                  const { return this->GetPosition() + Vector3(0,this->properties->eyeOffset,0); }
   const Vector3             GetSmoothEyePosition()            const { return this->GetSmoothPosition() + Vector3(0,this->properties->eyeOffset,0); }
+  
+  void Teleport(RunningState &state, const Vector3 &target);
   
   void                      SetAngles(const Vector3 &angles)        { this->angles = angles; }
   const Vector3 &           GetAngles()                       const { return this->angles; }

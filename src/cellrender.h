@@ -23,6 +23,7 @@ protected:
   Vector3 corners[8];
   std::vector<Vertex> verts;
   const Texture *texture;
+  const Texture *activeTexture;
   float uscale;
 
   IColor SideCornerColor(Side side, size_t corner) const;
@@ -31,6 +32,9 @@ protected:
 };
 
 inline const Texture *CellRender::GetTexture() const { 
+  if (this->activeTexture && this->lastT < this->nextActivationT) {
+    return this->activeTexture;
+  }
   return this->texture; 
 }
 

@@ -21,6 +21,7 @@ CellBase::CellBase(const std::string &type) :
   pos(0,0,0),
   dirty(true),
   lastT(0.0),
+  nextActivationT(0.0),
   shared(info)
 {
   for (size_t i=0; i<6; i++)
@@ -35,6 +36,7 @@ CellRender::CellRender(const std::string &type) :
   reversedSides(false),
   verts(0),
   texture(nullptr),
+  activeTexture(nullptr),
   uscale(1.0)
 {
 }
@@ -79,6 +81,7 @@ Cell::operator =(const Cell &that)
     this->neighbours[i] = nullptr;
 
   this->texture = that.texture;
+  this->activeTexture = that.activeTexture;
   this->uscale = that.uscale;
   
   this->lastUseT = 0.0;
@@ -564,6 +567,7 @@ void Cell::SetWorld(World *world, const IVector3 &pos) {
     this->SetTexture(info->textures[world->GetState().GetRandom().Integer(info->textures.size())], info->flags & MultiSided);
   }
 
+  if (this->info->activeTexture != "") this->activeTexture = loadTexture("cells/texture/"+this->info->activeTexture);
   
   //this->tickPhase = pos.y % this->shared.tickInterval;
   // this->tickPhase = this->world->GetRandom().Integer(this->shared.tickInterval);
@@ -624,8 +628,17 @@ Cell::Ray(const Vector3 &start, const Vector3 &dir, float &t, Vector3 &p) const 
   return hit;
 }
 
-void Cell::OnStepOn(RunningState &, Mob &) {
+void Cell::OnStepOn(RunningState &state, Mob &mob) {
   // TODO: traps, teleports
+  if (this->shared.teleport && state.GetGame().GetTime() > this->nextActivationT) {
+    IVector3 target(this->shared.teleportTarget);
+    Cell &targetCell = state.GetWorld().GetCell(target);
+
+    this->nextActivationT = state.GetGame().GetTime() + 2;
+    targetCell.nextActivationT = state.GetGame().GetTime() + 2;
+
+    mob.Teleport(state, Vector3(target));
+  }
 }
 
 void Cell::OnStepOff(RunningState &, Mob &) {
@@ -652,6 +665,7 @@ Serializer &operator << (Serializer &ser, const Cell &cell) {
   }
   
   ser << cell.shared.detail << cell.shared.smoothDetail;
+  ser << cell.shared.teleport << cell.shared.teleportTarget;
   return ser;
 }
 
@@ -685,5 +699,6 @@ Deserializer &operator >> (Deserializer &deser, Cell &cell) {
   }
   
   deser >> cell.shared.detail >> cell.shared.smoothDetail;
+  deser >> cell.shared.teleport >> cell.shared.teleportTarget;
   return deser;
 }
