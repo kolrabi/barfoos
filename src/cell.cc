@@ -36,7 +36,9 @@ CellRender::CellRender(const std::string &type) :
   reversedSides(false),
   verts(0),
   texture(nullptr),
+  emissiveTexture(nullptr),
   activeTexture(nullptr),
+  emissiveActiveTexture(nullptr),
   uscale(1.0)
 {
 }
@@ -82,6 +84,8 @@ Cell::operator =(const Cell &that)
 
   this->texture = that.texture;
   this->activeTexture = that.activeTexture;
+  this->emissiveTexture = that.emissiveTexture;
+  this->emissiveActiveTexture = that.emissiveActiveTexture;
   this->uscale = that.uscale;
   
   this->lastUseT = 0.0;
@@ -101,6 +105,17 @@ CellRender::Draw(std::vector<Vertex> &verts) const {
   
   for (const Vertex &v : this->verts) {
     verts.push_back(v);
+  }
+}
+
+void 
+CellRender::DrawEmissive(std::vector<Vertex> &verts) const {
+  if (info->flags & CellFlags::DoNotRender || visibility == 0) return;
+  
+  for (const Vertex &v : this->verts) {
+    Vertex vv = v;
+    vv.rgb[0] = vv.rgb[1] = vv.rgb[2] = vv.rgb[3] = 1.0;
+    verts.push_back(vv);
   }
 }
 
@@ -157,7 +172,7 @@ Cell::Update(
     }
   }
   
-  UpdateNeighbours();
+  world->MarkForUpdateNeighbours(*this);
 }
 
 void Cell::OnUse(RunningState &state, Mob &user, bool force) {
@@ -254,8 +269,8 @@ Cell::Flow(Side side) {
     cell->shared.detail++;
   }
 
-  UpdateNeighbours();
-  cell->UpdateNeighbours();
+  world->MarkForUpdateNeighbours(*this);
+  world->MarkForUpdateNeighbours(*cell);
   return true;
 }
 
@@ -453,7 +468,7 @@ Cell::UpdateNeighbours(
     updated = true;
     for (size_t i=0; i<6; i++) {
       Cell &cell = *this->neighbours[i];
-      cell.UpdateNeighbours();
+      world->MarkForUpdateNeighbours(cell);
     }
   }
   
@@ -564,14 +579,15 @@ void Cell::SetWorld(World *world, const IVector3 &pos) {
   if (info->textures.empty()) {
     this->SetTexture(0, info->flags & MultiSided);
   } else {
-    this->SetTexture(info->textures[world->GetState().GetRandom().Integer(info->textures.size())], info->flags & MultiSided);
+    size_t idx = world->GetState().GetRandom().Integer(info->textures.size());
+    this->SetTexture(info->textures[idx], info->flags & MultiSided);
+    if (idx < info->emissiveTextures.size())
+      this->SetEmissiveTexture(info->emissiveTextures[idx]);
   }
 
   if (this->info->activeTexture != "") this->activeTexture = loadTexture("cells/texture/"+this->info->activeTexture);
+  if (this->info->emissiveActiveTexture != "") this->emissiveActiveTexture = loadTexture("cells/texture/"+this->info->emissiveActiveTexture);
   
-  //this->tickPhase = pos.y % this->shared.tickInterval;
-  // this->tickPhase = this->world->GetRandom().Integer(this->shared.tickInterval);
-  // this->reversedSides = this->world->GetRandom().Integer(2);
   this->dirty = true;
   
   this->pos = pos; 
@@ -580,10 +596,10 @@ void Cell::SetWorld(World *world, const IVector3 &pos) {
   }
   
   for (size_t i=0; i<6; i++) {
-    this->neighbours[i]->UpdateNeighbours();
+    world->MarkForUpdateNeighbours(*this->neighbours[i]);
   }
   
-  this->UpdateNeighbours();
+  world->MarkForUpdateNeighbours(*this);
 }
 
 AABB Cell::GetAABB() const {

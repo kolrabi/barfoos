@@ -8,10 +8,14 @@ public:
 
   void  SetTexture(const Texture *tex, bool multi = false);
   const Texture *GetTexture() const;
+  
+  void  SetEmissiveTexture(const Texture *tex);
+  const Texture *GetEmissiveTexture() const;
 
   void UpdateVertices();
 
   void Draw(std::vector<Vertex> &vertices) const;
+  void DrawEmissive(std::vector<Vertex> &vertices) const;
   void DrawHighlight(std::vector<Vertex> &vertices) const;
 
 protected:
@@ -22,8 +26,8 @@ protected:
   bool reversedSides;
   Vector3 corners[8];
   std::vector<Vertex> verts;
-  const Texture *texture;
-  const Texture *activeTexture;
+  const Texture *texture, *emissiveTexture;
+  const Texture *activeTexture, *emissiveActiveTexture;
   float uscale;
 
   IColor SideCornerColor(Side side, size_t corner) const;
@@ -36,6 +40,13 @@ inline const Texture *CellRender::GetTexture() const {
     return this->activeTexture;
   }
   return this->texture; 
+}
+
+inline const Texture *CellRender::GetEmissiveTexture() const { 
+  if (this->emissiveActiveTexture && this->lastT < this->nextActivationT) {
+    return this->emissiveActiveTexture;
+  }
+  return this->emissiveTexture; 
 }
 
 #endif

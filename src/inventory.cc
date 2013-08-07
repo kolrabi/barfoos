@@ -33,7 +33,7 @@ Inventory::operator[](InventorySlot slot) const {
   */
 bool
 Inventory::AddToBackpack(const std::shared_ptr<Item> &item) {
-  Log("AddToBackpack %s %u\n", item->GetDisplayName().c_str(), item->GetAmount());
+  //Log("AddToBackpack %s %u\n", item->GetDisplayName().c_str(), item->GetAmount());
   InventorySlot i = InventorySlot::Backpack0;
   while(i < InventorySlot::End) {
     if (self[i] && self[i]->CanStack(*item)) {
@@ -61,7 +61,7 @@ Inventory::AddToBackpack(const std::shared_ptr<Item> &item) {
   */
 void
 Inventory::AddToInventory(const std::shared_ptr<Item> &item, InventorySlot slot) {
-  Log("AddToInventory %s %u\n", item->GetDisplayName().c_str(), item->GetAmount());
+  //Log("AddToInventory %s %u\n", item->GetDisplayName().c_str(), item->GetAmount());
   
   if (!self[slot]) {
     // target slot is free
@@ -78,20 +78,20 @@ Inventory::AddToInventory(const std::shared_ptr<Item> &item, InventorySlot slot)
 
   // try stacking them together
   if (self[slot]->CanStack(*item)) {
-    Log("Can Stack!\n");
+    //Log("Can Stack!\n");
     self[slot]->AddAmount(item->GetAmount());
     item->SetAmount(0);
     return;
   } else if (item->GetAmount() > 1) {
-    Log("Cannot Stack!\n");
+    //Log("Cannot Stack!\n");
     // can't be stacked, put all but one from stack into backpack
     std::shared_ptr<Item> rest(new Item(item->GetProperties().name));
     rest->SetAmount(item->GetAmount()-1);
     item->SetAmount(1);
 
-    Log("%u %u\n", item->GetAmount(), rest->GetAmount());
+    //Log("%u %u\n", item->GetAmount(), rest->GetAmount());
     
-    Log("Putting %u back into backpack\n", rest->GetAmount());
+    //Log("Putting %u back into backpack\n", rest->GetAmount());
     if (!this->AddToBackpack(rest)) {
       this->DropItem(rest);
     }

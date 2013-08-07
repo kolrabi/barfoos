@@ -31,6 +31,7 @@ const EntityProperties *getEntity(const std::string &name) {
 void
 EntityProperties::ParseProperty(const std::string &cmd) {
   if (cmd == "tex")             Parse("entities/texture/", this->sprite.texture);
+  else if (cmd == "emissivetex") Parse("entities/texture/", this->sprite.emissiveTexture);
   else if (cmd == "frames")     Parse(this->sprite.totalFrames);
   else if (cmd == "anim") {
     size_t firstFrame = 0;
@@ -82,6 +83,7 @@ EntityProperties::ParseProperty(const std::string &cmd) {
   } else if (cmd == "drawbox") {
     EntityDrawBox box;
     Parse("entities/texture/", box.texture);
+    Parse("entities/texture/", box.emissiveTexture);
     Parse(box.aabb.center);
     Parse(box.aabb.extents);
     this->drawBoxes.push_back(box);
@@ -379,6 +381,7 @@ Entity::Draw(Gfx &gfx) const {
   } else {
     gfx.SetColor(IColor(255,255,255), 1.0);
   }
+  gfx.SetBlendNormal();
   
   for (auto &box : this->properties->drawBoxes) {
     AABB aabb = box.aabb;
@@ -386,11 +389,26 @@ Entity::Draw(Gfx &gfx) const {
     
     gfx.SetTextureFrame(box.texture,0,0,8);
     gfx.DrawAABB(aabb);
+    
+    if (box.emissiveTexture) {
+      gfx.SetBlendAdd();
+      gfx.SetTextureFrame(box.texture,0,0,8);
+      gfx.DrawAABB(aabb);
+      gfx.SetBlendNormal();
+    }
   }
   
   if (this->properties->isBox) {
-    gfx.SetTextureFrame(this->properties->sprite.texture,0,0,8);
-    gfx.DrawAABB(this->aabb);
+    if (this->properties->sprite.texture) {
+      gfx.SetTextureFrame(this->properties->sprite.texture,0,0,8);
+      gfx.DrawAABB(this->aabb);
+    }
+    if (this->properties->sprite.emissiveTexture) {
+      gfx.SetBlendAdd();
+      gfx.SetTextureFrame(this->properties->sprite.emissiveTexture,0,0,8);
+      gfx.DrawAABB(this->aabb);
+      gfx.SetBlendNormal();
+    }
   } else {
     gfx.DrawSprite(this->sprite, this->aabb.center, gfx.GetView().GetRight().Dot(GetForward())<0);
   }

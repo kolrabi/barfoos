@@ -55,8 +55,10 @@ struct CellProperties : public Properties {
   
   /** An array of textures to randomly choose from on cell creation. */
   std::vector<const Texture *> textures;
+  std::vector<const Texture *> emissiveTextures;
 
   std::string activeTexture;
+  std::string emissiveActiveTexture;
   
   /** Light emission from this kind of cell. 
     * Default: Black, no light is emitted. 

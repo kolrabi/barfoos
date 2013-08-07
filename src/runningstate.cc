@@ -13,6 +13,7 @@
 #include "deserializer.h"
 
 #include <algorithm>
+#include <sys/time.h>
 
 RunningState::RunningState(Game &game) :
   GameState(game),

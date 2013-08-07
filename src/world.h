@@ -6,6 +6,7 @@
 #include "icolor.h"
 
 #include <unordered_map>
+#include <unordered_set>
 
 class World final {
 public:
@@ -62,6 +63,8 @@ public:
   bool IsCellValidTeleportTarget(const IVector3 &pos) const;
   IVector3 FindSolidBelow(const IVector3 &pos) const;
   IVector3 GetRandomTeleportTarget(Random &random) const;
+  
+  void MarkForUpdateNeighbours(const Cell &cell);
 
 private:
 
@@ -78,11 +81,15 @@ private:
   float nextTickT;
   float tickInterval;
 
+  std::unordered_set<size_t> neighbourUpdates;
+  
   IColor ambientLight;
   
   std::vector<Vertex> allVerts;
-  std::unordered_map<const Texture *, size_t> vertexStarts;
-  std::unordered_map<const Texture *, size_t> vertexCounts;
+  std::unordered_map<const Texture *, size_t> vertexStartsNormal;
+  std::unordered_map<const Texture *, size_t> vertexCountsNormal;
+  std::unordered_map<const Texture *, size_t> vertexStartsEmissive;
+  std::unordered_map<const Texture *, size_t> vertexCountsEmissive;
   unsigned int vbo;  
  
   std::vector<bool> seenFeatures;

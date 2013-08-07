@@ -32,8 +32,10 @@ World::World(RunningState &state, const IVector3 &size) :
   tickInterval(0.01),
   ambientLight(32, 32, 64),
   allVerts(0),
-  vertexStarts(),
-  vertexCounts(),
+  vertexStartsNormal(),
+  vertexCountsNormal(),
+  vertexStartsEmissive(),
+  vertexCountsEmissive(),
   vbo(0),
   seenFeatures(0),
   checkOverwrite(false),
@@ -49,8 +51,10 @@ World::World(RunningState &state, Deserializer &deser) :
   defaultCell("default"),
   dynamicCells(0),
   allVerts(0),
-  vertexStarts(),
-  vertexCounts(),
+  vertexStartsNormal(),
+  vertexCountsNormal(),
+  vertexStartsEmissive(),
+  vertexCountsEmissive(),
   vbo(0),
   checkOverwrite(false),
   checkOverwriteOK(true)
@@ -273,7 +277,7 @@ World::SetCell(const IVector3 &pos, const Cell &cell, bool ignoreLock) {
   this->cells[i] = cell;
   this->cells[i].SetWorld(this, pos);
   this->cells[i].SetFeatureID(featId);
-  this->cells[i].UpdateNeighbours();
+  this->UpdateCell(i);
 
   // ignore changes between invisible and dynamic cells, static mesh wont change
   /*
@@ -291,7 +295,10 @@ World::SetCell(const IVector3 &pos, const Cell &cell, bool ignoreLock) {
  */
 void 
 World::UpdateCell(size_t i) {
-  this->cells[i].UpdateNeighbours();
+  this->MarkForUpdateNeighbours(this->cells[i]);
+  for (size_t i=0; i<6; i++) {
+    this->MarkForUpdateNeighbours(this->cells[i][(Side)i]);
+  }
 }
   
 /**
@@ -321,19 +328,24 @@ World::Draw(Gfx &gfx) {
     this->dynamicCells.clear();
 
     if (firstDirty) {
+      // update all changed cells
       for (size_t i=0; i<this->cellCount; i++) {
-        this->cells[i].UpdateNeighbours();
+        if (this->cells[i].GetInfo().GetFeatureID() != ~0UL) 
+          this->MarkForUpdateNeighbours(this->cells[i]);
       }
 
+      // fill up liquids with liquids above, so it won't trickle
       for (size_t i=0; i<this->cellCount; i++) {
         if (this->cells[i].IsLiquid() && this->cells[i][Side::Up].GetInfo() == this->cells[i].GetInfo()) {
           this->cells[i].SetDetail(16);
         } 
       }
+      
       firstDirty = false;
     }
 
-    std::unordered_map<const Texture *, std::vector<Vertex>> vertices;
+    std::unordered_map<const Texture *, std::vector<Vertex>> verticesNormal;
+    std::unordered_map<const Texture *, std::vector<Vertex>> verticesEmissive;
 
     for (size_t i=0; i<this->cellCount; i++) {
       Cell &cell = this->cells[i];
@@ -353,14 +365,28 @@ World::Draw(Gfx &gfx) {
       // group vertex buffers by texture
       
       const Texture *tex = cell.GetTexture();
-      cell.Draw(vertices[tex]);
+      if (tex) cell.Draw(verticesNormal[tex]);
+      
+      const Texture *etex = cell.GetEmissiveTexture();
+      if (etex) cell.DrawEmissive(verticesEmissive[etex]);
     }
     
     size_t index = 0;
     this->allVerts.clear();
-    for (auto &iter : vertices) {
-      this->vertexStarts[iter.first] = index;
-      this->vertexCounts[iter.first] = iter.second.size();
+    
+    for (auto &iter : verticesNormal) {
+      this->vertexStartsNormal[iter.first] = index;
+      this->vertexCountsNormal[iter.first] = iter.second.size();
+      index += iter.second.size();
+
+      for (auto &v : iter.second) {
+        this->allVerts.push_back(v);
+      }
+    }
+    
+    for (auto &iter : verticesEmissive) {
+      this->vertexStartsEmissive[iter.first] = index;
+      this->vertexCountsEmissive[iter.first] = iter.second.size();
       index += iter.second.size();
 
       for (auto &v : iter.second) {
@@ -377,26 +403,49 @@ World::Draw(Gfx &gfx) {
 
   gfx.SetShader("default");
   gfx.SetColor(IColor(255,255,255));
+  gfx.SetBlendNormal();
   
-  for (auto &s : this->vertexStarts) {
+  for (auto &s : this->vertexStartsNormal) {
     gfx.SetTextureFrame(s.first);
-    gfx.DrawTriangles(this->vbo, s.second, this->vertexCounts[s.first]);
+    gfx.DrawTriangles(this->vbo, s.second, this->vertexCountsNormal[s.first]);
+  }
+  
+  gfx.SetBlendAdd();
+  for (auto &s : this->vertexStartsEmissive) {
+    gfx.SetTextureFrame(s.first);
+    gfx.DrawTriangles(this->vbo, s.second, this->vertexCountsEmissive[s.first]);
   }
 
   // get vertices for dynamic cells
-  std::unordered_map<const Texture *, std::vector<Vertex>> dynvertices;
+  std::unordered_map<const Texture *, std::vector<Vertex>> dynVerticesNormal;
+  std::unordered_map<const Texture *, std::vector<Vertex>> dynVerticesEmissive;
+  
   for (size_t i : dynamicCells) {
     const Texture *tex = this->cells[i].GetTexture();
-    if (dynvertices.find(tex) == dynvertices.end()) 
-        dynvertices[tex] = std::vector<Vertex>();
+    if (dynVerticesNormal.find(tex) == dynVerticesNormal.end()) 
+        dynVerticesNormal[tex] = std::vector<Vertex>();
+
+    const Texture *etex = this->cells[i].GetEmissiveTexture();
+    if (dynVerticesEmissive.find(etex) == dynVerticesEmissive.end()) 
+        dynVerticesEmissive[etex] = std::vector<Vertex>();
+        
     this->cells[i].UpdateVertices();
-    this->cells[i].Draw(dynvertices[tex]);
+    this->cells[i].Draw(dynVerticesNormal[tex]);
+    this->cells[i].DrawEmissive(dynVerticesEmissive[etex]);
   }
 
   // render vertices for dynamic cells
-  auto iter = dynvertices.begin();
-  for (size_t i=0; i<dynvertices.size(); i++, iter++) {
-    gfx.SetTextureFrame(reinterpret_cast<const Texture *>(iter->first));
+  gfx.SetBlendNormal();
+  auto iter = dynVerticesNormal.begin();
+  for (size_t i=0; i<dynVerticesNormal.size(); i++, iter++) {
+    gfx.SetTextureFrame(iter->first);
+    gfx.DrawTriangles(iter->second);
+  }
+
+  gfx.SetBlendAdd();
+  iter = dynVerticesEmissive.begin();
+  for (size_t i=0; i<dynVerticesEmissive.size(); i++, iter++) {
+    gfx.SetTextureFrame(iter->first);
     gfx.DrawTriangles(iter->second);
   }
 }
@@ -470,15 +519,29 @@ World::DrawMap(
   (void)gfx;
 }
 
+void World::MarkForUpdateNeighbours(const Cell &cell) {
+  size_t i = GetCellIndex(cell.GetPosition());
+  this->neighbourUpdates.insert(i);
+}
+
 void 
 World::Update(
   RunningState &state
 ) {
   PROFILE();
   
+  // this->neighbourUpdates.clear();
+  
   // update all dynamic cells
   for (size_t i : this->dynamicCells) {
     this->cells[i].Update(state);
+  }
+  
+  // Log("updating %u neighbours\n", this->neighbourUpdates.size());
+  while(!this->neighbourUpdates.empty()) {
+    size_t i = *(this->neighbourUpdates.begin());
+    this->neighbourUpdates.erase(this->neighbourUpdates.begin());
+    this->cells[i].UpdateNeighbours();
   }
 
   // tick world

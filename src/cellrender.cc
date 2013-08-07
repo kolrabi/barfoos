@@ -23,6 +23,12 @@ CellRender::SetTexture(const Texture *tex, bool multi) {
 }
 
 void
+CellRender::SetEmissiveTexture(const Texture *tex) {
+  this->emissiveTexture = tex; 
+  this->dirty = true;
+}
+
+void
 CellRender::SideVerts(Side side, std::vector<Vertex> &verts, bool reverse) const {
   Vector3 uvec;
   Vector3 vvec(0,1,0);

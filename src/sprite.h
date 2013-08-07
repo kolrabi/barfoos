@@ -8,6 +8,7 @@
 struct Sprite {
   /** Texture to use when drawing the sprite. */
   const Texture *texture;
+  const Texture *emissiveTexture;
   
   /** Sprite width. */
   float width;
@@ -43,6 +44,7 @@ struct Sprite {
   
   Sprite() :
     texture(nullptr),
+    emissiveTexture(nullptr),
     width(1.0),
     height(1.0),
     offsetX(0.0),

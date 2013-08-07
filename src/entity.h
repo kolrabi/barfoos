@@ -25,6 +25,7 @@ enum class SpawnClass : char {
 
 struct EntityDrawBox {
   const Texture *texture = nullptr;
+  const Texture *emissiveTexture = nullptr;
   AABB aabb = AABB();
 };
 

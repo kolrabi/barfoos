@@ -81,6 +81,8 @@ public:
 
   void SetShader(const std::string &shader);
   void SetTextureFrame(const Texture *texture, size_t stage = 0, size_t currentFrame = 0, size_t frameCount = 1);
+  void SetBlendNormal();
+  void SetBlendAdd();
   void SetFog(float l, const IColor &color);
   void SetColor(const IColor &color, float alpha = 1.0);
   void SetBackfaceCulling(bool cull);

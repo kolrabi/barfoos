@@ -266,7 +266,7 @@ Gfx::Init(Game &game) {
   
   glEnable(GL_DEPTH_TEST);
   glEnable(GL_BLEND);
-  glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+  SetBlendNormal();
   
  // Colors look nicer unclamped
   if (GLEE_ARB_color_buffer_float) {
@@ -395,6 +395,14 @@ void Gfx::SetShader(const std::string &name) {
   this->activeShader = shaders[name];
 
   glUseProgramObjectARB(shaders[name]->GetProgram());
+}
+
+void Gfx::SetBlendNormal() {
+  glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+}
+
+void Gfx::SetBlendAdd() {
+  glBlendFunc(GL_ONE, GL_ONE);
 }
 
 void 
@@ -551,8 +559,6 @@ void Gfx::DrawAABB(const AABB &aabb) {
 }
 
 void Gfx::DrawSprite(const Sprite &sprite, const Vector3 &pos, bool flip, bool billboard) {
-  this->SetTextureFrame(sprite.texture, 0, sprite.currentFrame, sprite.totalFrames);
-
   this->view.Push();
   this->view.Translate(pos);
 
@@ -563,19 +569,36 @@ void Gfx::DrawSprite(const Sprite &sprite, const Vector3 &pos, bool flip, bool b
   
   this->view.Scale(Vector3(sprite.width/2, sprite.height/2, 1));
   SetBackfaceCulling(!flip); 
-  this->DrawQuads(this->quadVerts);
+
+  if (sprite.texture) {
+    this->SetTextureFrame(sprite.texture, 0, sprite.currentFrame, sprite.totalFrames);
+    this->DrawQuads(this->quadVerts);
+  }
+  if (sprite.emissiveTexture) {
+    this->SetTextureFrame(sprite.emissiveTexture, 0, sprite.currentFrame, sprite.totalFrames);
+    this->SetBlendAdd();
+    this->DrawQuads(this->quadVerts);
+    this->SetBlendNormal();
+  }
   SetBackfaceCulling(true); 
 
   this->view.Pop();
 }
 
 void Gfx::DrawIcon(const Sprite &sprite, const Point &center, const Point &size) {
-  this->SetTextureFrame(sprite.texture, 0, sprite.currentFrame, sprite.totalFrames);
-
   this->view.Push();
   this->view.Translate(Vector3(center.x + sprite.offsetX*size.x, center.y + sprite.offsetY*size.y, 0));
   this->view.Scale    (Vector3(size.x/2, -size.y/2, 1));
-  this->DrawQuads(this->quadVerts);
+  if (sprite.texture) {
+    this->SetTextureFrame(sprite.texture, 0, sprite.currentFrame, sprite.totalFrames);
+    this->DrawQuads(this->quadVerts);
+  }
+  if (sprite.emissiveTexture) {
+    this->SetTextureFrame(sprite.emissiveTexture, 0, sprite.currentFrame, sprite.totalFrames);
+    this->SetBlendAdd();
+    this->DrawQuads(this->quadVerts);
+    this->SetBlendNormal();
+  }
   this->view.Pop();
 }
 
