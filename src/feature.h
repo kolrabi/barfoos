@@ -121,7 +121,7 @@ public:
   
   const IVector3 GetSize() const; 
   float GetProbability(const RunningState &state, const IVector3 &pos) const;
-  FeatureInstance BuildFeature(RunningState &state, World &world, const IVector3 &pos, int dir, int dist, size_t id, const FeatureConnection *conn) const;
+  FeatureInstance BuildFeature(RunningState &state, World &world, const IVector3 &pos, int dir, int dist, size_t id, const FeatureConnection *conn, size_t prevId) const;
   void SpawnEntities(RunningState &state, const IVector3 &pos) const;
   
   const std::vector<FeatureConnection> &GetConnections() const { return conns; }
@@ -153,6 +153,8 @@ protected:
   float maxProbability;
 
   size_t minY;
+  
+  bool useLastId;
   
   void ReplaceChars(const FeatureReplacement &r, std::vector<char> &chars) const;
 };

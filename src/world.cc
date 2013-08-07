@@ -77,6 +77,11 @@ World::World(RunningState &state, Deserializer &deser) :
     this->cells[i].SetWorld(this, GetCellPos(i));
   }
   glGenBuffers(1, &this->vbo);
+
+  // update all cells
+  for (size_t i=0; i<this->cellCount; i++) {
+    this->MarkForUpdateNeighbours(this->cells[i]);
+  }
 }
 
 World::~World() {
@@ -101,8 +106,8 @@ World::Build() {
 
   std::vector<FeatureInstance> instances;
   
-  // try 10 times to build a world with at least 50 features
-  for (size_t tries=0; tries < 10 && instances.size() < 50; tries++) {
+  // try 10 times to build a world with at least 150 features
+  for (size_t tries=0; tries < 10 && instances.size() < 150; tries++) {
     
     for (size_t i=0; i<this->cellCount; i++) {
       IVector3 pos = GetCellPos(i);
@@ -132,7 +137,7 @@ World::Build() {
     this->defaultMask = std::vector<bool>(this->cellCount, true);
   
     instances.clear();
-    instances.push_back(getFeature("start")->BuildFeature(state, *this, IVector3(32-4, 32-8,32-4), 0, 0, instances.size(), nullptr));
+    instances.push_back(getFeature("start")->BuildFeature(state, *this, IVector3(32-4, 32-8,32-4), 0, 0, instances.size(), nullptr, ~0UL));
     instances.back().prevID = ~0UL;
   
     int loop = 0;
@@ -162,9 +167,9 @@ World::Build() {
     
       // build the next feature if possible
       this->BeginCheckOverwrite();
-      nextFeature->BuildFeature(state, *this, pos, conn->dir, instance.dist, instances.size(), nullptr);
+      nextFeature->BuildFeature(state, *this, pos, conn->dir, instance.dist, instances.size(), nullptr, featNum);
       if (this->FinishCheckOverwrite()) {
-        FeatureInstance nextInstance = nextFeature->BuildFeature(state, *this, pos, conn->dir, instance.dist, instances.size(), revConn);
+        FeatureInstance nextInstance = nextFeature->BuildFeature(state, *this, pos, conn->dir, instance.dist, instances.size(), revConn, featNum);
         feature->ReplaceChars(state, *this, instance.pos, conn->id, featNum);
 
         // check if we accidentally connected properly to anything else
@@ -251,8 +256,11 @@ World::Build() {
   for (auto instance : instances) {
     instance.feature->SpawnEntities(state, instance.pos);
   }
-
-  this->Dump();
+  
+  // update all cells
+  for (size_t i=0; i<this->cellCount; i++) {
+    this->MarkForUpdateNeighbours(this->cells[i]);
+  }
 }
 
 Cell &
@@ -328,12 +336,6 @@ World::Draw(Gfx &gfx) {
     this->dynamicCells.clear();
 
     if (firstDirty) {
-      // update all changed cells
-      for (size_t i=0; i<this->cellCount; i++) {
-        if (this->cells[i].GetInfo().GetFeatureID() != ~0UL) 
-          this->MarkForUpdateNeighbours(this->cells[i]);
-      }
-
       // fill up liquids with liquids above, so it won't trickle
       for (size_t i=0; i<this->cellCount; i++) {
         if (this->cells[i].IsLiquid() && this->cells[i][Side::Up].GetInfo() == this->cells[i].GetInfo()) {
@@ -452,45 +454,27 @@ World::Draw(Gfx &gfx) {
 
 void
 World::DrawMap(
-  Gfx &gfx
+  Gfx &gfx, 
+  const Vector3 &eyePos
 ) {
   PROFILE();
-/*  std::vector<Vertex> verts;
-
+  std::vector<Vertex> verts;
+  
+  size_t y = eyePos.y;
   uint8_t types[size.x*size.z];
 
   for (size_t x=0; x<size.x; x++) {
     for (size_t z=0; z<size.z; z++) {
-      bool unSolid = false;
-      size_t lastId = ~0UL;
       types[x+z*size.x] = 0;
-      for (size_t y=0; y<size.y; y++) {
-        IVector3 pos(x,y,z);
-        Cell &cell = this->GetCell(pos);
-
-        bool seen = cell.IsSeen() || 
-                    cell[Side::Right].IsSeen() ||
-                    cell[Side::Left].IsSeen() ||
-                    cell[Side::Forward].IsSeen() ||
-                    cell[Side::Backward].IsSeen();
-        if (!seen) continue;
-
-        if (cell.GetFeatureID() != lastId && cell.GetFeatureID() != ~0UL) {
-          lastId = cell.GetFeatureID();
-          unSolid = false;
-        }
-
-        bool solid = !cell.IsTransparent();
-
-        if (!solid) {
-          unSolid = true;
-        }
- 
-        if (unSolid) {
-          types[x+z*size.x] = 2;
-          continue;
-        }
+      IVector3 pos(x,y,z);
+      Cell &cell = this->GetCell(pos);
+      if (!cell.IsSeen(2)) continue; 
+        
+      bool solid = !cell.IsTransparent() && !cell[Side::Up].IsTransparent() && !cell[Side::Down].IsTransparent();
+      if (solid) {
         types[x+z*size.x] = 1;
+      } else {
+        types[x+z*size.x] = 2;
       }
     }
   }
@@ -504,7 +488,7 @@ World::DrawMap(
         case 1: color = IColor(192,192,192); break;
         case 2: color = IColor(128,128,128); break;
       }
-
+      
       Vector3 vpos(x,0,z);
     
       verts.push_back(Vertex(vpos,                            color, 0, 0));
@@ -513,9 +497,8 @@ World::DrawMap(
       verts.push_back(Vertex(vpos+Vector3(vsize.x,0,      0), color, 1, 0));
     }
   }
-*/
-  //gfx.SetTextureFrame(loadTexture("gui/white"));
-  //gfx.DrawQuads(verts);
+  gfx.SetTextureFrame(loadTexture("gui/white"));
+  gfx.DrawQuads(verts);
   (void)gfx;
 }
 

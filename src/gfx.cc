@@ -378,8 +378,8 @@ void Gfx::Viewport(const Rect &view) {
     glViewport(0,0, this->screenSize.x, this->screenSize.y);
     this->viewportSize = this->screenSize;
   } else {
-    glScissor(view.pos.x, view.pos.y, view.size.x, view.size.y);
-    glViewport(view.pos.x, view.pos.y, view.size.x, view.size.y);
+    glScissor(view.pos.x, view.pos.y + this->screenSize.y - view.size.y, view.size.x, view.size.y);
+    glViewport(view.pos.x, view.pos.y + this->screenSize.y - view.size.y, view.size.x, view.size.y);
     this->viewportSize = view.size;
   }
 }

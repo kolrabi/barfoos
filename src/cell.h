@@ -62,7 +62,7 @@ public:
   size_t GetFeatureID() const;
   void SetFeatureID(size_t f);
 
-  bool IsSeen() const;
+  bool IsSeen(size_t checkNeighbours = 0) const;
   
   bool HasSolidSides() const;
   bool CheckSideSolid(Side side, const Vector3 &org) const;

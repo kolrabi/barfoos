@@ -102,8 +102,11 @@ RunningState::Render(Gfx &gfx) const {
   gfx.ClearDepth(1.0);
   player->DrawWeapons(gfx);
   
+  Point vscreen = gfx.GetScreenSize();
+  gfx.Viewport(Rect(Point(vscreen.x-256, 0), Point(256, 256)));  
   player->MapView(gfx);
-  world->DrawMap(gfx);
+  world->DrawMap(gfx, player->GetSmoothPosition());
+  gfx.Viewport(Rect());  
 
   // next draw gui stuff
   gfx.GetView().GUI();

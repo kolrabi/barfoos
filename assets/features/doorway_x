@@ -1,6 +1,8 @@
 Size     3  5  5
 Level    0 -1 20.0
 
+UseLastId
+
 Conn     1  1  2   -1
   Next   $hallway
   Next   $stairs_x

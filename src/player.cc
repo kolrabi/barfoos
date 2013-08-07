@@ -114,7 +114,7 @@ void
 Player::MapView(Gfx &gfx) const {
   Vector3 up    = this->GetForward();
   Vector3 pos   = this->smoothPosition + Vector3(0,16,0);
-  
+
   gfx.GetView().Look(pos, Vector3(0,-1,0), -32.0, up);
 }
 

@@ -609,9 +609,19 @@ AABB Cell::GetAABB() const {
   return aabb;
 }
   
-bool Cell::IsSeen() const {
+bool Cell::IsSeen(size_t checkNeighbours) const {
   if (!this->world) return false;
+  
+  if (checkNeighbours) {
+    for (int xx=-checkNeighbours; xx <= (int)checkNeighbours; xx++) {
+      for (int zz=-checkNeighbours; zz <= (int)checkNeighbours; zz++) {
+        if (this->world->GetCell(IVector3(this->pos.x+xx, this->pos.y, this->pos.z+zz)).IsSeen()) return true;
+      }
+    }
+  }
+  
   if (this->GetFeatureID() == ~0UL) return false;
+  if (!this->visibility && (info->flags & CellFlags::DoNotRender) == 0) return false;
   return this->world->IsFeatureSeen(this->GetFeatureID());
 }
 

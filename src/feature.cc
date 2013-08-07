@@ -89,6 +89,8 @@ Feature::Feature(FILE *f, const std::string &name) :
       this->group = tokens[1];
     } else if (tokens[0] == "above") {
       this->minY = std::atoi(tokens[1].c_str());
+    } else if (tokens[0] == "uselastid") {
+      this->useLastId = true;
     } else if (tokens[0] == "conn") {
       IVector3 pos(std::atoi(tokens[1].c_str()), std::atoi(tokens[2].c_str()), std::atoi(tokens[3].c_str()));
       int dir = std::atoi(tokens[4].c_str());
@@ -239,7 +241,9 @@ float Feature::GetProbability(const RunningState &state, const IVector3 &pos) co
   return maxProbability * std::sin(3.14159*levelFrac);
 }
 
-FeatureInstance Feature::BuildFeature(RunningState &state, World &world, const IVector3 &pos, int dir, int dist, size_t id, const FeatureConnection *conn) const {
+FeatureInstance Feature::BuildFeature(RunningState &state, World &world, const IVector3 &pos, int dir, int dist, size_t id, const FeatureConnection *conn, size_t prevId) const {
+  if (this->useLastId) id = prevId;
+  
   for (size_t z=0; z<size.z; z++) {
     for (size_t y=0; y<size.y; y++) {
       for (size_t x=0; x<size.x; x++) { 

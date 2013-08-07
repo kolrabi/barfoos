@@ -25,7 +25,7 @@ public:
   RunningState &GetState() const { return state; }
 
   void Draw(Gfx &gfx);
-  void DrawMap(Gfx &gfx);
+  void DrawMap(Gfx &gfx, const Vector3 &eyePos);
   void Update(RunningState &runningState);
   
   Cell &GetCell(const IVector3 &pos) const;
