@@ -1,5 +1,5 @@
 Tex teleport.off
-ActiveTex teleport.on
+EmissiveActiveTex teleport.on
 Multi
 
 solid

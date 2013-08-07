@@ -304,8 +304,8 @@ World::SetCell(const IVector3 &pos, const Cell &cell, bool ignoreLock) {
 void 
 World::UpdateCell(size_t i) {
   this->MarkForUpdateNeighbours(this->cells[i]);
-  for (size_t i=0; i<6; i++) {
-    this->MarkForUpdateNeighbours(this->cells[i][(Side)i]);
+  for (size_t n=0; n<6; n++) {
+    this->MarkForUpdateNeighbours(this->cells[i][(Side)n]);
   }
 }
   
@@ -486,7 +486,7 @@ World::DrawMap(
       switch(types[x+z*size.x]) {
         case 0: continue;
         case 1: color = IColor(192,192,192); break;
-        case 2: color = IColor(128,128,128); break;
+        case 2: color = IColor(64,64,64); break;
       }
       
       Vector3 vpos(x,0,z);
@@ -498,13 +498,15 @@ World::DrawMap(
     }
   }
   gfx.SetTextureFrame(loadTexture("gui/white"));
+  gfx.SetColor(IColor(255,255,255));
   gfx.DrawQuads(verts);
   (void)gfx;
 }
 
-void World::MarkForUpdateNeighbours(const Cell &cell) {
-  size_t i = GetCellIndex(cell.GetPosition());
-  this->neighbourUpdates.insert(i);
+void World::MarkForUpdateNeighbours(Cell &cell) {
+  cell.UpdateNeighbours();
+//  size_t i = GetCellIndex(cell.GetPosition());
+//  this->neighbourUpdates.insert(i);
 }
 
 void 
@@ -523,8 +525,8 @@ World::Update(
   // Log("updating %u neighbours\n", this->neighbourUpdates.size());
   while(!this->neighbourUpdates.empty()) {
     size_t i = *(this->neighbourUpdates.begin());
-    this->neighbourUpdates.erase(this->neighbourUpdates.begin());
     this->cells[i].UpdateNeighbours();
+    this->neighbourUpdates.erase(this->neighbourUpdates.begin());
   }
 
   // tick world
@@ -1008,8 +1010,9 @@ World::AddFeatureSeen(size_t f) {
   
 bool 
 World::IsFeatureSeen(size_t id) const {
-  if (id == ~0UL || id >= seenFeatures.size()) return false;
-  return seenFeatures[id];
+  if (id == ~0UL/* || id >= seenFeatures.size()*/) return false;
+  return true;
+//  return seenFeatures[id];
 }
 
 void

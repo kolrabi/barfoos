@@ -263,8 +263,9 @@ Gfx::Init(Game &game) {
   
   glEnable(GL_TEXTURE_2D);
   glEnable(GL_SCISSOR_TEST);
-  
+ 
   glEnable(GL_DEPTH_TEST);
+  glDepthFunc(GL_LEQUAL);
   glEnable(GL_BLEND);
   SetBlendNormal();
   

@@ -64,7 +64,7 @@ public:
   IVector3 FindSolidBelow(const IVector3 &pos) const;
   IVector3 GetRandomTeleportTarget(Random &random) const;
   
-  void MarkForUpdateNeighbours(const Cell &cell);
+  void MarkForUpdateNeighbours(Cell &cell);
 
 private:
 

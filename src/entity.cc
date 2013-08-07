@@ -46,6 +46,8 @@ EntityProperties::ParseProperty(const std::string &cmd) {
   } else if (cmd == "size") {
     Parse(this->sprite.width);
     Parse(this->sprite.height);
+  } else if (cmd == "sizerand") {
+    Parse(this->sizeRand);
       
   } else if (cmd == "name")     Parse(this->displayName);
     
@@ -228,6 +230,10 @@ Entity::Start(RunningState &state, size_t id) {
   if (this->properties->lifetime) {
     this->dieT = game.GetTime() + this->properties->lifetime + state.GetRandom().Float() * this->properties->lifetimeRand;
   }
+ 
+  float f = 1.0 + state.GetRandom().Float() * this->properties->sizeRand;
+  this->sprite.width *= f;
+  this->sprite.height *= f;
   
   // fill inventory with random crap
   for (auto item : this->properties->items) {

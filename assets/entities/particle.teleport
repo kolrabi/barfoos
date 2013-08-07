@@ -13,6 +13,8 @@ speed 0
 health 0
 
 extents 0.1 0.1 0.1
+size 0.2 0.2
+sizerand 0.5
 nohit
 nocollideentity
 

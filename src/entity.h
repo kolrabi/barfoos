@@ -41,6 +41,7 @@ struct EntityProperties : public Properties {
 
   // rendering
   Sprite  sprite            = Sprite();
+  float   sizeRand          = 0;
   bool    isBox             = false;  //< Render entity as a box instead of a sprite.
   IColor  glow              = IColor(0,0,0);
   size_t  flinchAnim        = ~0UL;   //< Animation to play when hurt.
