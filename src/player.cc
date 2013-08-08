@@ -51,6 +51,8 @@ Player::Player() :
   bigMessage        (new RenderString("", "big")),
   bigMessageT       (0.0),
   
+  mapZoom           (-32.0f),
+  
   leftHand          (new Item("barehand.player")),
   rightHand         (new Item("barehand.player"))
 {
@@ -115,7 +117,7 @@ Player::MapView(Gfx &gfx) const {
   Vector3 up    = this->GetForward();
   Vector3 pos   = this->smoothPosition + Vector3(0,16,0);
 
-  gfx.GetView().Look(pos, Vector3(0,-1,0), -32.0, up);
+  gfx.GetView().Look(pos, Vector3(0,-1,0), this->mapZoom, up);
 }
 
 void
@@ -252,7 +254,10 @@ Player::UpdateInput(
   
   Input &input = game.GetInput();
   
-  if (input.IsKeyDown(InputKey::DebugDie)) this->Die(state, HealthInfo());
+  if (input.IsKeyActive(InputKey::MapZoomIn))  this->mapZoom += deltaT * 10.0;
+  if (input.IsKeyActive(InputKey::MapZoomOut)) this->mapZoom -= deltaT * 10.0;
+  
+  if (input.IsKeyDown(InputKey::DebugDie))     this->Die(state, HealthInfo());
   
   if (!state.IsShowingInventory()) {
     if (input.IsKeyDown(InputKey::Use) && this->selectedEntity != ~0UL) {

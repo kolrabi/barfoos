@@ -36,6 +36,11 @@ static InputKey MapKey(int k) {
     case GLFW_KEY_TAB:        key = InputKey::Inventory;       break;
     case GLFW_KEY_ESCAPE:     key = InputKey::Escape;          break;
     
+    case '+':                 key = InputKey::MapZoomIn;       break;
+    case '-':                 key = InputKey::MapZoomOut;      break;
+    case GLFW_KEY_KP_ADD:     key = InputKey::MapZoomIn;       break;
+    case GLFW_KEY_KP_SUBTRACT:key = InputKey::MapZoomOut;      break;
+    
     case GLFW_KEY_F1:         key = InputKey::DebugDie;        break;
     case GLFW_KEY_F2:         key = InputKey::DebugEntityAABB; break;
     case GLFW_KEY_F3:         key = InputKey::DebugWireframe;  break;

@@ -93,6 +93,8 @@ private:
   RenderString *bigMessage;
   float bigMessageT;
   
+  float mapZoom;
+  
   std::shared_ptr<Item> leftHand, rightHand;
 
   void UpdateInput(RunningState &state);

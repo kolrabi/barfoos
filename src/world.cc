@@ -106,8 +106,8 @@ World::Build() {
 
   std::vector<FeatureInstance> instances;
   
-  // try 10 times to build a world with at least 150 features
-  for (size_t tries=0; tries < 10 && instances.size() < 150; tries++) {
+  bool done = false;
+  for (size_t tries=0; tries < 10 && !done; tries++) {
     
     for (size_t i=0; i<this->cellCount; i++) {
       IVector3 pos = GetCellPos(i);
@@ -142,7 +142,7 @@ World::Build() {
   
     int loop = 0;
     do {
-      if (loop++ > 100000) break;
+      if (loop++ > 10000) break;
 
       // select a feature from which to go
       bool useLast = random.Chance(useLastChance);
@@ -197,6 +197,34 @@ World::Build() {
         instances.back().prevID = featNum;
       }
     } while(instances.size() < featureCount); 
+    
+    size_t bottom = size.y;
+    for (size_t i=0; i<cellCount; i++) {
+      IVector3 pos = GetCellPos(i);
+      if (!IsDefault(pos)) {
+        bottom = pos.y;
+        break;
+      }
+    }
+
+    size_t top = 0;
+    for (size_t i=cellCount-1; i>0; i--) {
+      IVector3 pos = GetCellPos(i);
+      if (!IsDefault(pos)) {
+        top = pos.y;
+        break;
+      }
+    }
+    
+    int height = top - bottom;
+  
+    // want at least 150 features and at least 16 cells high
+    if (instances.size() < 150 || height < 16) {
+      done = false;
+      Log("Discarding boring world with %u features and height %d :( ...\n", instances.size(), height);
+    } else {
+      done = true;
+    }
   }
     
   for (size_t i=0; i<teleportCount; i++) {
@@ -462,19 +490,27 @@ World::DrawMap(
   
   size_t y = eyePos.y;
   uint8_t types[size.x*size.z];
+  size_t yys[size.x*size.z];
 
   for (size_t x=0; x<size.x; x++) {
     for (size_t z=0; z<size.z; z++) {
       types[x+z*size.x] = 0;
-      IVector3 pos(x,y,z);
-      Cell &cell = this->GetCell(pos);
-      if (!cell.IsSeen(2)) continue; 
+      
+      for (size_t yy=y; yy>0; yy--) {
+        IVector3 pos(x,yy,z);
+        Cell &cell = this->GetCell(pos);
+        if (!cell.IsSeen(2)) continue; 
         
-      bool solid = !cell.IsTransparent() && !cell[Side::Up].IsTransparent() && !cell[Side::Down].IsTransparent();
-      if (solid) {
-        types[x+z*size.x] = 1;
-      } else {
-        types[x+z*size.x] = 2;
+        bool solid = !cell.IsTransparent() && !cell[Side::Up].IsTransparent() && !cell[Side::Down].IsTransparent();
+        if (solid) {
+          types[x+z*size.x] = 1;
+          yys[x+z*size.x] = yy;
+          break;
+        } else {
+          types[x+z*size.x] = 2;
+          yys[x+z*size.x] = yy;
+          break;
+        }
       }
     }
   }
@@ -485,9 +521,12 @@ World::DrawMap(
       IColor color;
       switch(types[x+z*size.x]) {
         case 0: continue;
-        case 1: color = IColor(192,192,192); break;
+        case 1: color = IColor(128,128,128); break;
         case 2: color = IColor(64,64,64); break;
       }
+      
+      float d = 1.0 / (1.0 + std::abs(y - yys[x+z*size.x])/2.0);
+      color = color * d;
       
       Vector3 vpos(x,0,z);
     
@@ -500,7 +539,6 @@ World::DrawMap(
   gfx.SetTextureFrame(loadTexture("gui/white"));
   gfx.SetColor(IColor(255,255,255));
   gfx.DrawQuads(verts);
-  (void)gfx;
 }
 
 void World::MarkForUpdateNeighbours(Cell &cell) {
@@ -1010,9 +1048,8 @@ World::AddFeatureSeen(size_t f) {
   
 bool 
 World::IsFeatureSeen(size_t id) const {
-  if (id == ~0UL/* || id >= seenFeatures.size()*/) return false;
-  return true;
-//  return seenFeatures[id];
+  if (id == ~0UL || id >= seenFeatures.size()) return false;
+  return seenFeatures[id];
 }
 
 void

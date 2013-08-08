@@ -1,47 +1,49 @@
-size 9 10 9
+# Size              X Y Z
+# Level             MinLevel MaxLevel Probability
+# Group             GroupName
+# Above             MinYPosition
+# UseLastId
+#
+# Conn              X Y Z Dir
+#   OnConnReplace   CharFrom CharTo
+#   Next            FeatureName
+#   NextP           FeatureName Weight
+#
+# Def               Char [CellName]
+#   Cell            CellName
+#   Top             YOfs0 YOfs1 YOfs2 YOfs3
+#   Bottom          YOfs0 YOfs1 YOfs2 YOfs3
+#   TopNoise        Amplitude Frequency
+#   BottomNoise     Amplitude Frequency
+#   TopDisplace     Offset
+#   BottomDisplace  Offset
+#   Override
+#   NoLock
+#   NoWrite
+#   OnlyDefault
+#   BRev
+#   TRev
+#
+# Entity            Probability EntityType AttachDir X Y Z
+# Mob               Probability EntityType AttachDir X Y Z
+# Item              Probability EntityType AttachDir X Y Z
+# Slice             YStart YEnd
 
-conn 9 2 4 1
-next doorway_x
+Size            9   10  9
 
-#conn -1 2 4 -1
-#next doorway_x
+Conn            9   2   4       1
+Next            doorway_x
 
-def . 
-cell air
+Def             .   air
+Def             #   brick
+Def             G   gate
+Def             D   door.right.closed
+Def             \   step
+  Bottom         0.0 -1.0 -1.0  0.0
+Def             /   step
+  Bottom        -1.0  0.0  0.0 -1.0
 
-def #
-cell brick
-
-def *
-cell brick
-Top 0.5 0.5 0.5 0.5
-
-def ~
-cell dirt
-BottomNoise 0.5 0.3
-
-def \
-cell step
-bottom 0 -1 -1 0
-
-def /
-cell step
-bottom -1 0 0 -1
-
-def G 
-cell gate
-
-def D 
-cell door.right.closed
-
-entity 1.0 torch -2 1 2 1
-entity 1.0 torch -2 7 2 1
-entity 1.0 torch -2 1 2 7
-entity 1.0 torch -2 7 2 7
-
-entity 1.0 box   -2 4 2 4
-
-slice 0 0
+Slice           0   0
 #########
 #########
 #########
@@ -52,7 +54,7 @@ slice 0 0
 #########
 #########
 
-slice 1 1
+Slice           1   1
 #########
 #*******#
 #*******#
@@ -63,18 +65,7 @@ slice 1 1
 #*******#
 #########
 
-slice 2 2
-#########
-#.......#
-#.......#
-G.......#
-G.......D
-G..***..#
-#..###..#
-#.......#
-#########
-
-slice 3 3
+slice           2   2
 #########
 #.......#
 #.......#
@@ -85,8 +76,26 @@ G.......#
 #.......#
 #########
 
+Entity          1.0 torch   -2    1   2   1
+Entity          1.0 torch   -2    7   2   1
+Entity          1.0 torch   -2    1   2   7
+Entity          1.0 torch   -2    7   2   7
 
-slice 4 4
+Entity          1.0 box     -2    4   2   6
+
+Slice           3   3
+#########
+#.......#
+#.......#
+G.......#
+G.......D
+G.......#
+#.......#
+#.......#
+#########
+
+
+Slice           4   4
 #########
 #.......#
 #.......#
@@ -97,7 +106,7 @@ G.......#
 #.......#
 #########
 
-slice 5 5
+Slice           5   5
 #########
 #.......#
 #.......#
@@ -108,7 +117,7 @@ slice 5 5
 #.......#
 #########
 
-slice 6 8
+Slice           6   8
 #########
 #.......#
 #.......#
@@ -119,13 +128,13 @@ slice 6 8
 #.......#
 #########
 
-slice 9 9
-~~~~~~~~~
-~~~~~~~~~
-~~~~~~~~~
-~~~~~~~~~
-~~~~~~~~~
-~~~~~~~~~
-~~~~~~~~~
-~~~~~~~~~
-~~~~~~~~~
+Slice           9   9
+#########
+#########
+#########
+#########
+#########
+#########
+#########
+#########
+#########

@@ -7,6 +7,7 @@
 #include "projectile.h"
 #include "texture.h"
 #include "text.h"
+#include "itementity.h"
 
 #include "serializer.h"
 #include "deserializer.h"
@@ -327,8 +328,12 @@ void Item::UseOnEntity(RunningState &state, Mob &user, size_t id) {
     if (mob) {
       mob->AddImpulse(user.GetForward() * this->GetKnockback());
     }
-    
+
+    // replace item
     auto iter = entity->GetProperties()->onUseItemReplace.find(this->properties->name);
+    if (iter == entity->GetProperties()->onUseItemReplace.end())
+      iter = entity->GetProperties()->onUseItemReplace.find("*");
+      
     if (iter != entity->GetProperties()->onUseItemReplace.end()) {
       *this = Item(iter->second);
     } else {
@@ -336,6 +341,29 @@ void Item::UseOnEntity(RunningState &state, Mob &user, size_t id) {
       entity->AddHealth(state, healthInfo);
       std::string effect = this->properties->onHitAddBuff.select(state.GetRandom().Float01());
       entity->AddBuff(state, effect);
+    }
+    
+    // replace entity
+    auto iter2 = entity->GetProperties()->onUseEntityReplace.find(this->properties->name);
+    if (iter2 == entity->GetProperties()->onUseEntityReplace.end())
+      iter2 = entity->GetProperties()->onUseEntityReplace.find("*");
+      
+    if (iter2 != entity->GetProperties()->onUseEntityReplace.end()) {
+      SpawnClass klass = iter2->second.first;
+      std::string type = iter2->second.second;
+      
+      Entity *entity2 = nullptr;
+      switch(klass) {
+        case SpawnClass::MobClass:        entity2 = new Mob(type); break;
+        case SpawnClass::EntityClass:     entity2 = new Entity(type); break;
+        case SpawnClass::ItemEntityClass: entity2 = new ItemEntity(type); break;
+        default: break;
+      }
+      if (entity2) {
+        entity2->SetPosition(entity->GetPosition());
+        state.AddEntity(entity2);
+      }
+      state.RemoveEntity(entity->GetId());
     }
     
     this->StartCooldown(state, user);

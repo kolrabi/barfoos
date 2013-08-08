@@ -6,6 +6,7 @@
 #include "ivector3.h"
 #include "util.h"
 #include "stats.h"
+#include "entity.h"
 
 #include <cstdio>
 #include <cstring>
@@ -139,6 +140,24 @@ Properties::Parse(Element &e) {
     e = Element::Life;
   } else {
     SetError("Unknown element name: "+elementString);
+  }
+}
+
+void 
+Properties::Parse(SpawnClass &s) {
+  std::string classString = "entity";
+  Parse(classString);
+  
+  for (auto &c:classString) c = ::tolower(c);
+  
+  if (classString == "entity") {
+    s = SpawnClass::EntityClass;
+  } else if (classString == "mob") {
+    s = SpawnClass::MobClass;
+  } else if (classString == "item") {
+    s = SpawnClass::ItemEntityClass;
+  } else {
+    SetError("Unknown spawn class name: "+classString);
   }
 }
 

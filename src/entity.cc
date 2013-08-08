@@ -70,6 +70,11 @@ EntityProperties::ParseProperty(const std::string &cmd) {
   else if (cmd == "flipleft")         this->flipLeft = true;
   else if (cmd == "bubble")           this->createBubbles   = true;
 
+  else if (cmd == "level") {
+    Parse(this->minLevel);
+    Parse(this->maxLevel);
+    Parse(this->maxProbability);
+  }
   else if (cmd == "step")             Parse(this->stepHeight);
   else if (cmd == "jump")             Parse(this->jumpSpeed);
   else if (cmd == "mass")             Parse(this->mass);
@@ -124,6 +129,13 @@ EntityProperties::ParseProperty(const std::string &cmd) {
     Parse(replace.first);
     Parse(replace.second);
     this->onUseItemReplace[replace.first] = replace.second;
+    
+  } else if (cmd == "onuseentityreplace") {
+    std::pair<std::string, std::pair<SpawnClass, std::string>> replace;
+    Parse(replace.first);
+    Parse(replace.second.first);
+    Parse(replace.second.second);
+    this->onUseEntityReplace[replace.first] = replace.second;
 
   } else if (cmd == "ondieexplode") {
     Parse(this->onDieExplodeRadius);
@@ -173,6 +185,19 @@ GetEntitiesInGroup(const std::string &group) {
       entities.push_back(ent.first);
   }
   return entities;
+}
+
+float GetEntityProbability(const std::string &name, int level) {
+  if (allEntities.find(name) == allEntities.end()) return 0.0;
+  
+  const EntityProperties &prop = allEntities[name];
+  
+  if (level < prop.minLevel) return 0;
+  if (prop.maxLevel < prop.minLevel) return prop.maxProbability;
+
+  // make highest chance right between min and max level
+  float levelFrac = (level-prop.minLevel)/(float)(prop.maxLevel-prop.minLevel + 1);
+  return prop.maxProbability * std::sin(Const::pi*levelFrac);
 }
 
 Entity::Entity(const std::string &type) :

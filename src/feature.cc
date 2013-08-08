@@ -108,6 +108,7 @@ Feature::Feature(FILE *f, const std::string &name) :
     } else if (tokens[0] == "def") {
       lastDef = tokens[1][0];
       defs[lastDef] = FeatureCharDef();
+      if (tokens.size() > 2) defs[lastDef].type = tokens[2];
     } else if (tokens[0] == "cell") {
       defs[lastDef].type = tokens[1];
     } else if (tokens[0] == "top") {
@@ -237,8 +238,8 @@ float Feature::GetProbability(const RunningState &state, const IVector3 &pos) co
   if (this->maxLevel < this->minLevel) return this->maxProbability;
 
   // make highest chance right between min and max level
-  float levelFrac = (level-minLevel)/(float)(maxLevel-minLevel);
-  return maxProbability * std::sin(3.14159*levelFrac);
+  float levelFrac = (level-minLevel)/(float)(maxLevel-minLevel+1);
+  return maxProbability * std::sin(Const::pi*levelFrac);
 }
 
 FeatureInstance Feature::BuildFeature(RunningState &state, World &world, const IVector3 &pos, int dir, int dist, size_t id, const FeatureConnection *conn, size_t prevId) const {
@@ -307,9 +308,12 @@ void Feature::SpawnEntities(RunningState &state, const IVector3 &pos) const {
       
       std::string type = spawn.type;
       if (type[0] == '$') {
-        std::vector<std::string> types = GetEntitiesInGroup(type.substr(1));
+        weighted_map<std::string> types;
+        for (const std::string &t : GetEntitiesInGroup(type.substr(1))) {
+          types[t] = GetEntityProbability(t, state.GetLevel());
+        }
         if (type.size() == 0) continue;
-        type = types[state.GetRandom().Integer(types.size())];
+        type = types.select(state.GetRandom().Float01());
       }
 
       switch(spawn.spawnClass) {

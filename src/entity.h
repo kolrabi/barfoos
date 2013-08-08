@@ -59,6 +59,10 @@ struct EntityProperties : public Properties {
   float   gravity           = 1.0;    //< Amount of effect of gravity on entity.
 
   // gameplay
+  int     minLevel          = 0;
+  int     maxLevel          = -1;
+  float   maxProbability    = 1.0;
+  
   Vector3 extents           = Vector3(0.5,0.5,0.5); //< Size of the entity.
   float   eyeOffset         = 0.0;    //< Offset from the center.
   float   thinkInterval     = 0.0;    //< Time interval beetween calls to Entity::Think().
@@ -116,7 +120,11 @@ struct EntityProperties : public Properties {
   std::string name          = "";
   std::string group         = "";
   
+  /** Replace items that are used on this entity. itemname -> new itemname */
   std::unordered_map<std::string, std::string> onUseItemReplace;
+
+  /** Replace entity if used with an item. itemname -> new entityname */
+  std::unordered_map<std::string, std::pair<SpawnClass, std::string>> onUseEntityReplace;
   
   virtual void ParseProperty(const std::string &name) override;
 };
@@ -124,6 +132,7 @@ struct EntityProperties : public Properties {
 void LoadEntities();
 const EntityProperties *getEntity(const std::string &name);
 std::vector<std::string> GetEntitiesInGroup(const std::string &group);
+float GetEntityProbability(const std::string &type, int level);
 
 class Entity {
 public:

@@ -23,8 +23,8 @@ cell wood
 nolock
 onlydefault
 
-entity 1.0 torch -3  1 2 0
-entity 1.0 torch  3  1 2 4
+entity 0.1 torch -3  1 2 0
+entity 0.1 torch  3  1 2 4
 
 slice 0 0
 &%&

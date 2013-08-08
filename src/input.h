@@ -20,6 +20,9 @@ enum class InputKey : size_t {
   MouseRight,
   Use,
   
+  MapZoomIn,
+  MapZoomOut,
+  
   Inventory,
   
   Escape,
