@@ -22,6 +22,7 @@ struct Texture {
 
 const Texture *noiseTexture(const Point &size, const Vector3 &scale = Vector3(1,1,1), const Vector3 &offset = Vector3());
 const Texture *loadTexture(const std::string &name, const Texture * tex = nullptr);
+const Texture *updateTexture(const std::string &name, const Point &size, const uint8_t *rgba);
 void updateTextures();
 
 #endif

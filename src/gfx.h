@@ -99,6 +99,7 @@ public:
   void DrawQuads(unsigned int vbo, size_t first, size_t vertexCount);
   
   void DrawUnitCube();
+  void DrawUnitQuad();
   void DrawAABB(const AABB &aabb);
   void DrawSprite(const Sprite &sprite, const Vector3 &pos, bool flip = false, bool billboard = true);
   void DrawIcon(const Sprite &sprite, const Point &pos, const Point &size = Point(32, 32));

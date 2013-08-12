@@ -38,6 +38,7 @@ World::World(RunningState &state, const IVector3 &size) :
   vertexCountsEmissive(),
   vbo(0),
   seenFeatures(0),
+  mapTexture(nullptr),
   checkOverwrite(false),
   checkOverwriteOK(true)
 {  
@@ -98,6 +99,7 @@ World::Build() {
   IVector3 r(random.Integer(), random.Integer(), random.Integer());
   size_t featureCount  = random.Integer(400)+400;             // 400 - 800
   float  useLastChance = 0.1 + random.Float01()*0.8;          // 0.1 - 0.9
+  float  useLastDirChance = 0.6;
   size_t caveLengthMin = random.Integer(20);                  //   0 -  20
   size_t caveLengthMax = caveLengthMin + random.Integer(100); //   0 - 200
   size_t caveRepeat    = random.Integer(20)+1;                //   1 -  21
@@ -107,7 +109,7 @@ World::Build() {
   std::vector<FeatureInstance> instances;
   
   bool done = false;
-  for (size_t tries=0; tries < 10 && !done; tries++) {
+  for (size_t tries=0; tries < 20 && !done; tries++) {
     
     for (size_t i=0; i<this->cellCount; i++) {
       IVector3 pos = GetCellPos(i);
@@ -137,21 +139,23 @@ World::Build() {
     this->defaultMask = std::vector<bool>(this->cellCount, true);
   
     instances.clear();
-    instances.push_back(getFeature("start")->BuildFeature(state, *this, IVector3(32-4, 32-8,32-4), 0, 0, instances.size(), nullptr, ~0UL));
+    instances.push_back(getFeature("start")->BuildFeature(state, *this, IVector3(32-4, 32-8,32-4), 0, 0, 0, nullptr, 0));
     instances.back().prevID = ~0UL;
   
     int loop = 0;
+    int lastDir = 0;
     do {
-      if (loop++ > 10000) break;
+      if (loop++ > 100000) break;
 
       // select a feature from which to go
       bool useLast = random.Chance(useLastChance);
+      bool useLastDir = lastDir != 0 && random.Chance(useLastDirChance) && useLast;
       size_t featNum = useLast ? instances.size()-1 : (random.Integer(instances.size()));
       const FeatureInstance &instance = instances[featNum];
     
       // select a random connection from the current feature
       const Feature *feature = instance.feature;
-      const FeatureConnection *conn = feature->GetRandomConnection(state);
+      const FeatureConnection *conn = useLastDir ? feature->GetRandomConnection(lastDir, state) : feature->GetRandomConnection(state);
       if (!conn) continue;
 
       // select next feature
@@ -171,6 +175,7 @@ World::Build() {
       if (this->FinishCheckOverwrite()) {
         FeatureInstance nextInstance = nextFeature->BuildFeature(state, *this, pos, conn->dir, instance.dist, instances.size(), revConn, featNum);
         feature->ReplaceChars(state, *this, instance.pos, conn->id, featNum);
+        lastDir = conn->dir;
 
         // check if we accidentally connected properly to anything else
         for (const FeatureConnection &nextConn : nextInstance.feature->GetConnections()) {
@@ -486,59 +491,14 @@ World::DrawMap(
   const Vector3 &eyePos
 ) {
   PROFILE();
-  std::vector<Vertex> verts;
   
-  size_t y = eyePos.y;
-  uint8_t types[size.x*size.z];
-  size_t yys[size.x*size.z];
-
-  for (size_t x=0; x<size.x; x++) {
-    for (size_t z=0; z<size.z; z++) {
-      types[x+z*size.x] = 0;
-      
-      for (size_t yy=y; yy>0; yy--) {
-        IVector3 pos(x,yy,z);
-        Cell &cell = this->GetCell(pos);
-        if (!cell.IsSeen(2)) continue; 
-        
-        bool solid = !cell.IsTransparent() && !cell[Side::Up].IsTransparent() && !cell[Side::Down].IsTransparent();
-        if (solid) {
-          types[x+z*size.x] = 1;
-          yys[x+z*size.x] = yy;
-          break;
-        } else {
-          types[x+z*size.x] = 2;
-          yys[x+z*size.x] = yy;
-          break;
-        }
-      }
-    }
-  }
-        
-  Vector3 vsize(1,0,1);
-  for (size_t x=0; x<size.x; x++) {
-    for (size_t z=0; z<size.z; z++) {
-      IColor color;
-      switch(types[x+z*size.x]) {
-        case 0: continue;
-        case 1: color = IColor(128,128,128); break;
-        case 2: color = IColor(64,64,64); break;
-      }
-      
-      float d = 1.0 / (1.0 + std::abs(y - yys[x+z*size.x])/2.0);
-      color = color * d;
-      
-      Vector3 vpos(x,0,z);
-    
-      verts.push_back(Vertex(vpos,                            color, 0, 0));
-      verts.push_back(Vertex(vpos+Vector3(      0,0,vsize.z), color, 0, 1));
-      verts.push_back(Vertex(vpos+Vector3(vsize.x,0,vsize.z), color, 1, 1));
-      verts.push_back(Vertex(vpos+Vector3(vsize.x,0,      0), color, 1, 0));
-    }
-  }
-  gfx.SetTextureFrame(loadTexture("gui/white"));
+  gfx.SetTextureFrame(this->mapTexture);
   gfx.SetColor(IColor(255,255,255));
-  gfx.DrawQuads(verts);
+  gfx.GetView().Push();
+  gfx.GetView().Translate(Vector3(-1 + 2*eyePos.x/size.x, -1 + 2*eyePos.z/size.z, 0));
+  gfx.GetView().Scale(Vector3(-1, 1, 1));
+  gfx.DrawUnitQuad();
+  gfx.GetView().Pop();
 }
 
 void World::MarkForUpdateNeighbours(Cell &cell) {
@@ -1030,20 +990,40 @@ World::AddFeatureSeen(size_t f) {
     seenFeatures.resize(f+1, false);
   }
   
+  if (seenFeatures[f]) return;
+  
   seenFeatures[f] = true;
 
-/*  
-  // mark neighbouring features as seen as well
-  if (instances[f].prevID != ~0UL) {
-    seenFeatures[instances[f].prevID] = true;
-  }
-  for (size_t i=0; i<instances.size(); i++) {
-    if (instances[i].prevID == f) {
-      if (seenFeatures.size() <= i) seenFeatures.resize(i+1, false);
-      seenFeatures[i] = true;
+  uint8_t pixels[size.x*size.z*4];
+
+  for (size_t x=0; x<size.x; x++) {
+    for (size_t z=0; z<size.z; z++) {
+      size_t index = (x+(size.z-1-z)*size.x)*4;
+      pixels[index+3] = 0;
+      
+      for (size_t yy=size.y-1; yy>0; yy--) {
+        IVector3 pos(x,yy,z);
+        Cell &cell = this->GetCell(pos);
+        // TEST if (!cell.IsSeen(2)) continue; 
+        
+        bool solid = !cell.IsTransparent() && !cell[Side::Up].IsTransparent() && !cell[Side::Down].IsTransparent();
+        if (solid) {
+          pixels[index+0] = 64+yy;
+          pixels[index+1] = 64+yy;
+          pixels[index+2] = 64+yy;
+          pixels[index+3] = 255;
+        } else {
+          pixels[index+0] = yy;
+          pixels[index+1] = yy;
+          pixels[index+2] = yy;
+          pixels[index+3] = 255;
+          break;
+        }
+      }
     }
   }
-  */
+  
+  mapTexture = updateTexture("*map", Point(size.x, size.z), pixels);
 }
   
 bool 

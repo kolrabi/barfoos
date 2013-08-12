@@ -114,10 +114,10 @@ Player::View(Gfx &gfx) const {
 
 void
 Player::MapView(Gfx &gfx) const {
-  Vector3 up    = this->GetForward();
-  Vector3 pos   = this->smoothPosition + Vector3(0,16,0);
+//  Vector3 up    = this->GetForward();
+//  Vector3 pos   = this->smoothPosition + Vector3(0,16,0);
 
-  gfx.GetView().Look(pos, Vector3(0,-1,0), this->mapZoom, up);
+  gfx.GetView().Look(Vector3(0,0,-1), Vector3(0,0,1), -1, Vector3(0,1,0));
 }
 
 void

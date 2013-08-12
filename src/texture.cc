@@ -141,30 +141,33 @@ const Texture *loadTexture(const std::string &name, const Texture * tex) {
   // read the png into image_data through row_pointers
   png_read_image(png_ptr, row_pointers);
 
-  // Generate the OpenGL texture object
-  glBindTexture(GL_TEXTURE_2D, textureHandle);
+  uint8_t *rgba = new uint8_t[w*h*4];
+  
+  // convert image to rgba
   if (color_type == 6) {
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, image_data);
+    memcpy(rgba, image_data, w*h*4);
   } else if (color_type == 3) {
     png_colorp palette;
     int num_palette;
     if (png_get_PLTE(png_ptr, info_ptr, &palette, &num_palette)) {
-      uint8_t *data = new uint8_t[w*h*4];
       for (size_t i=0; i<w*h; i++) {
-        data[i*4+0] = image_data[i]?palette[image_data[i]].red:0;
-        data[i*4+1] = image_data[i]?palette[image_data[i]].green:0;
-        data[i*4+2] = image_data[i]?palette[image_data[i]].blue:0;
-        data[i*4+3] = image_data[i]?255:0;
+        rgba[i*4+0] = image_data[i]?palette[image_data[i]].red:0;
+        rgba[i*4+1] = image_data[i]?palette[image_data[i]].green:0;
+        rgba[i*4+2] = image_data[i]?palette[image_data[i]].blue:0;
+        rgba[i*4+3] = image_data[i]?255:0;
       }
-      glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
-      delete [] data;
     }
   } else if (color_type == 2) {
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, w, h, 0, GL_RGB, GL_UNSIGNED_BYTE, image_data);
+    for (size_t i=0; i<w*h; i++) {
+      rgba[i*4+0] = image_data[i*3+0];
+      rgba[i*4+1] = image_data[i*3+1];
+      rgba[i*4+2] = image_data[i*3+2];
+      rgba[i*4+3] = 255;
+    }
   }
-  glGenerateMipmapEXT(GL_TEXTURE_2D);
-  glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-  glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+  
+  updateTexture(name, Point(w,h), rgba);
+  delete [] rgba;
 
   // clean up
   png_destroy_read_struct(&png_ptr, &info_ptr, &end_info);
@@ -172,32 +175,42 @@ const Texture *loadTexture(const std::string &name, const Texture * tex) {
   delete [] row_pointers;
   fclose(fp);
 
-  textures[name]->size = Point(w,h);
   return textures[name].get();
 }
 
+const Texture *updateTexture(const std::string &name, const Point &size, const uint8_t *rgba) {
+  if (!textures[name]) {
+    textures[name] = std::unique_ptr<Texture>(new Texture());
+    glGenTextures(1, &textures[name]->handle);
+  }
+  
+  Texture *tex = textures[name].get();
+  tex->size = size;
+  
+  glBindTexture(GL_TEXTURE_2D, tex->handle);
+  
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, size.x, size.y, 0, GL_RGBA, GL_UNSIGNED_BYTE, rgba);
+  //glGenerateMipmapEXT(GL_TEXTURE_2D);
+  glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+  glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+  
+  return tex;
+}
+
 void updateTextures() {
-  time_t lastMod = lastUpdate;
-  if (time(nullptr) - lastMod < 2) return;
+  if (time(nullptr) - lastUpdate < 2) return;
   
   Log("Checking for updated textures...\n");
 
-  bool updated = false;
   for (auto &t : textures) {
     if (t.first[0] == '*') continue;
     time_t mtime = getFileChangeTime(t.first+".png"); 
     if (mtime > lastUpdate) {
-      const Texture *res = loadTexture(t.first, t.second.get());
-      if (res && mtime > lastMod) lastMod = mtime;
-      updated = true;
+      loadTexture(t.first, t.second.get());
     }
   }
   
-  if (updated) {
-    lastUpdate = lastMod;
-  } else {
-    lastUpdate = time(nullptr);
-  }
+  lastUpdate = time(nullptr);
 }
 
 const Texture * 

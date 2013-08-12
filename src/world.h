@@ -93,6 +93,7 @@ private:
   unsigned int vbo;  
  
   std::vector<bool> seenFeatures;
+  const Texture *mapTexture;
 
   bool checkOverwrite;
   bool checkOverwriteOK;

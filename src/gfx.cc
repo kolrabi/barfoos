@@ -556,6 +556,10 @@ void Gfx::DrawUnitCube() {
   this->DrawQuads(this->cubeVerts);
 }    
 
+void Gfx::DrawUnitQuad() {
+  this->DrawQuads(this->quadVerts);
+}    
+
 void Gfx::DrawAABB(const AABB &aabb) {
   this->view.Push();
   this->view.Translate(aabb.center);
