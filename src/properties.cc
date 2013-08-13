@@ -156,6 +156,10 @@ Properties::Parse(SpawnClass &s) {
     s = SpawnClass::MobClass;
   } else if (classString == "item") {
     s = SpawnClass::ItemEntityClass;
+  } else if (classString == "player") {
+    s = SpawnClass::PlayerClass;
+  } else if (classString == "projectile") {
+    s = SpawnClass::ProjectileClass;
   } else {
     SetError("Unknown spawn class name: "+classString);
   }

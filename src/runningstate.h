@@ -27,7 +27,6 @@ public:
   Entity *              GetEntity(size_t id);
   void                  RemoveEntity(size_t entity);
   
-  size_t                AddPlayer(Player *entity);
   Player &              GetPlayer()                       { return *this->player; }
   
   bool                  CheckEntities(const IVector3 &pos);
@@ -39,7 +38,11 @@ public:
   Vector3               MoveAABB(const AABB &aabb, const Vector3 &dir, uint8_t &axis);
   
   void                  Explosion(Entity &entity, const Vector3 &pos, size_t radius, float strength, float damage, Element element);
-  size_t                SpawnMobInAABB(const std::string &type, const AABB &aabb, const Vector3 &velocity = Vector3());
+  size_t                SpawnInAABB(const std::string &type, const AABB &aabb, const Vector3 &velocity = Vector3());
+  
+  void                  TriggerOn(size_t id);
+  void                  TriggerOff(size_t id);
+  uint32_t              GetNextTriggerId() { return this->nextTriggerId ++; }
   
   void                  SaveLevel();
   void                  LoadLevel();
@@ -58,6 +61,7 @@ private:
   bool showInventory;
   
   float lastSaveT;
+  size_t nextTriggerId;
   
   std::vector<const Entity*> FindLightEntities(const Vector3 &pos, float radius) const;
   void BuildWorld();

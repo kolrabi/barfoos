@@ -2,7 +2,9 @@
 #include "runningstate.h"
 #include "mainmenugui.h"
 #include "text.h"
+
 #include "gfx.h"
+#include "gfxview.h"
 
 MainMenuState::MainMenuState(Game &game) :
   GameState(game),

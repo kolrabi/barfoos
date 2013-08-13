@@ -8,6 +8,29 @@
 #include <unordered_map>
 #include <unordered_set>
 
+class MiniMap final {
+public:
+
+  MiniMap(const World &world);
+  MiniMap(const World &world, Deserializer &deser);
+
+  void Draw(Gfx &gfx, const Vector3 &eyePos);
+  
+  void AddFeatureSeen(size_t f);
+  bool IsFeatureSeen(size_t id) const;
+  
+private:
+
+  const World &world;
+  std::vector<bool> seenFeatures;
+  const Texture *mapTexture;
+  
+  size_t viewY; 
+  void RepaintMap();
+  
+  friend Serializer &operator << (Serializer &ser, const MiniMap &map);
+};
+
 class World final {
 public:
 
@@ -21,11 +44,11 @@ public:
   
   void Build();
   
-  const IVector3 &GetSize() const { return size; }
-  RunningState &GetState() const { return state; }
+  const IVector3 &GetSize()   const { return size; }
+  RunningState &  GetState()  const { return state; }
+  MiniMap &       GetMap()          { return minimap; }
 
   void Draw(Gfx &gfx);
-  void DrawMap(Gfx &gfx, const Vector3 &eyePos);
   void Update(RunningState &runningState);
   
   Cell &GetCell(const IVector3 &pos) const;
@@ -53,8 +76,6 @@ public:
 
   bool IsDefault(const IVector3 &pos);
   
-  void AddFeatureSeen(size_t f); // TODO: move to separate map class
-  bool IsFeatureSeen(size_t id) const;
   void BreakBlock(const IVector3 &pos);
   
   void SetDirty() { this->dirty = true; }
@@ -63,6 +84,9 @@ public:
   bool IsCellValidTeleportTarget(const IVector3 &pos) const;
   IVector3 FindSolidBelow(const IVector3 &pos) const;
   IVector3 GetRandomTeleportTarget(Random &random) const;
+
+  void                  TriggerOn(size_t id);
+  void                  TriggerOff(size_t id);
   
   void MarkForUpdateNeighbours(Cell &cell);
 
@@ -71,6 +95,8 @@ private:
   RunningState &state;
   IVector3 size;
   bool dirty, firstDirty;
+  
+  MiniMap minimap;
 
   size_t cellCount;
   std::vector<Cell> cells;
@@ -92,9 +118,6 @@ private:
   std::unordered_map<const Texture *, size_t> vertexCountsEmissive;
   unsigned int vbo;  
  
-  std::vector<bool> seenFeatures;
-  const Texture *mapTexture;
-
   bool checkOverwrite;
   bool checkOverwriteOK;
 
@@ -106,7 +129,7 @@ private:
   bool IsValidCellPosition(const IVector3 &pos) const { 
     return pos.x < size.x  && pos.y < size.y && pos.z < size.z; 
   }
-
+  
   friend Serializer &operator << (Serializer &ser, const World &world);
 };
 

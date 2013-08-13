@@ -5,14 +5,16 @@
 
 #include "vector3.h"
 
+// asset management
 FILE *openAsset(const std::string &name);
 std::string loadAssetAsString(const std::string &name);
 std::vector <std::string> findAssets(const std::string &type);
 
+// file management
 FILE *createUserFile(const std::string &name);
 FILE *openUserFile(const std::string &name);
-
 time_t getFileChangeTime(const std::string &name);
+
 
 float Wave(float x, float z, float t, float a = 0.2);
 
@@ -68,7 +70,11 @@ std::string ToString(const T &v) {
 
 class Regular {
 public:
-  Regular() {}
+  Regular() : 
+    interval(0.0),
+    func(),
+    t(0.0)
+    {}
 
   Regular(float interval, std::function<void()> func) :
     interval(interval),

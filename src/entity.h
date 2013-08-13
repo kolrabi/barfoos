@@ -12,6 +12,8 @@
 #include "vector3.h"
 #include "smooth.h"
 
+#include "trigger.h"
+
 #include "properties.h"
 
 enum class SpawnClass : char {
@@ -19,7 +21,6 @@ enum class SpawnClass : char {
   MobClass    = 'M', 
   ItemEntityClass = 'I',
   PlayerClass = 'P',
-  ParticleClass = 'A',
   ProjectileClass = 'R'
 };
 
@@ -38,6 +39,8 @@ struct ParticleEmitter {
 };
 
 struct EntityProperties : public Properties {
+
+  SpawnClass klass          = SpawnClass::EntityClass;
 
   // rendering
   Sprite  sprite            = Sprite();
@@ -76,6 +79,7 @@ struct EntityProperties : public Properties {
   bool    noFriction        = false;  //< Entity is unaffected by friction.
   bool    isSolid           = false;  //< Entity is solid in collision detection.
   bool    respawn           = false;  //< Entity will automatically respawn on death.
+  bool    noStep            = false;
   bool    aggressive        = false;
   bool    onCollideUseCell  = false;
   bool    swim              = false;
@@ -124,7 +128,7 @@ struct EntityProperties : public Properties {
   std::unordered_map<std::string, std::string> onUseItemReplace;
 
   /** Replace entity if used with an item. itemname -> new entityname */
-  std::unordered_map<std::string, std::pair<SpawnClass, std::string>> onUseEntityReplace;
+  std::unordered_map<std::string, std::string> onUseEntityReplace;
   
   virtual void ParseProperty(const std::string &name) override;
 };
@@ -134,10 +138,12 @@ const EntityProperties *getEntity(const std::string &name);
 std::vector<std::string> GetEntitiesInGroup(const std::string &group);
 float GetEntityProbability(const std::string &type, int level);
 
-class Entity {
+class Entity : public Triggerable {
 public:
-  Entity(const std::string &type);
-  Entity(const std::string &type, Deserializer &deser);
+
+  static Entity *Create(const std::string &type);
+  static Entity *Create(const std::string &type, Deserializer &deser);
+
   Entity(const Entity &that) = delete;
   virtual ~Entity();
   
@@ -209,6 +215,9 @@ public:
   virtual void              Serialize(Serializer &ser)        const;
   
 protected:
+
+  Entity(const std::string &type);
+  Entity(const std::string &type, Deserializer &deser);
 
   // management
   size_t id, ownerId;

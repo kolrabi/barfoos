@@ -7,10 +7,12 @@
 
 #include "random.h"
 #include "worldedit.h"
+#include "feature.h"
 
 #include "runningstate.h"
-#include "feature.h"
+
 #include "gfx.h"
+#include "gfxview.h"
 
 #include "vertex.h"
 #include "texture.h"
@@ -23,6 +25,7 @@ World::World(RunningState &state, const IVector3 &size) :
   size(size),
   dirty(true),
   firstDirty(true),
+  minimap(*this),
   cellCount(size.x * size.y * size.z),
   cells(cellCount, Cell("default")),
   defaultCell("default"),
@@ -37,8 +40,6 @@ World::World(RunningState &state, const IVector3 &size) :
   vertexStartsEmissive(),
   vertexCountsEmissive(),
   vbo(0),
-  seenFeatures(0),
-  mapTexture(nullptr),
   checkOverwrite(false),
   checkOverwriteOK(true)
 {  
@@ -49,6 +50,7 @@ World::World(RunningState &state, Deserializer &deser) :
   state(state),
   dirty(true),
   firstDirty(true),
+  minimap(*this, deser),
   defaultCell("default"),
   dynamicCells(0),
   allVerts(0),
@@ -72,7 +74,6 @@ World::World(RunningState &state, Deserializer &deser) :
   deser >> this->nextTickT;
   deser >> this->tickInterval;
   deser >> this->ambientLight;
-  deser >> this->seenFeatures;
   
   for (size_t i = 0; i<cellCount; i++) {
     this->cells[i].SetWorld(this, GetCellPos(i));
@@ -104,7 +105,8 @@ World::Build() {
   size_t caveLengthMax = caveLengthMin + random.Integer(100); //   0 - 200
   size_t caveRepeat    = random.Integer(20)+1;                //   1 -  21
  
-  size_t teleportCount = random.Integer(10)+50;
+  size_t teleportCount = 0; //random.Integer(10)+50;
+  size_t trapCount = random.Integer(10)+50;
 
   std::vector<FeatureInstance> instances;
   
@@ -145,7 +147,7 @@ World::Build() {
     int loop = 0;
     int lastDir = 0;
     do {
-      if (loop++ > 100000) break;
+      if (loop++ > 1000) break;
 
       // select a feature from which to go
       bool useLast = random.Chance(useLastChance);
@@ -176,6 +178,7 @@ World::Build() {
         FeatureInstance nextInstance = nextFeature->BuildFeature(state, *this, pos, conn->dir, instance.dist, instances.size(), revConn, featNum);
         feature->ReplaceChars(state, *this, instance.pos, conn->id, featNum);
         lastDir = conn->dir;
+        loop = 0;
 
         // check if we accidentally connected properly to anything else
         for (const FeatureConnection &nextConn : nextInstance.feature->GetConnections()) {
@@ -240,23 +243,34 @@ World::Build() {
     SetCell(a, Cell("teleport")).SetTeleportTarget(b);
     SetCell(b, Cell("teleport")).SetTeleportTarget(a);
   }
+  
+  for (size_t i=0; i<trapCount; i++) {
+    
+    IVector3 a = GetRandomTeleportTarget(random);
+    
+    Cell *aboveCell = &GetCell(a)[Side::Up][Side::Up];
+    Side side = (Side)random.Integer(6);
+    while (side == Side::Down) side = (Side)random.Integer(6);
+    
+    size_t distance = 0;
+    while(!aboveCell->IsSolid()) {
+      aboveCell = &((*aboveCell)[side]);
+      distance ++;
+    }
+    
+    if (distance > 5) { i--; continue; }
+    
+    Cell &trigger = SetCell(a, Cell("rock"));
+    Cell &spawner = SetCell(aboveCell->GetPosition(), Cell("dirt"));
+    // TODO: get entity from group "trap"
+    spawner.SetSpawnOnActive("projectile.bfw9k", -side, 0.0);
+    
+    uint32_t id = state.GetNextTriggerId();
+    spawner.SetTrigger(id, false);
+    trigger.SetTriggerTarget(id);
+  }
 
   Log("Built world with %lu features. Level %lu.\n", instances.size(), state.GetLevel());
-  /*
-  for (size_t i=0; i<this->cellCount; i++) {
-    IVector3 pos = GetCellPos(i);
-
-    IVector3 ppp(pos+r);
-    ppp.x %= 256;
-    ppp.y %= 256;
-    ppp.z %= 256;
-    Vector3 vpos(ppp);
-    vpos.y *= 2;
-    float f = (simplexNoise(vpos*0.01) * simplexNoise(vpos*0.02) * simplexNoise(vpos*0.04));
-    if (f < -0.2 && cells[i].GetFeatureID() > 10) {
-      SetCell(pos, Cell("air"));
-    }
-  } */ 
  
   WorldEdit e(this);
   
@@ -390,7 +404,7 @@ World::Draw(Gfx &gfx) {
       if (info.flags & CellFlags::DoNotRender || !cell.GetVisibility()) continue;
 
       // don't add dynamic cells to static vertex buffer
-      if (info.flags & CellFlags::Dynamic) {
+      if (cell.IsDynamic()) {
         dynamicCells.push_back(i);
         continue;
       }
@@ -483,22 +497,6 @@ World::Draw(Gfx &gfx) {
     gfx.SetTextureFrame(iter->first);
     gfx.DrawTriangles(iter->second);
   }
-}
-
-void
-World::DrawMap(
-  Gfx &gfx, 
-  const Vector3 &eyePos
-) {
-  PROFILE();
-  
-  gfx.SetTextureFrame(this->mapTexture);
-  gfx.SetColor(IColor(255,255,255));
-  gfx.GetView().Push();
-  gfx.GetView().Translate(Vector3(-1 + 2*eyePos.x/size.x, -1 + 2*eyePos.z/size.z, 0));
-  gfx.GetView().Scale(Vector3(-1, 1, 1));
-  gfx.DrawUnitQuad();
-  gfx.GetView().Pop();
 }
 
 void World::MarkForUpdateNeighbours(Cell &cell) {
@@ -977,61 +975,6 @@ World::IsDefault(const IVector3 &pos) {
   return defaultMask[GetCellIndex(pos)];
 }
 
-/**
- * Mark a feature as seen (e.g. for minimap).
- * @param f Feature id.
- */
-void
-World::AddFeatureSeen(size_t f) {
-  if (f == ~0UL) return;
-  
-  // make sure vector is large enough
-  if (seenFeatures.size() <= f) {
-    seenFeatures.resize(f+1, false);
-  }
-  
-  if (seenFeatures[f]) return;
-  
-  seenFeatures[f] = true;
-
-  uint8_t pixels[size.x*size.z*4];
-
-  for (size_t x=0; x<size.x; x++) {
-    for (size_t z=0; z<size.z; z++) {
-      size_t index = (x+(size.z-1-z)*size.x)*4;
-      pixels[index+3] = 0;
-      
-      for (size_t yy=size.y-1; yy>0; yy--) {
-        IVector3 pos(x,yy,z);
-        Cell &cell = this->GetCell(pos);
-        // TEST if (!cell.IsSeen(2)) continue; 
-        
-        bool solid = !cell.IsTransparent() && !cell[Side::Up].IsTransparent() && !cell[Side::Down].IsTransparent();
-        if (solid) {
-          pixels[index+0] = 64+yy;
-          pixels[index+1] = 64+yy;
-          pixels[index+2] = 64+yy;
-          pixels[index+3] = 255;
-        } else {
-          pixels[index+0] = yy;
-          pixels[index+1] = yy;
-          pixels[index+2] = yy;
-          pixels[index+3] = 255;
-          break;
-        }
-      }
-    }
-  }
-  
-  mapTexture = updateTexture("*map", Point(size.x, size.z), pixels);
-}
-  
-bool 
-World::IsFeatureSeen(size_t id) const {
-  if (id == ~0UL || id >= seenFeatures.size()) return false;
-  return seenFeatures[id];
-}
-
 void
 World::BreakBlock(const IVector3 &pos) {
   if (this->GetCell(pos).GetInfo().type == "air") return;
@@ -1042,7 +985,7 @@ World::BreakBlock(const IVector3 &pos) {
   if (particleType != "") {
     Random &random = state.GetRandom();
     for (size_t i=0; i<4; i++) {
-      state.SpawnMobInAABB(particleType, aabb, random.Vector()*10);
+      state.SpawnInAABB(particleType, aabb, random.Vector()*10);
     }
   }
 }
@@ -1061,7 +1004,7 @@ World::IsCellValidTeleportTarget(const IVector3 &pos) const {
     IsCellWalkable(pos[Side::Right]) ||
     IsCellWalkable(pos[Side::Left]) ||
     IsCellWalkable(pos[Side::Forward]) ||
-    IsCellWalkable(pos[Side::Backward]));
+    IsCellWalkable(pos[Side::Backward])); // TODO: check triggers
 }
 
 IVector3 
@@ -1085,7 +1028,22 @@ World::GetRandomTeleportTarget(Random &random) const {
   return pos;
 }
 
+void World::TriggerOn(size_t id) {
+  for (size_t i=0; i<this->cellCount; i++) {
+    if (this->cells[i].GetTriggerId() == id) this->cells[i].TriggerOn();
+  }
+}
+
+void World::TriggerOff(size_t id) {
+  for (size_t i=0; i<this->cellCount; i++) {
+    if (this->cells[i].GetTriggerId() == id) this->cells[i].TriggerOff();
+  }
+}
+
+
+
 Serializer &operator << (Serializer &ser, const World &world) {
+  ser << world.minimap;
   ser << world.size;
   
   for (auto &c:world.cells)
@@ -1095,6 +1053,118 @@ Serializer &operator << (Serializer &ser, const World &world) {
   ser << world.nextTickT;
   ser << world.tickInterval;
   ser << world.ambientLight;
-  ser << world.seenFeatures;
+  return ser;
+}
+
+
+
+
+
+// ----------------------------
+
+MiniMap::MiniMap(const World &world) :
+  world(world),
+  seenFeatures(0),
+  mapTexture(nullptr),
+  viewY(0)
+{
+}
+
+MiniMap::MiniMap(const World &world, Deserializer &deser) : 
+  world(world),
+  mapTexture(nullptr),
+  viewY(0)
+{
+  deser >> this->seenFeatures;
+}
+
+void
+MiniMap::Draw(
+  Gfx &gfx, 
+  const Vector3 &eyePos
+) {
+  PROFILE();
+  
+  size_t y = eyePos.y;
+  if (y != this->viewY) {
+    this->viewY = y;
+    this->RepaintMap();
+  }
+  
+  const IVector3 &size = world.GetSize();
+  
+  gfx.SetTextureFrame(this->mapTexture);
+  gfx.SetColor(IColor(255,255,255));
+  gfx.GetView().Push();
+  gfx.GetView().Translate(Vector3(-1 + 2*eyePos.x/size.x, -1 + 2*eyePos.z/size.z, 0));
+  gfx.GetView().Scale(Vector3(-1, 1, 1));
+  gfx.DrawUnitQuad();
+  gfx.GetView().Pop();
+}
+
+/**
+ * Mark a feature as seen.
+ * @param f Feature id.
+ */
+void
+MiniMap::AddFeatureSeen(size_t f) {
+  if (f == ~0UL) return;
+  
+  // make sure vector is large enough
+  if (this->seenFeatures.size() <= f) {
+    this->seenFeatures.resize(f+1, false);
+  }
+  
+  if (this->seenFeatures[f]) return;
+  
+  this->seenFeatures[f] = true;
+  
+  RepaintMap();
+}
+
+bool 
+MiniMap::IsFeatureSeen(size_t id) const {
+  if (id == ~0UL || id >= this->seenFeatures.size()) return false;
+  return this->seenFeatures[id];
+}
+
+void 
+MiniMap::RepaintMap() {
+  const IVector3 &size = world.GetSize();
+  uint8_t pixels[size.x*size.z*4];
+
+  for (size_t x=0; x<size.x; x++) {
+    for (size_t z=0; z<size.z; z++) {
+      size_t index = (x+(size.z-1-z)*size.x)*4;
+      pixels[index+3] = 0;
+      
+      for (size_t yy=viewY; yy>0; yy--) {
+        IVector3 pos(x,yy,z);
+        Cell &cell = this->world.GetCell(pos);
+        // TEST if (!cell.IsSeen(2)) continue; 
+        
+        bool solid = !cell.IsTransparent() && !cell[Side::Up].IsTransparent() && !cell[Side::Down].IsTransparent();
+        uint8_t v = yy - viewY + 64;
+        if (solid) {
+          pixels[index+0] = v;
+          pixels[index+1] = v;
+          pixels[index+2] = v;
+          pixels[index+3] = 255;
+        } else {
+          pixels[index+0] = v/2;
+          pixels[index+1] = v/2;
+          pixels[index+2] = v/2;
+          pixels[index+3] = 255;
+          break;
+        }
+      }
+    }
+  }
+  
+  this->mapTexture = updateTexture("*minimap", Point(size.x, size.z), pixels);
+}
+
+Serializer &operator << (Serializer &ser, const MiniMap &map) {
+  ser << map.seenFeatures;
   return ser;
 }

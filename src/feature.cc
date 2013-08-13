@@ -44,7 +44,8 @@ Feature::Feature() :
   minLevel(0),
   maxLevel(0),
   maxProbability(0.0),
-  minY(0)
+  minY(0),
+  useLastId(false)
 {}
 
 Feature::Feature(FILE *f, const std::string &name) :
@@ -61,7 +62,8 @@ Feature::Feature(FILE *f, const std::string &name) :
   minLevel(0),
   maxLevel(-1),
   maxProbability(1.0),
-  minY(0)
+  minY(0),
+  useLastId(false)
 {
   char line[256];
   char lastDef = 0;
@@ -315,13 +317,8 @@ void Feature::SpawnEntities(RunningState &state, const IVector3 &pos) const {
         if (type.size() == 0) continue;
         type = types.select(state.GetRandom().Float01());
       }
-
-      switch(spawn.spawnClass) {
-        case SpawnClass::MobClass:        entity = new Mob(type); break;
-        case SpawnClass::EntityClass:     entity = new Entity(type); break;
-        case SpawnClass::ItemEntityClass: entity = new ItemEntity(type); break;
-        default: continue;
-      }
+      
+      entity = Entity::Create(type);
       
       Vector3 spawnPos = Vector3(pos)+spawn.pos;
       if (spawn.attach) {

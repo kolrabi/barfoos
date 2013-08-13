@@ -4,6 +4,7 @@
 #include "mob.h"
 #include "runningstate.h"
 #include "gfx.h"
+#include "gfxview.h"
 #include "projectile.h"
 #include "texture.h"
 #include "text.h"
@@ -349,16 +350,7 @@ void Item::UseOnEntity(RunningState &state, Mob &user, size_t id) {
       iter2 = entity->GetProperties()->onUseEntityReplace.find("*");
       
     if (iter2 != entity->GetProperties()->onUseEntityReplace.end()) {
-      SpawnClass klass = iter2->second.first;
-      std::string type = iter2->second.second;
-      
-      Entity *entity2 = nullptr;
-      switch(klass) {
-        case SpawnClass::MobClass:        entity2 = new Mob(type); break;
-        case SpawnClass::EntityClass:     entity2 = new Entity(type); break;
-        case SpawnClass::ItemEntityClass: entity2 = new ItemEntity(type); break;
-        default: break;
-      }
+      Entity *entity2 = Entity::Create(iter2->second);
       if (entity2) {
         entity2->SetPosition(entity->GetPosition());
         state.AddEntity(entity2);

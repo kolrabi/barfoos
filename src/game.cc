@@ -1,11 +1,17 @@
-#include "gfx.h"
 #include "game.h"
+
+#include "entity.h"
 #include "item.h"
-#include "input.h"
 #include "effect.h"
+
 #include "cell.h"
 #include "feature.h"
-#include "entity.h"
+
+#include "gfx.h"
+#include "gfxview.h"
+
+#include "input.h"
+
 #include "gui.h"
 
 #include "serializer.h"

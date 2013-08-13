@@ -7,6 +7,7 @@
 #include "cell.h"
 
 #include "gfx.h"
+#include "gfxview.h"
 #include "shader.h"
 #include "texture.h"
 #include "text.h"
@@ -172,7 +173,7 @@ Player::Update(RunningState &state) {
   
   // update map
   if (headCell) {
-    state.GetWorld().AddFeatureSeen(headCell->GetFeatureID());
+    state.GetWorld().GetMap().AddFeatureSeen(headCell->GetFeatureID());
   }
 
   // update messages

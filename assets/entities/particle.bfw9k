@@ -1,3 +1,5 @@
+Class       Mob
+
 tex particle.bfw9k
 frames 2
 
@@ -15,6 +17,7 @@ health 0
 extents 0.1 0.1 0.1
 nohit
 nocollideentity
+NoStep
 
 lifetime 0.5
 gravity 0

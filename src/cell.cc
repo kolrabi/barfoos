@@ -16,12 +16,20 @@
 // -------------------------------------------------------------------------
 
 CellBase::CellBase(const std::string &type) :
+  Triggerable(),
   info(&GetCellProperties(type)),
   world(nullptr),
   pos(0,0,0),
   dirty(true),
   lastT(0.0),
   nextActivationT(0.0),
+  teleport(false),
+  teleportTarget(),
+  spawnOnActiveMob(""),
+  spawnOnActiveSide(Side::InvalidSide),
+  spawnOnActiveRate(0.0),
+  isTrigger(false),
+  triggerTargetId(0),
   shared(info)
 {
   for (size_t i=0; i<6; i++)
@@ -64,6 +72,7 @@ Cell::Cell(const Cell &that) :
   
   lastUseT(0.0)
 {
+  (Triggerable&)self = that;
   shared = that.shared;
 }
 
@@ -147,6 +156,22 @@ Cell::Update(
   this->lastT = state.GetGame().GetTime();
 
   this->shared.smoothDetail = this->shared.smoothDetail + (this->shared.detail - this->shared.smoothDetail) * deltaT * 2;
+  
+  if (spawnOnActiveMob != "" && IsTriggered()) {
+    if (this->lastT > this->nextActivationT) {
+      Vector3 v(spawnOnActiveSide);
+      Entity *entity = state.GetEntity(state.SpawnInAABB(spawnOnActiveMob, self[spawnOnActiveSide].GetAABB()));
+      Mob *mob = dynamic_cast<Mob*>(entity);
+      if (mob) {
+        mob->AddVelocity(v*mob->GetProperties()->maxSpeed);
+      }
+      
+      this->nextActivationT = this->lastT + spawnOnActiveRate;
+      if (spawnOnActiveRate == 0.0) {
+        this->TriggerOff();
+      }
+    }
+  }
 
   // if this cell lost all its liquid replace by air
   if (this->IsLiquid() && this->shared.smoothDetail < 0.1) {
@@ -622,7 +647,7 @@ bool Cell::IsSeen(size_t checkNeighbours) const {
   
   if (this->GetFeatureID() == ~0UL) return false;
   if (!this->visibility && (info->flags & CellFlags::DoNotRender) == 0) return false;
-  return this->world->IsFeatureSeen(this->GetFeatureID());
+  return this->world->GetMap().IsFeatureSeen(this->GetFeatureID());
 }
 
 bool 
@@ -655,9 +680,8 @@ Cell::Ray(const Vector3 &start, const Vector3 &dir, float &t, Vector3 &p) const 
 }
 
 void Cell::OnStepOn(RunningState &state, Mob &mob) {
-  // TODO: traps, teleports
-  if (this->shared.teleport && state.GetGame().GetTime() > this->nextActivationT) {
-    IVector3 target(this->shared.teleportTarget);
+  if (this->teleport && state.GetGame().GetTime() > this->nextActivationT) {
+    IVector3 target(this->teleportTarget);
     Cell &targetCell = state.GetWorld().GetCell(target);
 
     this->nextActivationT = state.GetGame().GetTime() + 2;
@@ -665,19 +689,25 @@ void Cell::OnStepOn(RunningState &state, Mob &mob) {
 
     mob.Teleport(state, Vector3(target));
   }
+  
+  if (this->isTrigger) {
+    state.TriggerOn(this->triggerTargetId);
+  }
 }
 
-void Cell::OnStepOff(RunningState &, Mob &) {
-  // TODO: traps, teleports
+void Cell::OnStepOff(RunningState &state, Mob &) {
+  if (this->isTrigger) {
+    state.TriggerOff(this->triggerTargetId);
+  }
 }
   
-
-
 Serializer &operator << (Serializer &ser, const Cell &cell) {
+  ser << (Triggerable&)cell;
   ser << cell.info->type;
   ser << (cell.texture?cell.texture->name:"") << cell.uscale;
   ser << cell.lastT << cell.tickPhase << cell.lastUseT;
   ser << cell.lightLevel;
+  ser << cell.spawnOnActiveMob << (int8_t&)cell.spawnOnActiveSide << cell.spawnOnActiveRate;
   
   ser << cell.shared.tickInterval;
   ser << cell.shared.featureID;
@@ -691,11 +721,13 @@ Serializer &operator << (Serializer &ser, const Cell &cell) {
   }
   
   ser << cell.shared.detail << cell.shared.smoothDetail;
-  ser << cell.shared.teleport << cell.shared.teleportTarget;
+  ser << cell.teleport << cell.teleportTarget;
   return ser;
 }
 
 Deserializer &operator >> (Deserializer &deser, Cell &cell) {
+  deser >> (Triggerable&)cell;
+  
   std::string cellType;
   deser >> cellType;
   
@@ -708,6 +740,8 @@ Deserializer &operator >> (Deserializer &deser, Cell &cell) {
   deser >> cell.uscale;
   deser >> cell.lastT >> cell.tickPhase >> cell.lastUseT;
   deser >> cell.lightLevel;
+  
+  deser >> cell.spawnOnActiveMob >> (int8_t&)cell.spawnOnActiveSide >> cell.spawnOnActiveRate;
   
   deser >> cell.shared.tickInterval;
   deser >> cell.shared.featureID;
@@ -725,6 +759,6 @@ Deserializer &operator >> (Deserializer &deser, Cell &cell) {
   }
   
   deser >> cell.shared.detail >> cell.shared.smoothDetail;
-  deser >> cell.shared.teleport >> cell.shared.teleportTarget;
+  deser >> cell.teleport >> cell.teleportTarget;
   return deser;
 }

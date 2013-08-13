@@ -3,14 +3,19 @@
 
 #include "cellproperties.h"
 
-class CellBase {
+#include "trigger.h"
+
+class CellBase : public Triggerable {
 public:
 
   const std::string &GetType() const;
   const CellProperties &GetInfo() const;
 
   void SetTeleportTarget(const IVector3 &target);
-
+  void SetTriggerTarget(size_t triggerTargetId);
+  
+  void SetSpawnOnActive(const std::string &mob, Side side, float rate);
+  
 protected:
 
   CellBase(const std::string &type);
@@ -22,6 +27,17 @@ protected:
   bool dirty;
   float lastT;
   float nextActivationT;
+  
+  bool teleport;
+  IVector3 teleportTarget;
+
+  std::string spawnOnActiveMob;
+  SpawnClass spawnOnActiveClass;
+  Side spawnOnActiveSide;
+  float spawnOnActiveRate;
+  
+  bool isTrigger;
+  uint32_t triggerTargetId;
  
   static const int OffsetScale = 127;
 
@@ -45,9 +61,6 @@ protected:
     uint32_t detail;
     float smoothDetail;
 
-    bool teleport;
-    IVector3 teleportTarget;
-    
     SharedInfo(const CellProperties *info) :
       tickInterval( info->flags & CellFlags::Viscous ? 32 : 5 ),
       isLocked(false),
@@ -61,12 +74,10 @@ protected:
       u { 0,0,0,0 },
       v { 0,0,0,0 },
       detail( info->flags & CellFlags::Liquid ? 15 : 0 ),
-      smoothDetail( detail ),
-      teleport(false),
-      teleportTarget()
+      smoothDetail( detail )
     { }
   } shared;
-  
+
   float YOfs(size_t n)  const { return this->shared.topHeights[n]/(float)OffsetScale; }
   float YOfsb(size_t n) const { return this->shared.bottomHeights[n]/(float)OffsetScale; }
   
@@ -81,8 +92,19 @@ inline const CellProperties &CellBase::GetInfo() const {
 }
 
 inline void CellBase::SetTeleportTarget(const IVector3 &target) {
-  this->shared.teleport = true;
-  this->shared.teleportTarget = target;
+  this->teleport = true;
+  this->teleportTarget = target;
+}
+
+inline void CellBase::SetTriggerTarget(uint32_t id) {
+  this->isTrigger = id != 0;
+  this->triggerTargetId = id;
+}
+
+inline void CellBase::SetSpawnOnActive(const std::string &mob, Side side, float rate) {
+  this->spawnOnActiveMob = mob;
+  this->spawnOnActiveSide = side;
+  this->spawnOnActiveRate = rate;
 }
 
 

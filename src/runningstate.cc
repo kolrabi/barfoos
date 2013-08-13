@@ -7,6 +7,7 @@
 #include "feature.h"
 #include "inventorygui.h"
 #include "gfx.h"
+#include "gfxview.h"
 #include "input.h"
 
 #include "serializer.h"
@@ -23,6 +24,7 @@ RunningState::RunningState(Game &game) :
   player(nullptr),
   showInventory(false),
   lastSaveT(0.0),
+  nextTriggerId(1),
   saving(false)
 {
   Log("+RunningState() %p %p %p %p\n", this, &GetRandom(), &game, &GetGame());
@@ -56,12 +58,14 @@ RunningState::NewGame() {
   this->world = new World(*this, IVector3(64, 64, 64));
   this->world->Build();
 
-  Player *player = new Player();
-  player->SetPosition(IVector3(32,32,32));
-  player->SetSpawnPos(IVector3(32,32,32));
-  this->AddPlayer(player);
+  Entity *player = Entity::Create("player");
+  if (player) {
+    player->SetPosition(IVector3(32,32,32));
+    player->SetSpawnPos(IVector3(32,32,32));
+    this->AddEntity(player);
+  }
   
-  Entity *entity = new Entity("box");
+  Entity *entity = Entity::Create("box");
   entity->SetPosition(IVector3(32,24,32));
   this->AddEntity(entity);
 }
@@ -74,6 +78,8 @@ RunningState::ContinueGame() {
 void
 RunningState::Render(Gfx &gfx) const {
   PROFILE();
+  
+  if (!player) return;
   
   std::vector<IColor> lightColors;
   std::vector<Vector3> lightPositions;
@@ -105,7 +111,7 @@ RunningState::Render(Gfx &gfx) const {
   Point vscreen = gfx.GetScreenSize();
   gfx.Viewport(Rect(Point(vscreen.x-256, 0), Point(256, 256)));  
   player->MapView(gfx);
-  world->DrawMap(gfx, player->GetSmoothPosition());
+  world->GetMap().Draw(gfx, player->GetSmoothPosition());
   gfx.Viewport(Rect());  
 
   // next draw gui stuff
@@ -214,19 +220,12 @@ RunningState::AddEntity(Entity *entity) {
   size_t entityId = GetNextEntityId();
   this->entities[entityId] = entity;
   entity->Start(*this, entityId);
+  
+  if (dynamic_cast<Player*>(entity)) {
+    this->player = dynamic_cast<Player*>(entity);
+    GetGame().GetGfx().SetPlayer(player);
+  }
   return entityId;
-}
-
-/**
- * Add the player entity to this game. 
- * Also stores the player for future reference.
- * @param player Player to add
- */
-size_t
-RunningState::AddPlayer(Player *player) {
-  this->player = player;
-  GetGame().GetGfx().SetPlayer(player);
-  return this->AddEntity(player);
 }
 
 /**
@@ -470,17 +469,38 @@ RunningState::Explosion(Entity &entity, const Vector3 &pos, size_t radius, float
 }
 
 size_t
-RunningState::SpawnMobInAABB(
+RunningState::SpawnInAABB(
   const std::string &type,
   const AABB &aabb,
   const Vector3 &velocity
 ) {
-  Mob *mob = new Mob(type);
-  Vector3 s = aabb.extents - mob->GetAABB().extents;
+  Entity *entity = Entity::Create(type);
+  if (!entity) return ~0UL;
+  
+  Vector3 s = aabb.extents - entity->GetAABB().extents;
   Vector3 p = GetRandom().Vector() * s + aabb.center;
-  mob->SetPosition(p);
-  mob->AddVelocity(velocity);
-  return AddEntity(mob);
+  entity->SetPosition(p);
+  
+  Mob *mob = dynamic_cast<Mob*>(entity);
+  if (mob) mob->AddVelocity(velocity);
+  
+  return AddEntity(entity);
+}
+
+void RunningState::TriggerOn(size_t id) {
+  Log("Trigger on: %u\n", id);
+  for (auto &entity : this->entities) {
+    if (entity.second->GetTriggerId() == id) entity.second->TriggerOn();
+  }
+  this->GetWorld().TriggerOn(id);
+}
+
+void RunningState::TriggerOff(size_t id) {
+  Log("Trigger off: %u\n", id);
+  for (auto &entity : this->entities) {
+    if (entity.second->GetTriggerId() == id) entity.second->TriggerOff();
+  }
+  this->GetWorld().TriggerOff(id);
 }
 
 void 
@@ -549,6 +569,7 @@ RunningState::LoadLevel() {
 Serializer &operator << (Serializer &ser, const RunningState &state) {
   ser << state.level;
   ser << state.nextEntityId;
+  ser << state.nextTriggerId;
   return ser;
 }
 
@@ -572,8 +593,7 @@ RunningState::Load() {
 
 Deserializer &operator >> (Deserializer &deser, RunningState &state) {
   deser >> state.level; 
-  Log("%u\n", state.level);
   deser >> state.nextEntityId;
-  Log("%u\n", state.nextEntityId);
+  deser >> state.nextTriggerId;
   return deser;
 }

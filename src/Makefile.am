@@ -23,7 +23,9 @@ barfoos_CFLAGS=$(CF) --std=c99
 barfoos_LDADD=
 barfoos_LDFLAGS=$(LDWINFLAGS)
 barfoos_SOURCES=\
-  gfx.cc main.cc io.cc texture.cc \
+  main.cc \
+  gfx.cc gfx.h gfxview.cc gfxview.h \
+  io.cc texture.cc \
   GLee.c GLee.h \
   game.cc game.h \
   runningstate.cc runningstate.h \
@@ -44,6 +46,8 @@ barfoos_SOURCES=\
   player.cc player.h \
   itementity.cc itementity.h \
   projectile.cc projectile.h \
+  \
+  trigger.cc trigger.h \
   \
   cell.cc cell.h \
   cellproperties.cc cellproperties.h \

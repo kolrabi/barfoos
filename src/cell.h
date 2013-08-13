@@ -39,6 +39,8 @@ public:
   bool IsTransparent() const;
   bool IsSolid() const;
   bool IsLiquid() const;
+  bool IsDynamic() const;
+  bool IsTrigger() const;
 
   void SetWorld(World *world, const IVector3 &pos);
   World *GetWorld() const;
@@ -134,6 +136,14 @@ inline bool Cell::IsSolid() const {
 
 inline bool Cell::IsLiquid() const {
   return this->info->flags & CellFlags::Liquid;
+}
+
+inline bool Cell::IsDynamic() const {
+  return this->info->flags & CellFlags::Dynamic || this->GetTriggerId() || this->IsTrigger();
+}
+
+inline bool Cell::IsTrigger() const {
+  return this->isTrigger;
 }
 
 inline const IColor &Cell::GetLightLevel() const { 

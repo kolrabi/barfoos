@@ -1,15 +1,21 @@
 #include "entity.h"
+
+#include "player.h"
+#include "projectile.h"
+#include "itementity.h"
+#include "item.h"
+
 #include "world.h"
 #include "cell.h"
 #include "util.h"
-#include "item.h"
-#include "itementity.h"
 #include "random.h"
+
 #include "gfx.h"
-#include "input.h"
+#include "gfxview.h"
 #include "texture.h"
-#include "player.h"
-#include "projectile.h"
+
+#include "input.h"
+
 #include "runningstate.h"
 
 #include "serializer.h"
@@ -31,6 +37,7 @@ const EntityProperties *getEntity(const std::string &name) {
 void
 EntityProperties::ParseProperty(const std::string &cmd) {
   if (cmd == "tex")             Parse("entities/texture/", this->sprite.texture);
+  else if (cmd == "class")       Parse(this->klass);
   else if (cmd == "emissivetex") Parse("entities/texture/", this->sprite.emissiveTexture);
   else if (cmd == "frames")     Parse(this->sprite.totalFrames);
   else if (cmd == "anim") {
@@ -56,6 +63,7 @@ EntityProperties::ParseProperty(const std::string &cmd) {
   else if (cmd == "attackanim") Parse(this->attackAnim);
       
   else if (cmd == "respawn")          this->respawn         = true;
+  else if (cmd == "nostep")           this->noStep          = true;
   else if (cmd == "vert")             this->sprite.vertical = true;
 
   else if (cmd == "box")              this->isBox           = true;
@@ -131,10 +139,9 @@ EntityProperties::ParseProperty(const std::string &cmd) {
     this->onUseItemReplace[replace.first] = replace.second;
     
   } else if (cmd == "onuseentityreplace") {
-    std::pair<std::string, std::pair<SpawnClass, std::string>> replace;
+    std::pair<std::string, std::string> replace;
     Parse(replace.first);
-    Parse(replace.second.first);
-    Parse(replace.second.second);
+    Parse(replace.second);
     this->onUseEntityReplace[replace.first] = replace.second;
 
   } else if (cmd == "ondieexplode") {
@@ -200,6 +207,40 @@ float GetEntityProbability(const std::string &name, int level) {
   return prop.maxProbability * std::sin(Const::pi*levelFrac);
 }
 
+Entity *Entity::Create(const std::string &type) {
+  //if (allEntities.find(type) == allEntities.end()) return nullptr;
+  const EntityProperties &prop = allEntities[type];
+  
+  Log("creating %s: %c\n", type.c_str(), prop.klass);
+  
+  Entity *entity;
+  switch(prop.klass) {
+    case SpawnClass::EntityClass:     entity = new Entity(type); break;
+    case SpawnClass::MobClass:        entity = new Mob(type);    break;
+    case SpawnClass::ItemEntityClass: entity = new ItemEntity(type); break;
+    case SpawnClass::PlayerClass:     entity = new Player(); break;
+    case SpawnClass::ProjectileClass: entity = new Projectile(type); break;
+    default: entity = nullptr;
+  }
+  return entity;
+}
+
+Entity *Entity::Create(const std::string &type, Deserializer &deser) {
+  //if (allEntities.find(type) == allEntities.end()) return nullptr;
+  const EntityProperties &prop = allEntities[type];
+  
+  Entity *entity;
+  switch(prop.klass) {
+    case SpawnClass::EntityClass:     entity = new Entity(type, deser); break;
+    case SpawnClass::MobClass:        entity = new Mob(type, deser);    break;
+    case SpawnClass::ItemEntityClass: entity = new ItemEntity(deser); break;
+    case SpawnClass::PlayerClass:     entity = new Player(deser); break;
+    case SpawnClass::ProjectileClass: entity = new Projectile(type, deser); break;
+    default: entity = nullptr;
+  }
+  return entity;
+}
+
 Entity::Entity(const std::string &type) :
   id(~0UL),
   ownerId(~0UL),
@@ -207,6 +248,7 @@ Entity::Entity(const std::string &type) :
   properties(getEntity(type)),
   nextThinkT(0.0),
   startT(0.0),
+  regulars(),
   dieT(0.0),
   isDead(false),
   lastPos(),
@@ -226,6 +268,7 @@ Entity::Entity(const std::string &type) :
 }
 
 Entity::Entity(const std::string &type, Deserializer &deser) : Entity(type) {
+  deser >> (Triggerable&)*this;
   deser >> ownerId;
   deser >> nextThinkT;
   deser >> startT;
@@ -499,7 +542,7 @@ Entity::Die(RunningState &state, const HealthInfo &info) {
 
   if (this->properties->onDieParticles) {
     for (size_t i=0; i<this->properties->onDieParticles; i++)
-      state.SpawnMobInAABB(this->properties->onDieParticleType, this->aabb, state.GetRandom().Vector()*this->properties->onDieParticleSpeed);
+      state.SpawnInAABB(this->properties->onDieParticleType, this->aabb, state.GetRandom().Vector()*this->properties->onDieParticleSpeed);
   }
 
   this->inventory.Drop(state, *this);
@@ -568,18 +611,18 @@ Entity::Teleport(RunningState &state, const Vector3 &target) {
   aabb.extents.x += 0.5;
   aabb.extents.z += 0.5;
   for (size_t i=0; i<5; i++) {    
-    state.SpawnMobInAABB("particle.teleport", aabb, Vector3(0, state.GetRandom().Float()*0.3, 0));
+    state.SpawnInAABB("particle.teleport", aabb, Vector3(0, state.GetRandom().Float()*0.3, 0));
   }
   SetPosition(Vector3(0.5, 1.0 + aabb.extents.y, 0.5) + Vector3(target));
   aabb.center = GetPosition();
   for (size_t i=0; i<25; i++) {    
-    state.SpawnMobInAABB("particle.teleport", aabb, Vector3(0, state.GetRandom().Float()*0.3, 0));
+    state.SpawnInAABB("particle.teleport", aabb, Vector3(0, state.GetRandom().Float()*0.3, 0));
   }
 }
 
-
 void 
 Entity::Serialize(Serializer &ser) const {
+  ser << (Triggerable&)*this;
   ser << ownerId;
   ser << nextThinkT;
   ser << startT;
@@ -610,14 +653,7 @@ Deserializer &operator >> (Deserializer &deser, Entity *&entity) {
   std::string type;
   deser >> type;
   
-  switch(SpawnClass(cl)) {
-    case SpawnClass::EntityClass:     entity = new Entity(type, deser); break;
-    case SpawnClass::MobClass:        entity = new Mob(type, deser);    break;
-    case SpawnClass::ItemEntityClass: entity = new ItemEntity(deser); break;
-    case SpawnClass::PlayerClass:     entity = new Player(deser); break;
-    case SpawnClass::ProjectileClass: entity = new Projectile(type, deser); break;
-    default: entity = nullptr;
-  }
+  entity = Entity::Create(type, deser);
   
   return deser;
 }
