@@ -41,8 +41,8 @@ EntityProperties::ParseProperty(const std::string &cmd) {
   else if (cmd == "emissivetex") Parse("entities/texture/", this->sprite.emissiveTexture);
   else if (cmd == "frames")     Parse(this->sprite.totalFrames);
   else if (cmd == "anim") {
-    size_t firstFrame = 0;
-    size_t frameCount = 0;
+    uint32_t firstFrame = 0;
+    uint32_t frameCount = 0;
     float  fps = 0;
     
     Parse(firstFrame);
@@ -242,8 +242,8 @@ Entity *Entity::Create(const std::string &type, Deserializer &deser) {
 }
 
 Entity::Entity(const std::string &type) :
-  id(~0UL),
-  ownerId(~0UL),
+  id(~0),
+  ownerId(~0),
   removable(false),
   properties(getEntity(type)),
   nextThinkT(0.0),
@@ -289,7 +289,7 @@ Entity::~Entity() {
 }
 
 void
-Entity::Start(RunningState &state, size_t id) {
+Entity::Start(RunningState &state, uint32_t id) {
   Game &game = state.GetGame();
   World &world = state.GetWorld();
   
@@ -356,7 +356,7 @@ Entity::Start(RunningState &state, size_t id) {
 }
 
 void
-Entity::Continue(RunningState &, size_t id) {
+Entity::Continue(RunningState &, uint32_t id) {
   this->id = id;
 }
 
@@ -551,7 +551,7 @@ Entity::Die(RunningState &state, const HealthInfo &info) {
 
   this->inventory.Drop(state, *this);
   
-  if (this->properties->dyingAnim != ~0UL) {
+  if (this->properties->dyingAnim != ~0U) {
     this->sprite.StartAnim(this->properties->dyingAnim);
     this->sprite.QueueAnim(0);
   } else {

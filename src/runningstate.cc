@@ -579,7 +579,7 @@ void
 RunningState::SaveLevel() {
   Serializer ser("LEVL");
   ser << *world;
-  ser << this->player->GetId();
+  ser << (uint32_t)this->player->GetId();
   ser << this->entities;
   
   FILE *f = createUserFile("level." + ToString(level));
@@ -603,7 +603,7 @@ RunningState::LoadLevel() {
   delete world;
   world = new World(*this, deser);
 
-  size_t playerId;
+  uint32_t playerId;
   deser >> playerId;
   deser >> this->entities;
   

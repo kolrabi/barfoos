@@ -2,7 +2,7 @@
 
 ## Build ----------------------------------------------------------
 
-CF=$(GL_CFLAGS) -Werror -Wall -Wextra -I$(top_srcdir)/src -DDATA_PATH=\"$(pkgdatadir)\" -pthread -D_GLIBCXX_DEBUG
+CF=$(GL_CFLAGS) -Wall -Wextra -I$(top_srcdir)/src -DDATA_PATH=\"$(pkgdatadir)\" -pthread -D_GLIBCXX_DEBUG
 
 if WINDOOF
 RESFILE=res.rc icon.ico
@@ -13,15 +13,22 @@ RESFILE=
 LDWINFLAGS=
 endif
 
+if MECKES
+LDMACOSXFLAGS:=-framework OpenGL -framework cocoa -framework IOKit `libpng-config --ldflags`
+CCMACOSXFLAGS:=`libpng-config --cflags`
+else
+LDMACOSXFLAGS=
+endif
+
 .rc.o:
 	windres $< -o $@
 
 bin_PROGRAMS=barfoos
 
-barfoos_CXXFLAGS=$(CF) -std=c++11
+barfoos_CXXFLAGS=$(CF) -std=c++11 $(CCMACOSXFLAGS)
 barfoos_CFLAGS=$(CF) -std=c99 
 barfoos_LDADD=
-barfoos_LDFLAGS=$(LDWINFLAGS)
+barfoos_LDFLAGS=$(LDWINFLAGS) $(LDMACOSXFLAGS)
 barfoos_SOURCES=\
   main.cc \
   gfx.cc gfx.h gfxview.cc gfxview.h \

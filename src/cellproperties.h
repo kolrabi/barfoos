@@ -95,7 +95,7 @@ struct CellProperties : public Properties {
   /** If nonzero, replace this cell when cell detail goes below this value. 
     * Default: 0, don't replace.
     */
-  size_t detailBelowReplace;
+  uint32_t detailBelowReplace;
   
   /** Rendering scale of this cell. Has no effect on collision detection. 
     * Default: [1,1,1], don't change size.
@@ -105,12 +105,12 @@ struct CellProperties : public Properties {
   float speedModifier;
   float friction;
 
-  size_t showSides;
-  size_t hideSides;
-  size_t clipSidesIn;  // default: don't clip movement into cell from all sides when solid
-  size_t clipSidesOut; // default: don't clip movement out of cell to all sides when solid
+  uint32_t showSides;
+  uint32_t hideSides;
+  uint32_t clipSidesIn;  // default: don't clip movement into cell from all sides when solid
+  uint32_t clipSidesOut; // default: don't clip movement out of cell to all sides when solid
   
-  size_t onUseCascade;
+  uint32_t onUseCascade;
   float useDelay;
   float breakStrength;
   float lavaDamage;

@@ -50,8 +50,8 @@ ItemProperties::ParseProperty(const std::string &cmd) {
   } else if (cmd == "frames") {
     Parse(this->sprite.totalFrames);
   } else if (cmd == "anim") {
-    size_t firstFrame = 0;
-    size_t frameCount = 0;
+    uint32_t firstFrame = 0;
+    uint32_t frameCount = 0;
     float  fps = 0;
     
     Parse(firstFrame);
@@ -320,7 +320,7 @@ void Item::Update(RunningState &state) {
   if (cooldownFrac < 0) cooldownFrac = 0;
 }
 
-void Item::UseOnEntity(RunningState &state, Mob &user, size_t id) {
+void Item::UseOnEntity(RunningState &state, Mob &user, uint32_t id) {
   if (!this->CanUse(state)) return;
 
   if (this->properties->canUseEntity) {

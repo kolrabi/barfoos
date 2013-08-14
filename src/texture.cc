@@ -52,7 +52,7 @@ const Texture *loadTexture(const std::string &name, const Texture * tex) {
     Log("Loading texture %s as %u\n", name.c_str(), textureHandle);
   }
 
-  unsigned long w,h;
+  png_uint_32 w,h;
   FILE *fp = openAsset(name+".png");
   if (!fp) return nullptr;
   

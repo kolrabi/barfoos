@@ -677,7 +677,7 @@ bool Cell::IsSeen(size_t checkNeighbours) const {
     }
   }
   
-  if (this->GetFeatureID() == ~0UL) return false;
+  if (this->GetFeatureID() == ~0U) return false;
   if (!this->visibility && (info->flags & CellFlags::DoNotRender) == 0) return false;
   return this->world->GetMap().IsFeatureSeen(this->GetFeatureID());
 }

@@ -20,7 +20,7 @@ struct ItemProperties : public Properties {
   
   // rendering
   Sprite sprite = Sprite();
-  size_t equipAnim = 0;
+  uint32_t equipAnim = 0;
   IColor light {0,0,0};
   bool flicker = false;
 
@@ -109,11 +109,11 @@ public:
   bool CanUse(RunningState &state) const;
   void StartCooldown(RunningState &state, Entity &user, bool damage = true);
   
-  void UseOnEntity(RunningState &state, Mob &user, size_t ent);
+  void UseOnEntity(RunningState &state, Mob &user, uint32_t ent);
   void UseOnCell(RunningState &state, Mob &user, Cell *cell, Side side);
   void UseOnNothing(RunningState &state, Mob &user);
 
-  size_t GetDurability()                const { return this->durability; }
+  uint32_t GetDurability()                const { return this->durability; }
   float GetRange()                      const { return this->properties->range * this->effect->range; }  
   float GetDamage()                     const { return this->properties->damage * this->effect->damage; }  
   Element GetElement()                  const { return this->effect->element; }  
@@ -133,7 +133,7 @@ public:
   
   std::string GetDisplayName(bool capitalize = false)          const;
   Stats GetDisplayStats()               const;
-  size_t GetAmount()                    const { return this->amount; }
+  uint32_t GetAmount()                    const { return this->amount; }
   void DecAmount()                            { if (this->amount > 1) this->amount --; }
   void IncAmount()                            { this->amount ++; }
   void AddAmount(int amt);

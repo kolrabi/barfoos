@@ -12,7 +12,7 @@ public:
   const CellProperties &GetInfo() const;
 
   void SetTeleportTarget(const IVector3 &target);
-  void SetTriggerTarget(size_t triggerTargetId);
+  void SetTriggerTarget(uint32_t triggerTargetId);
   
   void SetSpawnOnActive(const std::string &mob, Side side, float rate);
   
@@ -47,13 +47,13 @@ protected:
 
   // shared information, that will stay the same after assignment from different cell
   struct SharedInfo {
-    size_t tickInterval;
+    uint8_t tickInterval;
     
     // map generation
     bool isLocked;    // disallow modification via World::SetCell...
     bool ignoreLock;  // ..unless this is true
     bool ignoreWrite; // World::SetCell will only pretend to succeed
-    size_t featureID;
+    uint32_t featureID;
 
     // rendering  
     bool reversedTop;
@@ -72,7 +72,7 @@ protected:
       isLocked(false),
       ignoreLock(false),
       ignoreWrite(false),
-      featureID(~0UL),
+      featureID(~0U),
       reversedTop(false),
       reversedBottom(false),
       topHeights { OffsetScale, OffsetScale, OffsetScale, OffsetScale },

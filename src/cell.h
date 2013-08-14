@@ -61,8 +61,8 @@ public:
   uint32_t GetDetail() const;
   void SetDetail(uint32_t detail);
 
-  size_t GetFeatureID() const;
-  void SetFeatureID(size_t f);
+  uint32_t GetFeatureID() const;
+  void SetFeatureID(uint32_t f);
 
   bool IsSeen(size_t checkNeighbours = 0) const;
   
@@ -90,7 +90,7 @@ protected:
 
   // unique information, that will change after assignment from different cell
   
-  size_t tickPhase;
+  uint8_t tickPhase;
   IColor lightLevel;
   
   float lastUseT;
@@ -192,11 +192,11 @@ inline void Cell::SetDetail(uint32_t detail) {
   this->shared.detail = detail;
 }
 
-inline size_t Cell::GetFeatureID() const { 
+inline uint32_t Cell::GetFeatureID() const { 
   return this->shared.featureID; 
 }
 
-inline void Cell::SetFeatureID(size_t f) { 
+inline void Cell::SetFeatureID(uint32_t f) { 
   this->shared.featureID = f;
 }
 

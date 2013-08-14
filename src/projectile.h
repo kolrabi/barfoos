@@ -11,7 +11,7 @@ public:
   Projectile(const std::string &type);
   Projectile(const std::string &type, Deserializer &deser);
 
-  virtual void Start(RunningState &state, size_t id) override;
+  virtual void Start(RunningState &state, uint32_t id) override;
 
   virtual void OnCollide(RunningState &state, Cell &cell, Side side) override;
   virtual void OnCollide(RunningState &state, Entity &) override;

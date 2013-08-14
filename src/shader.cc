@@ -12,11 +12,11 @@ Shader::Shader(const std::string &name) :
   char tmp[1024];
   GLsizei l;
 
-  unsigned int vshad = glCreateShaderObjectARB(GL_VERTEX_SHADER_ARB);
+  GLhandleARB vshad = glCreateShaderObjectARB(GL_VERTEX_SHADER_ARB);
   std::string vtext = loadAssetAsString("shaders/"+name+".vs");
   txt = vtext.c_str();
   glShaderSourceARB(vshad, 1, &txt, 0);
-  glCompileShader(vshad);
+  glCompileShaderARB(vshad);
   glAttachObjectARB(program, vshad);
 
   glGetInfoLogARB(vshad, sizeof(tmp)-1, &l, tmp);
@@ -24,11 +24,11 @@ Shader::Shader(const std::string &name) :
   
   if (l) Log("Vertex shader %s result:\n%s\n", name.c_str(), tmp);
 
-  unsigned int fshad = glCreateShaderObjectARB(GL_FRAGMENT_SHADER_ARB);
+  GLhandleARB fshad = glCreateShaderObjectARB(GL_FRAGMENT_SHADER_ARB);
   std::string ftext = loadAssetAsString("shaders/"+name+".fs");
   txt = ftext.c_str();
   glShaderSourceARB(fshad, 1, &txt, 0);
-  glCompileShader(fshad);
+  glCompileShaderARB(fshad);
   glAttachObjectARB(program, fshad);
   
   glGetInfoLogARB(fshad, sizeof(tmp)-1, &l, tmp);

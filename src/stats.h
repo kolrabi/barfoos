@@ -85,7 +85,7 @@ struct Stats {
   
   float exp = 0;
   
-  size_t sp = 0;
+  uint32_t sp = 0;
   float walkSpeed = 1.0;
   
   bool operator==(const Stats &o);

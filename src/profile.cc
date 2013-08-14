@@ -2,6 +2,8 @@
 
 #ifdef WIN32
 #include <windows.h>
+#elif defined(MACOSX)
+#include <mach/mach_time.h>
 #else
 #include <time.h>
 #endif
@@ -32,6 +34,8 @@ static inline uint64_t measure() {
   LARGE_INTEGER li;
   QueryPerformanceCounter(&li);
   return li.QuadPart;
+#elif defined(MACOSX)
+  return 0; // TODO
 #else
   timespec t;
   clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &t);

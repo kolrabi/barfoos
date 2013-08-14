@@ -47,9 +47,9 @@ struct EntityProperties : public Properties {
   float   sizeRand          = 0;
   bool    isBox             = false;  //< Render entity as a box instead of a sprite.
   IColor  glow              = IColor(0,0,0);
-  size_t  flinchAnim        = ~0UL;   //< Animation to play when hurt.
-  size_t  dyingAnim         = ~0UL;   //< Animation to play on death.
-  size_t  attackAnim        = ~0UL;   //< Animation to play on death.
+  uint32_t  flinchAnim        = ~0U;   //< Animation to play when hurt.
+  uint32_t  dyingAnim         = ~0U;   //< Animation to play on death.
+  uint32_t  attackAnim        = ~0U;   //< Animation to play on death.
   std::vector<EntityDrawBox> drawBoxes = std::vector<EntityDrawBox>(0);
   std::vector<ParticleEmitter> emitters = std::vector<ParticleEmitter>(0);
   bool    createBubbles     = false;
@@ -96,12 +96,12 @@ struct EntityProperties : public Properties {
   float   exp               = 0.0;
   float   lockedChance      = 0.0;
 
-  size_t  onDieExplodeRadius = 0;
+  uint32_t  onDieExplodeRadius = 0;
   float   onDieExplodeStrength = 0.0;
   float   onDieExplodeDamage = 0.0;
   Element onDieExplodeElement = Element::Physical;
 
-  size_t  onDieParticles    = 0;
+  uint32_t  onDieParticles    = 0;
   float   onDieParticleSpeed = 0.0;
   std::string onDieParticleType = "";
 
@@ -151,8 +151,8 @@ public:
   
   Entity &operator=(const Entity &that) = delete;
   
-  virtual void Start(RunningState &state, size_t id);
-  virtual void Continue(RunningState &state, size_t id);
+  virtual void Start(RunningState &state, uint32_t id);
+  virtual void Continue(RunningState &state, uint32_t id);
   virtual void Update(RunningState &state);
   virtual void Think(RunningState &state);
 
@@ -172,12 +172,12 @@ public:
   virtual void OnBuffAdded(RunningState &, const EffectProperties &)      {}
     
   // management
-  size_t                    GetId()                           const { return id; }
+  uint32_t                  GetId()                           const { return id; }
   bool                      IsRemovable()                     const { return removable; }
   const EntityProperties *  GetProperties()                   const { return properties; }
   virtual std::string       GetName()                         const { return properties->displayName; }
 
-  size_t                    GetOwner()                        const { return ownerId; }
+  uint32_t                  GetOwner()                        const { return ownerId; }
   void                      SetOwner(const Entity &owner)           { this->ownerId = owner.id; }
   
   // gameplay
@@ -226,7 +226,7 @@ protected:
   Entity(const std::string &type, Deserializer &deser);
 
   // management
-  size_t id, ownerId;
+  uint32_t id, ownerId;
   bool removable;
   const EntityProperties *properties;
   float nextThinkT, startT;

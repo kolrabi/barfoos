@@ -20,7 +20,7 @@ struct Properties {
   virtual void ParseProperty(const std::string &name) = 0;
   
   void Parse(int &i);
-  void Parse(size_t &i);
+  void Parse(uint32_t &i);
   void Parse(float &f);
   void Parse(Vector3 &v);
   void Parse(IVector3 &iv);
@@ -30,7 +30,7 @@ struct Properties {
   void Parse(std::string &s);
   void Parse(Element &e);
   void Parse(SpawnClass &s);
-  void ParseSideMask(size_t &i);
+  void ParseSideMask(uint32_t &i);
 
   Game *game;
   

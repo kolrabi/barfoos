@@ -16,7 +16,7 @@ public:
   virtual ~ItemEntity();
 
   virtual void Draw(Gfx &gfx) const override;
-  virtual void Start(RunningState &state, size_t id) override;
+  virtual void Start(RunningState &state, uint32_t id) override;
   virtual void Update(RunningState &state) override;
   
   virtual void OnUse(RunningState &state, Entity &other) override;

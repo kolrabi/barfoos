@@ -31,7 +31,7 @@ Player::Player() :
   bobAmplitude      (0.0),
   
   // gameplay
-  selectedEntity    (~0UL),
+  selectedEntity    (~0U),
   selectedCell      (nullptr),
   selectedCellSide  (Side::Forward),
   selectionRange    (0.0),
@@ -73,7 +73,7 @@ Player::Player(Deserializer &deser) : Mob("player", deser),
   bobAmplitude      (0.0),
   
   // gameplay
-  selectedEntity    (~0UL),
+  selectedEntity    (~0U),
   selectedCell      (nullptr),
   selectedCellSide  (Side::Forward),
   selectionRange    (0.0),
@@ -122,7 +122,7 @@ Player::MapView(Gfx &gfx) const {
 }
 
 void
-Player::Start(RunningState &state, size_t id) {
+Player::Start(RunningState &state, uint32_t id) {
   Mob::Start(state, id);
   
   this->pain = 0;
@@ -153,7 +153,7 @@ Player::Update(RunningState &state) {
       useItem->UseOnNothing(state, *this);
     } else if (this->selectedCell) {
       useItem->UseOnCell(state, *this, this->selectedCell, this->selectedCellSide);
-    } else if (this->selectedEntity != ~0UL) {
+    } else if (this->selectedEntity != ~0U) {
       useItem->UseOnEntity(state, *this, this->selectedEntity);
     }
   }
@@ -166,7 +166,7 @@ Player::Update(RunningState &state) {
       useItem->UseOnNothing(state, *this);
     } else if (this->selectedCell) {
       useItem->UseOnCell(state, *this, this->selectedCell, this->selectedCellSide);
-    } else if (this->selectedEntity != ~0UL) {
+    } else if (this->selectedEntity != ~0U) {
       useItem->UseOnEntity(state, *this, this->selectedEntity);
     }
   }
@@ -217,7 +217,7 @@ void Player::UpdateSelection(RunningState &state) {
   float hitDist = range;
   Vector3 hitPos;
 
-  this->selectedEntity = ~0UL;
+  this->selectedEntity = ~0U;
   this->selectedCell = nullptr;
   
   // check entities in range  
@@ -240,7 +240,7 @@ void Player::UpdateSelection(RunningState &state) {
   if (hitDist < dist) {
     dist = hitDist;
     this->selectedCell = &cell;
-    this->selectedEntity = ~0UL;
+    this->selectedEntity = ~0U;
   }
   
   this->selectionRange = dist;
@@ -261,7 +261,7 @@ Player::UpdateInput(
   if (input.IsKeyDown(InputKey::DebugDie))     this->Die(state, HealthInfo());
   
   if (!state.IsShowingInventory()) {
-    if (input.IsKeyDown(InputKey::Use) && this->selectedEntity != ~0UL) {
+    if (input.IsKeyDown(InputKey::Use) && this->selectedEntity != ~0U) {
       Entity *entity = state.GetEntity(this->selectedEntity);
       if (entity) entity->OnUse(state, *this);
     } else if (input.IsKeyDown(InputKey::Use) && this->selectedCell) {

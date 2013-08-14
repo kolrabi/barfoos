@@ -4,6 +4,9 @@
 /* Define to 1 if you have the `clock_gettime' function. */
 /* #undef HAVE_CLOCK_GETTIME */
 
+/* Define to 1 if you have the <GLFW/glfw3.h> header file. */
+#define HAVE_GLFW_GLFW3_H 1
+
 /* Define to 1 if you have the <inttypes.h> header file. */
 #define HAVE_INTTYPES_H 1
 
@@ -14,7 +17,7 @@
 /* #undef HAVE_LIBGL */
 
 /* Define to 1 if you have the `glfw3' library (-lglfw3). */
-/* #undef HAVE_LIBGLFW3 */
+#define HAVE_LIBGLFW3 1
 
 /* Define to 1 if you have the `GLU' library (-lGLU). */
 /* #undef HAVE_LIBGLU */
@@ -86,6 +89,9 @@
 
 /* Define to 1 if the system has the type `_Bool'. */
 #define HAVE__BOOL 1
+
+/* define if compiling for Mac OS X */
+#define MACOSX 1
 
 /* Define to 1 if your C compiler doesn't accept -c and -o together. */
 /* #undef NO_MINUS_C_MINUS_O */

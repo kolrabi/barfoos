@@ -21,16 +21,21 @@ AC_PROG_CXX
 AC_CHECK_LIB(pthread, pthread_create)
 
 AM_CONDITIONAL([WINDOOF], [test x$OS = xWindows_NT])
+AM_CONDITIONAL([MECKES], [test x$OSTYPE = xdarwin11])
 if test x$OS = xWindows_NT; then
   AC_DEFINE(WIN32)
   AC_CHECK_LIB(winmm, main)
   AC_CHECK_LIB(opengl32, main)
   AC_CHECK_LIB(gdi32, main)
   AC_CHECK_LIB(glu32, main)
+elif test x$OSTYPE = xdarwin11; then
+  AC_DEFINE(MACOSX)
 else
   AC_CHECK_LIB(GL, main)
   AC_CHECK_LIB(GLU, main)
 fi
+
+AC_CHECK_HEADERS([GLFW/glfw3.h])
 
 AC_CHECK_LIB(X11, [XOpenDisplay], [AC_DEFINE(X11)])
 AC_CHECK_LIB(X11, XConvertSelection)
@@ -61,6 +66,7 @@ AC_TYPE_SIZE_T
 
 AH_TEMPLATE(WIN32, [define if compiling for windows])
 AH_TEMPLATE(X11, [define if compiling for X11])
+AH_TEMPLATE(MACOSX, [define if compiling for Mac OS X])
 
 #CFLAGS="-O0 -ggdb"
 #CXXFLAGS="-O0 -ggdb"

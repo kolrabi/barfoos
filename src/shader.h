@@ -21,11 +21,11 @@ public:
   void Uniform(const std::string &name, const std::vector<Vector3> &value) const;
   void Uniform(const std::string &name, const Matrix4 &value) const;
   
-  unsigned int GetProgram() const { return program; }
+  void *GetProgram() const { return program; }
 
 private:
 
-  unsigned int program;
+  void *program;
 };
 
 

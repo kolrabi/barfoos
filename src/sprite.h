@@ -26,21 +26,21 @@ struct Sprite {
   bool vertical;
   
   /** Total number of frames in texture. */
-  size_t totalFrames;
+  uint32_t totalFrames;
   
   /** Current animation frame. */
-  size_t currentFrame;
+  uint32_t currentFrame;
   
   /** Current animation time. */
   float t;
   
   /** Active animation index. */
-  size_t currentAnimation;
+  uint32_t currentAnimation;
   
   /** All animations. */
   std::vector<Animation> animations;
   
-  std::list<size_t> animQueue;
+  std::list<uint32_t> animQueue;
   
   Sprite() :
     texture(nullptr),
@@ -72,7 +72,7 @@ struct Sprite {
       t += anim.fps * deltaT;
       currentFrame = t;
       if (t > anim.frameCount + anim.firstFrame) {
-        size_t next = currentAnimation;
+        uint32_t next = currentAnimation;
         if (!animQueue.empty()) {
           next = animQueue.front();
           animQueue.pop_front();
@@ -85,7 +85,7 @@ struct Sprite {
     }
   }
  
-  void StartAnim(size_t anim) {
+  void StartAnim(uint32_t anim) {
     this->animQueue.clear();
     
     if (anim >= this->animations.size()) return;
@@ -95,7 +95,7 @@ struct Sprite {
     this->currentFrame = t;
   }
   
-  void QueueAnim(size_t anim) {
+  void QueueAnim(uint32_t anim) {
     if (anim >= this->animations.size()) {
       return;
     }

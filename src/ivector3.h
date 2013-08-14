@@ -6,10 +6,10 @@
 #include "vector3.h"
 
 struct IVector3 {
-  size_t x,y,z;
+  uint32_t x,y,z;
 
   IVector3() : x(0), y(0), z(0) {}
-  IVector3(size_t x, size_t y, size_t z) : x(x), y(y), z(z) {}
+  IVector3(uint32_t x, uint32_t y, uint32_t z) : x(x), y(y), z(z) {}
   IVector3(const Vector3 &v) : x(v.x), y(v.y), z(v.z) {}
   
   IVector3 operator+(const IVector3 &o) const {
@@ -62,9 +62,9 @@ struct IVector3 {
   }
   
   void For(std::function<void (const IVector3 &)> func) const {
-    for (size_t z = 0; z<this->z; z++) {
-      for (size_t y = 0; y<this->y; y++) {
-        for (size_t x = 0; x<this->x; x++) {
+    for (uint32_t z = 0; z<this->z; z++) {
+      for (uint32_t y = 0; y<this->y; y++) {
+        for (uint32_t x = 0; x<this->x; x++) {
           func(IVector3(x,y,z));
         }
       }

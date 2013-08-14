@@ -57,7 +57,7 @@ private:
   uint32_t nextEntityId;
   uint32_t GetNextEntityId() { return nextEntityId++; }
   
-  std::unordered_map<size_t, Entity*> entities;
+  std::unordered_map<uint32_t, Entity*> entities;
   Player *player;
 
   bool showInventory;

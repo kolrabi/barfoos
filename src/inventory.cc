@@ -255,7 +255,7 @@ Inventory::ModifyStats(Stats &stats) const {
 }
 
 Serializer &operator << (Serializer &ser, const Inventory &inventory) {
-  size_t count = 0;
+  uint32_t count = 0;
   for (auto item : inventory.inventory) {
     if (item.second) count ++;
   }
@@ -270,7 +270,7 @@ Serializer &operator << (Serializer &ser, const Inventory &inventory) {
 Deserializer &operator >> (Deserializer &deser, Inventory &inventory) {
   inventory.inventory.clear();
   
-  size_t count;
+  uint32_t count;
   deser >> count;
   
   for (size_t i = 0; i<count; i++) {

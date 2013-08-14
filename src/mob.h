@@ -15,8 +15,8 @@ public:
   
   Mob &operator=(const Mob &that) = delete;
 
-  virtual void Start(RunningState &state, size_t id) override;
-  virtual void Continue(RunningState &state, size_t id) override;
+  virtual void Start(RunningState &state, uint32_t id) override;
+  virtual void Continue(RunningState &state, uint32_t id) override;
   virtual void Update(RunningState &state) override;
   virtual void Think(RunningState &state) override;
   
@@ -47,7 +47,7 @@ protected:
   Vector3 moveTarget;
   bool validMoveTarget;
   
-  size_t attackTarget;
+  uint32_t attackTarget;
   float nextAttackT;
   std::shared_ptr<Item> attackItem;
 

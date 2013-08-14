@@ -28,7 +28,7 @@ ItemEntity::ItemEntity(Deserializer &deser) :
 ItemEntity::~ItemEntity() {
 }
 
-void ItemEntity::Start(RunningState &state, size_t id) {
+void ItemEntity::Start(RunningState &state, uint32_t id) {
   Mob::Start(state, id);
   this->startT += state.GetRandom().Float() * Const::pi * 2;
 }

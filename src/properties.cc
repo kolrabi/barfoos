@@ -47,7 +47,7 @@ Properties::Parse(int &i) {
 }
 
 void 
-Properties::Parse(size_t &i) {
+Properties::Parse(uint32_t &i) {
   if (tokens.empty()) {
     this->SetError("unexpected end of line, expecting uint");
     return;
@@ -172,7 +172,7 @@ Properties::SetError(const std::string &error) {
 }
 
 void
-Properties::ParseSideMask(size_t &sides) {
+Properties::ParseSideMask(uint32_t &sides) {
   if (tokens.empty()) {
     this->SetError("unexpected end of line, expecting string");
     return;
