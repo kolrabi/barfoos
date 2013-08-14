@@ -1,21 +1,20 @@
 Class       entity
-Name chest
+Name        chest
 
-tex chest
+Tex         chest
+Box
 
-anim 0 1 1
+Extents     0.5 0.4 0.4
+Solid
 
-step 0
-mass 0
-move 0
-speed 0
-health 5
+Step        0
+Mass        0
+Move        0
+Speed       0
+Health      5
 
-extents 0.5 0.4 0.4
-solid
-box
-
-# DrawBox chest  0.0 1.0 0.0  0.1 0.1 0.1
+OpenInventory
+LockedChance 0.3
 
 inventory 0.5 torch
 inventory 0.5 torch
@@ -28,5 +27,4 @@ inventory 1.0 potion.heal
 inventory 1.0 potion.poison
 inventory 1.0 potion.poison
 inventory 1.0 potion.water
-
 

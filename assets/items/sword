@@ -16,6 +16,9 @@ IdentifiedName   "Iron Sword"
 # OnUseSpawnProjectile projectile.test
 # CanUseNothing
 CanUseEntity
+CanUseCell
 
 Effect  0.9 ""
 Effect  0.1 "strength"
+
+BreakBlockStrength 0.1

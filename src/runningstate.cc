@@ -25,6 +25,7 @@ RunningState::RunningState(Game &game) :
   showInventory(false),
   lastSaveT(0.0),
   nextTriggerId(1),
+  nextLockId(1),
   saving(false)
 {
   Log("+RunningState() %p %p %p %p\n", this, &GetRandom(), &game, &GetGame());
@@ -125,17 +126,23 @@ RunningState::Update() {
   PROFILE();
 
   // show or hide inventory
-  if (GetGame().GetInput().IsKeyActive(InputKey::Inventory)) {
+  if (GetGame().GetInput().IsKeyDown(InputKey::Inventory)) {
     if (!this->showInventory) {
       size_t ent = this->player->GetSelectedEntity();
-      if (ent == ~0UL /*|| !entities[ent]->GetProperties()->CanOpenInventory() TODO */) {
+      if (ent == ~0UL || !entities[ent]->GetProperties()->openInventory) {
         GetGame().SetGui(std::shared_ptr<Gui>(new InventoryGui(*this, *player)));
+        this->showInventory = true;
       } else {
-        GetGame().SetGui(std::shared_ptr<Gui>(new InventoryGui(*this, *player, *entities[ent])));
+        if (entities[ent]->GetLockedID()) {
+          // TODO: player message: "locked!"
+          Log("it's locked!\n");
+        } else {
+          GetGame().SetGui(std::shared_ptr<Gui>(new InventoryGui(*this, *player, *entities[ent])));
+          this->showInventory = true;
+        }
       }
     }
-    this->showInventory = true;
-  } else {
+  } else if (GetGame().GetInput().IsKeyUp(InputKey::Inventory)) {
     if (this->showInventory) {
       GetGame().SetGui(nullptr);
     }
@@ -173,8 +180,8 @@ RunningState::Update() {
   }
 
   // update all entities
-  {
-    PROFILE_NAMED("update"); 
+  { 
+    PROFILE_NAMED("Entity Update"); 
     for (auto entity : this->entities) {
       entity.second->Update(*this); 
     }
@@ -182,11 +189,10 @@ RunningState::Update() {
   
   // remove removable entities
   {
-    PROFILE_NAMED("remove"); 
+    PROFILE_NAMED("Remove Entities"); 
     auto entityIter = this->entities.begin();
     while(entityIter != this->entities.end()) {
       if (!entityIter->second || entityIter->second->IsRemovable()) {
-//        Log("removing %s\n", entityIter->second->GetProperties()->name.c_str());
         delete entityIter->second;
         entityIter = this->entities.erase(entityIter);
       } else {
@@ -195,11 +201,6 @@ RunningState::Update() {
     }
   }
   
-/*  if (GetGame().GetTime() > this->lastSaveT + 5.0) {
-    this->lastSaveT += 5.0;
-    Save();
-  }
-  */
   return this;
 }
 
@@ -487,8 +488,25 @@ RunningState::SpawnInAABB(
   return AddEntity(entity);
 }
 
+void RunningState::LockCell(Cell &cell) {
+  uint32_t id = nextLockId ++;
+  cell.Lock(id);
+  // TODO:
+  //if (GetRandom().Chance(0.8)) {
+  //  drop key item somewhere
+  //}
+}
+
+void RunningState::LockEntity(Entity &entity) {
+  uint32_t id = nextLockId ++;
+  entity.Lock(id);
+  // TODO:
+  //if (GetRandom().Chance(0.8)) {
+  //  drop key item somewhere
+  //}
+}
+
 void RunningState::TriggerOn(size_t id) {
-  Log("Trigger on: %u\n", id);
   for (auto &entity : this->entities) {
     if (entity.second->GetTriggerId() == id) entity.second->TriggerOn();
   }
@@ -496,7 +514,6 @@ void RunningState::TriggerOn(size_t id) {
 }
 
 void RunningState::TriggerOff(size_t id) {
-  Log("Trigger off: %u\n", id);
   for (auto &entity : this->entities) {
     if (entity.second->GetTriggerId() == id) entity.second->TriggerOff();
   }
@@ -570,6 +587,7 @@ Serializer &operator << (Serializer &ser, const RunningState &state) {
   ser << state.level;
   ser << state.nextEntityId;
   ser << state.nextTriggerId;
+  ser << state.nextLockId;
   return ser;
 }
 
@@ -595,5 +613,6 @@ Deserializer &operator >> (Deserializer &deser, RunningState &state) {
   deser >> state.level; 
   deser >> state.nextEntityId;
   deser >> state.nextTriggerId;
+  deser >> state.nextLockId;
   return deser;
 }

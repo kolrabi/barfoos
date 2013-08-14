@@ -269,6 +269,7 @@ void Feature::ReplaceChars(RunningState &state, World &world, const IVector3 &po
       this->ReplaceChars(r, repchars);
     }
   }
+  
   for (size_t z=0; z<size.z; z++) {
     for (size_t y=0; y<size.y; y++) {
       for (size_t x=0; x<size.x; x++) { 
@@ -292,6 +293,17 @@ void Feature::ReplaceChars(RunningState &state, World &world, const IVector3 &po
         cell.SetIgnoreLock(true);
         cell.SetIgnoreWrite(def.ignoreWrite);
         world.SetCell(pos+IVector3(x,y,z), cell).SetFeatureID(featureId);
+      }
+    }
+  }
+  
+  for (size_t z=0; z<size.z; z++) {
+    for (size_t y=0; y<size.y; y++) {
+      for (size_t x=0; x<size.x; x++) { 
+        Cell &cell = world.GetCell(pos+IVector3(x,y,z));
+        if (cell.GetInfo().lockedChance && state.GetRandom().Chance(cell.GetInfo().lockedChance)) {
+          state.LockCell(cell);
+        }
       }
     }
   }

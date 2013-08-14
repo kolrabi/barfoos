@@ -50,7 +50,7 @@ public:
   }
   
   bool Chance(float p) {
-    return Float() <= p;
+    return Float01() <= p;
   }
   
   std::mt19937 &GetGen() { return gen; }

@@ -84,6 +84,7 @@ struct EntityProperties : public Properties {
   bool    onCollideUseCell  = false;
   bool    swim              = false;
   bool    flipLeft          = false;
+  bool    openInventory     = false;
   float   jumpSpeed         = 8.0;
   float   attackInterval    = 0.0;
   float   aggroRangeNear    = 0.0;
@@ -93,6 +94,7 @@ struct EntityProperties : public Properties {
   float   attackForwardStep = 0.0;
   float   attackJump        = 0.0;
   float   exp               = 0.0;
+  float   lockedChance      = 0.0;
 
   size_t  onDieExplodeRadius = 0;
   float   onDieExplodeStrength = 0.0;
@@ -193,7 +195,7 @@ public:
   const Vector3             GetEyePosition()                  const { return this->GetPosition() + Vector3(0,this->properties->eyeOffset,0); }
   const Vector3             GetSmoothEyePosition()            const { return this->GetSmoothPosition() + Vector3(0,this->properties->eyeOffset,0); }
   
-  void Teleport(RunningState &state, const Vector3 &target);
+  void                      Teleport(RunningState &state, const Vector3 &target);
   
   void                      SetAngles(const Vector3 &angles)        { this->angles = angles; }
   const Vector3 &           GetAngles()                       const { return this->angles; }
@@ -208,6 +210,10 @@ public:
   bool                      CanSee(RunningState &state, const Vector3 &pos);
   
   void                      AddBuff(RunningState &state, const std::string &name);
+  void                      Lock(uint32_t id)                       { this->lockedID = id; }
+  void                      Unlock()                                { this->lockedID = 0; }
+  uint32_t                  GetLockedID()                     const { return this->lockedID; }
+  bool                      CanOpenInventory()                const { return this->properties->openInventory && this->lockedID == 0; }
   
   // rendering
   virtual IColor            GetLight()                        const { return this->properties->glow + inventory.GetLight(); }
@@ -245,6 +251,7 @@ protected:
   Cell *lastCell;
   IVector3 cellPos;
   Inventory inventory;
+  uint32_t lockedID;
   
   // rendering
   Sprite sprite;

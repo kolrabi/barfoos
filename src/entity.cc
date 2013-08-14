@@ -77,6 +77,7 @@ EntityProperties::ParseProperty(const std::string &cmd) {
   else if (cmd == "swim")             this->swim = true;
   else if (cmd == "flipleft")         this->flipLeft = true;
   else if (cmd == "bubble")           this->createBubbles   = true;
+  else if (cmd == "openinventory")    this->openInventory   = true;
 
   else if (cmd == "level") {
     Parse(this->minLevel);
@@ -91,6 +92,7 @@ EntityProperties::ParseProperty(const std::string &cmd) {
   else if (cmd == "health")           Parse(this->maxHealth);
   else if (cmd == "lifetime")         Parse(this->lifetime);
   else if (cmd == "lifetimerand")     Parse(this->lifetimeRand);
+  else if (cmd == "lockedchance")     Parse(this->lockedChance);
   else if (cmd == "extents") {
     Parse(this->extents);
     this->sprite.width = this->extents.x;
@@ -211,8 +213,6 @@ Entity *Entity::Create(const std::string &type) {
   //if (allEntities.find(type) == allEntities.end()) return nullptr;
   const EntityProperties &prop = allEntities[type];
   
-  Log("creating %s: %c\n", type.c_str(), prop.klass);
-  
   Entity *entity;
   switch(prop.klass) {
     case SpawnClass::EntityClass:     entity = new Entity(type); break;
@@ -260,6 +260,7 @@ Entity::Entity(const std::string &type) :
   lastCell(nullptr),
   cellPos(),
   inventory(),
+  lockedID(0),
   sprite(this->properties->sprite),
   drawAABB(false),
   cellLight(0,0,0),
@@ -280,6 +281,7 @@ Entity::Entity(const std::string &type, Deserializer &deser) : Entity(type) {
   
   deser >> health;
   deser >> inventory;
+  deser >> lockedID;
   //deser >> sprite;
 }
 
@@ -349,6 +351,8 @@ Entity::Start(RunningState &state, size_t id) {
     }
   }
   this->SetPosition(aabb.center + offset);
+  
+  if (this->properties->lockedChance && state.GetRandom().Chance(this->properties->lockedChance)) state.LockEntity(*this);
 }
 
 void
@@ -634,6 +638,7 @@ Entity::Serialize(Serializer &ser) const {
   
   ser << health;
   ser << inventory;
+  ser << lockedID;
   //ser << sprite;
 }
 

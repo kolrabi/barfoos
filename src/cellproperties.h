@@ -120,6 +120,8 @@ struct CellProperties : public Properties {
 
   std::unordered_map<std::string, std::string> onFlowOntoReplaceTarget;
   std::unordered_map<std::string, std::string> onFlowOntoReplaceSelf;
+  
+  float lockedChance;
 
   CellProperties(); 
   

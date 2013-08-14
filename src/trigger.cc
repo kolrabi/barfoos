@@ -29,14 +29,12 @@ void Triggerable::TriggerOn() {
   } else {
     triggered = true;
   }
-  Log("TriggerOn: %u is now %s\n", triggerID, triggered ? "on" : "off");
 }
 
 void Triggerable::TriggerOff() {
   if (!isToggle) {
     triggered = false;
   }
-  Log("TriggerOff: %u is now %s\n", triggerID, triggered ? "on" : "off");
 }
 
 Serializer &operator << (Serializer &ser, const Triggerable &trig) {

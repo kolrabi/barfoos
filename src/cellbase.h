@@ -16,6 +16,10 @@ public:
   
   void SetSpawnOnActive(const std::string &mob, Side side, float rate);
   
+  void Lock(uint32_t id);
+  void Unlock();
+  uint32_t GetLockedID() const;
+  
 protected:
 
   CellBase(const std::string &type);
@@ -38,7 +42,7 @@ protected:
   
   bool isTrigger;
   uint32_t triggerTargetId;
- 
+  
   static const int OffsetScale = 127;
 
   // shared information, that will stay the same after assignment from different cell
@@ -61,6 +65,8 @@ protected:
     uint32_t detail;
     float smoothDetail;
 
+    uint32_t lockedID;
+
     SharedInfo(const CellProperties *info) :
       tickInterval( info->flags & CellFlags::Viscous ? 32 : 5 ),
       isLocked(false),
@@ -74,7 +80,8 @@ protected:
       u { 0,0,0,0 },
       v { 0,0,0,0 },
       detail( info->flags & CellFlags::Liquid ? 15 : 0 ),
-      smoothDetail( detail )
+      smoothDetail( detail ),
+      lockedID(0)
     { }
   } shared;
 
@@ -105,6 +112,10 @@ inline void CellBase::SetSpawnOnActive(const std::string &mob, Side side, float 
   this->spawnOnActiveMob = mob;
   this->spawnOnActiveSide = side;
   this->spawnOnActiveRate = rate;
+}
+
+inline uint32_t CellBase::GetLockedID() const {
+  return this->shared.lockedID;
 }
 
 

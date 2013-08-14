@@ -78,6 +78,7 @@ struct ItemProperties : public Properties {
   weighted_map<std::string> effects = weighted_map<std::string>();
   bool stackable = false;
  
+  float unlockChance = 0.0;
   virtual void ParseProperty(const std::string &name) override;
 };
 
@@ -177,7 +178,8 @@ protected:
 
   bool identified;
   
-  size_t amount;
+  uint32_t amount;
+  uint32_t unlockID;
   
   friend Serializer &operator << (Serializer &ser, const Item &item);
   friend Deserializer &operator >> (Deserializer &ser, Item *&item);

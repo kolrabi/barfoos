@@ -12,10 +12,11 @@ Projectile::Projectile(const std::string &type, Deserializer &deser) : Mob(type,
 }
 
 void Projectile::Start(RunningState &state, size_t id) {
+  Log("Projectile::Start()\n");
   Mob::Start(state, id);
   
-  Vector3 fwd   = (GetAngles()).EulerToVector();
-  this->SetPosition(state.GetWorld().MoveAABB(this->aabb, this->GetPosition() + fwd));
+  Vector3 fwd   = GetForward();
+  // this->SetPosition(state.GetWorld().MoveAABB(this->aabb, this->GetPosition() + fwd));
   this->AddVelocity(fwd * this->properties->maxSpeed);
 }
 

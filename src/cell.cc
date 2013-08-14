@@ -4,6 +4,7 @@
 #include "gfx.h"
 #include "runningstate.h"
 #include "mob.h"
+#include "projectile.h"
 
 #include "random.h"
 #include "vertex.h"
@@ -34,6 +35,28 @@ CellBase::CellBase(const std::string &type) :
 {
   for (size_t i=0; i<6; i++)
     this->neighbours[i] = nullptr;
+}
+
+void CellBase::Lock(uint32_t id) {
+  if (this->shared.lockedID == id) return;
+  
+  this->shared.lockedID = id;
+  
+  for (int i=0; i<6; i++) {
+    if (info->onUseCascade & (1<<i) && this->neighbours[i]->info == info) 
+      this->neighbours[i]->Lock(id);
+  }
+}
+
+void CellBase::Unlock() {
+  if (this->shared.lockedID == 0) return;
+  
+  this->shared.lockedID = 0;
+  
+  for (int i=0; i<6; i++) {
+    if (info->onUseCascade & (1<<i) && this->neighbours[i]->info == info) 
+      this->neighbours[i]->Unlock();
+  }
 }
 
 // -------------------------------------------------------------------------
@@ -160,10 +183,12 @@ Cell::Update(
   if (spawnOnActiveMob != "" && IsTriggered()) {
     if (this->lastT > this->nextActivationT) {
       Vector3 v(spawnOnActiveSide);
+      Log("spawning projectile\n");
       Entity *entity = state.GetEntity(state.SpawnInAABB(spawnOnActiveMob, self[spawnOnActiveSide].GetAABB()));
-      Mob *mob = dynamic_cast<Mob*>(entity);
-      if (mob) {
-        mob->AddVelocity(v*mob->GetProperties()->maxSpeed);
+      Projectile *proj = dynamic_cast<Projectile*>(entity);
+      if (proj) {
+        Log("adding velocity\n");
+        proj->SetVelocity(v * proj->GetProperties()->maxSpeed);
       }
       
       this->nextActivationT = this->lastT + spawnOnActiveRate;
@@ -205,6 +230,12 @@ void Cell::OnUse(RunningState &state, Mob &user, bool force) {
   if (!force && !state.GetRandom().Chance(this->info->useChance)) return;
 
   this->lastUseT = state.GetGame().GetTime();
+  
+  if (this->shared.lockedID) {
+    // TODO: player message: "locked!"
+    Log("it's locked!\n");
+    return;
+  }
 
   const CellProperties *info = this->info;
   if (info->flags & CellFlags::OnUseReplace) {
@@ -722,6 +753,7 @@ Serializer &operator << (Serializer &ser, const Cell &cell) {
   
   ser << cell.shared.detail << cell.shared.smoothDetail;
   ser << cell.teleport << cell.teleportTarget;
+  ser << cell.shared.lockedID;
   return ser;
 }
 
@@ -760,5 +792,7 @@ Deserializer &operator >> (Deserializer &deser, Cell &cell) {
   
   deser >> cell.shared.detail >> cell.shared.smoothDetail;
   deser >> cell.teleport >> cell.teleportTarget;
+  deser >> cell.shared.lockedID;
+  
   return deser;
 }

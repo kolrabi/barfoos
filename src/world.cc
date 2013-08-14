@@ -260,8 +260,8 @@ World::Build() {
     
     if (distance > 5) { i--; continue; }
     
-    Cell &trigger = SetCell(a, Cell("rock"));
-    Cell &spawner = SetCell(aboveCell->GetPosition(), Cell("dirt"));
+    Cell &trigger = GetCell(a);
+    Cell &spawner = SetCell(aboveCell->GetPosition(), Cell("shooter"));
     // TODO: get entity from group "trap"
     spawner.SetSpawnOnActive("projectile.bfw9k", -side, 0.0);
     
@@ -977,9 +977,11 @@ World::IsDefault(const IVector3 &pos) {
 
 void
 World::BreakBlock(const IVector3 &pos) {
-  if (this->GetCell(pos).GetInfo().type == "air") return;
+  const CellProperties &info = this->GetCell(pos).GetInfo();
   
-  std::string particleType = this->GetCell(pos).GetInfo().breakParticle;
+  if (info.type == "air") return;
+
+  std::string particleType = info.breakParticle;
   AABB aabb = this->SetCell(pos, Cell("air")).GetAABB();
   
   if (particleType != "") {
@@ -987,6 +989,11 @@ World::BreakBlock(const IVector3 &pos) {
     for (size_t i=0; i<4; i++) {
       state.SpawnInAABB(particleType, aabb, random.Vector()*10);
     }
+  }
+  
+  for (int i=0; i<6; i++) {
+    if (info.onUseCascade & (1<<i) && this->GetCell(pos[(Side)i]).GetInfo() == info) 
+      BreakBlock(pos[(Side)i]);
   }
 }
 

@@ -39,10 +39,11 @@ CellProperties::CellProperties() :
   clipSidesOut(0),
   onUseCascade(0),
   useDelay(0.0),
-  breakStrength(1.0),
+  breakStrength(-1.0),
   lavaDamage(0.0),
   useChance(1.0),
-  breakParticle("particle.rock")
+  breakParticle("particle.rock"),
+  lockedChance(0.0)
 {}
 
 void CellProperties::ParseProperty(const std::string &cmd) {
@@ -99,6 +100,7 @@ void CellProperties::ParseProperty(const std::string &cmd) {
     this->onFlowOntoReplaceTarget[from] = to;
     this->onFlowOntoReplaceSelf[from] = own;
   }
+  else if (cmd == "lockedchance") Parse(this->lockedChance);
   else SetError("Ignoring '" + cmd + "'\n");
 }
 

@@ -39,6 +39,8 @@ public:
   
   void                  Explosion(Entity &entity, const Vector3 &pos, size_t radius, float strength, float damage, Element element);
   size_t                SpawnInAABB(const std::string &type, const AABB &aabb, const Vector3 &velocity = Vector3());
+  void                  LockCell(Cell &cell);
+  void                  LockEntity(Entity &entity);
   
   void                  TriggerOn(size_t id);
   void                  TriggerOff(size_t id);
@@ -52,8 +54,8 @@ private:
   int32_t level;
   World *world;
   
-  size_t nextEntityId;
-  size_t GetNextEntityId() { return nextEntityId++; }
+  uint32_t nextEntityId;
+  uint32_t GetNextEntityId() { return nextEntityId++; }
   
   std::unordered_map<size_t, Entity*> entities;
   Player *player;
@@ -61,7 +63,9 @@ private:
   bool showInventory;
   
   float lastSaveT;
-  size_t nextTriggerId;
+  uint32_t nextTriggerId;
+  
+  uint32_t nextLockId;
   
   std::vector<const Entity*> FindLightEntities(const Vector3 &pos, float radius) const;
   void BuildWorld();

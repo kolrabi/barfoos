@@ -26,6 +26,7 @@ public:
   void ApplyForce(RunningState &state, const Vector3 &f);
   void AddImpulse(const Vector3 &v)  { velocity = velocity + v / this->properties->mass; }
   void AddVelocity(const Vector3 &v) { velocity = velocity + v; }
+  void SetVelocity(const Vector3 &v) { velocity = v; }
   const Vector3 &GetVelocity() const { return velocity; }
 
   virtual void              Serialize(Serializer &ser)        const;
