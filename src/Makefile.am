@@ -18,8 +18,8 @@ endif
 
 bin_PROGRAMS=barfoos
 
-barfoos_CXXFLAGS=$(CF) --std=c++0x
-barfoos_CFLAGS=$(CF) --std=c99 
+barfoos_CXXFLAGS=$(CF) -std=c++11
+barfoos_CFLAGS=$(CF) -std=c99 
 barfoos_LDADD=
 barfoos_LDFLAGS=$(LDWINFLAGS)
 barfoos_SOURCES=\
