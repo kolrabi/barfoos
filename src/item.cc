@@ -4,6 +4,7 @@
 #include "mob.h"
 #include "runningstate.h"
 #include "gfx.h"
+#include "gfxview.h"
 #include "projectile.h"
 #include "texture.h"
 #include "text.h"
@@ -189,6 +190,8 @@ ItemProperties::ParseProperty(const std::string &cmd) {
     
     this->effects[name] = w;
     
+  } else if (cmd == "unlockchance") {
+    Parse(this->unlockChance);
   } else if (cmd != "") {
     this->SetError("ignoring '" + cmd + "'");
   }
@@ -229,7 +232,8 @@ Item::Item(const std::string &type) :
   beatitude(Beatitude::Normal),
   modifier(0),
   identified(false),
-  amount(1)
+  amount(1),
+  unlockID(0)
 {
   if (!this->sprite.animations.empty()) this->sprite.StartAnim(0);
 }
@@ -301,6 +305,8 @@ void Item::Update(RunningState &state) {
   // when broken, replace or remove
   if (this->durability <= 0 && this->properties->durability != 0.0) {
     std::string replacement = this->properties->replacement;
+    // TODO: message: your x broke
+    Log("Your %s broke...\n", this->GetDisplayName().c_str());
     if (replacement != "") {
       this->ReplaceWith(replacement);
       return;
@@ -324,10 +330,16 @@ void Item::UseOnEntity(RunningState &state, Mob &user, size_t id) {
       return;
     }
     
-    Mob *mob = dynamic_cast<Mob*>(entity);
-    if (mob) {
-      mob->AddImpulse(user.GetForward() * this->GetKnockback());
+    uint32_t entityLock = entity->GetLockedID();
+    if (entityLock && this->properties->unlockChance > 0.0 && (this->unlockID == entityLock || this->unlockID == 0) && state.GetRandom().Chance(this->properties->unlockChance)) {
+      entity->Unlock();
+      this->isRemovable = true;
+      // TODO: message "unlocked!"
+      Log("unlocked!\n");
     }
+    
+    Mob *mob = dynamic_cast<Mob*>(entity);
+    if (mob) mob->AddImpulse(user.GetForward() * this->GetKnockback());
 
     // replace item
     auto iter = entity->GetProperties()->onUseItemReplace.find(this->properties->name);
@@ -349,16 +361,7 @@ void Item::UseOnEntity(RunningState &state, Mob &user, size_t id) {
       iter2 = entity->GetProperties()->onUseEntityReplace.find("*");
       
     if (iter2 != entity->GetProperties()->onUseEntityReplace.end()) {
-      SpawnClass klass = iter2->second.first;
-      std::string type = iter2->second.second;
-      
-      Entity *entity2 = nullptr;
-      switch(klass) {
-        case SpawnClass::MobClass:        entity2 = new Mob(type); break;
-        case SpawnClass::EntityClass:     entity2 = new Entity(type); break;
-        case SpawnClass::ItemEntityClass: entity2 = new ItemEntity(type); break;
-        default: break;
-      }
+      Entity *entity2 = Entity::Create(iter2->second);
       if (entity2) {
         entity2->SetPosition(entity->GetPosition());
         state.AddEntity(entity2);
@@ -376,9 +379,18 @@ void Item::UseOnCell(RunningState &state, Mob &user, Cell *cell, Side) {
   if (!this->CanUse(state)) return;
   
   if (this->properties->canUseCell) {
+    uint32_t cellLock = cell->GetLockedID();
+    if (cellLock && this->properties->unlockChance > 0.0 && (this->unlockID == cellLock || this->unlockID == 0) && state.GetRandom().Chance(this->properties->unlockChance)) {
+      cell->Unlock();
+      this->isRemovable = true;
+      // TODO: message "unlocked!"
+      Log("unlocked!\n");
+    }
+    
     if (this->GetBreakBlockStrength() && state.GetRandom().Chance(this->properties->breakBlockStrength / cell->GetInfo().breakStrength)) {
       cell->GetWorld()->BreakBlock(cell->GetPosition());
     }
+    
     this->StartCooldown(state, user);
   } else {
     this->UseOnNothing(state, user);

@@ -1,5 +1,8 @@
 #include "text.h"
+
 #include "gfx.h"
+#include "gfxview.h"
+
 #include "vertex.h"
 #include "texture.h"
 

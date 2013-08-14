@@ -19,15 +19,14 @@ FeatureSpawn::FeatureSpawn() :
   pos(0,0,0)
 {}
 
-
 static std::unordered_map<std::string, Feature> allFeatures;
 
 const Feature *getFeature(const std::string &name) {
-  if (allFeatures.find(name) == allFeatures.end()) {
-    Log("Feature of type '%s' not found\n", name.c_str());
-    return nullptr;
+  for (auto &f:allFeatures) {
+    if (f.first == name) return &f.second;
   }
-  return &allFeatures[name];
+  Log("Feature of type '%s' not found\n", name.c_str());
+  return nullptr;
 }
 
 Feature::Feature() :
@@ -44,7 +43,8 @@ Feature::Feature() :
   minLevel(0),
   maxLevel(0),
   maxProbability(0.0),
-  minY(0)
+  minY(0),
+  useLastId(false)
 {}
 
 Feature::Feature(FILE *f, const std::string &name) :
@@ -61,7 +61,8 @@ Feature::Feature(FILE *f, const std::string &name) :
   minLevel(0),
   maxLevel(-1),
   maxProbability(1.0),
-  minY(0)
+  minY(0),
+  useLastId(false)
 {
   char line[256];
   char lastDef = 0;
@@ -267,6 +268,7 @@ void Feature::ReplaceChars(RunningState &state, World &world, const IVector3 &po
       this->ReplaceChars(r, repchars);
     }
   }
+  
   for (size_t z=0; z<size.z; z++) {
     for (size_t y=0; y<size.y; y++) {
       for (size_t x=0; x<size.x; x++) { 
@@ -293,6 +295,18 @@ void Feature::ReplaceChars(RunningState &state, World &world, const IVector3 &po
       }
     }
   }
+  
+  if (featureId > 1)
+  for (size_t z=0; z<size.z; z++) {
+    for (size_t y=0; y<size.y; y++) {
+      for (size_t x=0; x<size.x; x++) { 
+        Cell &cell = world.GetCell(pos+IVector3(x,y,z));
+        if (cell.GetInfo().lockedChance && state.GetRandom().Chance(cell.GetInfo().lockedChance)) {
+          state.LockCell(cell);
+        }
+      }
+    }
+  }
 }
 
 void Feature::ReplaceChars(const FeatureReplacement &r, std::vector<char> &chars) const {
@@ -315,13 +329,8 @@ void Feature::SpawnEntities(RunningState &state, const IVector3 &pos) const {
         if (type.size() == 0) continue;
         type = types.select(state.GetRandom().Float01());
       }
-
-      switch(spawn.spawnClass) {
-        case SpawnClass::MobClass:        entity = new Mob(type); break;
-        case SpawnClass::EntityClass:     entity = new Entity(type); break;
-        case SpawnClass::ItemEntityClass: entity = new ItemEntity(type); break;
-        default: continue;
-      }
+      
+      entity = Entity::Create(type);
       
       Vector3 spawnPos = Vector3(pos)+spawn.pos;
       if (spawn.attach) {
@@ -403,7 +412,12 @@ const Feature *FeatureConnection::GetRandomFeature(RunningState &state, const IV
     wm[f] = w;
   }
   
-  return wm.select(state.GetRandom().Float01());
+  const Feature *feature = wm.select(state.GetRandom().Float01());
+  if (!feature) return nullptr;
+  
+  size_t variant = state.GetRandom().Integer(4);
+  if (variant >= feature->variants.size()) return feature;
+  return &feature->variants[variant];
 }
 
 const FeatureConnection *
@@ -432,6 +446,62 @@ Feature::ResolveConnections() {
   for (FeatureConnection &conn : conns) {
     conn.Resolve();
   }
+  
+  for (auto &v:variants) {
+    v.ResolveConnections();
+  }
+}
+
+Feature
+Feature::Rotate() {
+  Feature feature = *this;
+  feature.size = IVector3(size.z, size.y, size.x);
+  for (size_t y=0; y<size.y; y++) {
+    for (size_t x=0; x<size.x; x++) {
+      for (size_t z=0; z<size.z; z++) {
+        IVector3 from(x,y,z);
+        IVector3 to(from.Rotate(size));
+        size_t fromIndex = from.x+        size.x*(y+        size.y*from.z);
+        size_t toIndex   = to.x  +feature.size.x*(y+feature.size.y*to.z);
+        feature.cells[toIndex] = cells[fromIndex];
+        feature.cells[toIndex].Rotate();
+        feature.defaultMask[toIndex] = defaultMask[fromIndex];
+        feature.chars[toIndex] = chars[fromIndex];
+      }
+    }
+  }
+  
+  for (auto &conn:feature.conns) {
+    conn.pos = conn.pos.Rotate(size);
+    switch(conn.dir) {
+      case  1: conn.dir =  3; break;
+      case -1: conn.dir = -3; break;
+      case  3: conn.dir = -1; break;
+      case -3: conn.dir =  1; break;
+      default: break;
+    }
+  }
+  
+  for (auto &spawn:feature.spawns) {
+    if (spawn.attach) {
+      spawn.pos = Vector3(size.z-spawn.pos.z-1, spawn.pos.y, spawn.pos.x);
+    } else {
+      spawn.pos = Vector3(size.z-spawn.pos.z, spawn.pos.y, spawn.pos.x);
+    }
+    
+    switch(spawn.attach) {
+      case  1: spawn.attach =  3; break;
+      case -1: spawn.attach = -3; break;
+      case  3: spawn.attach = -1; break;
+      case -3: spawn.attach =  1; break;
+      default: break;
+    }
+  }
+  
+  for (auto &def:feature.defs) {
+    def.second.Rotate();
+  }
+  return feature;
 }
 
 void
@@ -441,13 +511,17 @@ LoadFeatures() {
     FILE *f = openAsset("features/"+name);
     if (f) {
       allFeatures[name] = Feature(f, name);
+      allFeatures[name].variants.push_back(allFeatures[name].Rotate());
+      allFeatures[name].variants.push_back(allFeatures[name].variants[0].Rotate());
+      allFeatures[name].variants.push_back(allFeatures[name].variants[1].Rotate());
+      allFeatures[name].variants.push_back(allFeatures[name].variants[2].Rotate());
       fclose(f);
     }
   }
 
   for (std::pair<std::string,Feature> f : allFeatures) {
+    Log("Feature '%s'\n", f.first.c_str());
     allFeatures[f.first].ResolveConnections();
   }
-
 }
 

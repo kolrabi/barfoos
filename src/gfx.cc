@@ -2,6 +2,8 @@
 #include <GLFW/glfw3.h>
 
 #include "gfx.h"
+#include "gfxview.h"
+
 #include "game.h"
 #include "vertex.h"
 #include "shader.h"
@@ -73,7 +75,7 @@ Gfx::Gfx(const Point &pos, const Point &size, bool fullscreen) :
   quadVerts(0),
 
   activeShader(nullptr),
-  view(*this),
+  view(new GfxView(*this)),
   color(255, 255, 255),
   alpha(1.0),
   activeTextures(),
@@ -128,6 +130,8 @@ Gfx::~Gfx() {
   if (isInit) {
     this->Deinit();
   }
+  
+  delete this->view;
 }
 
 bool 
@@ -443,10 +447,10 @@ Gfx::SetTextureFrame(const Texture *texture, size_t stage, size_t currentFrame, 
   
   if (!texture) return;
   
-  this->view.textureStack.back() = Matrix4();
+  this->view->textureStack.back() = Matrix4();
   
   if (frameCount > 1) {
-    this->view.textureStack.back() = 
+    this->view->textureStack.back() = 
       Matrix4::Scale(Vector3(1.0/frameCount, 1, 1)) *
       Matrix4::Translate(Vector3(currentFrame, 0, 0));
   }
@@ -480,7 +484,7 @@ Gfx::SetUniforms() const {
   std::vector<IColor>  lightCol;
 
   for (size_t i=0; i<this->lightPositions.size(); i++) {
-//    if (this->view.IsPointVisible(this->lightPositions[i])) {
+//    if (this->view->IsPointVisible(this->lightPositions[i])) {
       lightPos.push_back(this->lightPositions[i]);
       lightCol.push_back(this->lightColors[i]);
 //    }
@@ -489,7 +493,7 @@ Gfx::SetUniforms() const {
   lightCol.resize(MaxLights, IColor(0,0,0));
   lightPos.resize(MaxLights);
   
-  this->view.SetUniforms(this->activeShader);
+  this->view->SetUniforms(this->activeShader);
   
   this->activeShader->Uniform("u_fogLin",   this->fogLin);
   this->activeShader->Uniform("u_fogColor", this->fogColor);
@@ -507,8 +511,6 @@ Gfx::SetUniforms() const {
 
 void
 Gfx::BindVertexPointer(const Vertex *ptr) {
-  //if (ptr == this->activeVertexPointer) return;
-  
   glInterleavedArrays(GL_T2F_C4F_N3F_V3F,  sizeof(Vertex), ptr);
   this->activeVertexPointer = ptr;
 }
@@ -556,24 +558,28 @@ void Gfx::DrawUnitCube() {
   this->DrawQuads(this->cubeVerts);
 }    
 
+void Gfx::DrawUnitQuad() {
+  this->DrawQuads(this->quadVerts);
+}    
+
 void Gfx::DrawAABB(const AABB &aabb) {
-  this->view.Push();
-  this->view.Translate(aabb.center);
-  this->view.Scale(aabb.extents);
+  this->view->Push();
+  this->view->Translate(aabb.center);
+  this->view->Scale(aabb.extents);
   this->DrawUnitCube();
-  this->view.Pop();
+  this->view->Pop();
 }
 
 void Gfx::DrawSprite(const Sprite &sprite, const Vector3 &pos, bool flip, bool billboard) {
-  this->view.Push();
-  this->view.Translate(pos);
+  this->view->Push();
+  this->view->Translate(pos);
 
   if (billboard) {
-    this->view.Billboard(flip, sprite.vertical);
-    this->view.Translate(Vector3(sprite.offsetX, sprite.offsetY, 0));
+    this->view->Billboard(flip, sprite.vertical);
+    this->view->Translate(Vector3(sprite.offsetX, sprite.offsetY, 0));
   }
   
-  this->view.Scale(Vector3(sprite.width/2, sprite.height/2, 1));
+  this->view->Scale(Vector3(sprite.width/2, sprite.height/2, 1));
   SetBackfaceCulling(!flip); 
 
   if (sprite.texture) {
@@ -588,13 +594,13 @@ void Gfx::DrawSprite(const Sprite &sprite, const Vector3 &pos, bool flip, bool b
   }
   SetBackfaceCulling(true); 
 
-  this->view.Pop();
+  this->view->Pop();
 }
 
 void Gfx::DrawIcon(const Sprite &sprite, const Point &center, const Point &size) {
-  this->view.Push();
-  this->view.Translate(Vector3(center.x + sprite.offsetX*size.x, center.y + sprite.offsetY*size.y, 0));
-  this->view.Scale    (Vector3(size.x/2, -size.y/2, 1));
+  this->view->Push();
+  this->view->Translate(Vector3(center.x + sprite.offsetX*size.x, center.y + sprite.offsetY*size.y, 0));
+  this->view->Scale    (Vector3(size.x/2, -size.y/2, 1));
   if (sprite.texture) {
     this->SetTextureFrame(sprite.texture, 0, sprite.currentFrame, sprite.totalFrames);
     this->DrawQuads(this->quadVerts);
@@ -605,15 +611,15 @@ void Gfx::DrawIcon(const Sprite &sprite, const Point &center, const Point &size)
     this->DrawQuads(this->quadVerts);
     this->SetBlendNormal();
   }
-  this->view.Pop();
+  this->view->Pop();
 }
 
 void Gfx::DrawIconQuad(const Point &center, const Point &size) {
-  this->view.Push();
-  this->view.Translate(Vector3(center.x, center.y, 0));
-  this->view.Scale    (Vector3(size.x/2, -size.y/2, 1));
+  this->view->Push();
+  this->view->Translate(Vector3(center.x, center.y, 0));
+  this->view->Scale    (Vector3(size.x/2, -size.y/2, 1));
   this->DrawQuads(this->quadVerts);
-  this->view.Pop();
+  this->view->Pop();
 }
 
 void Gfx::DrawStretched(const Texture *tex, const Rect &src, const Rect &dest) {
@@ -632,28 +638,6 @@ void Gfx::DrawStretched(const Texture *tex, const Rect &src, const Rect &dest) {
   
   DrawQuads(verts);
 }
-
-/*void Gfx::DrawSubTex(const Point &pos, const Point &size, const Point &srcPos, const Texture *tex) {
-  this->SetTextureFrame(tex);
-  
-  float u = float(srcPos.x)  / float(tex->size.x);
-  float v = float(srcPos.y)  / float(tex->size.y);
-  float w = float(srcSize.x) / float(tex->size.x);
-  float h = float(srcSize.y) / float(tex->size.y);
-  
-  std::vector<Vertex> verts;
-  verts.push_back(Vertex(Vector3(pos.x,        pos.y+size.y,  0), IColor(255,255,255), u,   v,   Vector3( 0, 0, 1)));
-  verts.push_back(Vertex(Vector3(pos.x+size.x, pos.y+size.y,  0), IColor(255,255,255), u+w, v,   Vector3( 0, 0, 1)));
-  verts.push_back(Vertex(Vector3(pos.x+size.x, pos.y,         0), IColor(255,255,255), u+w, v+h, Vector3( 0, 0, 1)));
-  verts.push_back(Vertex(Vector3(pos.x,        pos.y,         0), IColor(255,255,255), u,   v+h, Vector3( 0, 0, 1)));
-  
-  DrawQuads(verts);
-}
-*/
-/*
-void Gfx::DrawNinePatch(const NinePatch &patch, const Rect &rect) {
-}
-*/
 
 Point 
 Gfx::AlignBottomLeftScreen(const Point &size, int padding) {
@@ -677,100 +661,3 @@ Gfx::AlignTopRightScreen(const Point &size, int padding) {
   const Point &ssize(this->GetVirtualScreenSize());
   return Point( ssize.x - padding - size.x/2, padding + size.y/2 );
 }
-
-
-
-// TODO: move to different file
-
-void GfxView::Look(const Vector3 &pos, const Vector3 &forward, float fovY, const Vector3 &up) {
-  float aspect = (float)gfx.viewportSize.x / (float)gfx.viewportSize.y;
-
-  this->right = forward.Cross(up);
-  
-  if (fovY > 0.0) {
-    this->projStack.back() = Matrix4::Perspective(fovY, aspect, 0.0015f, 64.0f);
-  } else {
-    this->projStack.back() = Matrix4::Ortho(fovY*aspect, -fovY*aspect, fovY, -fovY, 0.0015f, 64.0f);
-  }
-  
-  this->viewStack.back() = 
-  this->modelViewStack.back() = Matrix4::LookFrom(pos, forward, up);
-  glEnable(GL_DEPTH_TEST);
-}
-
-void GfxView::GUI() {
-  this->projStack.back() = Matrix4();
-
-  this->modelViewStack.back() = 
-    Matrix4::Scale(    Vector3(2.0/gfx.screenSize.x, -2.0/gfx.screenSize.y, 1)) *
-    Matrix4::Translate(Vector3( -gfx.screenSize.x/2, -gfx.screenSize.y/2,   0));
-    
-  if (gfx.screenSize.x > 640) {
-    this->modelViewStack.back() = this->modelViewStack.back() * Matrix4::Scale(Vector3(2,2,1));
-  }
-  this->viewStack.back() = this->modelViewStack.back();
-  glDisable(GL_DEPTH_TEST);
-}
-
-void GfxView::Push() {
-  this->projStack.push_back(this->projStack.back());
-  this->modelViewStack.push_back(this->modelViewStack.back());
-  this->viewStack.push_back(this->viewStack.back());
-  this->textureStack.push_back(this->textureStack.back());
-}
-
-void GfxView::Pop() {
-  this->projStack.pop_back();
-  this->modelViewStack.pop_back();
-  this->viewStack.pop_back();
-  this->textureStack.pop_back();
-
-  if (projStack.empty())      projStack.push_back(Matrix4());
-  if (modelViewStack.empty()) modelViewStack.push_back(Matrix4());
-  if (viewStack.empty()) viewStack.push_back(Matrix4());
-  if (textureStack.empty())   textureStack.push_back(Matrix4());
-}
-
-void GfxView::Translate(const Vector3 &p) {
-  this->modelViewStack.back() = this->modelViewStack.back() * Matrix4::Translate(p);
-}
-
-void GfxView::Scale(const Vector3 &p) {
-  this->modelViewStack.back() = this->modelViewStack.back() * Matrix4::Scale(p);
-}
-
-void GfxView::Rotate(float angle, const Vector3 &p)  {
-  this->modelViewStack.back() = this->modelViewStack.back() * Matrix4::Rotate(angle, p);
-}
-  
-void GfxView::Billboard(bool flip, bool vertical) {
-  this->modelViewStack.back()(0,0) = flip?-1:1; 
-  this->modelViewStack.back()(0,1) = 0;
-  this->modelViewStack.back()(0,2) = 0;
-
-  if (!vertical) {
-    this->modelViewStack.back()(1,0) = 0; 
-    this->modelViewStack.back()(1,1) = 1;
-    this->modelViewStack.back()(1,2) = 0;
-  }
-    
-  this->modelViewStack.back()(2,0) = 0; 
-  this->modelViewStack.back()(2,1) = 0;
-  this->modelViewStack.back()(2,2) = 1;
-}
-
-void GfxView::SetUniforms(const std::shared_ptr<Shader> &shader) const {
-  shader->Uniform("u_matProjection",    this->projStack.back());
-  shader->Uniform("u_matModelView",     this->modelViewStack.back());
-  shader->Uniform("u_matView",          this->viewStack.back());
-  shader->Uniform("u_matInvModelView",  this->modelViewStack.back().Inverse());
-  shader->Uniform("u_matTexture",       this->textureStack.back());
-  shader->Uniform("u_matNormal",        this->modelViewStack.back().Mat3().Inverse().Transpose());
-}
-
-bool GfxView::IsPointVisible(const Vector3 &p) const {
-  Matrix4 matProjView(this->projStack.back() * this->viewStack.back());
-  Vector3 p2 = matProjView*p;
-  return p2.x > -1 && p2.x < 1 && p2.y > -1 && p2.y < 1 && p2.z > -0.001;
-}
-

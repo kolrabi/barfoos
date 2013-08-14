@@ -72,7 +72,7 @@ Mob::Start(RunningState &state, size_t id) {
   if (this->properties->createBubbles) {
     this->regulars["bubble"] = Regular(0.2, [&]() {
       if (this->footCell && this->footCell->IsLiquid()) 
-        state.SpawnMobInAABB("particle.bubble", this->footCell->GetAABB());
+        state.SpawnInAABB("particle.bubble", this->footCell->GetAABB());
     });
   }
 }
@@ -88,7 +88,7 @@ Mob::Continue(RunningState &state, size_t id) {
   if (this->properties->createBubbles) {
     this->regulars["bubble"] = Regular(0.2, [&]() {
       if (this->footCell && this->footCell->IsLiquid()) 
-        state.SpawnMobInAABB("particle.bubble", this->footCell->GetAABB());
+        state.SpawnInAABB("particle.bubble", this->footCell->GetAABB());
     });
   }
 }
@@ -238,9 +238,9 @@ Mob::Update(RunningState &state) {
   }
 
   if (newGroundCell != groundCell) {
-    if (groundCell) groundCell->OnStepOff(state, *this);
+    if (groundCell && !properties->noStep) groundCell->OnStepOff(state, *this);
     groundCell = newGroundCell;
-    if (groundCell) groundCell->OnStepOn(state, *this);
+    if (groundCell && !properties->noStep) groundCell->OnStepOn(state, *this);
   }
 
   underWater = headCell->IsLiquid();

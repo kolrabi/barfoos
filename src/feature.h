@@ -111,6 +111,22 @@ struct FeatureCharDef {
     topDisplace(0.0),
     bottomDisplace(0.0)
   {}
+  
+  void Rotate() {
+    float tmp;
+    tmp = top[0];
+    top[0] = top[1];
+    top[1] = top[2];
+    top[2] = top[3];
+    top[3] = tmp;
+    tmp = bot[0];
+    bot[0] = bot[1];
+    bot[1] = bot[2];
+    bot[2] = bot[3];
+    bot[3] = tmp;
+    botRev = !botRev;
+    topRev = !topRev;
+  }
 };
 
 class Feature final {
@@ -134,8 +150,12 @@ public:
 
   void ResolveConnections();
   void ReplaceChars(RunningState &state, World &world, const IVector3 &pos, size_t connId, size_t featureId) const;
+  
+  Feature Rotate();
 
 protected:
+
+  std::vector<Feature> variants;
 
   std::map<char, FeatureCharDef> defs;
   std::vector<FeatureConnection> conns;
@@ -157,6 +177,9 @@ protected:
   bool useLastId;
   
   void ReplaceChars(const FeatureReplacement &r, std::vector<char> &chars) const;
+  
+  friend void LoadFeatures();
+  friend const Feature *FeatureConnection::GetRandomFeature(RunningState &state, const IVector3 &pos) const;
 };
 
 void LoadFeatures();

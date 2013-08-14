@@ -19,7 +19,7 @@ public:
   
   void Update(RunningState &state);
   
-  void UpdateNeighbours();
+  void UpdateNeighbours(size_t depth = 16);
   
   uint8_t GetVisibility() const;
   void SetVisibility(uint8_t visibility);
@@ -39,6 +39,8 @@ public:
   bool IsTransparent() const;
   bool IsSolid() const;
   bool IsLiquid() const;
+  bool IsDynamic() const;
+  bool IsTrigger() const;
 
   void SetWorld(World *world, const IVector3 &pos);
   World *GetWorld() const;
@@ -81,6 +83,8 @@ public:
   void OnUse(RunningState &state, Mob &user, bool force = false);
   void OnStepOn(RunningState &state, Mob &mob);
   void OnStepOff(RunningState &state, Mob &mob);
+  
+  void Rotate();
   
 protected:
 
@@ -134,6 +138,14 @@ inline bool Cell::IsSolid() const {
 
 inline bool Cell::IsLiquid() const {
   return this->info->flags & CellFlags::Liquid;
+}
+
+inline bool Cell::IsDynamic() const {
+  return this->info->flags & CellFlags::Dynamic || this->GetTriggerId() || this->IsTrigger();
+}
+
+inline bool Cell::IsTrigger() const {
+  return this->isTrigger;
 }
 
 inline const IColor &Cell::GetLightLevel() const { 

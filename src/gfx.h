@@ -6,51 +6,10 @@
 #include "2d.h"
 #include "icolor.h"
 #include "matrix4.h"
-#include "vector3.h"
 
 #include <unordered_map>
 
-class GfxView final {
-public:
-
-  void Look(const Vector3 &pos, const Vector3 &forward, float fovY = 60.0, const Vector3 &up = Vector3(0,1,0));
-  void GUI();
-  
-  void Push();
-  void Pop();
-  void Translate(const Vector3 &p);
-  void Scale(const Vector3 &p);
-  void Rotate(float angle, const Vector3 &p);
-
-  bool IsPointVisible(const Vector3 &p) const;
- 
-  const Vector3 &GetRight() const { return right; }
-
-  void Billboard(bool flip = false, bool vertical = false);
-  
-private:
-
-  Gfx &gfx;
-  
-  std::vector<Matrix4> projStack;
-  std::vector<Matrix4> viewStack;
-  std::vector<Matrix4> modelViewStack;
-  std::vector<Matrix4> textureStack;
-
-  Vector3 right;
-
-  friend class Gfx;
-  
-  GfxView(Gfx &gfx) : 
-    gfx(gfx),
-    projStack(1),
-    viewStack(1),
-    modelViewStack(1),
-    textureStack(1)
-  {}
-  
-  void SetUniforms(const std::shared_ptr<Shader> &shader) const;
-};
+class GfxView;
 
 class Gfx final {
 public:
@@ -70,7 +29,7 @@ public:
   const Point &GetScreenSize()        const { return screenSize; }
   const Point &GetVirtualScreenSize() const { return virtualScreenSize; }
   const Point &GetMousePos()          const { return mousePos; }
-  GfxView     &GetView()                    { return view; }
+  GfxView     &GetView()                    { return *view; }
   
   void IncGuiCount();
   void DecGuiCount();
@@ -99,13 +58,12 @@ public:
   void DrawQuads(unsigned int vbo, size_t first, size_t vertexCount);
   
   void DrawUnitCube();
+  void DrawUnitQuad();
   void DrawAABB(const AABB &aabb);
   void DrawSprite(const Sprite &sprite, const Vector3 &pos, bool flip = false, bool billboard = true);
   void DrawIcon(const Sprite &sprite, const Point &pos, const Point &size = Point(32, 32));
   void DrawIconQuad(const Point &pos, const Point &size = Point(32, 32));
   void DrawStretched(const Texture *tex, const Rect &src, const Rect &dest);
-//  void DrawSubTex(const Point &pos, const Point &size, const Point &srcPos, const Texture *tex);
-//  void DrawNinePatch(const NinePatch &patch, const Rect &rect);
 
   Point AlignBottomLeftScreen(const Point &size, int padding = 0);
   Point AlignBottomRightScreen(const Point &size, int padding = 0);
@@ -148,7 +106,7 @@ private:
   // render state
   std::unordered_map<std::string, std::shared_ptr<Shader>> shaders;
   std::shared_ptr<Shader> activeShader;
-  GfxView view;
+  GfxView *view;
   IColor color;
   float alpha;
   std::unordered_map<size_t, const Texture *> activeTextures;

@@ -1,0 +1,15 @@
+Tex               ring.silver
+
+Hand
+Cooldown          0.4
+
+CanUseEntity
+CanUseCell
+
+UnlockChance      0.2
+
+NoModifier
+NoBeatitude
+
+Name             "lockpick"
+

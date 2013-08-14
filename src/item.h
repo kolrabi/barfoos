@@ -78,6 +78,7 @@ struct ItemProperties : public Properties {
   weighted_map<std::string> effects = weighted_map<std::string>();
   bool stackable = false;
  
+  float unlockChance = 0.0;
   virtual void ParseProperty(const std::string &name) override;
 };
 
@@ -137,6 +138,7 @@ public:
   void IncAmount()                            { this->amount ++; }
   void AddAmount(int amt);
   void SetAmount(int amt)                     { this->amount = amt; }
+  void SetUnlockID(uint32_t id)               { this->unlockID = id; }
   
   bool IsConsumable()                   const { return this->properties->onConsumeEffect != "" || this->properties->onConsumeResult != "" || this->properties->onConsumeTeleport; }
   
@@ -177,7 +179,8 @@ protected:
 
   bool identified;
   
-  size_t amount;
+  uint32_t amount;
+  uint32_t unlockID;
   
   friend Serializer &operator << (Serializer &ser, const Item &item);
   friend Deserializer &operator >> (Deserializer &ser, Item *&item);

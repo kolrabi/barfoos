@@ -12,7 +12,7 @@ enum Axis : int {
 
 // ====================================================================
 
-enum Corner : int {
+enum Corner : int8_t {
   CornerX = 1,
   CornerY = 2,
   CornerZ = 4,
@@ -29,7 +29,7 @@ enum Corner : int {
 
 // ====================================================================
 
-enum class Side : int {
+enum class Side : int8_t {
   Right       = 0,
   Left        = 1,
   Up          = 2,
@@ -45,6 +45,15 @@ static inline Side operator-(Side side) {
 
 static inline uint8_t operator << (uint8_t n, Side side) {
   return (n << (uint8_t)side);
+}
+
+static inline Side Rotate(Side side) {
+  switch(side) {
+    case Side::Right: return Side::Backward;
+    case Side::Backward: return Side::Left;
+    case Side::Left: return Side::Forward;
+    default: return side;
+  }
 }
 
 #endif

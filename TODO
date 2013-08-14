@@ -1,8 +1,7 @@
-traps
+keys
+lockpicks
 
-locked doors/chests
-  keys
-  lockpicks
+decorations
 
 items (entities)
   rings
