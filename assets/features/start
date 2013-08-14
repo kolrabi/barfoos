@@ -32,7 +32,7 @@
 Size            9   10  9
 
 Conn            9   2   4       1
-Next            doorway_x
+Next            doorway
 
 Def             .   air
 Def             #   brick

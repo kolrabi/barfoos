@@ -222,7 +222,7 @@ Cell::Update(
     }
   }
   
-  world->MarkForUpdateNeighbours(*this);
+  this->UpdateNeighbours();
 }
 
 void Cell::OnUse(RunningState &state, Mob &user, bool force) {
@@ -325,8 +325,8 @@ Cell::Flow(Side side) {
     cell->shared.detail++;
   }
 
-  world->MarkForUpdateNeighbours(*this);
-  world->MarkForUpdateNeighbours(*cell);
+  this->UpdateNeighbours();
+  cell->UpdateNeighbours();
   return true;
 }
 
@@ -454,6 +454,7 @@ Cell::GetHeightBottomClamp(
 
 void
 Cell::UpdateNeighbours(
+  size_t depth 
 ) {
   if (this->world == nullptr) return;
   
@@ -520,11 +521,11 @@ Cell::UpdateNeighbours(
   
   // update this cell and neighbours recursively until nothing changes anymore
   // FIXME: change return type to void, we don't need to recurse
-  if (this->SetLightLevel(color) || this->visibility != oldvis) {
+  if (depth > 0 && (this->SetLightLevel(color) || this->visibility != oldvis)) {
     updated = true;
     for (size_t i=0; i<6; i++) {
       Cell &cell = *this->neighbours[i];
-      world->MarkForUpdateNeighbours(cell);
+      cell.UpdateNeighbours(depth-1);
     }
   }
   
@@ -652,10 +653,10 @@ void Cell::SetWorld(World *world, const IVector3 &pos) {
   }
   
   for (size_t i=0; i<6; i++) {
-    world->MarkForUpdateNeighbours(*this->neighbours[i]);
+    this->neighbours[i]->UpdateNeighbours();
   }
   
-  world->MarkForUpdateNeighbours(*this);
+  this->UpdateNeighbours();
 }
 
 AABB Cell::GetAABB() const {
@@ -730,6 +731,20 @@ void Cell::OnStepOff(RunningState &state, Mob &) {
   if (this->isTrigger) {
     state.TriggerOff(this->triggerTargetId);
   }
+}
+
+void Cell::Rotate() {
+  int16_t tmp = this->shared.topHeights[0];
+  this->shared.topHeights[0] = this->shared.topHeights[1];
+  this->shared.topHeights[1] = this->shared.topHeights[2];
+  this->shared.topHeights[2] = this->shared.topHeights[3];
+  this->shared.topHeights[3] = tmp;
+
+  tmp = this->shared.bottomHeights[0];
+  this->shared.bottomHeights[0] = this->shared.bottomHeights[1];
+  this->shared.bottomHeights[1] = this->shared.bottomHeights[2];
+  this->shared.bottomHeights[2] = this->shared.bottomHeights[3];
+  this->shared.bottomHeights[3] = tmp;
 }
   
 Serializer &operator << (Serializer &ser, const Cell &cell) {

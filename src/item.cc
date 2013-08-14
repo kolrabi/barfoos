@@ -333,6 +333,7 @@ void Item::UseOnEntity(RunningState &state, Mob &user, size_t id) {
     uint32_t entityLock = entity->GetLockedID();
     if (entityLock && this->properties->unlockChance > 0.0 && (this->unlockID == entityLock || this->unlockID == 0) && state.GetRandom().Chance(this->properties->unlockChance)) {
       entity->Unlock();
+      this->isRemovable = true;
       // TODO: message "unlocked!"
       Log("unlocked!\n");
     }
@@ -381,6 +382,7 @@ void Item::UseOnCell(RunningState &state, Mob &user, Cell *cell, Side) {
     uint32_t cellLock = cell->GetLockedID();
     if (cellLock && this->properties->unlockChance > 0.0 && (this->unlockID == cellLock || this->unlockID == 0) && state.GetRandom().Chance(this->properties->unlockChance)) {
       cell->Unlock();
+      this->isRemovable = true;
       // TODO: message "unlocked!"
       Log("unlocked!\n");
     }

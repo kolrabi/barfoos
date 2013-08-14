@@ -19,7 +19,7 @@ public:
   
   void Update(RunningState &state);
   
-  void UpdateNeighbours();
+  void UpdateNeighbours(size_t depth = 16);
   
   uint8_t GetVisibility() const;
   void SetVisibility(uint8_t visibility);
@@ -83,6 +83,8 @@ public:
   void OnUse(RunningState &state, Mob &user, bool force = false);
   void OnStepOn(RunningState &state, Mob &mob);
   void OnStepOff(RunningState &state, Mob &mob);
+  
+  void Rotate();
   
 protected:
 

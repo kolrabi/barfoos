@@ -1,0 +1,15 @@
+Tex               ring.gold
+
+Hand
+Cooldown          0.4
+
+CanUseEntity
+CanUseCell
+
+UnlockChance      1.0
+
+NoModifier
+NoBeatitude
+
+Name              "key"
+

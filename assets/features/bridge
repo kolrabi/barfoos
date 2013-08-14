@@ -2,13 +2,13 @@ size 7 7 7
 group hallway
 level 0 -1 10
 
-conn 3 2 0 -3
-next doorway_z
-next alcove_z
+conn 0 2 3 -1
+next doorway
+next alcove
 
-conn 3 2 6 3
-next doorway_z
-next alcove_z
+conn 6 2 3 1
+next doorway
+next alcove
 
 conn 3 6 3 2
 
@@ -51,20 +51,20 @@ cell lava
 
 slice 0 0
 &&&&&&&
-&#####&
-&LLLLL&
-&LLLLL&
-&LLLLL&
-&#####&
+&#LLL#&
+&#LLL#&
+&#LLL#&
+&#LLL#&
+&#LLL#&
 &&&&&&&
 
 slice 1 1
 &&&&&&&
-&#####&
-&..%..&
-&..%..&
-&..%..&
-&#####&
+&#...#&
+&#...#&
+&#%%%#&
+&#...#&
+&#...#&
 &&&&&&&
 
 slice 2 4

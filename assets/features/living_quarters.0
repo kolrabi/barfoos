@@ -6,34 +6,24 @@ group room
 # direct connections to other rooms
 
 Conn 3 1 0 -3
-  Next          doorway_z_wood
+  Next          $doorway_wood
   OnConnReplace 1 :
 
 Conn 0 1 3 -1
-  Next          doorway_x_wood
+  Next          $doorway_wood
   OnConnReplace 2 :
 
 Conn 6 1 3  1
-  Next          doorway_x_wood
+  Next          $doorway_wood
   OnConnReplace 3 :
 
 Conn 3 1 6  3
-  Next          doorway_z_wood
+  Next          $doorway_wood
   OnConnReplace 4 :
   
 # connections to doorways
 
-conn 0 1 3 -1
-#next doorway_x_small_wood
-
-#conn 6 1 3 1
-#next doorway_x_small_wood
-
-#conn 3 1 0 -3
-#next doorway_z
-
-#conn 3 1 6 3
-#next doorway_z
+# conn 0 1 3 -1
 
 mob 0.1 slime 1 2 2 3
 

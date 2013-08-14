@@ -10,6 +10,9 @@
 #include "gfxview.h"
 #include "input.h"
 
+#include "item.h"
+#include "itementity.h"
+
 #include "serializer.h"
 #include "deserializer.h"
 
@@ -287,15 +290,17 @@ std::vector<const Entity*>
 RunningState::FindLightEntities(const Vector3 &pos, float radius) const {
   std::vector<const Entity*> entities;
   
-  for (auto entity : this->entities) {
-    
-    if (!entity.second->GetLight().IsBlack() && (entity.second->GetPosition()-pos).GetMag() < radius) {
+  for (auto &entity : this->entities) {
+    if (entity.second && !entity.second->GetLight().IsBlack() && (entity.second->GetPosition()-pos).GetMag() < radius) {
       entities.push_back(entity.second);
     }
   } 
 
   std::sort(entities.begin(), entities.end(), [&](const Entity *a, const Entity *b) -> bool {
-    return (a->GetPosition()-pos).GetSquareMag() < (b->GetPosition()-pos).GetSquareMag(); 
+    float d1 = (a->GetPosition()-pos).GetSquareMag();
+    float d2 = (b->GetPosition()-pos).GetSquareMag();
+    if (d1 == d2) return false;
+    return d1 < d2; 
   });
   
   return entities;
@@ -489,21 +494,49 @@ RunningState::SpawnInAABB(
 }
 
 void RunningState::LockCell(Cell &cell) {
+  if (cell.GetLockedID()) return;
+  
   uint32_t id = nextLockId ++;
   cell.Lock(id);
-  // TODO:
-  //if (GetRandom().Chance(0.8)) {
-  //  drop key item somewhere
-  //}
+
+  if (GetRandom().Chance(0.8)) {
+    IVector3 keyPos = this->GetWorld().GetRandomTeleportTarget(this->GetRandom())[Side::Up];
+    //while (this->GetWorld().GetCell(keyPos).GetFeatureID() >= maxFeatureID - 1) {
+    //  keyPos = this->GetWorld().GetRandomTeleportTarget(this->GetRandom())[Side::Up];
+    //}
+    
+    std::shared_ptr<Item> keyItem(new Item("key"));
+    keyItem->SetUnlockID(id);
+
+    ItemEntity *entity = new ItemEntity(keyItem);
+    entity->SetPosition(this->GetWorld().GetCell(keyPos).GetAABB().center);
+    entity->AddVelocity(Vector3(0,10,0));
+  
+    AddEntity(entity);
+  }
 }
 
-void RunningState::LockEntity(Entity &entity) {
+void RunningState::LockEntity(Entity &ent) {
+  if (ent.GetLockedID()) return;
+  
   uint32_t id = nextLockId ++;
-  entity.Lock(id);
-  // TODO:
-  //if (GetRandom().Chance(0.8)) {
-  //  drop key item somewhere
-  //}
+  ent.Lock(id);
+  
+  if (GetRandom().Chance(0.8)) {
+    IVector3 keyPos = this->GetWorld().GetRandomTeleportTarget(this->GetRandom())[Side::Up];
+    //while (this->GetWorld().GetCell(keyPos).GetFeatureID() >= maxFeatureID - 1) {
+    //  keyPos = this->GetWorld().GetRandomTeleportTarget(this->GetRandom())[Side::Up];
+    //}
+    
+    std::shared_ptr<Item> keyItem(new Item("key"));
+    keyItem->SetUnlockID(id);
+
+    ItemEntity *entity = new ItemEntity(keyItem);
+    entity->SetPosition(this->GetWorld().GetCell(keyPos).GetAABB().center);
+    entity->AddVelocity(Vector3(0,10,0));
+  
+    AddEntity(entity);
+  }
 }
 
 void RunningState::TriggerOn(size_t id) {

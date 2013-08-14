@@ -3,22 +3,20 @@ group hallway
 level 0 -1 100
 
 conn 0 2 3 -1
-next doorway_x
-next doorway_x_wood
-next alcove_x
+next doorway
+next alcove
 
 conn 6 2 3 1
-next doorway_x
-next doorway_x_wood
-next alcove_x
+next doorway
+next alcove
 
 conn 3 2 0 -3
-next doorway_z
-next alcove_z
+next doorway
+next alcove
 
 conn 3 2 6 3
-next doorway_z
-next alcove_z
+next doorway
+next alcove
 
 entity 0.1 torch 1 3 2 3
 mob 0.5 spider 0 3 2 3

@@ -1,13 +1,15 @@
 size 3 5 5
 level 0 -1 20
 
+group doorway_wood
+
 conn 1 1 2 -1
 next $room
-nextp doorway_x 0.2
+nextp $doorway 0.2
 
 conn 1 1 2 1
 next $room
-nextp doorway_x 0.2
+nextp $doorway 0.2
 
 def #
 cell carpet.red
@@ -23,8 +25,8 @@ cell wood
 nolock
 onlydefault
 
-entity 0.1 torch -3  1 2 0
-entity 0.1 torch  3  1 2 4
+entity 0.5 torch -3  1 2 0
+entity 0.5 torch  3  1 2 4
 
 slice 0 0
 &%&

@@ -3,20 +3,20 @@ group hallway
 level 0 -1 30
 
 conn 0 2 2 -1
-next doorway_x
-next alcove_x
+next doorway
+next alcove
 
 conn 4 2 2 1
-next doorway_x
-next alcove_x
+next doorway
+next alcove
 
 conn 2 2 0 -3
-next doorway_z
-next alcove_z
+next doorway
+next alcove
 
 conn 2 2 4 3
-next doorway_z
-next alcove_z
+next doorway
+next alcove
 
 def . 
 cell air

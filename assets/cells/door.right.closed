@@ -19,5 +19,5 @@ UseDelay      0.2
 
 Replace       door.right.open
 
-LockedChance  1.0
+LockedChance  0.3
 Strength      0.8

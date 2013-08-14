@@ -174,6 +174,7 @@ World::Build() {
       // build the next feature if possible
       this->BeginCheckOverwrite();
       nextFeature->BuildFeature(state, *this, pos, conn->dir, instance.dist, instances.size(), nullptr, featNum);
+      
       if (this->FinishCheckOverwrite()) {
         FeatureInstance nextInstance = nextFeature->BuildFeature(state, *this, pos, conn->dir, instance.dist, instances.size(), revConn, featNum);
         feature->ReplaceChars(state, *this, instance.pos, conn->id, featNum);
@@ -227,7 +228,7 @@ World::Build() {
     int height = top - bottom;
   
     // want at least 150 features and at least 16 cells high
-    if (instances.size() < 150 || height < 16) {
+    if (instances.size() < 50 || height < 1) {
       done = false;
       Log("Discarding boring world with %u features and height %d :( ...\n", instances.size(), height);
     } else {
@@ -302,6 +303,24 @@ World::Build() {
   
   for (auto instance : instances) {
     instance.feature->SpawnEntities(state, instance.pos);
+  }
+
+  // remove spilt liquids
+  bool foundLiquid = true;
+  while(foundLiquid) {
+    foundLiquid = false;
+    for (size_t i=0; i<this->cellCount; i++) {
+      if (!this->cells[i].IsLiquid()) continue;
+      
+      if (this->cells[i][Side::Down].GetType() == "air" ||
+          this->cells[i][Side::Right].GetType() == "air" ||
+          this->cells[i][Side::Left].GetType() == "air" ||
+          this->cells[i][Side::Forward].GetType() == "air" ||
+          this->cells[i][Side::Backward].GetType() == "air") {
+        foundLiquid = true;
+        this->SetCell(GetCellPos(i), Cell("air"));
+      }
+    }
   }
   
   // update all cells
@@ -500,9 +519,9 @@ World::Draw(Gfx &gfx) {
 }
 
 void World::MarkForUpdateNeighbours(Cell &cell) {
-  cell.UpdateNeighbours();
-//  size_t i = GetCellIndex(cell.GetPosition());
-//  this->neighbourUpdates.insert(i);
+//  cell.UpdateNeighbours();
+  size_t i = GetCellIndex(cell.GetPosition());
+  this->neighbourUpdates.insert(i);
 }
 
 void 

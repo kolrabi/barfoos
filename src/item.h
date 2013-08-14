@@ -138,6 +138,7 @@ public:
   void IncAmount()                            { this->amount ++; }
   void AddAmount(int amt);
   void SetAmount(int amt)                     { this->amount = amt; }
+  void SetUnlockID(uint32_t id)               { this->unlockID = id; }
   
   bool IsConsumable()                   const { return this->properties->onConsumeEffect != "" || this->properties->onConsumeResult != "" || this->properties->onConsumeTeleport; }
   

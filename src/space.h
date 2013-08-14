@@ -47,5 +47,14 @@ static inline uint8_t operator << (uint8_t n, Side side) {
   return (n << (uint8_t)side);
 }
 
+static inline Side Rotate(Side side) {
+  switch(side) {
+    case Side::Right: return Side::Backward;
+    case Side::Backward: return Side::Left;
+    case Side::Left: return Side::Forward;
+    default: return side;
+  }
+}
+
 #endif
 

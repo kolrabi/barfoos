@@ -1,0 +1,47 @@
+Size     3  5  5
+Level    0 -1 10.0
+
+group    doorway_x
+
+UseLastId
+
+Conn     1  1  2   -1
+  Next   $hallway
+  Next   $stairs_x
+  Next   $room
+
+Conn     1  1  2    1
+  Next   $hallway
+  Next   $stairs_x
+  Next   $room
+
+Def      #
+  Cell   brick
+
+Def             D   door.right.closed
+
+Def &
+  Cell   brick
+  NoLock
+  OnlyDefault
+
+Slice    0 0
+&#&
+&#&
+&#&
+&#&
+&#&
+
+slice 1 2
+&#&
+&#&
+&D&
+&#&
+&#&
+
+slice 3 4
+&#&
+&#&
+&#&
+&#&
+&#&

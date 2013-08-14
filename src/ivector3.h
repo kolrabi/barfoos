@@ -57,6 +57,10 @@ struct IVector3 {
     return Vector3(x,y,z);
   }
   
+  IVector3 Rotate(const IVector3 &size) const {
+    return IVector3(size.z-z-1, y, x);
+  }
+  
   void For(std::function<void (const IVector3 &)> func) const {
     for (size_t z = 0; z<this->z; z++) {
       for (size_t y = 0; y<this->y; y++) {
