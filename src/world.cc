@@ -77,13 +77,9 @@ World::World(RunningState &state, Deserializer &deser) :
   
   for (size_t i = 0; i<cellCount; i++) {
     this->cells[i].SetWorld(this, GetCellPos(i));
+    this->MarkForUpdateNeighbours(i);
   }
   glGenBuffers(1, &this->vbo);
-
-  // update all cells
-  for (size_t i=0; i<this->cellCount; i++) {
-    this->MarkForUpdateNeighbours(this->cells[i]);
-  }
 }
 
 World::~World() {
@@ -92,6 +88,7 @@ World::~World() {
 
 void
 World::Build() {
+
   // build features -------------------------------------------
   
   // some basic parameters for this world
@@ -105,137 +102,142 @@ World::Build() {
   size_t caveLengthMax = caveLengthMin + random.Integer(100); //   0 - 200
   size_t caveRepeat    = random.Integer(20)+1;                //   1 -  21
  
-  size_t teleportCount = 0; //random.Integer(10)+50;
-  size_t trapCount = random.Integer(10)+50;
+  size_t teleportCount = random.Integer(10)+2;
+  size_t trapCount = random.Integer(10)+2;
 
   std::vector<FeatureInstance> instances;
+
+  Log("Creating ground...\n");
+  std::vector<Cell> defaultCells(this->cellCount);
+  for (size_t i=0; i<this->cellCount; i++) {
+    IVector3 pos = GetCellPos(i);
+    if (pos.x < 2 || pos.y < 2 || pos.z < 2 || pos.x >= size.x-2 || pos.y >= size.y-2 || pos.z >= size.z-2) {
+      defaultCells[i] = Cell("bedrock");
+      defaultCells[i].SetLocked(true);
+      defaultCells[i].SetIgnoreWrite(true);
+    } else {
+      IVector3 ppp(pos+r);
+      ppp.x %= 256;
+      ppp.y %= 256;
+      ppp.z %= 256;
+      Vector3 vpos(ppp);
+      float f = (simplexNoise(vpos*0.07) * simplexNoise(vpos*(-0.06)) * simplexNoise(vpos*(-0.13)));
+      if (f > 0.75) {
+        defaultCells[i] = Cell("brick");
+      } else if (f > 0.5) {
+        defaultCells[i] = Cell("rock");
+      } else {
+        defaultCells[i] = Cell("dirt");
+      }
+    }
+  }
   
   bool done = false;
   for (size_t tries=0; tries < 20 && !done; tries++) {
-    
+
+    Log("Filling ground...\n");
+    this->cells = defaultCells;
     for (size_t i=0; i<this->cellCount; i++) {
-      IVector3 pos = GetCellPos(i);
-      if (pos.x < 2 || pos.y < 2 || pos.z < 2 || pos.x >= size.x-2 || pos.y >= size.y-2 || pos.z >= size.z-2) {
-        this->cells[i] = Cell("bedrock");
-        this->cells[i].SetLocked(true);
-        this->cells[i].SetIgnoreWrite(true);
-      } else {
-        IVector3 ppp(pos+r);
-        ppp.x %= 256;
-        ppp.y %= 256;
-        ppp.z %= 256;
-        Vector3 vpos(ppp);
-        float f = (simplexNoise(vpos*0.07) * simplexNoise(vpos*(-0.06)) * simplexNoise(vpos*(-0.13)));
-        if (f > 0.75) {
-          this->SetCell(pos, Cell("brick"));
-        } else if (f > 0.5) {
-          this->SetCell(pos, Cell("rock"));
-        } else {
-          this->SetCell(pos, Cell("dirt"));
-        }
-      }
-      this->cells[i].SetWorld(this, pos);
+      this->cells[i].SetWorld(this, GetCellPos(i));
     }
 
-    // reinitialize, as it is modified by above SetCell  
     this->defaultMask = std::vector<bool>(this->cellCount, true);
   
     instances.clear();
     instances.push_back(getFeature("start")->BuildFeature(state, *this, IVector3(32-4, 32-8,32-4), 0, 0, 0, nullptr, 0));
-    instances.back().prevID = ~0UL;
+    instances.back().prevID = ~0U;
   
     int loop = 0;
     int lastDir = 0;
-    do {
-      if (loop++ > 1000) break;
+    size_t minY = size.y;
+    size_t maxY = 0;
 
+    Log("Building features...\n");
+    do {
       // select a feature from which to go
-      bool useLast = random.Chance(useLastChance);
-      bool useLastDir = lastDir != 0 && random.Chance(useLastDirChance) && useLast;
-      size_t featNum = useLast ? instances.size()-1 : (random.Integer(instances.size()));
-      const FeatureInstance &instance = instances[featNum];
+      bool                      useLast     = random.Chance(useLastChance);
+      bool                      useLastDir  = lastDir != 0 && useLast && random.Chance(useLastDirChance);
+      uint32_t                  featNum     = useLast ? instances.size()-1 : random.Integer(instances.size());
+      const FeatureInstance &   instance    = instances[featNum];
     
       // select a random connection from the current feature
-      const Feature *feature = instance.feature;
-      const FeatureConnection *conn = useLastDir ? feature->GetRandomConnection(lastDir, state) : feature->GetRandomConnection(state);
+      const Feature *           feature     = instance.feature;
+      const FeatureConnection * conn        = useLastDir ? feature->GetRandomConnection(lastDir, state) : feature->GetRandomConnection(state);
       if (!conn) continue;
 
       // select next feature
-      const Feature *nextFeature = conn->GetRandomFeature(state, instance.pos);
+      const Feature *           nextFeature = conn->GetRandomFeature(state, instance.pos);
       if (!nextFeature) continue;
     
       // make sure both features can connect
-      const FeatureConnection *revConn = nextFeature->GetRandomConnection(-conn->dir, state);
+      const FeatureConnection * revConn     = nextFeature->GetRandomConnection(-conn->dir, state);
       if (!revConn) continue;
 
       // snap both connection points together
-      IVector3 pos = instance.pos + conn->pos - revConn->pos;
+      IVector3                  pos         = instance.pos + conn->pos - revConn->pos;
     
-      // build the next feature if possible
+      // check if feature can be built
       this->BeginCheckOverwrite();
       nextFeature->BuildFeature(state, *this, pos, conn->dir, instance.dist, instances.size(), nullptr, featNum);
+      if (!this->FinishCheckOverwrite()) { Log("/"); continue; }
       
-      if (this->FinishCheckOverwrite()) {
-        FeatureInstance nextInstance = nextFeature->BuildFeature(state, *this, pos, conn->dir, instance.dist, instances.size(), revConn, featNum);
-        feature->ReplaceChars(state, *this, instance.pos, conn->id, featNum);
-        lastDir = conn->dir;
-        loop = 0;
+      Log(".");
+      
+      // build it
+      FeatureInstance           nextInstance = nextFeature->BuildFeature(state, *this, pos, conn->dir, instance.dist, instances.size(), revConn, featNum);
+      minY = std::min(minY, pos.y);
+      maxY = std::max(maxY, nextFeature->GetSize().y + pos.y);
+      
+      // replace some cells after connection if wanted
+      feature->ReplaceChars(state, *this, instance.pos, conn->id, featNum);
+      
+      lastDir = conn->dir;
+      loop    = 0;
 
-        // check if we accidentally connected properly to anything else
-        for (const FeatureConnection &nextConn : nextInstance.feature->GetConnections()) {
-          IVector3 nextConnPos = nextInstance.pos + nextConn.pos;
-          int connDir = nextConn.dir;
-          
-          for (auto &inst : instances) {
-            for (const FeatureConnection &c : inst.feature->GetConnections()) {
-              // match direction
-              if (c.dir != -connDir) continue;
-              
-              // match position
-              IVector3 connPos = inst.pos + c.pos;
-              if (connPos != nextConnPos) continue;
-              
-              // do connect replacement of cells
-              inst.feature->ReplaceChars(state, *this, inst.pos, c.id, inst.featureID);
-              nextInstance.feature->ReplaceChars(state, *this, nextInstance.pos, nextConn.id, nextInstance.featureID);
-            }
+      // check if we accidentally connected properly to anything else
+      for (auto &nextConn : nextInstance.feature->GetConnections()) {
+        IVector3 nextConnPos = nextInstance.pos + nextConn.pos;
+        
+        for (auto &inst : instances) {
+          for (const FeatureConnection &c : inst.feature->GetConnections()) {
+            // match direction
+            if (c.dir != -nextConn.dir) continue;
+            
+            // match position
+            IVector3 connPos = inst.pos + c.pos;
+            if (connPos != nextConnPos) continue;
+            
+            // replace some cells after connection if wanted
+            inst.feature->ReplaceChars(state, *this, inst.pos, c.id, inst.featureID);
+            nextInstance.feature->ReplaceChars(state, *this, nextInstance.pos, nextConn.id, nextInstance.featureID);
           }
         }
-
-        instances.push_back(nextInstance);
-        instances.back().prevID = featNum;
       }
+
+      // done :)
+      instances.push_back(nextInstance);
+      instances.back().prevID = featNum;
     } while(instances.size() < featureCount); 
+    Log("\n");
     
-    size_t bottom = size.y;
-    for (size_t i=0; i<cellCount; i++) {
-      IVector3 pos = GetCellPos(i);
-      if (!IsDefault(pos)) {
-        bottom = pos.y;
-        break;
-      }
-    }
-
-    size_t top = 0;
-    for (size_t i=cellCount-1; i>0; i--) {
-      IVector3 pos = GetCellPos(i);
-      if (!IsDefault(pos)) {
-        top = pos.y;
-        break;
-      }
-    }
-    
-    int height = top - bottom;
+    int height = maxY - minY;
   
     // want at least 150 features and at least 16 cells high
     if (instances.size() < 50 || height < 1) {
-      done = false;
-      Log("Discarding boring world with %u features and height %d :( ...\n", instances.size(), height);
+      if (loop++ > 1000) {
+        done = true;
+        Log("Made world with %u features and height %d, sick of waiting :/ ...\n", instances.size(), height);
+      } else {
+        done = false;
+        Log("Discarding boring world with %u features and height %d :( ...\n", instances.size(), height);
+      }
     } else {
       done = true;
+      Log("Made a nice world with %u features and height %d :) ...\n", instances.size(), height);
     }
   }
     
+  Log("Placing %u teleports...\n", teleportCount);
   for (size_t i=0; i<teleportCount; i++) {
     IVector3 a = GetRandomTeleportTarget(random);
     IVector3 b = GetRandomTeleportTarget(random);
@@ -245,6 +247,7 @@ World::Build() {
     SetCell(b, Cell("teleport")).SetTeleportTarget(a);
   }
   
+  Log("Placing %u traps...\n", trapCount);
   for (size_t i=0; i<trapCount; i++) {
     
     IVector3 a = GetRandomTeleportTarget(random);
@@ -271,9 +274,9 @@ World::Build() {
     trigger.SetTriggerTarget(id);
   }
 
-  Log("Built world with %lu features. Level %lu.\n", instances.size(), state.GetLevel());
- 
   WorldEdit e(this);
+  
+  Log("Carving caves...\n");
   
   // create caves
   e.SetBrush(Cell("air"));
@@ -301,11 +304,13 @@ World::Build() {
     }
   }
   
+  Log("Spawning feature entities...\n");
   for (auto instance : instances) {
     instance.feature->SpawnEntities(state, instance.pos);
   }
 
   // remove spilt liquids
+  Log("Wiping the floor...\n");
   bool foundLiquid = true;
   while(foundLiquid) {
     foundLiquid = false;
@@ -324,9 +329,15 @@ World::Build() {
   }
   
   // update all cells
+  Log("Updating all cells...\n");
   for (size_t i=0; i<this->cellCount; i++) {
-    this->MarkForUpdateNeighbours(this->cells[i]);
+    this->MarkForUpdateNeighbours(i);
   }
+  
+  Update(state);
+  Update(state);
+  
+  Log("Done!\n");
 }
 
 Cell &
@@ -369,9 +380,9 @@ World::SetCell(const IVector3 &pos, const Cell &cell, bool ignoreLock) {
  */
 void 
 World::UpdateCell(size_t i) {
-  this->MarkForUpdateNeighbours(this->cells[i]);
+  this->MarkForUpdateNeighbours(i);
   for (size_t n=0; n<6; n++) {
-    this->MarkForUpdateNeighbours(this->cells[i][(Side)n]);
+    this->MarkForUpdateNeighbours(&(this->cells[i][(Side)n]));
   }
 }
   
@@ -464,7 +475,8 @@ World::Draw(Gfx &gfx) {
 
     // set vertex buffer data
     glBindBuffer(GL_ARRAY_BUFFER, this->vbo);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex)*(this->allVerts.size()), &this->allVerts[0], GL_STATIC_DRAW);
+    if (this->allVerts.size())
+      glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex)*(this->allVerts.size()), &this->allVerts[0], GL_STATIC_DRAW);
 
     dirty = false;
   }
@@ -518,9 +530,13 @@ World::Draw(Gfx &gfx) {
   }
 }
 
-void World::MarkForUpdateNeighbours(Cell &cell) {
+void World::MarkForUpdateNeighbours(const Cell *cell) {
 //  cell.UpdateNeighbours();
-  size_t i = GetCellIndex(cell.GetPosition());
+  size_t i = GetCellIndex(cell->GetPosition());
+  this->neighbourUpdates.insert(i);
+}
+
+void World::MarkForUpdateNeighbours(size_t i) {
   this->neighbourUpdates.insert(i);
 }
 
@@ -530,19 +546,24 @@ World::Update(
 ) {
   PROFILE();
   
-  // this->neighbourUpdates.clear();
-  
   // update all dynamic cells
+  //Log("updating %u dynamic cells\n", this->dynamicCells.size());
   for (size_t i : this->dynamicCells) {
     this->cells[i].Update(state);
   }
   
-  // Log("updating %u neighbours\n", this->neighbourUpdates.size());
+  //Log("updating %u neighbours\n", this->neighbourUpdates.size());
+  size_t neighbourCount = 0;
   while(!this->neighbourUpdates.empty()) {
-    size_t i = *(this->neighbourUpdates.begin());
-    this->cells[i].UpdateNeighbours();
-    this->neighbourUpdates.erase(this->neighbourUpdates.begin());
+    std::unordered_set<size_t> tmp = this->neighbourUpdates;
+    this->neighbourUpdates.clear();
+    
+    for (auto &i:tmp) {
+      this->cells[i].UpdateNeighbours();
+      neighbourCount++;
+    }
   }
+  // Log("updated %u neighbours\n", neighbourCount);
 
   // tick world
   while (tickInterval != 0.0 && state.GetGame().GetTime() > nextTickT) {

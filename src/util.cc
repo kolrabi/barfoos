@@ -9,6 +9,7 @@
 
 #include <sstream>
 #include <cstring>
+#include <cstdio>
 
 float Wave(float x, float z, float t, float a) {
   return a * cos( ((x+z)*0.4+t*0.4) )
@@ -16,15 +17,12 @@ float Wave(float x, float z, float t, float a) {
 }
 
 Point::operator std::string() const {
-  Log("Point::operator std::string()\n");
-  
   char tmp[256];
   snprintf(tmp, sizeof(tmp), "[%d,%d]", x,y);
   return tmp;
 }
 
 Vector3::operator std::string() const {
-  Log("Vector3::operator std::string()\n");
   char tmp[256];
   snprintf(tmp, sizeof(tmp), "[%f,%f,%f]", x,y,z);
   return tmp;

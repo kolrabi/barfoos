@@ -88,7 +88,7 @@ public:
   void                  TriggerOn(size_t id);
   void                  TriggerOff(size_t id);
   
-  void MarkForUpdateNeighbours(Cell &cell);
+  void MarkForUpdateNeighbours(const Cell *cell);
 
 private:
 
@@ -123,6 +123,7 @@ private:
 
   void UpdateCell(size_t i);
   void UpdateCell(const IVector3 &pos);
+  void MarkForUpdateNeighbours(size_t i);
   
   size_t GetCellIndex(const IVector3 &pos) const { return pos.x+size.x*(pos.y+size.y*pos.z); }
   IVector3 GetCellPos(size_t i) const { return IVector3( i%size.x, (i/size.x)%size.y, (i/(size.x*size.y))%size.z); }

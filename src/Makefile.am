@@ -2,22 +2,17 @@
 
 ## Build ----------------------------------------------------------
 
-CF=$(GL_CFLAGS) -Wall -Wextra -I$(top_srcdir)/src -DDATA_PATH=\"$(pkgdatadir)\" -pthread -D_GLIBCXX_DEBUG
+CF=$(GL_CFLAGS) -Wall -Wextra -I$(top_srcdir)/src -DDATA_PATH=\"$(pkgdatadir)\" -pthread
+# -D_GLIBCXX_DEBUG 
 
 if WINDOOF
 RESFILE=res.rc icon.ico
-LDWINFLAGS=-mwindows 
-#-Wl,-Map=barfoos.map
-else
-RESFILE=
-LDWINFLAGS=
+LDWINFLAGS=-mwindows -Wl,-Map=barfoos.map
 endif
 
 if MECKES
 LDMACOSXFLAGS:=-framework OpenGL -framework cocoa -framework IOKit `libpng-config --ldflags`
 CCMACOSXFLAGS:=`libpng-config --cflags`
-else
-LDMACOSXFLAGS=
 endif
 
 .rc.o:

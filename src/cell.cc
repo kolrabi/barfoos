@@ -221,8 +221,8 @@ Cell::Update(
       this->SetYOffsets(h,h,h,h);
     }
   }
-  
-  this->UpdateNeighbours();
+
+  world->MarkForUpdateNeighbours(this);
 }
 
 void Cell::OnUse(RunningState &state, Mob &user, bool force) {
@@ -325,8 +325,8 @@ Cell::Flow(Side side) {
     cell->shared.detail++;
   }
 
-  this->UpdateNeighbours();
-  cell->UpdateNeighbours();
+  world->MarkForUpdateNeighbours(this);
+  world->MarkForUpdateNeighbours(cell);
   return true;
 }
 
@@ -454,7 +454,7 @@ Cell::GetHeightBottomClamp(
 
 void
 Cell::UpdateNeighbours(
-  size_t depth 
+  size_t
 ) {
   if (this->world == nullptr) return;
   
@@ -520,12 +520,10 @@ Cell::UpdateNeighbours(
   bool updated = false;
   
   // update this cell and neighbours recursively until nothing changes anymore
-  // FIXME: change return type to void, we don't need to recurse
-  if (depth > 0 && (this->SetLightLevel(color) || this->visibility != oldvis)) {
+  if (this->SetLightLevel(color) || this->visibility != oldvis) {
     updated = true;
     for (size_t i=0; i<6; i++) {
-      Cell &cell = *this->neighbours[i];
-      cell.UpdateNeighbours(depth-1);
+      world->MarkForUpdateNeighbours(this->neighbours[i]);
     }
   }
   
@@ -653,10 +651,10 @@ void Cell::SetWorld(World *world, const IVector3 &pos) {
   }
   
   for (size_t i=0; i<6; i++) {
-    this->neighbours[i]->UpdateNeighbours();
+    world->MarkForUpdateNeighbours(this->neighbours[i]);
   }
   
-  this->UpdateNeighbours();
+  world->MarkForUpdateNeighbours(this);
 }
 
 AABB Cell::GetAABB() const {

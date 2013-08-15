@@ -3,6 +3,8 @@
 
 #include "common.h"
 
+#include "GLee.h"
+
 class Shader final {
 public:
 
@@ -21,11 +23,11 @@ public:
   void Uniform(const std::string &name, const std::vector<Vector3> &value) const;
   void Uniform(const std::string &name, const Matrix4 &value) const;
   
-  void *GetProgram() const { return program; }
+  GLhandleARB GetProgram() const { return program; }
 
 private:
 
-  void *program;
+  GLhandleARB program;
 };
 
 
