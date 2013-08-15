@@ -16,15 +16,18 @@ float Wave(float x, float z, float t, float a) {
 }
 
 Point::operator std::string() const {
-  std::stringstream str;
-  str << "[" << x << ", " << y << "]";
-  return str.str();
+  Log("Point::operator std::string()\n");
+  
+  char tmp[256];
+  snprintf(tmp, sizeof(tmp), "[%d,%d]", x,y);
+  return tmp;
 }
 
 Vector3::operator std::string() const {
-  std::stringstream str;
-  str << "[" << x << ", " << y << ", " << z << "]";
-  return str.str();
+  Log("Vector3::operator std::string()\n");
+  char tmp[256];
+  snprintf(tmp, sizeof(tmp), "[%f,%f,%f]", x,y,z);
+  return tmp;
 }
 
 std::vector<std::string> Tokenize(const char *l) {

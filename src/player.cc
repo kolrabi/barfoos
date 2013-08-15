@@ -387,15 +387,15 @@ Player::DrawGUI(Gfx &gfx) const {
 
   // draw health bar
   gfx.SetColor(IColor(255,255,255));
-  std::stringstream strHealth;
+  std::string strHealth;
   int h = 10 * this->health / this->GetEffectiveStats().maxHealth;
   for (int i=0; i<10; i++) {
     if (i < h)
-      strHealth << u8"\u0081";
+      strHealth += u8"\u0081";
     else
-      strHealth << u8"\u0082";
+      strHealth += u8"\u0082";
   }
-  RenderString rsHealth(strHealth.str() + " " + ToString(int(this->health)), "big");
+  RenderString rsHealth(strHealth + " " + ToString(int(this->health)), "big");
   rsHealth.Draw(gfx, 2, vsize.y-4, (int)Align::HorizLeft | (int)Align::VertBottom);
   
   char tmp[1024];

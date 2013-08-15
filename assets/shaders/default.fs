@@ -50,7 +50,7 @@ void main() {
   vec3 light = pow( v_color.rgb + getTotalLight(), vec3(gamma) ) * u_color.rgb * contrast + vec3(0.2, 0.2, 0.3);
   
   float fogDepth = length(v_pos)*0.1;
-  float fogIntensity = 0; //pow(max(0.0, u_fogLin * fogDepth), 0.5);
+  float fogIntensity = 0.0; //pow(max(0.0, u_fogLin * fogDepth), 0.5);
   
   vec3 color = mix(t0.rgb * light, u_fogColor.rgb, min(1.0, fogIntensity)) + u_fade.rgb;
  

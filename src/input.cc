@@ -37,7 +37,9 @@ Input::AddHandler(std::function<void(const InputEvent &)> handler) {
   
 void 
 Input::RemoveHandler(size_t id) {
+  Log("Removing %u\n", id);
   auto iter = std::find(this->handlers.begin(), this->handlers.end(), id);
+  //Log("%p\n", id);
   if (iter != this->handlers.end())
     this->handlers.erase(iter);
 }

@@ -1,9 +1,10 @@
 #include "common.h"
 
+// broken on macos x
+#if !defined(MACOSX)
+
 #ifdef WIN32
 #include <windows.h>
-#elif defined(MACOSX)
-#include <mach/mach_time.h>
 #else
 #include <time.h>
 #endif
@@ -34,8 +35,6 @@ static inline uint64_t measure() {
   LARGE_INTEGER li;
   QueryPerformanceCounter(&li);
   return li.QuadPart;
-#elif defined(MACOSX)
-  return 0; // TODO
 #else
   timespec t;
   clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &t);
@@ -68,9 +67,13 @@ Profile::~Profile() {
   func.ticksPerCall = func.totalTicks / func.calls;
   funcStack.pop_back();
 }
+#endif
 
 std::string 
 Profile::GetDump() {
+#ifdef MACOSX
+  return "No profiling information available.";
+#else 
   std::stringstream str;
   
   std::vector<ProfileFunc> sortedFuncs;
@@ -87,9 +90,12 @@ Profile::GetDump() {
   }
   
   return str.str();
+#endif
 }
 
 void 
 Profile::Dump() {
   Log("%s\n", GetDump().c_str());
 }
+
+
