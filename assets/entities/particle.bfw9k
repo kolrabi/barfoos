@@ -18,6 +18,7 @@ extents 0.1 0.1 0.1
 nohit
 nocollideentity
 NoStep
+NoClip
 
 lifetime 0.5
 gravity 0

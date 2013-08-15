@@ -19,6 +19,7 @@ size 0.2 0.2
 sizerand 0.5
 nohit
 nocollideentity
+noclip
 
 lifetime 2.0
 lifetimerand 0.5

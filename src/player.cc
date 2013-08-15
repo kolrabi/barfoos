@@ -413,6 +413,9 @@ Player::DrawGUI(Gfx &gfx) const {
     buffstring += "\n" + b.effect->displayName;
   }
   RenderString(buffstring).Draw(gfx, vsize - Point(4,40), int(Align::HorizRight|Align::VertBottom));
+
+  snprintf(tmp, sizeof(tmp), "%3.1f", fps);
+  RenderString(tmp, "small").Draw(gfx, 4, vsize.y-32-24);
 }
 
 void

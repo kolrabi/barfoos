@@ -93,11 +93,6 @@ Game::NewGame(const std::string &seed) {
 bool Game::Frame() {
   PROFILE();
   
-  if (!this->gfx->Swap()) nextGameState = nullptr;
-  
-  this->gfx->ClearColor(IColor());
-  this->gfx->ClearDepth(1.0);
-
   if (nextGameState != activeGameState) {
     if (activeGameState) activeGameState->Leave(nextGameState);
     activeGameState = nextGameState;
@@ -136,6 +131,12 @@ bool Game::Frame() {
     this->frame = 0;
     this->lastFPST += 1.0;
   }
+  
+  if (!this->gfx->Swap()) nextGameState = nullptr;
+  
+  this->gfx->ClearColor(IColor());
+  this->gfx->ClearDepth(1.0);
+
   return nextGameState != nullptr;
 }
 

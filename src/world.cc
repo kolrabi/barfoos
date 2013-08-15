@@ -32,7 +32,7 @@ World::World(RunningState &state, const IVector3 &size) :
   defaultMask(cellCount, true),
   dynamicCells(0),
   nextTickT(0.0),
-  tickInterval(0.01),
+  tickInterval(0.1),
   ambientLight(32, 32, 64),
   allVerts(0),
   vertexStartsNormal(),
@@ -408,7 +408,7 @@ World::Draw(Gfx &gfx) {
   PROFILE();
   
   if (dirty) {
-    PROFILE();
+    PROFILE_NAMED("Vertex Update");
     // world has been changed, recreate vertex buffers
 
     this->defaultCell = Cell("default");
@@ -494,49 +494,57 @@ World::Draw(Gfx &gfx) {
   gfx.SetShader("default");
   gfx.SetColor(IColor(255,255,255));
   gfx.SetBlendNormal();
-  
-  for (auto &s : this->vertexStartsNormal) {
-    gfx.SetTextureFrame(s.first);
-    gfx.DrawTriangles(this->vbo, s.second, this->vertexCountsNormal[s.first]);
+
+  {
+    PROFILE_NAMED("Static Draw");
+
+    for (auto &s : this->vertexStartsNormal) {
+      gfx.SetTextureFrame(s.first);
+      gfx.DrawTriangles(this->vbo, s.second, this->vertexCountsNormal[s.first]);
+    }
+    
+    gfx.SetBlendAdd();
+    for (auto &s : this->vertexStartsEmissive) {
+      gfx.SetTextureFrame(s.first);
+      gfx.DrawTriangles(this->vbo, s.second, this->vertexCountsEmissive[s.first]);
+    }
   }
   
-  gfx.SetBlendAdd();
-  for (auto &s : this->vertexStartsEmissive) {
-    gfx.SetTextureFrame(s.first);
-    gfx.DrawTriangles(this->vbo, s.second, this->vertexCountsEmissive[s.first]);
-  }
-
-  // get vertices for dynamic cells
-  std::unordered_map<const Texture *, std::vector<Vertex>> dynVerticesNormal;
-  std::unordered_map<const Texture *, std::vector<Vertex>> dynVerticesEmissive;
+  {
+    PROFILE_NAMED("Dynamic Draw");
   
-  for (size_t i : dynamicCells) {
-    const Texture *tex = this->cells[i].GetTexture();
-    if (dynVerticesNormal.find(tex) == dynVerticesNormal.end()) 
-        dynVerticesNormal[tex] = std::vector<Vertex>();
+    // get vertices for dynamic cells
+    std::unordered_map<const Texture *, std::vector<Vertex>> dynVerticesNormal;
+    std::unordered_map<const Texture *, std::vector<Vertex>> dynVerticesEmissive;
+    
+    for (size_t i : dynamicCells) {
+      const Texture *tex = this->cells[i].GetTexture();
+      if (dynVerticesNormal.find(tex) == dynVerticesNormal.end()) 
+          dynVerticesNormal[tex] = std::vector<Vertex>();
 
-    const Texture *etex = this->cells[i].GetEmissiveTexture();
-    if (dynVerticesEmissive.find(etex) == dynVerticesEmissive.end()) 
-        dynVerticesEmissive[etex] = std::vector<Vertex>();
-        
-    this->cells[i].UpdateVertices();
-    this->cells[i].Draw(dynVerticesNormal[tex]);
-    this->cells[i].DrawEmissive(dynVerticesEmissive[etex]);
-  }
+      const Texture *etex = this->cells[i].GetEmissiveTexture();
+      if (dynVerticesEmissive.find(etex) == dynVerticesEmissive.end()) 
+          dynVerticesEmissive[etex] = std::vector<Vertex>();
+          
+      this->cells[i].UpdateVertices();
+      this->cells[i].Draw(dynVerticesNormal[tex]);
+      this->cells[i].DrawEmissive(dynVerticesEmissive[etex]);
+    }
 
-  // render vertices for dynamic cells
-  gfx.SetBlendNormal();
-  auto iter = dynVerticesNormal.begin();
-  for (size_t i=0; i<dynVerticesNormal.size(); i++, iter++) {
-    gfx.SetTextureFrame(iter->first);
-    gfx.DrawTriangles(iter->second);
-  }
+    // render vertices for dynamic cells
+    gfx.SetBlendNormal();
+    auto iter = dynVerticesNormal.begin();
+    for (size_t i=0; i<dynVerticesNormal.size(); i++, iter++) {
+      gfx.SetTextureFrame(iter->first);
+      gfx.DrawTriangles(iter->second);
+    }
 
-  gfx.SetBlendAdd();
-  iter = dynVerticesEmissive.begin();
-  for (size_t i=0; i<dynVerticesEmissive.size(); i++, iter++) {
-    gfx.SetTextureFrame(iter->first);
-    gfx.DrawTriangles(iter->second);
+    gfx.SetBlendAdd();
+    iter = dynVerticesEmissive.begin();
+    for (size_t i=0; i<dynVerticesEmissive.size(); i++, iter++) {
+      gfx.SetTextureFrame(iter->first);
+      gfx.DrawTriangles(iter->second);
+    }
   }
 }
 
@@ -581,11 +589,14 @@ World::Update(
   }
 
   // tick world
-  while (tickInterval != 0.0 && state.GetGame().GetTime() > nextTickT) {
-    for (size_t i : this->dynamicCells) {
-      this->cells[i].Tick(state);
+  {
+      PROFILE_NAMED("Tick");
+    while (tickInterval != 0.0 && state.GetGame().GetTime() > nextTickT) {
+      for (size_t i : this->dynamicCells) {
+        this->cells[i].Tick(state);
+      }
+      nextTickT += tickInterval;
     }
-    nextTickT += tickInterval;
   }
 }
 

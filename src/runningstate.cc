@@ -156,28 +156,27 @@ RunningState::Update() {
   this->world->Update(*this);
   
   // handle collision between entities
-  std::vector<size_t> entityIds;
-  for (auto entity : this->entities) {
-    entityIds.push_back(entity.first);
-  }
-  
-  for (size_t i=0; i<entityIds.size(); i++) {
-    size_t e1 = entityIds[i];
-    if (entities[e1]->GetProperties()->nocollideEntity) continue;
-    if (entities[e1]->IsDead()) continue;
-
-    for (size_t j=i+1; j<entityIds.size(); j++) {
-      size_t e2 = entityIds[j];
-      if (entities[e2]->GetProperties()->nocollideEntity) continue;
-      if (entities[e2]->IsDead()) continue;
-      
-      // don't collide with owners if not wanted
-      if (entities[e1]->GetOwner() == e2 && entities[e1]->GetProperties()->nocollideOwner) continue;
-      if (entities[e2]->GetOwner() == e1 && entities[e2]->GetProperties()->nocollideOwner) continue;
-      
-      if (entities[e1]->GetAABB().Overlap(entities[e2]->GetAABB())) {
-        entities[e1]->OnCollide(*this, *entities[e2]);
-        entities[e2]->OnCollide(*this, *entities[e1]);
+  { 
+    PROFILE_NAMED("Entity Collision"); 
+    std::vector<size_t> entityIds;
+    for (auto entity : this->entities) {
+      if (entity.second->GetProperties()->nocollideEntity) continue;
+      if (entity.second->IsDead()) continue;
+      entityIds.push_back(entity.first);
+    }
+    for (size_t i=0; i<entityIds.size(); i++) {
+      size_t e1 = entityIds[i];
+      for (size_t j=i+1; j<entityIds.size(); j++) {
+        size_t e2 = entityIds[j];
+        
+        // don't collide with owners if not wanted
+        if (entities[e1]->GetOwner() == e2 && entities[e1]->GetProperties()->nocollideOwner) continue;
+        if (entities[e2]->GetOwner() == e1 && entities[e2]->GetProperties()->nocollideOwner) continue;
+        
+        if (entities[e1]->GetAABB().Overlap(entities[e2]->GetAABB())) {
+          entities[e1]->OnCollide(*this, *entities[e2]);
+          entities[e2]->OnCollide(*this, *entities[e1]);
+        }
       }
     }
   }
