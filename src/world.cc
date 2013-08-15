@@ -98,9 +98,9 @@ World::Build() {
   size_t featureCount  = random.Integer(400)+400;             // 400 - 800
   float  useLastChance = 0.1 + random.Float01()*0.8;          // 0.1 - 0.9
   float  useLastDirChance = 0.6;
-  size_t caveLengthMin = random.Integer(20);                  //   0 -  20
-  size_t caveLengthMax = caveLengthMin + random.Integer(100); //   0 - 200
-  size_t caveRepeat    = random.Integer(20)+1;                //   1 -  21
+  size_t caveLengthMin = random.Integer(20) + 20;
+  size_t caveLengthMax = caveLengthMin + random.Integer(100);
+  size_t caveRepeat    = random.Integer(20)+10;
  
   size_t teleportCount = random.Integer(10)+2;
   size_t trapCount = random.Integer(10)+2;
@@ -179,7 +179,7 @@ World::Build() {
       // check if feature can be built
       this->BeginCheckOverwrite();
       nextFeature->BuildFeature(state, *this, pos, conn->dir, instance.dist, instances.size(), nullptr, featNum);
-      if (!this->FinishCheckOverwrite()) { Log("/"); continue; }
+      if (!this->FinishCheckOverwrite()) continue;
       
       Log(".");
       
@@ -236,6 +236,37 @@ World::Build() {
       Log("Made a nice world with %u features and height %d :) ...\n", instances.size(), height);
     }
   }
+
+  WorldEdit e(this);
+  
+  Log("Carving caves...\n");
+  
+  // create caves
+  e.SetBrush(Cell("air"));
+  size_t caveCount     = instances.size()>10 ? random.Integer(instances.size()/10) : 0;
+
+  for (size_t i = 0; i<caveCount; i++) {
+    size_t featNum = random.Integer(instances.size());
+    const FeatureInstance &instance = instances[featNum];
+    IVector3 size = instance.feature->GetSize();
+   
+    for (size_t k=0; k<caveRepeat; k++) {
+      IVector3 cavePos(instance.pos + IVector3(random.Integer(size.x), random.Integer(size.y), random.Integer(size.z)));
+      size_t caveLength = caveLengthMin + random.Integer(caveLengthMax-caveLengthMin);
+      bool lastSolid = false;
+      
+      for (size_t j=0; j<caveLength; j++) {
+        Side nextSide = (Side)(random.Integer(6));
+        bool solid = this->GetCell(cavePos).GetInfo().flags & CellFlags::Solid;
+        if (solid && !lastSolid) {
+          e.ApplyBrush(cavePos);
+        }
+        lastSolid = solid;
+        cavePos = cavePos[nextSide];
+      }
+    }
+  }
+
     
   Log("Placing %u teleports...\n", teleportCount);
   for (size_t i=0; i<teleportCount; i++) {
@@ -272,36 +303,6 @@ World::Build() {
     uint32_t id = state.GetNextTriggerId();
     spawner.SetTrigger(id, false);
     trigger.SetTriggerTarget(id);
-  }
-
-  WorldEdit e(this);
-  
-  Log("Carving caves...\n");
-  
-  // create caves
-  e.SetBrush(Cell("air"));
-  size_t caveCount     = 1; //instances.size()>10 ? random.Integer(instances.size()/10) : 0;
-
-  for (size_t i = 0; i<caveCount; i++) {
-    size_t featNum = random.Integer(instances.size());
-    const FeatureInstance &instance = instances[featNum];
-    IVector3 size = instance.feature->GetSize();
-   
-    for (size_t k=0; k<caveRepeat; k++) {
-      IVector3 cavePos(instance.pos + IVector3(random.Integer(size.x), random.Integer(size.y), random.Integer(size.z)));
-      size_t caveLength = caveLengthMin + random.Integer(caveLengthMax);
-      bool lastSolid = false;
-      
-      for (size_t j=0; j<caveLength; j++) {
-        Side nextSide = (Side)(random.Integer(6));
-        bool solid = this->GetCell(cavePos).GetInfo().flags & CellFlags::Solid;
-        if (solid && !lastSolid) {
-          e.ApplyBrush(cavePos);
-        }
-        lastSolid = solid;
-        cavePos = cavePos[nextSide];
-      }
-    }
   }
   
   Log("Spawning feature entities...\n");

@@ -1,66 +1,63 @@
-size 3 6 5
-level 0 -1 20
+size 5 6 5
+level 0 -1 30
 
 group stairs
 
-conn 3 1 2 -1
-next doorway
-next $stairs
+conn 0 2 2 -1
+  next $doorway
 
-conn -1 2 2 1
-next doorway
-next $stairs
+conn 4 1 2 1
+  next $doorway
 
-def . 
-cell air
+def . air
 
-def #
-cell brick
+def # brick
 
-def +
-cell step
-top 0.5 0.5 0.5 0.5
+def + step
+  top 0.5 0.5 0.5 0.5
 
-def -
-cell step
-bottom 0.5 0.5 0.5 0.5
+def - step
+  bottom 0.5 0.5 0.5 0.5
 
-def %
-cell step
+def % step
+
+Def & brick
+  NoLock
+  OnlyDefault
 
 slice 0 0
-###
-###
-###
-###
-###
+&###&
+&###&
+&###&
+&###&
+&###&
 
 slice 1 1
-###
-#+.
-#+.
-#+.
-###
+&###&
+&#+.&
+&#+.&
+&#+.&
+&###&
 
 slice 2 3
-###
-...
-...
-...
-###
+&###&
+&...&
+&...&
+&...&
+&###&
 
 slice 4 4
-###
-.-%
-.-%
-.-%
-###
+&###&
+&.-%&
+&.-%&
+&.-%&
+&###&
 
 slice 5 5
-###
-###
-###
-###
-###
+&###&
+&###&
+&###&
+&###&
+&###&
 
 

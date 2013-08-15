@@ -7,12 +7,12 @@ UseLastId
 
 Conn     1  1  2   -1
   Next   $hallway
-  Next   $stairs_short
+  Next   $stairs
   Next   $room
 
 Conn     1  1  2    1
   Next   $hallway
-  Next   $stairs_short
+  Next   $stairs
   Next   $room
 
 Def      #
