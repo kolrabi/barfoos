@@ -24,6 +24,13 @@ struct Vertex {
     n  { norm.x, norm.y, norm.z },
     xyz{ v.x, v.y, v.z }
   {}
+  
+  void SetColor(const IColor &c) {
+    rgb[0] = c.r/255.0f;
+    rgb[1] = c.g/255.0f;
+    rgb[2] = c.b/255.0f;
+    rgb[3] = 1.0f;
+  }
 };
 
 #endif

@@ -98,7 +98,7 @@ World::Build() {
   size_t featureCount  = random.Integer(400)+400;             // 400 - 800
   float  useLastChance = 0.1 + random.Float01()*0.8;          // 0.1 - 0.9
   float  useLastDirChance = 0.6;
-  size_t caveLengthMin = random.Integer(20) + 20;
+  size_t caveLengthMin = random.Integer(20);
   size_t caveLengthMax = caveLengthMin + random.Integer(100);
   size_t caveRepeat    = random.Integer(20)+10;
  
@@ -154,6 +154,9 @@ World::Build() {
 
     Log("Building features...\n");
     do {
+      loop++;
+      if (loop > 1000) break;
+      
       // select a feature from which to go
       bool                      useLast     = random.Chance(useLastChance);
       bool                      useLastDir  = lastDir != 0 && useLast && random.Chance(useLastDirChance);
@@ -224,7 +227,7 @@ World::Build() {
   
     // want at least 150 features and at least 16 cells high
     if (instances.size() < 50 || height < 1) {
-      if (loop++ > 1000) {
+      if (!done) {
         done = true;
         Log("Made world with %u features and height %d, sick of waiting :/ ...\n", instances.size(), height);
       } else {
@@ -337,7 +340,7 @@ World::Build() {
   
   Update(state);
   Update(state);
-  
+
   Log("Done!\n");
 }
 
@@ -426,6 +429,8 @@ World::Draw(Gfx &gfx) {
 
     std::unordered_map<const Texture *, std::vector<Vertex>> verticesNormal;
     std::unordered_map<const Texture *, std::vector<Vertex>> verticesEmissive;
+    
+    size_t updateCount = 0;
 
     for (size_t i=0; i<this->cellCount; i++) {
       Cell &cell = this->cells[i];
@@ -440,7 +445,9 @@ World::Draw(Gfx &gfx) {
         continue;
       }
 
-      cell.UpdateVertices();
+      if (cell.UpdateVertices()) {
+        updateCount ++;
+      }
 
       // group vertex buffers by texture
       
@@ -450,6 +457,8 @@ World::Draw(Gfx &gfx) {
       const Texture *etex = cell.GetEmissiveTexture();
       if (etex) cell.DrawEmissive(verticesEmissive[etex]);
     }
+    
+    if (updateCount) Log("%u cell vertex updates\n", updateCount);
     
     size_t index = 0;
     this->allVerts.clear();
@@ -546,7 +555,7 @@ World::Update(
   RunningState &state
 ) {
   PROFILE();
-  
+
   // update all dynamic cells
   //Log("updating %u dynamic cells\n", this->dynamicCells.size());
   for (size_t i : this->dynamicCells) {
@@ -555,7 +564,8 @@ World::Update(
   
   //Log("updating %u neighbours\n", this->neighbourUpdates.size());
   size_t neighbourCount = 0;
-  while(!this->neighbourUpdates.empty()) {
+
+  while(this->neighbourUpdates.size()) {  
     std::unordered_set<size_t> tmp = this->neighbourUpdates;
     this->neighbourUpdates.clear();
     
@@ -564,7 +574,11 @@ World::Update(
       neighbourCount++;
     }
   }
-  // Log("updated %u neighbours\n", neighbourCount);
+  
+  if (neighbourCount > 0) {
+    this->dirty = true;
+    Log("updated %u neighbours\n", neighbourCount);
+  }
 
   // tick world
   while (tickInterval != 0.0 && state.GetGame().GetTime() > nextTickT) {

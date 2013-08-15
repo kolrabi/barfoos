@@ -89,6 +89,7 @@ public:
   void                  TriggerOff(size_t id);
   
   void MarkForUpdateNeighbours(const Cell *cell);
+  void UpdateCell(const IVector3 &pos);
 
 private:
 
@@ -122,7 +123,6 @@ private:
   bool checkOverwriteOK;
 
   void UpdateCell(size_t i);
-  void UpdateCell(const IVector3 &pos);
   void MarkForUpdateNeighbours(size_t i);
   
   size_t GetCellIndex(const IVector3 &pos) const { return pos.x+size.x*(pos.y+size.y*pos.z); }

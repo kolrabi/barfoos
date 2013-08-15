@@ -13,7 +13,7 @@
  
 #include "serializer.h"
 #include "deserializer.h"
- 
+
 // -------------------------------------------------------------------------
 
 CellBase::CellBase(const std::string &type) :
@@ -21,7 +21,6 @@ CellBase::CellBase(const std::string &type) :
   info(&GetCellProperties(type)),
   world(nullptr),
   pos(0,0,0),
-  dirty(true),
   lastT(0.0),
   nextActivationT(0.0),
   teleport(false),
@@ -35,6 +34,9 @@ CellBase::CellBase(const std::string &type) :
 {
   for (size_t i=0; i<6; i++)
     this->neighbours[i] = nullptr;
+    
+  this->vertsDirty = false;
+  this->colorDirty = false;
 }
 
 void CellBase::Lock(uint32_t id) {
@@ -123,8 +125,6 @@ Cell::operator =(const Cell &that)
   this->lastUseT = 0.0;
   this->lastT = 0.0;
 
-  this->dirty = true;
-  
   return self;
 }
 
@@ -222,7 +222,7 @@ Cell::Update(
     }
   }
 
-  world->MarkForUpdateNeighbours(this);
+  //world->MarkForUpdateNeighbours(this);
 }
 
 void Cell::OnUse(RunningState &state, Mob &user, bool force) {
@@ -319,7 +319,6 @@ Cell::Flow(Side side) {
     this->world->SetCell(this->pos[side], Cell(info->type));
     cell->shared.detail = 1;
     cell->shared.smoothDetail = 1;
-    cell->UpdateVertices();
   } else {
     // otherwise just increase liquid
     cell->shared.detail++;
@@ -517,28 +516,35 @@ Cell::UpdateNeighbours(
     color = color.Max(this->info->light);
   }
 
-  bool updated = false;
   
   // update this cell and neighbours recursively until nothing changes anymore
-  if (this->SetLightLevel(color) || this->visibility != oldvis) {
+  bool lightChanged = this->SetLightLevel(color);
+  bool visChanged = this->visibility != oldvis;
+  bool updated = lightChanged || visChanged;
+  if (updated) {
     updated = true;
     for (size_t i=0; i<6; i++) {
       world->MarkForUpdateNeighbours(this->neighbours[i]);
     }
+    if (visChanged) {
+      this->vertsDirty = true;
+    }
+    this->colorDirty |= lightChanged;
   }
   
-  this->SetDirty();
-  
-  if (updated) {
-    // set corner cells dirty as well
-    this->world->GetCell(this->pos + IVector3( 1,  1,  1)).SetDirty();
-    this->world->GetCell(this->pos + IVector3(-1,  1,  1)).SetDirty();
-    this->world->GetCell(this->pos + IVector3( 1, -1,  1)).SetDirty();
-    this->world->GetCell(this->pos + IVector3(-1, -1,  1)).SetDirty();
-    this->world->GetCell(this->pos + IVector3( 1,  1, -1)).SetDirty();
-    this->world->GetCell(this->pos + IVector3(-1,  1, -1)).SetDirty();
-    this->world->GetCell(this->pos + IVector3( 1, -1, -1)).SetDirty();
-    this->world->GetCell(this->pos + IVector3(-1, -1, -1)).SetDirty();
+  if (lightChanged) {
+    // update corner cells as well
+    this->world->GetCell(this->pos + IVector3( 1,  1,  1)).colorDirty = true;
+    this->world->GetCell(this->pos + IVector3(-1,  1,  1)).colorDirty = true;
+    this->world->GetCell(this->pos + IVector3( 1, -1,  1)).colorDirty = true;
+    this->world->GetCell(this->pos + IVector3(-1, -1,  1)).colorDirty = true;
+    this->world->GetCell(this->pos + IVector3( 1,  1, -1)).colorDirty = true;
+    this->world->GetCell(this->pos + IVector3(-1,  1, -1)).colorDirty = true;
+    this->world->GetCell(this->pos + IVector3( 1, -1, -1)).colorDirty = true;
+    this->world->GetCell(this->pos + IVector3(-1, -1, -1)).colorDirty = true;
+    for (size_t i=0; i<6; i++) {
+      this->neighbours[i]->colorDirty = true;
+    }
   }
 }
   
@@ -577,7 +583,7 @@ Cell &
 Cell::SetOrder(bool topReversed, bool bottomReversed) {
   this->shared.reversedTop = topReversed;
   this->shared.reversedBottom = bottomReversed;
-  this->SetDirty();
+  if (world && !IsDynamic()) world->MarkForUpdateNeighbours(this);
   return *this;
 }
 
@@ -587,7 +593,7 @@ Cell::SetYOffsets(float a, float b, float c, float d) {
   this->shared.topHeights[1] = b * OffsetScale;
   this->shared.topHeights[2] = c * OffsetScale;
   this->shared.topHeights[3] = d * OffsetScale;
-  this->SetDirty();
+  if (world && !IsDynamic()) world->MarkForUpdateNeighbours(this);
   return *this;
 }
 
@@ -597,7 +603,7 @@ Cell::SetYOffsetsBottom(float a, float b, float c, float d) {
   this->shared.bottomHeights[1] = b * OffsetScale;
   this->shared.bottomHeights[2] = c * OffsetScale;
   this->shared.bottomHeights[3] = d * OffsetScale;
-  this->SetDirty();
+  if (world && !IsDynamic()) world->MarkForUpdateNeighbours(this);
   return *this;
 }
 
@@ -642,8 +648,6 @@ void Cell::SetWorld(World *world, const IVector3 &pos) {
 
   if (this->info->activeTexture != "") this->activeTexture = loadTexture("cells/texture/"+this->info->activeTexture);
   if (this->info->emissiveActiveTexture != "") this->emissiveActiveTexture = loadTexture("cells/texture/"+this->info->emissiveActiveTexture);
-  
-  this->dirty = true;
   
   this->pos = pos; 
   for (size_t i=0; i<6; i++) {

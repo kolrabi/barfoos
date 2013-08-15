@@ -69,7 +69,6 @@ public:
   bool HasSolidSides() const;
   bool CheckSideSolid(Side side, const Vector3 &org) const;
    
-  void SetDirty() { dirty = true; }
   AABB GetAABB() const;
 
   void Tick(RunningState &state);

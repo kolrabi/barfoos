@@ -12,7 +12,8 @@ public:
   void  SetEmissiveTexture(const Texture *tex);
   const Texture *GetEmissiveTexture() const;
 
-  void UpdateVertices();
+  bool UpdateVertices();
+  void UpdateColors();
 
   void Draw(std::vector<Vertex> &vertices) const;
   void DrawEmissive(std::vector<Vertex> &vertices) const;
@@ -29,9 +30,10 @@ protected:
   const Texture *texture, *emissiveTexture;
   const Texture *activeTexture, *emissiveActiveTexture;
   float uscale;
-
+  
   IColor SideCornerColor(Side side, size_t corner) const;
   void SideColors(Side side, IColor *colors) const;
+  void SideColors(Side side, std::vector<IColor> &outcolors, bool reverse) const;
   void SideVerts(Side side, std::vector<Vertex> &verts, bool reverse = false) const;
 };
 

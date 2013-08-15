@@ -28,7 +28,6 @@ protected:
   World *world;
   IVector3 pos;
   Cell *neighbours[6];
-  bool dirty;
   float lastT;
   float nextActivationT;
   
@@ -88,6 +87,7 @@ protected:
   float YOfs(size_t n)  const { return this->shared.topHeights[n]/(float)OffsetScale; }
   float YOfsb(size_t n) const { return this->shared.bottomHeights[n]/(float)OffsetScale; }
   
+  bool vertsDirty, colorDirty;
 };
 
 inline const std::string &CellBase::GetType() const { 

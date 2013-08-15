@@ -3,6 +3,58 @@
 #include "vertex.h"
 #include "util.h"
 
+static bool sidesDatasInited = false;
+
+struct SideData {
+  int idx[4];
+  int tile;
+  Vector3 uvec;
+  Vector3 vvec;
+};
+
+static SideData sideData[6];
+
+static void InitSideData(Side side) {
+  Vector3 uvec;
+  Vector3 vvec(0,1,0);
+  
+  int tile = 0;
+  int inv = 0;
+  int r, s, t;
+  
+  switch(side) {
+    case Side::Right:    r = Corner100; s = CornerY; t = CornerZ; uvec.z = 1.0; break;
+    case Side::Left:     r = Corner000; s = CornerY; t = CornerZ; uvec.z = 1.0; inv = CornerZ; tile = 1; break;
+    case Side::Forward:  r = Corner001; s = CornerY; t = CornerX; uvec.x = 1.0; inv = CornerX; tile = 2; break;
+    case Side::Backward: r = Corner000; s = CornerY; t = CornerX; uvec.x = 1.0; tile = 3; break;
+    case Side::Up:       r = Corner010; s = CornerZ; t = CornerX; uvec.x = 1.0; vvec = Vector3(0,0,1); tile = 4; break;
+    case Side::Down:     r = Corner000; s = CornerZ; t = CornerX; uvec.x = 1.0; vvec = Vector3(0,0,1); inv = CornerZ; tile = 5; break;
+    default: return;
+  }
+  
+  sideData[(int)side].tile = tile;
+  
+  sideData[(int)side].idx[0] = (r    )^inv;
+  sideData[(int)side].idx[1] = (r+s  )^inv;
+  sideData[(int)side].idx[2] = (r+s+t)^inv;
+  sideData[(int)side].idx[3] = (r+  t)^inv;
+  
+  sideData[(int)side].uvec = uvec;
+  sideData[(int)side].vvec = vvec;
+}
+
+static void InitSideData() {
+  for (size_t s = 0; s<6; s++) {
+    InitSideData((Side)s);
+  }
+  sidesDatasInited = true;
+}
+
+static const SideData &GetSideData(Side s) {
+  if (!sidesDatasInited) InitSideData();
+  return sideData[(int)s];
+}
+
 void 
 CellRender::SideColors(Side side, IColor *colors) const {
   colors[0] = this->SideCornerColor(side, 0);
@@ -19,43 +71,20 @@ CellRender::SetTexture(const Texture *tex, bool multi) {
     this->uscale = 1.0;
   }
   this->texture = tex; 
-  this->dirty = true;
 }
 
 void
 CellRender::SetEmissiveTexture(const Texture *tex) {
   this->emissiveTexture = tex; 
-  this->dirty = true;
 }
 
 void
 CellRender::SideVerts(Side side, std::vector<Vertex> &verts, bool reverse) const {
-  Vector3 uvec;
-  Vector3 vvec(0,1,0);
   bool drawA = true, drawB = true;
 
-  int tile = 0;
-  int inv = 0;
-  int r, s, t;
-  
-  switch(side) {
-    case Side::Right:    r = Corner100; s = CornerY; t = CornerZ; uvec.z = uscale; break;
-    case Side::Left:     r = Corner000; s = CornerY; t = CornerZ; uvec.z = uscale; inv = CornerZ; tile = 1; break;
-    case Side::Forward:  r = Corner001; s = CornerY; t = CornerX; uvec.x = uscale; inv = CornerX; tile = 2; break;
-    case Side::Backward: r = Corner000; s = CornerY; t = CornerX; uvec.x = uscale; tile = 3; break;
-    case Side::Up:       r = Corner010; s = CornerZ; t = CornerX; uvec.x = uscale; vvec = Vector3(0,0,1); tile = 4; break;
-    case Side::Down:     r = Corner000; s = CornerZ; t = CornerX; uvec.x = uscale; vvec = Vector3(0,0,1); inv = CornerZ; tile = 5; break;
-    default: return;
-  }
-  
-  int idx[4] = { (r)^inv, (r+s)^inv, (r+s+t)^inv, (r+t)^inv };
+  const SideData &data = GetSideData(side);
 
-  Vector3 pos[4] = { 
-    corners[idx[0]],
-    corners[idx[1]],
-    corners[idx[2]],
-    corners[idx[3]]
-  };
+  Vector3 pos[4] = { corners[data.idx[0]],    corners[data.idx[1]],    corners[data.idx[2]],    corners[data.idx[3]] };
 
   // avoid coplanar faces
   if (side == Side::Up   &&  reverse && pos[0].y == 0.0 && pos[1].y == 0.0 && pos[3].y == 0.0) drawA = false;
@@ -71,16 +100,17 @@ CellRender::SideVerts(Side side, std::vector<Vertex> &verts, bool reverse) const
   if (!drawA && !drawB) return;
 
   float u[4] = { 
-    pos[0].Dot(uvec) + this->shared.u[0] + tile * this->uscale, 
-    pos[1].Dot(uvec) + this->shared.u[1] + tile * this->uscale, 
-    pos[2].Dot(uvec) + this->shared.u[2] + tile * this->uscale, 
-    pos[3].Dot(uvec) + this->shared.u[3] + tile * this->uscale 
+    this->shared.u[0] + (pos[0].Dot(data.uvec) + data.tile) * this->uscale, 
+    this->shared.u[1] + (pos[1].Dot(data.uvec) + data.tile) * this->uscale, 
+    this->shared.u[2] + (pos[2].Dot(data.uvec) + data.tile) * this->uscale, 
+    this->shared.u[3] + (pos[3].Dot(data.uvec) + data.tile) * this->uscale 
   };
+  
   float v[4] = { 
-    pos[0].Dot(vvec) + this->shared.v[0], 
-    pos[1].Dot(vvec) + this->shared.v[1],
-    pos[2].Dot(vvec) + this->shared.v[2],
-    pos[3].Dot(vvec) + this->shared.v[3] 
+    pos[0].Dot(data.vvec) + this->shared.v[0], 
+    pos[1].Dot(data.vvec) + this->shared.v[1],
+    pos[2].Dot(data.vvec) + this->shared.v[2],
+    pos[3].Dot(data.vvec) + this->shared.v[3] 
   };
 
   if (GetInfo().flags & CellFlags::UVTurb) {
@@ -155,9 +185,90 @@ CellRender::SideVerts(Side side, std::vector<Vertex> &verts, bool reverse) const
 }
 
 void
+CellRender::SideColors(Side side, std::vector<IColor> &outcolors, bool reverse) const {
+  bool drawA = true, drawB = true;
+
+  const SideData &data = GetSideData(side);
+
+  Vector3 pos[4] = { corners[data.idx[0]],    corners[data.idx[1]],    corners[data.idx[2]],    corners[data.idx[3]] };
+
+  // avoid coplanar faces
+  if (side == Side::Up   &&  reverse && pos[0].y == 0.0 && pos[1].y == 0.0 && pos[3].y == 0.0) drawA = false;
+  if (side == Side::Up   &&  reverse && pos[1].y == 0.0 && pos[2].y == 0.0 && pos[3].y == 0.0) drawB = false;
+  if (side == Side::Up   && !reverse && pos[0].y == 0.0 && pos[1].y == 0.0 && pos[2].y == 0.0) drawA = false;
+  if (side == Side::Up   && !reverse && pos[0].y == 0.0 && pos[2].y == 0.0 && pos[3].y == 0.0) drawB = false;
+
+  if (side == Side::Down &&  reverse && pos[0].y == 1.0 && pos[1].y == 1.0 && pos[3].y == 1.0) drawA = false;
+  if (side == Side::Down &&  reverse && pos[1].y == 1.0 && pos[2].y == 1.0 && pos[3].y == 1.0) drawB = false;
+  if (side == Side::Down && !reverse && pos[0].y == 1.0 && pos[1].y == 1.0 && pos[2].y == 1.0) drawA = false;
+  if (side == Side::Down && !reverse && pos[0].y == 1.0 && pos[2].y == 1.0 && pos[3].y == 1.0) drawB = false;
+
+  if (!drawA && !drawB) return;
+
+  IColor colors[4];
+  SideColors(side, colors);
+  bool doubleSided = info->flags & CellFlags::DoubleSided;
+
+  if (reverse) {
+    if (drawA) {
+      outcolors.push_back(colors[0]);
+      outcolors.push_back(colors[1]);
+      outcolors.push_back(colors[3]);
+      
+      if (doubleSided) {
+        outcolors.push_back(colors[3]);
+        outcolors.push_back(colors[1]);
+        outcolors.push_back(colors[0]);
+      }
+    }
+
+    if (drawB) {
+      outcolors.push_back(colors[1]);
+      outcolors.push_back(colors[2]);
+      outcolors.push_back(colors[3]);
+      
+      if (doubleSided) {
+        outcolors.push_back(colors[3]);
+        outcolors.push_back(colors[2]);
+        outcolors.push_back(colors[1]);
+      }
+    }
+  } else {
+    if (drawA) {
+      outcolors.push_back(colors[0]);
+      outcolors.push_back(colors[1]);
+      outcolors.push_back(colors[2]);
+      
+      if (doubleSided) {
+        outcolors.push_back(colors[2]);
+        outcolors.push_back(colors[1]);
+        outcolors.push_back(colors[0]);
+      }
+    }
+
+    if (drawB) {
+      outcolors.push_back(colors[0]);
+      outcolors.push_back(colors[2]);
+      outcolors.push_back(colors[3]);
+      
+      if (doubleSided) {
+        outcolors.push_back(colors[3]);
+        outcolors.push_back(colors[2]);
+        outcolors.push_back(colors[0]);
+      }
+    }
+  }
+}
+
+bool
 CellRender::UpdateVertices() {
-  if (!this->dirty) return;
-  if ((info->flags & CellFlags::Dynamic) == 0) this->dirty = false;
+  if (!visibility || (this->info->flags & CellFlags::DoNotRender)) return false;
+  
+  if (!this->vertsDirty) {
+    this->UpdateColors();
+    return false;
+  }
+  if ((this->info->flags & CellFlags::Dynamic) == 0) this->vertsDirty = false;
 
   float h[4];
   h[0] = YOfs(0);
@@ -268,5 +379,31 @@ CellRender::UpdateVertices() {
   if (visibility & (1<<Side::Down))     SideVerts(Side::Down,     verts, this->shared.reversedBottom);
   if (visibility & (1<<Side::Forward))  SideVerts(Side::Forward,  verts, this->reversedSides);
   if (visibility & (1<<Side::Backward)) SideVerts(Side::Backward, verts, this->reversedSides);
+  
+  return true;
 }
 
+void
+CellRender::UpdateColors() {
+  if (!visibility || (this->info->flags & CellFlags::DoNotRender)) return;
+  if (!this->colorDirty) return;
+  if ((this->info->flags & CellFlags::Dynamic) == 0) this->colorDirty = false;
+  
+  std::vector<IColor> colors;
+  
+  if (visibility & (1<<Side::Right))    SideColors(Side::Right,    colors, this->reversedSides);
+  if (visibility & (1<<Side::Left))     SideColors(Side::Left,     colors, this->reversedSides);
+  if (visibility & (1<<Side::Up))       SideColors(Side::Up,       colors, this->shared.reversedTop);
+  if (visibility & (1<<Side::Down))     SideColors(Side::Down,     colors, this->shared.reversedBottom);
+  if (visibility & (1<<Side::Forward))  SideColors(Side::Forward,  colors, this->reversedSides);
+  if (visibility & (1<<Side::Backward)) SideColors(Side::Backward, colors, this->reversedSides);
+  
+  if (colors.size() != verts.size()) {
+    Log("color count %u doesn't match vertex count %u! %u\n", colors.size(), verts.size(), info->flags & CellFlags::DoubleSided);
+    return;
+  }
+  
+  for (size_t i=0; i<verts.size(); i++) {
+    verts[i].SetColor(colors[i]);
+  }
+}
