@@ -208,13 +208,8 @@ Gfx::Init(Game &game) {
       // send absolute coordinats
       game.GetInput().HandleEvent(InputEvent(InputEventType::MouseMove, mousePos)); 
     } else if (gfx.mouseGrab) {
-      // get distance from center
-      gfx.mouseDelta = gfx.mouseDelta + Point(
-        x - gfx.screenSize.x/2,
-        y - gfx.screenSize.y/2
-      );
-      // reset cursor to center
-      glfwSetCursorPos(gfx.window, gfx.screenSize.x/2, gfx.screenSize.y/2);
+      gfx.mouseDelta = gfx.mouseDelta + Point(x,y) - gfx.lastMousePos;
+      gfx.lastMousePos = Point(x,y);
     }
   } );
   
@@ -230,7 +225,7 @@ Gfx::Init(Game &game) {
       // grab mouse on click
       if (!gfx.guiActiveCount) {
         glfwSetCursorPos(gfx.window, gfx.screenSize.x/2, gfx.screenSize.y/2);
-        glfwSetInputMode(gfx.window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+        glfwSetInputMode(gfx.window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
       } else {
         game.GetInput().HandleEvent(InputEvent(InputEventType::Key, gfx.mousePos, key, down));
       }
@@ -326,7 +321,7 @@ Gfx::DecGuiCount() {
   
   if (!guiActiveCount && mouseGrab) {
     glfwSetCursorPos(this->window, screenSize.x/2, screenSize.y/2);
-    glfwSetInputMode(this->window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
   }
 }
 
@@ -356,7 +351,9 @@ Gfx::Update(Game &game) {
   if (this->mouseGrab && !this->guiActiveCount) { 
     // send relative coordinates
     game.GetInput().HandleEvent(InputEvent(InputEventType::MouseDelta, mouseDelta)); 
-
+    // reset cursor to center
+    //glfwSetCursorPos(window, screenSize.x/2, screenSize.y/2);
+    //lastMousePos = Point(screenSize.x/2, screenSize.y/2);
     mouseDelta = Point();
   }
 

@@ -91,7 +91,7 @@ private:
   Point viewportSize;
 
   // input
-  Point mousePos;
+  Point mousePos, lastMousePos;
   Point mouseDelta;
   bool mouseGrab;
   

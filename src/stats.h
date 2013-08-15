@@ -50,13 +50,13 @@ struct HealthInfo {
   float amount = 0;
   HealthType type = HealthType::Unspecified;
   Element element = Element::Physical;
-  size_t dealerId = ~0UL;
+  ID dealerId = InvalidID;
   HitType hitType = HitType::Normal;
   float exp = 0.0;
   std::string skill = "";
   
   HealthInfo() {}
-  HealthInfo(float amount, HealthType type = HealthType::Unspecified, Element element = Element::Physical, size_t dealerId = ~0UL, HitType hitType = HitType::Normal, float exp = 0.0, const std::string &skill = "") : 
+  HealthInfo(float amount, HealthType type = HealthType::Unspecified, Element element = Element::Physical, size_t dealerId = InvalidID, HitType hitType = HitType::Normal, float exp = 0.0, const std::string &skill = "") : 
     amount(amount), 
     type(type), 
     element(element), 

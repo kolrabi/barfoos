@@ -40,7 +40,7 @@ struct Sprite {
   /** All animations. */
   std::vector<Animation> animations;
   
-  std::list<uint32_t> animQueue;
+  std::list<ID> animQueue;
   
   Sprite() :
     texture(nullptr),
@@ -85,7 +85,7 @@ struct Sprite {
     }
   }
  
-  void StartAnim(uint32_t anim) {
+  void StartAnim(ID anim) {
     this->animQueue.clear();
     
     if (anim >= this->animations.size()) return;
@@ -95,7 +95,7 @@ struct Sprite {
     this->currentFrame = t;
   }
   
-  void QueueAnim(uint32_t anim) {
+  void QueueAnim(ID anim) {
     if (anim >= this->animations.size()) {
       return;
     }

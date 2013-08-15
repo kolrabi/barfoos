@@ -16,9 +16,9 @@ public:
   
   void SetSpawnOnActive(const std::string &mob, Side side, float rate);
   
-  void Lock(uint32_t id);
+  void Lock(ID id);
   void Unlock();
-  uint32_t GetLockedID() const;
+  ID GetLockedID() const;
   
 protected:
 
@@ -40,7 +40,7 @@ protected:
   float spawnOnActiveRate;
   
   bool isTrigger;
-  uint32_t triggerTargetId;
+  ID triggerTargetId;
   
   static const int OffsetScale = 127;
 
@@ -52,7 +52,7 @@ protected:
     bool isLocked;    // disallow modification via World::SetCell...
     bool ignoreLock;  // ..unless this is true
     bool ignoreWrite; // World::SetCell will only pretend to succeed
-    uint32_t featureID;
+    ID featureID;
 
     // rendering  
     bool reversedTop;
@@ -64,14 +64,14 @@ protected:
     uint32_t detail;
     float smoothDetail;
 
-    uint32_t lockedID;
+    ID lockedID;
 
     SharedInfo(const CellProperties *info) :
       tickInterval( info->flags & CellFlags::Viscous ? 32 : 5 ),
       isLocked(false),
       ignoreLock(false),
       ignoreWrite(false),
-      featureID(~0U),
+      featureID(InvalidID),
       reversedTop(false),
       reversedBottom(false),
       topHeights { OffsetScale, OffsetScale, OffsetScale, OffsetScale },
@@ -103,8 +103,8 @@ inline void CellBase::SetTeleportTarget(const IVector3 &target) {
   this->teleportTarget = target;
 }
 
-inline void CellBase::SetTriggerTarget(uint32_t id) {
-  this->isTrigger = id != 0;
+inline void CellBase::SetTriggerTarget(ID id) {
+  this->isTrigger = id != 0 && id != InvalidID;
   this->triggerTargetId = id;
 }
 

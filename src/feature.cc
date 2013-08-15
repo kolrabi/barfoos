@@ -243,7 +243,7 @@ float Feature::GetProbability(const RunningState &state, const IVector3 &pos) co
   return maxProbability * std::sin(Const::pi*levelFrac);
 }
 
-FeatureInstance Feature::BuildFeature(RunningState &state, World &world, const IVector3 &pos, int dir, int dist, size_t id, const FeatureConnection *conn, size_t prevId) const {
+FeatureInstance Feature::BuildFeature(RunningState &state, World &world, const IVector3 &pos, int dir, int dist, ID id, const FeatureConnection *conn, ID prevId) const {
   if (this->useLastId) id = prevId;
   
   for (size_t z=0; z<size.z; z++) {
@@ -261,7 +261,7 @@ FeatureInstance Feature::BuildFeature(RunningState &state, World &world, const I
   return FeatureInstance(this, pos, dir, dist+1, id);
 }
 
-void Feature::ReplaceChars(RunningState &state, World &world, const IVector3 &pos, size_t connId, size_t featureId) const {
+void Feature::ReplaceChars(RunningState &state, World &world, const IVector3 &pos, ID connId, ID featureId) const {
   std::vector<char> repchars = this->chars;
   for (const FeatureReplacement &r : replacements) {
     if (r.conn == connId) {

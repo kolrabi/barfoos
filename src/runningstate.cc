@@ -132,7 +132,7 @@ RunningState::Update() {
   if (GetGame().GetInput().IsKeyDown(InputKey::Inventory)) {
     if (!this->showInventory) {
       size_t ent = this->player->GetSelectedEntity();
-      if (ent == ~0UL || !entities[ent]->GetProperties()->openInventory) {
+      if (ent == InvalidID || !entities[ent]->GetProperties()->openInventory) {
         GetGame().SetGui(std::shared_ptr<Gui>(new InventoryGui(*this, *player)));
         this->showInventory = true;
       } else {
@@ -151,10 +151,10 @@ RunningState::Update() {
     }
     this->showInventory = false;
   }
-  
+
   // update world
   this->world->Update(*this);
-  
+
   // handle collision between entities
   { 
     PROFILE_NAMED("Entity Collision"); 
@@ -188,7 +188,7 @@ RunningState::Update() {
       entity.second->Update(*this); 
     }
   }
-  
+
   // remove removable entities
   {
     PROFILE_NAMED("Remove Entities"); 
@@ -202,7 +202,7 @@ RunningState::Update() {
       }
     }
   }
-  
+
   return this;
 }
 
@@ -218,7 +218,7 @@ void RunningState::HandleEvent(const InputEvent &event) {
  * Add an entity to this game.
  * @param entity Entity to add
  */
-size_t
+ID
 RunningState::AddEntity(Entity *entity) {
   size_t entityId = GetNextEntityId();
   this->entities[entityId] = entity;
@@ -237,7 +237,7 @@ RunningState::AddEntity(Entity *entity) {
  * @param entity Entity to remove
  */
 void
-RunningState::RemoveEntity(size_t entityId) {
+RunningState::RemoveEntity(ID entityId) {
   auto iter = this->entities.find(entityId);
   if (iter == this->entities.end()) {
     return;
@@ -259,9 +259,9 @@ RunningState::RemoveEntity(size_t entityId) {
  * @param aabb AABB within which to look for entities
  * @return A vector of entities.
  */
-std::vector<size_t> 
+std::vector<ID> 
 RunningState::FindEntities(const AABB &aabb) const {
-  std::vector<size_t> entities;
+  std::vector<ID> entities;
   
   for (auto entity : this->entities) {
     if (aabb.Overlap(entity.second->GetAABB())) {
@@ -272,9 +272,9 @@ RunningState::FindEntities(const AABB &aabb) const {
   return entities;
 }
 
-std::vector<size_t> 
+std::vector<ID> 
 RunningState::FindSolidEntities(const AABB &aabb) const {
-  std::vector<size_t> entities;
+  std::vector<ID> entities;
   
   for (auto entity : this->entities) {
     if (entity.second->IsSolid() && aabb.Overlap(entity.second->GetAABB())) {
@@ -324,7 +324,7 @@ RunningState::CheckEntities(const IVector3 &pos) {
 }
 
 Entity *
-RunningState::GetEntity(size_t entityId) {
+RunningState::GetEntity(ID entityId) {
   auto iter = this->entities.find(entityId);
   if (iter == this->entities.end()) return nullptr;
   return iter->second;
@@ -348,7 +348,7 @@ Vector3 RunningState::MoveAABB(
   targAABB.center = targ;
   
   AABB bounds = aabb.Combine(targAABB).Grow(0.1);
-  std::vector<size_t> entities = FindSolidEntities(bounds);
+  std::vector<ID> entities = FindSolidEntities(bounds);
   if (entities.empty()) return targ;
   
   // create vertices that serve as origins for ray check. must be at most
@@ -439,12 +439,12 @@ RunningState::Explosion(Entity &entity, const Vector3 &pos, size_t radius, float
 
   AABB aabb(pos, radius);
   
-  size_t ownerID = entity.GetOwner();
-  if (ownerID == ~0UL) ownerID = entity.GetId();
+  ID ownerID = entity.GetOwner();
+  if (ownerID == InvalidID) ownerID = entity.GetId();
   Entity &owner = *this->entities[ownerID];
 
-  std::vector<size_t> entIDs = this->FindEntities(aabb);
-  for (size_t entID : entIDs) {
+  std::vector<ID> entIDs = this->FindEntities(aabb);
+  for (ID entID : entIDs) {
     Entity &ent  = *this->entities[entID];
     Vector3 d = ent.GetPosition() - pos;
     float dmg = damage / (1.0 + d.GetSquareMag());
@@ -473,15 +473,15 @@ RunningState::Explosion(Entity &entity, const Vector3 &pos, size_t radius, float
   });
 }
 
-size_t
+ID
 RunningState::SpawnInAABB(
   const std::string &type,
   const AABB &aabb,
   const Vector3 &velocity
 ) {
   Entity *entity = Entity::Create(type);
-  if (!entity) return ~0UL;
-  
+  if (!entity) return InvalidID;
+    
   Vector3 s = aabb.extents - entity->GetAABB().extents;
   Vector3 p = GetRandom().Vector() * s + aabb.center;
   entity->SetPosition(p);
@@ -495,7 +495,7 @@ RunningState::SpawnInAABB(
 void RunningState::LockCell(Cell &cell) {
   if (cell.GetLockedID()) return;
   
-  uint32_t id = nextLockId ++;
+  ID id = nextLockId ++;
   cell.Lock(id);
 
   if (GetRandom().Chance(0.8)) {
@@ -518,7 +518,7 @@ void RunningState::LockCell(Cell &cell) {
 void RunningState::LockEntity(Entity &ent) {
   if (ent.GetLockedID()) return;
   
-  uint32_t id = nextLockId ++;
+  ID id = nextLockId ++;
   ent.Lock(id);
   
   if (GetRandom().Chance(0.8)) {
@@ -538,14 +538,14 @@ void RunningState::LockEntity(Entity &ent) {
   }
 }
 
-void RunningState::TriggerOn(size_t id) {
+void RunningState::TriggerOn(ID id) {
   for (auto &entity : this->entities) {
     if (entity.second->GetTriggerId() == id) entity.second->TriggerOn();
   }
   this->GetWorld().TriggerOn(id);
 }
 
-void RunningState::TriggerOff(size_t id) {
+void RunningState::TriggerOff(ID id) {
   for (auto &entity : this->entities) {
     if (entity.second->GetTriggerId() == id) entity.second->TriggerOff();
   }
@@ -602,7 +602,7 @@ RunningState::LoadLevel() {
   delete world;
   world = new World(*this, deser);
 
-  uint32_t playerId;
+  ID playerId;
   deser >> playerId;
   deser >> this->entities;
   

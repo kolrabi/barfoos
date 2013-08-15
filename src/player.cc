@@ -31,7 +31,7 @@ Player::Player() :
   bobAmplitude      (0.0),
   
   // gameplay
-  selectedEntity    (~0U),
+  selectedEntity    (InvalidID),
   selectedCell      (nullptr),
   selectedCellSide  (Side::Forward),
   selectionRange    (0.0),
@@ -73,7 +73,7 @@ Player::Player(Deserializer &deser) : Mob("player", deser),
   bobAmplitude      (0.0),
   
   // gameplay
-  selectedEntity    (~0U),
+  selectedEntity    (InvalidID),
   selectedCell      (nullptr),
   selectedCellSide  (Side::Forward),
   selectionRange    (0.0),
@@ -153,7 +153,7 @@ Player::Update(RunningState &state) {
       useItem->UseOnNothing(state, *this);
     } else if (this->selectedCell) {
       useItem->UseOnCell(state, *this, this->selectedCell, this->selectedCellSide);
-    } else if (this->selectedEntity != ~0U) {
+    } else if (this->selectedEntity != InvalidID) {
       useItem->UseOnEntity(state, *this, this->selectedEntity);
     }
   }
@@ -166,7 +166,7 @@ Player::Update(RunningState &state) {
       useItem->UseOnNothing(state, *this);
     } else if (this->selectedCell) {
       useItem->UseOnCell(state, *this, this->selectedCell, this->selectedCellSide);
-    } else if (this->selectedEntity != ~0U) {
+    } else if (this->selectedEntity != InvalidID) {
       useItem->UseOnEntity(state, *this, this->selectedEntity);
     }
   }
@@ -217,7 +217,7 @@ void Player::UpdateSelection(RunningState &state) {
   float hitDist = range;
   Vector3 hitPos;
 
-  this->selectedEntity = ~0U;
+  this->selectedEntity = InvalidID;
   this->selectedCell = nullptr;
   
   // check entities in range  
@@ -240,7 +240,7 @@ void Player::UpdateSelection(RunningState &state) {
   if (hitDist < dist) {
     dist = hitDist;
     this->selectedCell = &cell;
-    this->selectedEntity = ~0U;
+    this->selectedEntity = InvalidID;
   }
   
   this->selectionRange = dist;
@@ -261,7 +261,7 @@ Player::UpdateInput(
   if (input.IsKeyDown(InputKey::DebugDie))     this->Die(state, HealthInfo());
   
   if (!state.IsShowingInventory()) {
-    if (input.IsKeyDown(InputKey::Use) && this->selectedEntity != ~0U) {
+    if (input.IsKeyDown(InputKey::Use) && this->selectedEntity != InvalidID) {
       Entity *entity = state.GetEntity(this->selectedEntity);
       if (entity) entity->OnUse(state, *this);
     } else if (input.IsKeyDown(InputKey::Use) && this->selectedCell) {
@@ -426,6 +426,9 @@ Player::HandleEvent(const InputEvent &event) {
     if (event.key == InputKey::DebugNoclip && event.down) this->noclip = !this->noclip;
   } else if (event.type == InputEventType::MouseDelta) {
 #if WIN32
+    angles.x += event.p.x*0.005;
+    angles.y -= event.p.y*0.005;
+#elif MACOSX
     angles.x += event.p.x*0.005;
     angles.y -= event.p.y*0.005;
 #else

@@ -242,8 +242,8 @@ Entity *Entity::Create(const std::string &type, Deserializer &deser) {
 }
 
 Entity::Entity(const std::string &type) :
-  id(~0),
-  ownerId(~0),
+  id(InvalidID),
+  ownerId(InvalidID),
   removable(false),
   properties(getEntity(type)),
   nextThinkT(0.0),
@@ -530,7 +530,7 @@ Entity::Die(RunningState &state, const HealthInfo &info) {
 
   this->activeBuffs.clear();
   
-  if (info.dealerId != ~0UL) {
+  if (info.dealerId != InvalidID) {
     state.GetPlayer().AddDeathMessage(*this, *state.GetEntity(info.dealerId), info);
   } else {
     state.GetPlayer().AddDeathMessage(*this, info);
@@ -551,7 +551,7 @@ Entity::Die(RunningState &state, const HealthInfo &info) {
 
   this->inventory.Drop(state, *this);
   
-  if (this->properties->dyingAnim != ~0U) {
+  if (this->properties->dyingAnim != InvalidID) {
     this->sprite.StartAnim(this->properties->dyingAnim);
     this->sprite.QueueAnim(0);
   } else {

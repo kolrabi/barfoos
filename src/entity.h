@@ -47,9 +47,9 @@ struct EntityProperties : public Properties {
   float   sizeRand          = 0;
   bool    isBox             = false;  //< Render entity as a box instead of a sprite.
   IColor  glow              = IColor(0,0,0);
-  uint32_t  flinchAnim        = ~0U;   //< Animation to play when hurt.
-  uint32_t  dyingAnim         = ~0U;   //< Animation to play on death.
-  uint32_t  attackAnim        = ~0U;   //< Animation to play on death.
+  ID  flinchAnim            = InvalidID;   //< Animation to play when hurt.
+  ID  dyingAnim             = InvalidID;   //< Animation to play on death.
+  ID  attackAnim            = InvalidID;   //< Animation to play on death.
   std::vector<EntityDrawBox> drawBoxes = std::vector<EntityDrawBox>(0);
   std::vector<ParticleEmitter> emitters = std::vector<ParticleEmitter>(0);
   bool    createBubbles     = false;
@@ -151,8 +151,8 @@ public:
   
   Entity &operator=(const Entity &that) = delete;
   
-  virtual void Start(RunningState &state, uint32_t id);
-  virtual void Continue(RunningState &state, uint32_t id);
+  virtual void Start(RunningState &state, ID id);
+  virtual void Continue(RunningState &state, ID id);
   virtual void Update(RunningState &state);
   virtual void Think(RunningState &state);
 
@@ -172,12 +172,12 @@ public:
   virtual void OnBuffAdded(RunningState &, const EffectProperties &)      {}
     
   // management
-  uint32_t                  GetId()                           const { return id; }
+  ID                        GetId()                           const { return id; }
   bool                      IsRemovable()                     const { return removable; }
   const EntityProperties *  GetProperties()                   const { return properties; }
   virtual std::string       GetName()                         const { return properties->displayName; }
 
-  uint32_t                  GetOwner()                        const { return ownerId; }
+  ID                        GetOwner()                        const { return ownerId; }
   void                      SetOwner(const Entity &owner)           { this->ownerId = owner.id; }
   
   // gameplay
@@ -210,9 +210,9 @@ public:
   bool                      CanSee(RunningState &state, const Vector3 &pos);
   
   void                      AddBuff(RunningState &state, const std::string &name);
-  void                      Lock(uint32_t id)                       { this->lockedID = id; }
+  void                      Lock(ID id)                             { this->lockedID = id; }
   void                      Unlock()                                { this->lockedID = 0; }
-  uint32_t                  GetLockedID()                     const { return this->lockedID; }
+  ID                        GetLockedID()                     const { return this->lockedID; }
   bool                      CanOpenInventory()                const { return this->properties->openInventory && this->lockedID == 0; }
   
   // rendering
@@ -226,7 +226,7 @@ protected:
   Entity(const std::string &type, Deserializer &deser);
 
   // management
-  uint32_t id, ownerId;
+  ID id, ownerId;
   bool removable;
   const EntityProperties *properties;
   float nextThinkT, startT;
@@ -251,7 +251,7 @@ protected:
   Cell *lastCell;
   IVector3 cellPos;
   Inventory inventory;
-  uint32_t lockedID;
+  ID lockedID;
   
   // rendering
   Sprite sprite;

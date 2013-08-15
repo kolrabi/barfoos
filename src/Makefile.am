@@ -2,7 +2,7 @@
 
 ## Build ----------------------------------------------------------
 
-CF=$(GL_CFLAGS) -Wall -Wextra -I$(top_srcdir)/src -DDATA_PATH=\"$(pkgdatadir)\" -pthread
+CF=$(GL_CFLAGS) -Werror -Wall -Wextra -I$(top_srcdir)/src -DDATA_PATH=\"$(pkgdatadir)\" -pthread
 # -D_GLIBCXX_DEBUG 
 
 if WINDOOF

@@ -13,14 +13,14 @@ struct FeatureConnection {
   // where can be put a connection to another feature
   IVector3 pos;
   int dir;
-  size_t id;
+  ID id;
 
   // possible features that can be connected here
   std::map<std::string, float> nextFeatures;
   
   bool resolved;
 
-  FeatureConnection(const IVector3 &pos, int dir, size_t id) : 
+  FeatureConnection(const IVector3 &pos, int dir, ID id) : 
     pos(pos), 
     dir(dir), 
     id(id), 
@@ -39,16 +39,16 @@ struct FeatureInstance {
   IVector3 pos;
   int dir;
   int dist;
-  size_t featureID;
-  size_t prevID;
+  ID featureID;
+  ID prevID;
   
-  FeatureInstance(const Feature *feature, IVector3 pos, int dir, int dist, size_t id) : 
+  FeatureInstance(const Feature *feature, IVector3 pos, int dir, int dist, ID id) : 
     feature(feature), 
     pos(pos), 
     dir(dir), 
     dist(dist), 
     featureID(id), 
-    prevID(~0UL) 
+    prevID(InvalidID) 
   {}
   
   FeatureInstance() : 
@@ -56,8 +56,8 @@ struct FeatureInstance {
     pos(),
     dir(0), 
     dist(0), 
-    featureID(~0UL), 
-    prevID(~0UL) 
+    featureID(InvalidID), 
+    prevID(InvalidID) 
   {}
 };
 
@@ -137,7 +137,7 @@ public:
   
   const IVector3 GetSize() const; 
   float GetProbability(const RunningState &state, const IVector3 &pos) const;
-  FeatureInstance BuildFeature(RunningState &state, World &world, const IVector3 &pos, int dir, int dist, size_t id, const FeatureConnection *conn, size_t prevId) const;
+  FeatureInstance BuildFeature(RunningState &state, World &world, const IVector3 &pos, int dir, int dist, ID id, const FeatureConnection *conn, ID prevId) const;
   void SpawnEntities(RunningState &state, const IVector3 &pos) const;
   
   const std::vector<FeatureConnection> &GetConnections() const { return conns; }
@@ -149,7 +149,7 @@ public:
   const std::string &GetGroup() const { return group; }
 
   void ResolveConnections();
-  void ReplaceChars(RunningState &state, World &world, const IVector3 &pos, size_t connId, size_t featureId) const;
+  void ReplaceChars(RunningState &state, World &world, const IVector3 &pos, ID connId, ID featureId) const;
   
   Feature Rotate();
 

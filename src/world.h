@@ -16,8 +16,8 @@ public:
 
   void Draw(Gfx &gfx, const Vector3 &eyePos);
   
-  void AddFeatureSeen(size_t f);
-  bool IsFeatureSeen(size_t id) const;
+  void AddFeatureSeen(ID f);
+  bool IsFeatureSeen(ID id) const;
   
 private:
 

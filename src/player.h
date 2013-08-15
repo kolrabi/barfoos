@@ -17,7 +17,7 @@ public:
 
   Player &operator=(const Player &) = delete;
 
-  virtual void Start(RunningState &state, uint32_t id) override;
+  virtual void Start(RunningState &state, ID id) override;
   virtual void Update(RunningState &state) override;
   virtual void Draw(Gfx &gfx) const override;
 
@@ -42,7 +42,7 @@ public:
 
   virtual std::string       GetName()                         const;
   float                     GetPain()                         const { return this->pain; }
-  uint32_t                  GetSelectedEntity()               const { return this->selectedEntity; }
+  ID                        GetSelectedEntity()               const { return this->selectedEntity; }
   
   void SetUniforms(const std::shared_ptr<Shader> &shader) const;
   
@@ -76,7 +76,7 @@ private:
   float bobAmplitude;
   
   // gameplay
-  uint32_t selectedEntity;
+  ID selectedEntity;
   Cell *selectedCell;
   Side selectedCellSide;
   float selectionRange;

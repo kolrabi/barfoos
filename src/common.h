@@ -80,11 +80,13 @@ class World;
 namespace Const {
   constexpr float pi          = std::atan(1.0)*4.0;
   constexpr float pi_2        = std::atan(1.0)*2.0;
-  constexpr size_t InvalidID  = ~0UL;
 }
 
 constexpr float operator"" _deg(long double f)        { return        f / 180 * Const::pi; }
 constexpr float operator"" _deg(unsigned long long f) { return (float)f / 180 * Const::pi; }
 
+typedef uint32_t ID;
+constexpr ID InvalidID = (ID)0xFFFFFFFF;
+ 
 #endif
 

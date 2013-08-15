@@ -145,12 +145,12 @@ World::Build() {
   
     instances.clear();
     instances.push_back(getFeature("start")->BuildFeature(state, *this, IVector3(32-4, 32-8,32-4), 0, 0, 0, nullptr, 0));
-    instances.back().prevID = ~0U;
+    instances.back().prevID = InvalidID;
   
     int loop = 0;
     int lastDir = 0;
-    size_t minY = size.y;
-    size_t maxY = 0;
+    uint32_t minY = size.y;
+    uint32_t maxY = 0;
 
     Log("Building features...\n");
     do {
@@ -160,7 +160,7 @@ World::Build() {
       // select a feature from which to go
       bool                      useLast     = random.Chance(useLastChance);
       bool                      useLastDir  = lastDir != 0 && useLast && random.Chance(useLastDirChance);
-      uint32_t                  featNum     = useLast ? instances.size()-1 : random.Integer(instances.size());
+      ID                        featNum     = useLast ? instances.size()-1 : random.Integer(instances.size());
       const FeatureInstance &   instance    = instances[featNum];
     
       // select a random connection from the current feature
@@ -1180,8 +1180,8 @@ MiniMap::Draw(
  * @param f Feature id.
  */
 void
-MiniMap::AddFeatureSeen(size_t f) {
-  if (f == ~0UL) return;
+MiniMap::AddFeatureSeen(ID f) {
+  if (f == InvalidID) return;
   
   // make sure vector is large enough
   if (this->seenFeatures.size() <= f) {
@@ -1196,8 +1196,8 @@ MiniMap::AddFeatureSeen(size_t f) {
 }
 
 bool 
-MiniMap::IsFeatureSeen(size_t id) const {
-  if (id == ~0UL || id >= this->seenFeatures.size()) return false;
+MiniMap::IsFeatureSeen(ID id) const {
+  if (id == InvalidID || id >= this->seenFeatures.size()) return false;
   return this->seenFeatures[id];
 }
 

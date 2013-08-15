@@ -23,28 +23,28 @@ public:
   bool 	                IsShowingInventory()        const { return this->showInventory; }
 
   // entity management
-  size_t                AddEntity(Entity *entity);
-  Entity *              GetEntity(size_t id);
-  void                  RemoveEntity(size_t entity);
+  ID                    AddEntity(Entity *entity);
+  Entity *              GetEntity(ID id);
+  void                  RemoveEntity(ID entity);
   
   Player &              GetPlayer()                       { return *this->player; }
   
   bool                  CheckEntities(const IVector3 &pos);
   
-  std::vector<size_t>   FindEntities(const AABB &aabb)      const;
-  std::vector<size_t>   FindSolidEntities(const AABB &aabb) const;
+  std::vector<ID>       FindEntities(const AABB &aabb)      const;
+  std::vector<ID>       FindSolidEntities(const AABB &aabb) const;
 
   // misc.
   Vector3               MoveAABB(const AABB &aabb, const Vector3 &dir, uint8_t &axis);
   
   void                  Explosion(Entity &entity, const Vector3 &pos, size_t radius, float strength, float damage, Element element);
-  size_t                SpawnInAABB(const std::string &type, const AABB &aabb, const Vector3 &velocity = Vector3());
+  ID                    SpawnInAABB(const std::string &type, const AABB &aabb, const Vector3 &velocity = Vector3());
   void                  LockCell(Cell &cell);
   void                  LockEntity(Entity &entity);
   
-  void                  TriggerOn(size_t id);
-  void                  TriggerOff(size_t id);
-  uint32_t              GetNextTriggerId() { return this->nextTriggerId ++; }
+  void                  TriggerOn(ID id);
+  void                  TriggerOff(ID id);
+  ID                    GetNextTriggerId() { return this->nextTriggerId ++; }
   
   void                  SaveLevel();
   void                  LoadLevel();
@@ -54,18 +54,18 @@ private:
   int32_t level;
   World *world;
   
-  uint32_t nextEntityId;
-  uint32_t GetNextEntityId() { return nextEntityId++; }
+  ID nextEntityId;
+  ID GetNextEntityId() { return nextEntityId++; }
   
-  std::unordered_map<uint32_t, Entity*> entities;
+  std::unordered_map<ID, Entity*> entities;
   Player *player;
 
   bool showInventory;
   
   float lastSaveT;
-  uint32_t nextTriggerId;
+  ID nextTriggerId;
   
-  uint32_t nextLockId;
+  ID nextLockId;
   
   std::vector<const Entity*> FindLightEntities(const Vector3 &pos, float radius) const;
   void BuildWorld();
