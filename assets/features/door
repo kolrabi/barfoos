@@ -1,18 +1,19 @@
 Size     3  5  5
-Level    0 -1 10.0
+Level    0 -1 1.0
 
-group    doorway_x
+group    doorway
 
 UseLastId
+NoRotate
 
 Conn     1  1  2   -1
   Next   $hallway
-  Next   $stairs_x
+  Next   $stairs
   Next   $room
 
 Conn     1  1  2    1
   Next   $hallway
-  Next   $stairs_x
+  Next   $stairs
   Next   $room
 
 Def      #

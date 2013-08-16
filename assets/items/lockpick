@@ -1,4 +1,4 @@
-Tex               ring.silver
+Tex               lockpick
 
 Hand
 Cooldown          0.4
@@ -7,9 +7,13 @@ CanUseEntity
 CanUseCell
 
 UnlockChance      0.2
+Damage            0
+Durability        8
+UseDurability     1
 
 NoModifier
 NoBeatitude
 
 Name             "lockpick"
 
+Stack

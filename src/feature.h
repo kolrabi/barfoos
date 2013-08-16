@@ -175,6 +175,7 @@ protected:
   size_t minY;
   
   bool useLastId;
+  bool noRotate;
   
   void ReplaceChars(const FeatureReplacement &r, std::vector<char> &chars) const;
   

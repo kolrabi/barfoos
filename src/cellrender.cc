@@ -357,9 +357,9 @@ CellRender::UpdateVertices() {
     h[3] += Wave(this->pos.x+1, this->pos.z,   t, 0.1);
   }
   
-  const float &scaleX = info->scale.x;
-  const float &scaleY = info->scale.y;
-  const float &scaleZ = info->scale.z;
+  const float &scaleX = shared.scale.x;
+  const float &scaleY = shared.scale.y;
+  const float &scaleZ = shared.scale.z;
   
   corners[0] = Vector3(0.5-0.5*scaleX, 0.5+(YOfsb(0)-0.5)*scaleY, 0.5-0.5*scaleZ); 
   corners[1] = Vector3(0.5+0.5*scaleX, 0.5+(YOfsb(3)-0.5)*scaleY, 0.5-0.5*scaleZ); 

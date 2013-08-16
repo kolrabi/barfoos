@@ -21,7 +21,7 @@ NoStep
 NoClip
 
 lifetime 0.5
-gravity 0
+gravity 1
 
 Glow 0 1 0
 

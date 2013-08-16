@@ -103,7 +103,7 @@ World::Build() {
   size_t caveRepeat    = random.Integer(20)+10;
  
   size_t teleportCount = random.Integer(10)+2;
-  size_t trapCount = random.Integer(10)+2;
+  size_t trapCount = random.Integer(10)+10;
 
   std::vector<FeatureInstance> instances;
 
@@ -155,7 +155,7 @@ World::Build() {
     Log("Building features...\n");
     do {
       loop++;
-      if (loop > 1000) break;
+      if (loop > 100000) break;
       
       // select a feature from which to go
       bool                      useLast     = random.Chance(useLastChance);
@@ -226,7 +226,7 @@ World::Build() {
     int height = maxY - minY;
   
     // want at least 150 features and at least 16 cells high
-    if (instances.size() < 50 || height < 1) {
+    if (instances.size() < 150 || height < 16) {
       if (!done) {
         done = true;
         Log("Made world with %u features and height %d, sick of waiting :/ ...\n", instances.size(), height);
@@ -1154,7 +1154,8 @@ MiniMap::MiniMap(const World &world, Deserializer &deser) :
 void
 MiniMap::Draw(
   Gfx &gfx, 
-  const Vector3 &eyePos
+  const Vector3 &eyePos,
+  float angle
 ) {
   PROFILE();
   
@@ -1171,6 +1172,13 @@ MiniMap::Draw(
   gfx.GetView().Push();
   gfx.GetView().Translate(Vector3(-1 + 2*eyePos.x/size.x, -1 + 2*eyePos.z/size.z, 0));
   gfx.GetView().Scale(Vector3(-1, 1, 1));
+  gfx.DrawUnitQuad();
+  gfx.GetView().Pop();
+  
+  gfx.SetTextureFrame(loadTexture("gui/maparrow"));
+  gfx.GetView().Push();
+  gfx.GetView().Rotate(angle, Vector3(0,0,1));
+  gfx.GetView().Scale(Vector3(-1.0/4.0, 1.0/4.0, 1));
   gfx.DrawUnitQuad();
   gfx.GetView().Pop();
 }
@@ -1214,7 +1222,7 @@ MiniMap::RepaintMap() {
       for (size_t yy=viewY; yy>0; yy--) {
         IVector3 pos(x,yy,z);
         Cell &cell = this->world.GetCell(pos);
-        // TEST if (!cell.IsSeen(2)) continue; 
+        if (!cell.IsSeen(2)) continue; 
         
         bool solid = !cell.IsTransparent() && !cell[Side::Up].IsTransparent() && !cell[Side::Down].IsTransparent();
         uint8_t v = yy - viewY + 64;

@@ -115,7 +115,7 @@ RunningState::Render(Gfx &gfx) const {
   Point vscreen = gfx.GetScreenSize();
   gfx.Viewport(Rect(Point(vscreen.x-128, 0), Point(128, 128)));  
   player->MapView(gfx);
-  world->GetMap().Draw(gfx, player->GetSmoothPosition());
+  world->GetMap().Draw(gfx, player->GetSmoothPosition(), player->GetAngles().x * Const::rad2deg);
   gfx.Viewport(Rect());  
 
   // next draw gui stuff

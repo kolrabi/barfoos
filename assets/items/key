@@ -1,7 +1,9 @@
-Tex               ring.gold
+Tex               key
+#Size              0.25 0.25
 
 Hand
 Cooldown          0.4
+Damage            0
 
 CanUseEntity
 CanUseCell

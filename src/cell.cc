@@ -747,6 +747,8 @@ void Cell::Rotate() {
   this->shared.bottomHeights[1] = this->shared.bottomHeights[2];
   this->shared.bottomHeights[2] = this->shared.bottomHeights[3];
   this->shared.bottomHeights[3] = tmp;
+  
+  this->shared.scale = this->shared.scale.ZYX();
 }
   
 Serializer &operator << (Serializer &ser, const Cell &cell) {

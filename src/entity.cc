@@ -95,8 +95,8 @@ EntityProperties::ParseProperty(const std::string &cmd) {
   else if (cmd == "lockedchance")     Parse(this->lockedChance);
   else if (cmd == "extents") {
     Parse(this->extents);
-    this->sprite.width = this->extents.x;
-    this->sprite.height = this->extents.y;
+    this->sprite.width = this->extents.x*2.0;
+    this->sprite.height = this->extents.y*2.0;
   } else if (cmd == "drawbox") {
     EntityDrawBox box;
     Parse("entities/texture/", box.texture);

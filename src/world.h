@@ -14,7 +14,7 @@ public:
   MiniMap(const World &world);
   MiniMap(const World &world, Deserializer &deser);
 
-  void Draw(Gfx &gfx, const Vector3 &eyePos);
+  void Draw(Gfx &gfx, const Vector3 &eyePos, float angle);
   
   void AddFeatureSeen(ID f);
   bool IsFeatureSeen(ID id) const;

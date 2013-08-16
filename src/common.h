@@ -80,6 +80,7 @@ class World;
 namespace Const {
   constexpr float pi          = std::atan(1.0)*4.0;
   constexpr float pi_2        = std::atan(1.0)*2.0;
+  constexpr float rad2deg     = 180.0 / pi;
 }
 
 constexpr float operator"" _deg(long double f)        { return        f / 180 * Const::pi; }

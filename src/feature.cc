@@ -44,7 +44,8 @@ Feature::Feature() :
   maxLevel(0),
   maxProbability(0.0),
   minY(0),
-  useLastId(false)
+  useLastId(false),
+  noRotate(false)
 {}
 
 Feature::Feature(FILE *f, const std::string &name) :
@@ -62,7 +63,8 @@ Feature::Feature(FILE *f, const std::string &name) :
   maxLevel(-1),
   maxProbability(1.0),
   minY(0),
-  useLastId(false)
+  useLastId(false),
+  noRotate(false)
 {
   char line[256];
   char lastDef = 0;
@@ -170,6 +172,8 @@ Feature::Feature(FILE *f, const std::string &name) :
       spawn.attach = std::atoi(tokens[3].c_str());
       spawn.pos = Vector3(std::atof(tokens[4].c_str()), std::atof(tokens[5].c_str()), std::atof(tokens[6].c_str()));
       this->spawns.push_back(spawn);
+    } else if (tokens[0] == "norotate") {
+      this->noRotate = true;
     } else if (tokens[0] == "slice") {
       size_t y0 = std::atof(tokens[1].c_str());
       size_t y1 = std::atof(tokens[2].c_str());
@@ -455,6 +459,8 @@ Feature::ResolveConnections() {
 Feature
 Feature::Rotate() {
   Feature feature = *this;
+  if (this->noRotate) return feature;
+  
   feature.size = IVector3(size.z, size.y, size.x);
   for (size_t y=0; y<size.y; y++) {
     for (size_t x=0; x<size.x; x++) {
