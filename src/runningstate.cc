@@ -113,7 +113,7 @@ RunningState::Render(Gfx &gfx) const {
   player->DrawWeapons(gfx);
   
   Point vscreen = gfx.GetScreenSize();
-  gfx.Viewport(Rect(Point(vscreen.x-256, 0), Point(256, 256)));  
+  gfx.Viewport(Rect(Point(vscreen.x-128, 0), Point(128, 128)));  
   player->MapView(gfx);
   world->GetMap().Draw(gfx, player->GetSmoothPosition());
   gfx.Viewport(Rect());  

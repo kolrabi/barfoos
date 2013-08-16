@@ -76,3 +76,9 @@ barfoos_SOURCES=\
 ## Packaging ------------------------------------------------------
 
 EXTRA_DIST=libgcc_s_dw2-1.dll libstdc++-6.dll icon.ico res.rc.in
+
+
+if MECKES
+app:
+	sh makeapp.sh
+endif
