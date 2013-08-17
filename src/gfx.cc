@@ -57,6 +57,7 @@ Gfx::Gfx(const Point &pos, const Point &size, bool fullscreen) :
   window(nullptr),
   isInit(false),
   startTime(glfwGetTime()),
+  vbo(0),
   player(nullptr),
   
   screenPos(pos),
@@ -77,6 +78,7 @@ Gfx::Gfx(const Point &pos, const Point &size, bool fullscreen) :
   activeShader(nullptr),
   view(new GfxView(*this)),
   color(255, 255, 255),
+  light(0,0,0),
   alpha(1.0),
   activeTextures(),
   activeTextureStage(0),
@@ -285,7 +287,15 @@ Gfx::Init(Game &game) {
   glEnableClientState(GL_VERTEX_ARRAY);
   glEnableClientState(GL_COLOR_ARRAY);
   glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-  
+
+  std::vector<Vertex> verts;
+  for (auto &v:quadVerts) verts.push_back(v);  
+  for (auto &v:cubeVerts) verts.push_back(v);  
+  glGenBuffers(1, &this->vbo);
+  glBindBuffer(GL_ARRAY_BUFFER, this->vbo);
+  glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex)*(verts.size()), &verts[0], GL_STATIC_DRAW);
+
+  glBindBuffer(GL_ARRAY_BUFFER, 0);
   this->BindVertexPointer(&this->quadVerts[0]);
     
   isInit = true;
@@ -294,6 +304,8 @@ Gfx::Init(Game &game) {
 
 void
 Gfx::Deinit() {
+  if (this->vbo) glDeleteBuffersARB(1, &this->vbo);
+
   glfwSetWindowSizeCallback( this->window, nullptr);
   glfwSetCursorPosCallback(  this->window, nullptr);
   glfwSetMouseButtonCallback(this->window, nullptr);
@@ -402,6 +414,7 @@ void Gfx::SetShader(const std::string &name) {
   this->activeShader = shaders[name];
 
   glUseProgramObjectARB(shaders[name]->GetProgram());
+  this->SetUniforms();
 }
 
 void Gfx::SetBlendNormal() {
@@ -459,6 +472,11 @@ Gfx::SetColor(const IColor &color, float alpha) {
   this->alpha = alpha;
 }
 
+void
+Gfx::SetLight(const IColor &color) {
+  this->light = color;
+}
+
 void 
 Gfx::SetBackfaceCulling(bool cull) {
   if (cull) {
@@ -496,6 +514,7 @@ Gfx::SetUniforms() const {
   this->activeShader->Uniform("u_fogColor", this->fogColor);
   this->activeShader->Uniform("u_time",     this->GetTime());
   this->activeShader->Uniform("u_color",    this->color, this->alpha);
+  this->activeShader->Uniform("u_light",    this->light, 1.0);
   
   this->activeShader->Uniform("u_lightPos",   lightPos);
   this->activeShader->Uniform("u_lightColor", lightCol);
@@ -531,7 +550,6 @@ Gfx::DrawQuads(const std::vector<Vertex> &vertices) {
 void 
 Gfx::DrawTriangles(unsigned int vbo, size_t first, size_t vertexCount) {
   if (!vertexCount) return;
-
   this->SetUniforms();
 
   glBindBuffer(GL_ARRAY_BUFFER, vbo);
@@ -543,8 +561,8 @@ Gfx::DrawTriangles(unsigned int vbo, size_t first, size_t vertexCount) {
 void 
 Gfx::DrawQuads(unsigned int vbo, size_t first, size_t vertexCount) {
   if (!vertexCount) return;
-
   this->SetUniforms();
+
   glBindBuffer(GL_ARRAY_BUFFER, vbo);
   this->BindVertexPointer(nullptr);
   glDrawArrays(GL_QUADS,        first, vertexCount);
@@ -552,11 +570,11 @@ Gfx::DrawQuads(unsigned int vbo, size_t first, size_t vertexCount) {
 }
 
 void Gfx::DrawUnitCube() {
-  this->DrawQuads(this->cubeVerts);
+  this->DrawQuads(this->vbo, 4, 24); // this->cubeVerts);
 }    
 
 void Gfx::DrawUnitQuad() {
-  this->DrawQuads(this->quadVerts);
+  this->DrawQuads(this->vbo, 0, 4); //this->quadVerts);
 }    
 
 void Gfx::DrawAABB(const AABB &aabb) {
@@ -581,12 +599,12 @@ void Gfx::DrawSprite(const Sprite &sprite, const Vector3 &pos, bool flip, bool b
 
   if (sprite.texture) {
     this->SetTextureFrame(sprite.texture, 0, sprite.currentFrame, sprite.totalFrames);
-    this->DrawQuads(this->quadVerts);
+    this->DrawUnitQuad();
   }
   if (sprite.emissiveTexture) {
     this->SetTextureFrame(sprite.emissiveTexture, 0, sprite.currentFrame, sprite.totalFrames);
     this->SetBlendAdd();
-    this->DrawQuads(this->quadVerts);
+    this->DrawUnitQuad();
     this->SetBlendNormal();
   }
   SetBackfaceCulling(true); 
@@ -600,12 +618,12 @@ void Gfx::DrawIcon(const Sprite &sprite, const Point &center, const Point &size)
   this->view->Scale    (Vector3(size.x/2, -size.y/2, 1));
   if (sprite.texture) {
     this->SetTextureFrame(sprite.texture, 0, sprite.currentFrame, sprite.totalFrames);
-    this->DrawQuads(this->quadVerts);
+    this->DrawUnitQuad();
   }
   if (sprite.emissiveTexture) {
     this->SetTextureFrame(sprite.emissiveTexture, 0, sprite.currentFrame, sprite.totalFrames);
     this->SetBlendAdd();
-    this->DrawQuads(this->quadVerts);
+    this->DrawUnitQuad();
     this->SetBlendNormal();
   }
   this->view->Pop();

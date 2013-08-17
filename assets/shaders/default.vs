@@ -1,4 +1,5 @@
 #version 120
+const int lightCount = 4;
 
 uniform float u_time;
 uniform sampler2D u_texture;
@@ -10,13 +11,14 @@ uniform mat4 u_matView;
 uniform mat4 u_matTexture;
 uniform mat4 u_matNormal;
 
-uniform vec3 u_lightPos[8];
+uniform vec3 u_lightPos[lightCount];
+uniform vec4 u_lightColor[lightCount];
 
 varying vec3 v_pos;
 varying vec2 v_tex;
 varying vec4 v_color;
 varying vec3 v_norm;
-varying vec3 v_light[8];
+varying vec3 v_light[lightCount];
 
 vec3 Distort(vec4 vertex) {
   float t = u_time * 2.0 * 3.14159;
@@ -38,13 +40,12 @@ void main() {
   v_color     = gl_Color;
   v_tex       = (u_matTexture * gl_MultiTexCoord0).st;
   v_norm      = normalize(mat3(u_matNormal) * gl_Normal);
-  
-  v_light[0] = vec3(u_matView * vec4(u_lightPos[0], 1.0));
-  v_light[1] = vec3(u_matView * vec4(u_lightPos[1], 1.0));
-  v_light[2] = vec3(u_matView * vec4(u_lightPos[2], 1.0));
-  v_light[3] = vec3(u_matView * vec4(u_lightPos[3], 1.0));
-  v_light[4] = vec3(u_matView * vec4(u_lightPos[4], 1.0));
-  v_light[5] = vec3(u_matView * vec4(u_lightPos[5], 1.0));
-  v_light[6] = vec3(u_matView * vec4(u_lightPos[6], 1.0));
-  v_light[7] = vec3(u_matView * vec4(u_lightPos[7], 1.0));
+ 
+  for (int i=0; i<lightCount; i++) {
+    vec3 v_l = vec3(u_matView * vec4(u_lightPos[i], 1.0));
+    vec3 ld = v_l - v_pos;
+    vec3 L = normalize(ld);
+    float d = length(ld);
+    v_light[i] = u_lightColor[i].rgb * max(0.0, dot(v_norm, L)) / (1.0 +d);
+  }  
 }

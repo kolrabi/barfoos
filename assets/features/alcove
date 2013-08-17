@@ -10,11 +10,11 @@ def .
 cell air
 
 def \
-cell step
+cell brick
 bottom 1 0 0 1
 
 def /
-cell step
+cell brick
 bottom 0 1 1 0
 
 def &

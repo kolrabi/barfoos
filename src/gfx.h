@@ -44,6 +44,7 @@ public:
   void SetBlendAdd();
   void SetFog(float l, const IColor &color);
   void SetColor(const IColor &color, float alpha = 1.0);
+  void SetLight(const IColor &color);
   void SetBackfaceCulling(bool cull);
   void SetLights(const std::vector<Vector3> &positions, const std::vector<IColor> &colors);
   void SetPlayer(const Player *player);
@@ -70,7 +71,7 @@ public:
   Point AlignTopLeftScreen(const Point &size, int padding = 0);
   Point AlignTopRightScreen(const Point &size, int padding = 0);
   
-  static const size_t MaxLights = 8;
+  static const size_t MaxLights = 4;
   
 private:
 
@@ -80,6 +81,7 @@ private:
   
   bool isInit;
   float startTime;
+  unsigned int vbo;  
   
   const Player *player;
 
@@ -107,7 +109,7 @@ private:
   std::unordered_map<std::string, std::shared_ptr<Shader>> shaders;
   std::shared_ptr<Shader> activeShader;
   GfxView *view;
-  IColor color;
+  IColor color, light;
   float alpha;
   std::unordered_map<size_t, const Texture *> activeTextures;
   size_t activeTextureStage;

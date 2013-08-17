@@ -33,7 +33,7 @@ World::World(RunningState &state, const IVector3 &size) :
   dynamicCells(0),
   nextTickT(0.0),
   tickInterval(0.1),
-  ambientLight(32, 32, 64),
+  ambientLight(32, 32, 32),
   allVerts(0),
   vertexStartsNormal(),
   vertexCountsNormal(),
@@ -493,6 +493,7 @@ World::Draw(Gfx &gfx) {
 
   gfx.SetShader("default");
   gfx.SetColor(IColor(255,255,255));
+  gfx.SetLight(IColor(255,255,255));
   gfx.SetBlendNormal();
 
   {

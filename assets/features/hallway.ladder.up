@@ -28,32 +28,10 @@ def #
 cell brick
 nolock
 
-def % 
-cell brick
-nolock
-
 def &
 cell brick
 onlydefault
 nolock
-
-def a 
-cell step
-bottom 0 1 1 1
-
-def b
-cell step
-bottom 1 1 1 0
-brev
-
-def c 
-cell step
-bottom 1 0 1 1
-brev
-
-def d
-cell step
-bottom 1 1 0 1
 
 def L
 cell ladder.right
@@ -62,12 +40,12 @@ slice 0 1
 &&&&&&&
 &#####&
 &#####&
-&##%##&
+&#####&
 &#####&
 &#####&
 &&&&&&&
 
-slice 2 4
+slice 2 5
 &&&&&&&
 &.....&
 &.....&
@@ -77,15 +55,6 @@ slice 2 4
 &&&&&&&
 
 Entity 0.1 "torch" -3  2 2 3
-
-slice 5 5
-&&&&&&&
-&a...b&
-&.....&
-&..L..&
-&.....&
-&c...d&
-&&&&&&&
 
 slice 6 6
 &&&&&&&

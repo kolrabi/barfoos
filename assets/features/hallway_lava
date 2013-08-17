@@ -30,32 +30,10 @@ def #
 cell brick
 nolock
 
-def % 
-cell brick
-nolock
-
 def &
 cell brick
 onlydefault
 nolock
-
-def a 
-cell step
-bottom 0 1 1 1
-
-def b
-cell step
-bottom 1 1 1 0
-brev
-
-def c 
-cell step
-bottom 1 0 1 1
-brev
-
-def d
-cell step
-bottom 1 1 0 1
 
 def L
 cell lava
@@ -64,34 +42,25 @@ slice 0 1
 &&&&&&&
 &L###L&
 &#####&
-&##%##&
+&#####&
 &#####&
 &L###L&
 &&&&&&&
 
-slice 2 4
+slice 2 5
 &&&&&&&
 &.....&
 &.....&
 &.....&
 &.....&
 &.....&
-&&&&&&&
-
-slice 5 5
-&&&&&&&
-&a...b&
-&.....&
-&.....&
-&.....&
-&c...d&
 &&&&&&&
 
 slice 6 6
 &&&&&&&
 &#####&
 &#####&
-&##%##&
+&#####&
 &#####&
 &#####&
 &&&&&&&

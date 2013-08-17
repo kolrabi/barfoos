@@ -5,6 +5,8 @@
 
 #include "GLee.h"
 
+#include <unordered_map>
+
 class Shader final {
 public:
 
@@ -28,6 +30,9 @@ public:
 private:
 
   GLhandleARB program;
+
+  int GetUniformLocation(const std::string &name) const;
+  mutable std::unordered_map<std::string, int> locations;
 };
 
 

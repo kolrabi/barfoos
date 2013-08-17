@@ -2,7 +2,7 @@
 
 # Bundle information
 BUNDLE=barfoos
-BUNDLEID=de.kolrabi.barfoos
+BUNDLEID=de.kolrabi.barfoos2
 EXEC=barfoos
 
 # Version information
@@ -23,6 +23,7 @@ rm -rf $APP
 mkdir $APP $APPCONTENTS $APPCONTENTS/Resources $APPBIN
 cp -r ../assets $APPCONTENTS/assets
 cp $EXEC $APPBIN
+cp $BUNDLE.icns $APPCONTENTS/Resources
 
 # Rewire dynamic libraries
 otool -L $EXEC | cut -f 2 | grep -v "^/System"|grep "^/"|while read LIB REST; do
@@ -47,7 +48,7 @@ cat > $APPCONTENTS/Info.plist << EOF
   <key>CFBundleExecutable</key>             <string>$EXEC.sh</string>
   <key>CFBundleIdentifier</key>             <string>$BUNDLEID</string>
   <key>CFBundleName</key>                   <string>$BUNDLE</string>
-  <key>CFBundleIconFile</key>               <string>$BUNDLE.png</string>
+  <key>CFBundleIconFile</key>               <string>$BUNDLE.icns</string>
   <key>CFBundleShortVersionString</key>     <string>$VERSION</string>
   <key>CFBundleInfoDictionaryVersion</key>  <string>6.0</string>
   <key>CFBundlePackageType</key>            <string>APPL</string>

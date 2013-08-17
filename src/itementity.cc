@@ -46,7 +46,8 @@ void ItemEntity::Update(RunningState &state) {
 void ItemEntity::Draw(Gfx &gfx) const {
   Entity::Draw(gfx);
   
-  gfx.SetColor(this->cellLight);
+  gfx.SetLight(this->cellLight);
+  gfx.SetColor(IColor(255,255,255));
   
   this->item->DrawSprite(gfx, this->aabb.center + Vector3(0,yoffset,0));
 }

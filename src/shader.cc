@@ -53,23 +53,20 @@ Shader::~Shader() {
 
 void
 Shader::Uniform(const std::string &name, int value) const {
-  glUseProgramObjectARB(program);
-  int loc = glGetUniformLocationARB(program, name.c_str());
+  int loc = GetUniformLocation(name);
   glUniform1iARB(loc, value);
 }
 
 void
 Shader::Uniform(const std::string &name, float value) const {
-  glUseProgramObjectARB(program);
-  int loc = glGetUniformLocationARB(program, name.c_str());
+  int loc = GetUniformLocation(name);
   glUniform1fARB(loc, value);
 }
 
 void 
 Shader::Uniform(const std::string &name, const IColor &value, float alpha) const {
   float rgb[4] = { value.r / 255.0f, value.g / 255.0f, value.b / 255.0f, alpha };
-  glUseProgramObjectARB(program);
-  int loc = glGetUniformLocationARB(program, name.c_str());
+  int loc = GetUniformLocation(name);
   glUniform4fv(loc, 1, rgb);
 }
 
@@ -83,18 +80,16 @@ Shader::Uniform(const std::string &name, const std::vector<IColor> &value) const
     rgb[i*4+3] = 1.0;
   }
 
-  glUseProgramObjectARB(program);
-  int loc = glGetUniformLocationARB(program, name.c_str());
+  int loc = GetUniformLocation(name);
   glUniform4fv(loc, value.size(), rgb);
 
-  loc = glGetUniformLocationARB(program, (name+"_length").c_str());
+  loc = GetUniformLocation((name+"_length").c_str());
   glUniform1i(loc, value.size());
 }
 
 void 
 Shader::Uniform(const std::string &name, const Vector3 &value) const {
-  glUseProgramObjectARB(program);
-  int loc = glGetUniformLocationARB(program, name.c_str());
+  int loc = GetUniformLocation(name);
   float xyz[3] = { value.x, value.y, value.z };
   glUniform3fv(loc, 1, xyz);
 }
@@ -108,18 +103,24 @@ Shader::Uniform(const std::string &name, const std::vector<Vector3> &value) cons
     xyz[i*3+2] = value[i].z;
   }
 
-  glUseProgramObjectARB(program);
-  int loc = glGetUniformLocationARB(program, name.c_str());
+  int loc = GetUniformLocation(name);
   glUniform3fv(loc, value.size(), xyz);
   
-  loc = glGetUniformLocationARB(program, (name+"_length").c_str());
+  loc = GetUniformLocation((name+"_length").c_str());
   glUniform1i(loc, value.size());
 }
   
 void 
 Shader::Uniform(const std::string &name, const Matrix4 &value) const {
-  glUseProgramObjectARB(program);
-  int loc = glGetUniformLocationARB(program, name.c_str());
+  int loc = GetUniformLocation(name);
   glUniformMatrix4fv(loc, 1, false, value.m);
 }
 
+int 
+Shader::GetUniformLocation(const std::string &name) const {
+  auto iter = locations.find(name);
+  if (iter == locations.end()) {
+    locations[name] = glGetUniformLocationARB(program, name.c_str());
+  }
+  return locations[name];
+}

@@ -454,11 +454,8 @@ Entity::Think(RunningState &) {
 
 void
 Entity::Draw(Gfx &gfx) const {
-  if (this->GetLight().IsBlack()) {
-    gfx.SetColor(this->cellLight, 1.0);
-  } else {
-    gfx.SetColor(IColor(255,255,255), 1.0);
-  }
+  gfx.SetLight(this->cellLight + this->GetLight());
+  gfx.SetColor(IColor(255,255,255), 1.0);
   gfx.SetBlendNormal();
   
   for (auto &box : this->properties->drawBoxes) {

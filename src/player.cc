@@ -326,7 +326,8 @@ Player::DrawWeapons(Gfx &gfx) const {
   Vector3 pos = Vector3(0,0,-1)+bob;
   
   gfx.GetView().Look(pos, fwd);
-  gfx.SetColor(this->cellLight);
+  gfx.SetColor(IColor(255,255,255));
+  gfx.SetLight(this->cellLight + this->inventory.GetLight());
 
   if (this->inventory[InventorySlot::RightHand]) {
     this->inventory[InventorySlot::RightHand]->Draw(gfx, false);
