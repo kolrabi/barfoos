@@ -8,6 +8,12 @@
 #include "effect.h"
 #include "properties.h"
 
+enum class UseMovement : uint8_t {
+  SlashMovement,
+  StabMovement,
+  RecoilMovement
+};
+
 struct ItemProperties : public Properties {
   std::string name = "<item>";
   std::string identifiedName = "<item>";
@@ -24,6 +30,7 @@ struct ItemProperties : public Properties {
   uint32_t equipAnim = 0;
   IColor light {0,0,0};
   bool flicker = false;
+  UseMovement useMovement = UseMovement::SlashMovement;
 
   // gameplay
   float range = 5.0;

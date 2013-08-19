@@ -217,7 +217,13 @@ void Item::Draw(Gfx &gfx, bool left) {
   gfx.GetView().Rotate(40, Vector3(0, 1, 0));
 
   gfx.GetView().Translate(Vector3(1,-1,0));
-  gfx.GetView().Rotate(cooldownFrac*60-60, Vector3(0,0,1));
+  switch(properties->useMovement) {
+    case UseMovement::SlashMovement:  gfx.GetView().Rotate(cooldownFrac*60-60, Vector3(0,0,1)); break;
+    case UseMovement::StabMovement:   gfx.GetView().Rotate(-60, Vector3(0,0,1));
+                                      gfx.GetView().Translate(Vector3(-cooldownFrac,0,0)); break;
+    case UseMovement::RecoilMovement: gfx.GetView().Rotate(-60, Vector3(0,0,1));
+                                      gfx.GetView().Translate(Vector3(cooldownFrac,0,0)); break;
+  }
   gfx.GetView().Translate(Vector3(-1,1,0));
   gfx.GetView().Scale(Vector3(2,2,2));
   gfx.DrawSprite(this->sprite, Vector3(0,0,0), left, false);

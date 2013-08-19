@@ -73,6 +73,9 @@ ItemProperties::ParseProperty(const std::string &cmd) {
     Parse(this->sprite.width);
     Parse(this->sprite.height);
   } 
+  
+  else if (cmd == "stab")       this->useMovement = UseMovement::StabMovement;
+  else if (cmd == "recoil")     this->useMovement = UseMovement::RecoilMovement;
   else if (cmd == "damage")     Parse(this->damage);
   else if (cmd == "knockback")  Parse(this->knockback);
   
