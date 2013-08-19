@@ -1,17 +1,15 @@
-#include "common.h"
 #include "util.h"
 
 #include <sys/stat.h>
 #include <dirent.h>
 
 #include <cstdio>
+#include <cerrno>
 
 #ifdef WIN32
 #define WIN32_LEAN_AND_MEAN
 #include <Shlobj.h>
 #endif
-
-#include <cerrno>
 
 static const std::vector<const char *> assetPrefix { 
   "../assets/", 
@@ -122,10 +120,11 @@ static void makePath(const std::string &path) {
   if (pos == std::string::npos) return;
 
 #ifdef WIN32
-  mkdir(path.substr(0, pos).c_str());
+  int res = mkdir(path.substr(0, pos).c_str());
 #else
-  mkdir(path.substr(0, pos).c_str(), 0700);
+  int res = mkdir(path.substr(0, pos).c_str(), 0700);
 #endif
+  if (res) perror(path.substr(0,pos).c_str());
 }
 
 FILE *createUserFile(const std::string &name) {
@@ -133,7 +132,7 @@ FILE *createUserFile(const std::string &name) {
   makePath(path);
   
   FILE *file = fopen(path.c_str(), "wb");
-  perror(path.c_str());
+  if (!file) perror(path.c_str());
   return file;
 }
 
@@ -141,6 +140,6 @@ FILE *openUserFile(const std::string &name) {
   std::string path = getUserPath(name);
   Log("%s\n", path.c_str());
   FILE *file = fopen(path.c_str(), "rb");
-  perror(path.c_str());
+  if (!file) perror(path.c_str());
   return file;
 }

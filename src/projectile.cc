@@ -1,8 +1,5 @@
 #include "projectile.h"
-#include "world.h"
-#include "random.h"
 #include "runningstate.h"
-#include "worldedit.h"
 
 Projectile::Projectile(const std::string &type) :
   Mob(type)
@@ -16,7 +13,6 @@ void Projectile::Start(RunningState &state, uint32_t id) {
   Mob::Start(state, id);
   
   Vector3 fwd   = GetForward();
-  // this->SetPosition(state.GetWorld().MoveAABB(this->aabb, this->GetPosition() + fwd));
   this->AddVelocity(fwd * this->properties->maxSpeed);
 }
 

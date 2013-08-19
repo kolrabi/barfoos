@@ -1,4 +1,4 @@
-Class       Mob
+Class       Monster
 
 Tex       slime
 Frames    4
@@ -40,6 +40,9 @@ Inventory       0.5 gold
 # Inventory       0.05 gem.earth
 # Inventory       0.05 gem.water
 # Inventory       0.05 gem.life
+
+Inventory       0.75 $elemental_gem
+Inventory       0.75 $elemental_gem
 
 # aggro 1 3 10 1 barehand.1
 

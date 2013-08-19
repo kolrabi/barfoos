@@ -23,10 +23,10 @@ mob 0.5 spider 0 3 2 3
 mob 0.5 spider 0 3 2 3
 mob 0.5 slime 0 3 2 3
 mob 0.5 slime 0 3 2 3
-entity 0.1 deco.grass -2 2 2 2
-entity 0.1 deco.grass -2 3 2 3
-entity 0.1 deco.grass -2 2 2 3
-entity 0.1 deco.grass -2 3 2 2
+#entity 0.1 deco.grass -2 2 2 2
+#entity 0.1 deco.grass -2 3 2 3
+#entity 0.1 deco.grass -2 2 2 3
+#entity 0.1 deco.grass -2 3 2 2
 
 def . 
 cell air

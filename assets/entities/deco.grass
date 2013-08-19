@@ -1,4 +1,6 @@
 Class       Entity
+group       deco.misc.top
+
 tex grass
 vert
 

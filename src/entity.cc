@@ -1,6 +1,7 @@
 #include "entity.h"
 
 #include "player.h"
+#include "monster.h"
 #include "projectile.h"
 #include "itementity.h"
 #include "item.h"
@@ -24,7 +25,8 @@
 #include <unordered_map>
 
 static std::unordered_map<std::string, EntityProperties> allEntities;
-EntityProperties defaultEntity;
+static std::unordered_map<std::string, std::vector<std::string>> allEntityGroups;
+static EntityProperties defaultEntity;
 
 const EntityProperties *getEntity(const std::string &name) {
   if (allEntities.find(name) == allEntities.end()) {
@@ -40,6 +42,7 @@ EntityProperties::ParseProperty(const std::string &cmd) {
   else if (cmd == "class")       Parse(this->klass);
   else if (cmd == "emissivetex") Parse("entities/texture/", this->sprite.emissiveTexture);
   else if (cmd == "frames")     Parse(this->sprite.totalFrames);
+  else if (cmd == "group")      Parse(this->groups);
   else if (cmd == "anim") {
     uint32_t firstFrame = 0;
     uint32_t frameCount = 0;
@@ -179,21 +182,19 @@ LoadEntities() {
     FILE *f = openAsset("entities/"+name);
     if (f) {
       allEntities[name].name = name;
-      allEntities[name].group = name;
+      allEntities[name].groups.push_back(name);
       allEntities[name].ParseFile(f);
+      for (auto &g : allEntities[name].groups) {
+        allEntityGroups[g].push_back(name);
+      }      
       fclose(f);
     }
   }
 }
 
-std::vector<std::string>
+const std::vector<std::string> &
 GetEntitiesInGroup(const std::string &group) {
-  std::vector<std::string> entities;
-  for (auto &ent : allEntities) {
-    if (ent.second.group == group)
-      entities.push_back(ent.first);
-  }
-  return entities;
+  return allEntityGroups[group];
 }
 
 float GetEntityProbability(const std::string &name, int level) {
@@ -217,6 +218,7 @@ Entity *Entity::Create(const std::string &type) {
   switch(prop.klass) {
     case SpawnClass::EntityClass:     entity = new Entity(type); break;
     case SpawnClass::MobClass:        entity = new Mob(type);    break;
+    case SpawnClass::MonsterClass:    entity = new Monster(type);    break;
     case SpawnClass::ItemEntityClass: entity = new ItemEntity(type); break;
     case SpawnClass::PlayerClass:     entity = new Player(); break;
     case SpawnClass::ProjectileClass: entity = new Projectile(type); break;
@@ -233,6 +235,7 @@ Entity *Entity::Create(const std::string &type, Deserializer &deser) {
   switch(prop.klass) {
     case SpawnClass::EntityClass:     entity = new Entity(type, deser); break;
     case SpawnClass::MobClass:        entity = new Mob(type, deser);    break;
+    case SpawnClass::MonsterClass:    entity = new Monster(type, deser);    break;
     case SpawnClass::ItemEntityClass: entity = new ItemEntity(deser); break;
     case SpawnClass::PlayerClass:     entity = new Player(deser); break;
     case SpawnClass::ProjectileClass: entity = new Projectile(type, deser); break;
@@ -308,7 +311,13 @@ Entity::Start(RunningState &state, uint32_t id) {
   // fill inventory with random crap
   for (auto item : this->properties->items) {
     if (game.GetRandom().Chance(item.second)) {
-      Item *ii = new Item(item.first);
+      Item *ii;
+      if (item.first[0] == '$') {
+        std::string itemName = getRandomItem(item.first.substr(1), state.GetRandom());
+        ii = new Item(itemName);
+      } else {
+        ii = new Item(item.first);
+      }
       this->GetInventory().AddToBackpack(std::shared_ptr<Item>(ii));
     }
   }

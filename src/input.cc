@@ -1,6 +1,6 @@
-#include <algorithm>
-
 #include "input.h"
+
+#include <algorithm>
 
 Input::Input() :
   nextHandlerId(0),

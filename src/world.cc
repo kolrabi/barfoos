@@ -2,8 +2,8 @@
 
 #include "world.h"
 #include "cell.h"
-#include "mob.h"
 #include "simplex.h"
+#include "entity.h"
 
 #include "random.h"
 #include "worldedit.h"
@@ -16,6 +16,7 @@
 
 #include "vertex.h"
 #include "texture.h"
+#include "aabb.h"
 
 #include "serializer.h"
 #include "deserializer.h"
@@ -104,6 +105,7 @@ World::Build() {
  
   size_t teleportCount = random.Integer(10)+2;
   size_t trapCount = random.Integer(10)+10;
+  size_t decoCount = 500+random.Integer(200);
 
   std::vector<FeatureInstance> instances;
 
@@ -303,7 +305,7 @@ World::Build() {
     // TODO: get entity from group "trap"
     spawner.SetSpawnOnActive("projectile.bfw9k", -side, 0.0);
     
-    uint32_t id = state.GetNextTriggerId();
+    ID id = state.GetNextTriggerId();
     spawner.SetTrigger(id, false);
     trigger.SetTriggerTarget(id);
   }
@@ -313,6 +315,39 @@ World::Build() {
     instance.feature->SpawnEntities(state, instance.pos);
   }
 
+  Log("Placing some decoration (%u of them)...\n", decoCount);
+  for (size_t i=0; i<decoCount; i++) {
+    bool top = random.Coin();
+    IVector3 a;
+    if (top) {
+      a = GetRandomTeleportTarget(random)[Side::Up];
+    } else {
+      a = GetRandomCeiling(random)[Side::Down];
+    }
+    Cell &cell = GetCell(a);
+    ID decoID = cell.GetFeatureID();
+    if (decoID == InvalidID) continue;
+    
+    std::string decoGroup = "deco." + instances[decoID].feature->GetDecoGroup() + ".";
+    decoGroup += top?"top":"bottom";
+    
+    const std::vector<std::string> &decoEnts = GetEntitiesInGroup(decoGroup);
+    if (decoEnts.empty()) continue;
+    
+    std::string decoName = decoEnts[random.Integer(decoEnts.size())];
+    
+    Entity *entity = Entity::Create(decoName);
+    if (!entity) continue;
+    
+    state.AddEntity(entity);
+    if (top) {
+      entity->SetPosition(Vector3(a.x + 0.5, a.y + entity->GetAABB().extents.y+0.01, a.z + 0.5));
+    } else {
+      entity->SetPosition(Vector3(a.x + 0.5, a.y - entity->GetAABB().extents.y+0.99, a.z + 0.5));
+    }
+    Log("deco: %u %f %f\n", a.y, entity->GetAABB().center.y, entity->GetAABB().extents.y);
+  }
+  
   // remove spilt liquids
   Log("Wiping the floor...\n");
   bool foundLiquid = true;
@@ -1081,11 +1116,28 @@ World::IsCellValidTeleportTarget(const IVector3 &pos) const {
     IsCellWalkable(pos[Side::Backward])); // TODO: check triggers
 }
 
+bool 
+World::IsCellValidCeiling(const IVector3 &pos) const {
+  const Cell &cell = GetCell(pos);
+  const Cell &cell2 = cell[Side::Down];
+  const Cell &cell3 = cell2[Side::Down];
+  return cell.IsSolid() && !cell2.IsSolid() && !cell2.IsLiquid() && !cell3.IsSolid() && !cell3.IsLiquid();
+}
+
 IVector3 
 World::FindSolidBelow(const IVector3 &pos) const {
   IVector3 p(pos);
   while(!GetCell(p).IsSolid()) 
     p = p[Side::Down];
+
+  return p;
+}
+
+IVector3 
+World::FindSolidAbove(const IVector3 &pos) const {
+  IVector3 p(pos);
+  while(!GetCell(p).IsSolid()) 
+    p = p[Side::Up];
 
   return p;
 }
@@ -1099,6 +1151,18 @@ World::GetRandomTeleportTarget(Random &random) const {
     pos.z = random.Integer(size.z);
     pos = FindSolidBelow(pos);
   } while(!IsCellValidTeleportTarget(pos));
+  return pos;
+}
+
+IVector3 
+World::GetRandomCeiling(Random &random) const {
+  IVector3 pos;
+  do {
+    pos.x = random.Integer(size.x);
+    pos.y = random.Integer(size.y);
+    pos.z = random.Integer(size.z);
+    pos = FindSolidAbove(pos);
+  } while(!IsCellValidCeiling(pos));
   return pos;
 }
 
@@ -1170,6 +1234,7 @@ MiniMap::Draw(
   
   gfx.SetTextureFrame(this->mapTexture);
   gfx.SetColor(IColor(255,255,255));
+  gfx.SetLight(IColor(255,255,255));
   gfx.GetView().Push();
   gfx.GetView().Translate(Vector3(-1 + 2*eyePos.x/size.x, -1 + 2*eyePos.z/size.z, 0));
   gfx.GetView().Scale(Vector3(-1, 1, 1));

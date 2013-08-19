@@ -1,0 +1,12 @@
+Tex               gem.water
+Group             elemental_gem
+
+Size              0.5 0.5
+
+UnidentifiedName  "water gem"
+IdentifiedName    "water gem"
+
+NoBeatitude
+NoModifier
+
+Stack

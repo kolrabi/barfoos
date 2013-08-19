@@ -1,19 +1,12 @@
-#include "cell.h"
-#include "util.h"
-#include "world.h"
-#include "gfx.h"
-#include "runningstate.h"
-#include "mob.h"
+#include "cellproperties.h"
 
-#include "random.h"
-#include "vertex.h"
+#include "util.h"
+#include "gfx.h"
 
 #include "texture.h"
  
-#include "serializer.h"
-#include "deserializer.h"
- 
 #include <unordered_map>
+#include <cstdio>
 
 static std::unordered_map<std::string, CellProperties> cellProperties;
 

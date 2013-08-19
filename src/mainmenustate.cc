@@ -1,7 +1,6 @@
 #include "mainmenustate.h"
 #include "runningstate.h"
 #include "mainmenugui.h"
-#include "text.h"
 
 #include "gfx.h"
 #include "gfxview.h"

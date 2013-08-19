@@ -1,0 +1,12 @@
+Tex               gem.wind
+Group             elemental_gem
+
+Size              0.5 0.5
+
+UnidentifiedName  "wind gem"
+IdentifiedName    "wind gem"
+
+NoBeatitude
+NoModifier
+
+Stack

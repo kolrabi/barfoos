@@ -1,0 +1,12 @@
+Tex               gem.life
+Group             elemental_gem
+
+Size              0.5 0.5
+
+UnidentifiedName  "life gem"
+IdentifiedName    "life gem"
+
+NoBeatitude
+NoModifier
+
+Stack

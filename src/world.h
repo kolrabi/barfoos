@@ -82,8 +82,11 @@ public:
 
   bool IsCellWalkable(const IVector3 &pos) const;
   bool IsCellValidTeleportTarget(const IVector3 &pos) const;
+  bool IsCellValidCeiling(const IVector3 &pos) const;
   IVector3 FindSolidBelow(const IVector3 &pos) const;
+  IVector3 FindSolidAbove(const IVector3 &pos) const;
   IVector3 GetRandomTeleportTarget(Random &random) const;
+  IVector3 GetRandomCeiling(Random &random) const;
 
   void                  TriggerOn(size_t id);
   void                  TriggerOff(size_t id);

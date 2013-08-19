@@ -28,6 +28,7 @@ struct Properties {
   void Parse(const std::string &prefix, const Texture *&t);
   void Parse(const std::string &prefix, std::vector<const Texture *> &t);
   void Parse(std::string &s);
+  void Parse(std::vector<std::string> &s);
   void Parse(Element &e);
   void Parse(SpawnClass &s);
   void ParseSideMask(uint32_t &i);

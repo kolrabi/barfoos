@@ -523,9 +523,6 @@ Cell::UpdateNeighbours(
   bool updated = lightChanged || visChanged;
   if (updated) {
     updated = true;
-    for (size_t i=0; i<6; i++) {
-      world->MarkForUpdateNeighbours(this->neighbours[i]);
-    }
     if (visChanged) {
       this->vertsDirty = true;
     }
@@ -533,6 +530,10 @@ Cell::UpdateNeighbours(
   }
   
   if (lightChanged) {
+    for (size_t i=0; i<6; i++) {
+      world->MarkForUpdateNeighbours(this->neighbours[i]);
+    }
+    
     // update corner cells as well
     this->world->GetCell(this->pos + IVector3( 1,  1,  1)).colorDirty = true;
     this->world->GetCell(this->pos + IVector3(-1,  1,  1)).colorDirty = true;

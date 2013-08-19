@@ -155,7 +155,7 @@ Gfx::Init(Game &game) {
   
   glfwSetWindowUserPointer(this->window, &game);
   
-  if (this->screenSize.x <= 640) {
+  if (this->screenSize.x < 800) {
     this->virtualScreenSize.x = this->screenSize.x;
     this->virtualScreenSize.y = this->screenSize.y;
   } else {
@@ -168,9 +168,9 @@ Gfx::Init(Game &game) {
 
   // Window resize
   glfwSetWindowSizeCallback( this->window, [](GLFWwindow *window, int w, int h) { 
-    if (w < 320 || h < 240) {
-      if (w<320) w = 320;
-      if (h<240) h = 240;
+    if (w < 400 || h < 300) {
+      if (w<400) w = 400;
+      if (h<300) h = 300;
       glfwSetWindowSize(window, w, h);
       return;
     }
@@ -227,6 +227,7 @@ Gfx::Init(Game &game) {
       // grab mouse on click
       if (!gfx.guiActiveCount) {
         glfwSetCursorPos(gfx.window, gfx.screenSize.x/2, gfx.screenSize.y/2);
+        gfx.mousePos = gfx.lastMousePos = Point(gfx.screenSize.x/2, gfx.screenSize.y/2);
         glfwSetInputMode(gfx.window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
       } else {
         game.GetInput().HandleEvent(InputEvent(InputEventType::Key, gfx.mousePos, key, down));
@@ -333,6 +334,7 @@ Gfx::DecGuiCount() {
   
   if (!guiActiveCount && mouseGrab) {
     glfwSetCursorPos(this->window, screenSize.x/2, screenSize.y/2);
+    mousePos = lastMousePos = Point(screenSize.x/2, screenSize.y/2);
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
   }
 }
@@ -527,7 +529,7 @@ Gfx::SetUniforms() const {
 
 void
 Gfx::BindVertexPointer(const Vertex *ptr) {
-  glInterleavedArrays(GL_T2F_C4F_N3F_V3F,  sizeof(Vertex), ptr);
+  if (this->activeVertexPointer != ptr) glInterleavedArrays(GL_T2F_C4F_N3F_V3F,  sizeof(Vertex), ptr);
   this->activeVertexPointer = ptr;
 }
 
@@ -633,7 +635,7 @@ void Gfx::DrawIconQuad(const Point &center, const Point &size) {
   this->view->Push();
   this->view->Translate(Vector3(center.x, center.y, 0));
   this->view->Scale    (Vector3(size.x/2, -size.y/2, 1));
-  this->DrawQuads(this->quadVerts);
+  this->DrawUnitQuad();
   this->view->Pop();
 }
 
@@ -651,7 +653,7 @@ void Gfx::DrawStretched(const Texture *tex, const Rect &src, const Rect &dest) {
   verts.push_back(Vertex(Vector3(dest.pos.x+dest.size.x, dest.pos.y,              0), IColor(255,255,255), u2, v2, Vector3( 0, 0, 1)));
   verts.push_back(Vertex(Vector3(dest.pos.x,             dest.pos.y,              0), IColor(255,255,255), u1, v2, Vector3( 0, 0, 1)));
   
-  DrawQuads(verts);
+  this->DrawUnitQuad();
 }
 
 Point 
@@ -676,3 +678,4 @@ Gfx::AlignTopRightScreen(const Point &size, int padding) {
   const Point &ssize(this->GetVirtualScreenSize());
   return Point( ssize.x - padding - size.x/2, padding + size.y/2 );
 }
+  

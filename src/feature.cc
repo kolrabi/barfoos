@@ -3,12 +3,12 @@
 #include "world.h"
 #include "cell.h"
 #include "random.h"
-#include "itementity.h"
 #include "runningstate.h"
-#include "vertex.h"
 #include "simplex.h"
+#include "entity.h"
 
 #include <unordered_map>
+#include <algorithm>
 #include "weighted_map.h"
 
 FeatureSpawn::FeatureSpawn() :
@@ -35,7 +35,7 @@ Feature::Feature() :
   spawns(),
   replacements(),
   name("<undefined>"),
-  group("<undefined>"),
+  groups(),
   cells(0),
   defaultMask(0),
   chars(0),
@@ -54,7 +54,7 @@ Feature::Feature(FILE *f, const std::string &name) :
   spawns(),
   replacements(),
   name(name),
-  group(name),
+  groups(),
   cells(0),
   defaultMask(0),
   chars(0),
@@ -68,6 +68,8 @@ Feature::Feature(FILE *f, const std::string &name) :
 {
   char line[256];
   char lastDef = 0;
+  
+  this->groups.push_back(name);
   
   while(fgets(line, 256, f) && !feof(f)) {
     std::vector<std::string> tokens = Tokenize(line);
@@ -89,7 +91,9 @@ Feature::Feature(FILE *f, const std::string &name) :
       this->maxLevel = std::atoi(tokens[2].c_str());
       this->maxProbability = std::atof(tokens[3].c_str());
     } else if (tokens[0] == "group") {
-      this->group = tokens[1];
+      this->groups.push_back(tokens[1]);
+    } else if (tokens[0] == "deco") {
+      this->decoGroup = tokens[1];
     } else if (tokens[0] == "above") {
       this->minY = std::atoi(tokens[1].c_str());
     } else if (tokens[0] == "uselastid") {
@@ -386,7 +390,8 @@ void FeatureConnection::Resolve() {
         float prob = iter->second;
         iter = nextFeatures.erase(iter);
         for (auto f : allFeatures) {
-          if (f.second.GetGroup() == group) {
+          const std::vector<std::string> &groups = f.second.GetGroups();
+          if (std::find(groups.begin(), groups.end(), group) != groups.end()) {
             if (nextFeatures.find(f.first) != nextFeatures.end()) {
               nextFeatures[f.first] *= prob;
             } else {

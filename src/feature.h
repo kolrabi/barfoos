@@ -146,7 +146,8 @@ public:
   const FeatureConnection *GetRandomConnection(int dir, RunningState &state) const;
   
   const std::string &GetName()  const { return name;  }
-  const std::string &GetGroup() const { return group; }
+  const std::vector<std::string> &GetGroups() const { return groups; }
+  const std::string &GetDecoGroup()  const { return decoGroup;  }
 
   void ResolveConnections();
   void ReplaceChars(RunningState &state, World &world, const IVector3 &pos, ID connId, ID featureId) const;
@@ -162,7 +163,9 @@ protected:
   std::vector<FeatureSpawn> spawns;
   std::vector<FeatureReplacement> replacements;
   std::string name;
-  std::string group;
+  std::vector<std::string> groups;
+  
+  std::string decoGroup = "misc";
 
   std::vector<Cell> cells;
   std::vector<bool> defaultMask;

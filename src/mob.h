@@ -19,7 +19,6 @@ public:
   virtual void              Update      (RunningState &state)                         override;
   virtual void              Think       (RunningState &state)                         override;
 
-  virtual void              Die         (RunningState &state, const HealthInfo &info) override;
   virtual void              OnCollide   (RunningState &state, Entity &other)          override;
 
   void                      ApplyForce  (RunningState &state, const Vector3 &f);
@@ -43,16 +42,9 @@ protected:
   bool                  isNoclip;
   bool                  isSneaking;
 
-  // TODO: these belong in a separate monster class
-  float                 nextMoveT;
-  Vector3               moveTarget;
-  bool                  isMoveTargetValid;
-
-  ID                    attackTarget;
-  float                 nextAttackT;
-  std::shared_ptr<Item> attackItem;
-
-  Cell *headCell, *footCell, *groundCell;
+  Cell *                headCell;
+  Cell *                footCell;
+  Cell *                groundCell;
 
   void SetInLiquid(bool inLiquid);
   float GetMoveModifier() const;

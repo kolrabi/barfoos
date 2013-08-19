@@ -45,6 +45,7 @@ barfoos_SOURCES=\
   \
   entity.cc entity.h \
   mob.cc mob.h \
+  monster.cc monster.h \
   player.cc player.h \
   itementity.cc itementity.h \
   projectile.cc projectile.h \
@@ -59,6 +60,7 @@ barfoos_SOURCES=\
   worldedit.cc worldedit.h \
   \
   item.cc item.h \
+  itemproperties.cc itemproperties.h \
   inventory.cc inventory.h \
   effect.cc effect.h \
   \

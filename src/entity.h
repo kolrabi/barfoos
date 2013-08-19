@@ -19,6 +19,7 @@
 enum class SpawnClass : char {
   EntityClass = 'E',
   MobClass    = 'M',
+  MonsterClass = 'O',
   ItemEntityClass = 'I',
   PlayerClass = 'P',
   ProjectileClass = 'R'
@@ -125,7 +126,7 @@ struct EntityProperties : public Properties {
   std::string displayName   = "";
 
   std::string name          = "";
-  std::string group         = "";
+  std::vector<std::string> groups;
 
   /** Replace items that are used on this entity. itemname -> new itemname */
   std::unordered_map<std::string, std::string> onUseItemReplace;
@@ -138,7 +139,7 @@ struct EntityProperties : public Properties {
 
 void LoadEntities();
 const EntityProperties *getEntity(const std::string &name);
-std::vector<std::string> GetEntitiesInGroup(const std::string &group);
+const std::vector<std::string> &GetEntitiesInGroup(const std::string &group);
 float GetEntityProbability(const std::string &type, int level);
 
 class Entity : public Triggerable {

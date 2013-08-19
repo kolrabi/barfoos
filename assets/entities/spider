@@ -1,4 +1,4 @@
-Class       Mob
+Class       Monster
 
 Tex       spider
 Frames    2
@@ -43,6 +43,9 @@ Inventory       0.5 gold
 # Inventory       0.05 gem.life
 
 # Aggro 1 10 15 3 barehand.1
+
+Inventory       0.75 $elemental_gem
+Inventory       0.75 $elemental_gem
 
 Bubble
 Swim

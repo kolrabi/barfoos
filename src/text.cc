@@ -111,7 +111,8 @@ RenderString::RenderString(const std::string &text, const std::string &fontName)
   wrappedText(L""),
   dirty(true),
   vertices(0),
-  size(0,0)
+  size(0,0),
+  vbo(0)
 {
   this->SetText(text);
 }
@@ -120,6 +121,9 @@ RenderString& RenderString::operator =(const std::string &text) {
   this->SetText(text);
   this->dirty = true;
   return *this;
+}
+
+RenderString::~RenderString() {
 }
   
 void RenderString::Draw(Gfx &gfx, float x, float y, int align) {

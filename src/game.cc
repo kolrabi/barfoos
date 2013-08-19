@@ -99,10 +99,9 @@ bool Game::Frame() {
     if (activeGameState) activeGameState->Enter();
   }
   
-  // update game (at most 0.1s at a time)
 //  float t = lastT + 1.0/25.0;
   
-
+  // update game (at most 0.1s at a time)
   float t = this->gfx->GetTime() - this->startT;
   while(t - this->lastT > 0.1) {
     this->lastT += 0.1;

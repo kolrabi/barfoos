@@ -108,7 +108,6 @@ Properties::Parse(const std::string &prefix, std::vector<const Texture *> &t) {
   if (tex) t.push_back(tex);
 }
 
-
 void 
 Properties::Parse(std::string &str) {
   if (tokens.empty()) {
@@ -116,6 +115,16 @@ Properties::Parse(std::string &str) {
     return;
   }
   str = tokens[0];
+  tokens.erase(tokens.begin());
+}
+
+void 
+Properties::Parse(std::vector<std::string> &str) {
+  if (tokens.empty()) {
+    this->SetError("unexpected end of line, expecting string");
+    return;
+  }
+  str.push_back(tokens[0]);
   tokens.erase(tokens.begin());
 }
 
@@ -154,6 +163,8 @@ Properties::Parse(SpawnClass &s) {
     s = SpawnClass::EntityClass;
   } else if (classString == "mob") {
     s = SpawnClass::MobClass;
+  } else if (classString == "monster") {
+    s = SpawnClass::MonsterClass;
   } else if (classString == "item") {
     s = SpawnClass::ItemEntityClass;
   } else if (classString == "player") {

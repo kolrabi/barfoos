@@ -24,6 +24,7 @@ public:
 
   RenderString(const std::string &text, const std::string &font = "default");
   RenderString &operator =(const std::string &text);
+  ~RenderString();
 
   void Draw(Gfx &gfx, float x, float y, int align = 0);
   void Draw(Gfx &gfx, const Point &pos, int align = 0);
@@ -45,6 +46,8 @@ private:
   size_t dirty;
   std::vector<Vertex> vertices;
   Point size;
+  
+  unsigned int vbo;
   
   void DrawChar(float x, float y, wchar_t c, const IColor &color);
   void DrawString();
