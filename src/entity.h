@@ -17,8 +17,8 @@
 #include "properties.h"
 
 enum class SpawnClass : char {
-  EntityClass = 'E', 
-  MobClass    = 'M', 
+  EntityClass = 'E',
+  MobClass    = 'M',
   ItemEntityClass = 'I',
   PlayerClass = 'P',
   ProjectileClass = 'R'
@@ -53,7 +53,7 @@ struct EntityProperties : public Properties {
   std::vector<EntityDrawBox> drawBoxes = std::vector<EntityDrawBox>(0);
   std::vector<ParticleEmitter> emitters = std::vector<ParticleEmitter>(0);
   bool    createBubbles     = false;
-  
+
   // movement
   float   stepHeight        = 0.5;    //< Allow entity to climb stairs.
   float   mass              = 1.0;    //< Mass of entity.
@@ -65,7 +65,7 @@ struct EntityProperties : public Properties {
   int     minLevel          = 0;
   int     maxLevel          = -1;
   float   maxProbability    = 1.0;
-  
+
   Vector3 extents           = Vector3(0.5,0.5,0.5); //< Size of the entity.
   float   eyeOffset         = 0.0;    //< Offset from the center.
   float   thinkInterval     = 0.0;    //< Time interval beetween calls to Entity::Think().
@@ -100,6 +100,7 @@ struct EntityProperties : public Properties {
   float   onDieExplodeStrength = 0.0;
   float   onDieExplodeDamage = 0.0;
   Element onDieExplodeElement = Element::Physical;
+  // TODO: onDieExplodeAddBuff
 
   uint32_t  onDieParticles    = 0;
   float   onDieParticleSpeed = 0.0;
@@ -110,28 +111,28 @@ struct EntityProperties : public Properties {
   int     dex               = 0;
   int     agi               = 0;
   int     def               = 0;
-  
+
   /** Inventory items and their absolute probability. */
   std::vector<std::pair<std::string, float>> items = std::vector<std::pair<std::string, float>>(0);
-  
+
   /** When entering a cell, replace it with a cell of this type. */
   std::string cellEnter     = "";
 
   /** When leaving a cell, replace it with a cell of this type. */
   std::string cellLeave     = "";
-  
+
   /** Display name of entity. */
   std::string displayName   = "";
 
   std::string name          = "";
   std::string group         = "";
-  
+
   /** Replace items that are used on this entity. itemname -> new itemname */
   std::unordered_map<std::string, std::string> onUseItemReplace;
 
   /** Replace entity if used with an item. itemname -> new entityname */
   std::unordered_map<std::string, std::string> onUseEntityReplace;
-  
+
   virtual void ParseProperty(const std::string &name) override;
 };
 
@@ -148,9 +149,9 @@ public:
 
   Entity(const Entity &that) = delete;
   virtual ~Entity();
-  
+
   Entity &operator=(const Entity &that) = delete;
-  
+
   virtual void Start(RunningState &state, ID id);
   virtual void Continue(RunningState &state, ID id);
   virtual void Update(RunningState &state);
@@ -158,19 +159,19 @@ public:
 
   virtual void Draw(Gfx &gfx) const;
   virtual void DrawBoundingBox(Gfx &gfx) const;
-  
-  virtual void AddHealth(RunningState &state, const HealthInfo &info); 
+
+  virtual void AddHealth(RunningState &state, const HealthInfo &info);
   virtual void Die(RunningState &state, const HealthInfo &info);
-  
+
   virtual void OnCollide(RunningState &, Entity &)            {}
   virtual void OnCollide(RunningState &, Cell &, Side)        {}
   virtual void OnUse(RunningState &, Entity &)                {}
-  
+
   virtual void OnHealthDealt(RunningState &, Entity &other, const HealthInfo &info);
   virtual void OnLevelUp(RunningState &)                          {}
   virtual void OnEquip(RunningState &, const Item &, InventorySlot, bool)      {}
   virtual void OnBuffAdded(RunningState &, const EffectProperties &)      {}
-    
+
   // management
   ID                        GetId()                           const { return id; }
   bool                      IsRemovable()                     const { return removable; }
@@ -179,13 +180,13 @@ public:
 
   ID                        GetOwner()                        const { return ownerId; }
   void                      SetOwner(const Entity &owner)           { this->ownerId = owner.id; }
-  
+
   // gameplay
-  
+
   bool                      IsSolid()                         const { return properties->isSolid; }
   bool                      IsDead()                          const { return this->isDead; }
   Inventory &               GetInventory()                          { return this->inventory; }
-  
+
   void                      SetSpawnPos(const Vector3  &p)          { this->spawnPos = p; }
 
   void                      SetPosition(const Vector3  &pos)        { this->smoothPosition.SnapTo( this->aabb.center = pos ); }
@@ -194,32 +195,32 @@ public:
   const Vector3 &           GetSmoothPosition()               const { return this->smoothPosition; }
   const Vector3             GetEyePosition()                  const { return this->GetPosition() + Vector3(0,this->properties->eyeOffset,0); }
   const Vector3             GetSmoothEyePosition()            const { return this->GetSmoothPosition() + Vector3(0,this->properties->eyeOffset,0); }
-  
+
   void                      Teleport(RunningState &state, const Vector3 &target);
-  
+
   void                      SetAngles(const Vector3 &angles)        { this->angles = angles; }
   const Vector3 &           GetAngles()                       const { return this->angles; }
   Vector3                   GetForward()                      const { return this->GetAngles().EulerToVector(); }
   Vector3                   GetRight()                        const { return (this->GetAngles() + Vector3(Const::pi_2, 0, 0)).EulerToVector(); }
-  
+
   const AABB &              GetAABB()                         const { return this->aabb; }
   Stats                     GetEffectiveStats()               const;
   Stats &                   GetBaseStats()                          { return this->baseStats; }
   float                     GetHealth()                       const { return this->health; }
-  
+
   bool                      CanSee(RunningState &state, const Vector3 &pos);
-  
+
   void                      AddBuff(RunningState &state, const std::string &name);
   void                      Lock(ID id)                             { this->lockedID = id; }
   void                      Unlock()                                { this->lockedID = 0; }
   ID                        GetLockedID()                     const { return this->lockedID; }
   bool                      CanOpenInventory()                const { return this->properties->openInventory && this->lockedID == 0; }
-  
+
   // rendering
   virtual IColor            GetLight()                        const { return this->properties->glow + inventory.GetLight(); }
 
   virtual void              Serialize(Serializer &ser)        const;
-  
+
 protected:
 
   Entity(const std::string &type);
@@ -232,7 +233,7 @@ protected:
   float nextThinkT, startT;
 
   std::unordered_map<std::string, Regular> regulars;
-  
+
   // gameplay
   float dieT;
   bool isDead;
@@ -240,27 +241,27 @@ protected:
   Vector3 lastPos;
   Vector3 spawnPos;
   Vector3 angles;
-  
+
   Stats baseStats;
   std::vector<Buff> activeBuffs;
-  
+
   AABB aabb;
-  
+
   float health;
-  
+
   Cell *lastCell;
   IVector3 cellPos;
   Inventory inventory;
   ID lockedID;
-  
+
   // rendering
   Sprite sprite;
   bool drawAABB;
   IColor cellLight;
   std::vector<ParticleEmitter> emitters = std::vector<ParticleEmitter>(0);
-  
+
   virtual SpawnClass GetSpawnClass() const { return SpawnClass::EntityClass; }
-  
+
   friend Serializer &operator << (Serializer &ser, const Entity *entity);
   friend Deserializer &operator >> (Deserializer &deser, Entity *&entity);
 };

@@ -9,8 +9,6 @@ uniform vec4 u_color;
 uniform vec4 u_light;
 uniform float u_fogLin;
 
-uniform vec4 u_lightColor[4];
-
 uniform mat4 u_matView;
 
 uniform vec4 u_fade;
@@ -20,35 +18,10 @@ varying vec2 v_tex;
 varying vec4 v_color;
 varying vec3 v_norm;
 
-varying vec3 v_light[4];
+varying vec3 v_light;
 
 const float gamma = 1.8;
 const float contrast = 1.0;
-
-vec3 getLight(int n) {
-  return v_light[n];
-/*
-  vec3 ld = v_light[n] - v_pos;
-  vec3 L = normalize(ld);
-  float d = length(ld);
-
-  return u_lightColor[n].rgb * max(0.0, dot(v_norm, L)) / (1.0 +d);
-*/
-}
-
-vec3 getTotalLight() {
-  vec3 light = vec3(0.0);
-  light += getLight(0);
-  light += getLight(1);
-  light += getLight(2);
-  light += getLight(3);
-/*  light += getLight(4);
-  light += getLight(5);
-  light += getLight(6);
-  light += getLight(7);
-*/
-  return light;
-}
 
 void main() {
   vec4 texSRGB = texture2D(u_texture, v_tex);
@@ -56,7 +29,7 @@ void main() {
 
   vec3 texLin  = pow(texSRGB.rgb, vec3(1.0/gamma));
 
-  vec3 lightLin  = getTotalLight();
+  vec3 lightLin  = v_light;
   vec3 vColorLin = v_color.rgb;
   vec3 uColorLin = u_color.rgb;
   vec3 uLightLin = u_light.rgb;
