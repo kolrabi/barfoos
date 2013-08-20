@@ -131,16 +131,18 @@ RunningState::Update() {
   // show or hide inventory
   if (GetGame().GetInput().IsKeyDown(InputKey::Inventory)) {
     if (!this->showInventory) {
-      size_t ent = this->player->GetSelectedEntity();
-      if (ent == InvalidID || !entities[ent]->GetProperties()->openInventory) {
+      ID entityID;
+      Side cellSide;
+      this->player->GetSelection(*this, nullptr, cellSide, entityID);
+
+      if (entityID == InvalidID || !entities[entityID]->GetProperties()->openInventory) {
         GetGame().SetGui(std::shared_ptr<Gui>(new InventoryGui(*this, *player)));
         this->showInventory = true;
       } else {
-        if (entities[ent]->GetLockedID()) {
-          // TODO: player message: "locked!"
-          Log("it's locked!\n");
+        if (entities[entityID]->GetLockedID()) {
+          this->player->AddMessage("The "+entities[entityID]->GetName()+" is locked.");
         } else {
-          GetGame().SetGui(std::shared_ptr<Gui>(new InventoryGui(*this, *player, *entities[ent])));
+          GetGame().SetGui(std::shared_ptr<Gui>(new InventoryGui(*this, *player, *entities[entityID])));
           this->showInventory = true;
         }
       }

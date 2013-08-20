@@ -31,11 +31,6 @@ Player::Player() :
   bobAmplitude      (0.0),
 
   // gameplay
-  selectedEntity    (InvalidID),
-  selectedCell      (nullptr),
-  selectedCellSide  (Side::Forward),
-  selectionRange    (0.0),
-
   itemActiveLeft    (false),
   itemActiveRight   (false),
 
@@ -73,11 +68,6 @@ Player::Player(Deserializer &deser) : Mob("player", deser),
   bobAmplitude      (0.0),
 
   // gameplay
-  selectedEntity    (InvalidID),
-  selectedCell      (nullptr),
-  selectedCellSide  (Side::Forward),
-  selectionRange    (0.0),
-
   itemActiveLeft    (false),
   itemActiveRight   (false),
   lastHurtT         (),
@@ -136,7 +126,6 @@ Player::Update(RunningState &state) {
   if (this->pain < 0) this->pain = 0;
 
   this->UpdateInput(state);
-  this->UpdateSelection(state);
 
   this->rightHand->Update(state);
   this->leftHand->Update(state);
@@ -144,27 +133,17 @@ Player::Update(RunningState &state) {
   if (itemActiveLeft) {
     std::shared_ptr<Item> useItem = this->inventory[InventorySlot::RightHand];
     if (!useItem) useItem = this->rightHand;
-
-    if (useItem->GetRange() < this->selectionRange) {
-      useItem->UseOnNothing(state, *this);
-    } else if (this->selectedCell) {
-      useItem->UseOnCell(state, *this, this->selectedCell, this->selectedCellSide);
-    } else if (this->selectedEntity != InvalidID) {
-      useItem->UseOnEntity(state, *this, this->selectedEntity);
-    }
+    std::string skill = useItem->GetProperties().useSkill;
+    bool result = this->UseItem(state, useItem);
+    if (result && skill != "") this->baseStats.skills[skill]++;
   }
 
   if (itemActiveRight) {
     std::shared_ptr<Item> useItem = this->inventory[InventorySlot::LeftHand];
     if (!useItem) useItem = this->leftHand;
-
-    if (useItem->GetRange() < this->selectionRange) {
-      useItem->UseOnNothing(state, *this);
-    } else if (this->selectedCell) {
-      useItem->UseOnCell(state, *this, this->selectedCell, this->selectedCellSide);
-    } else if (this->selectedEntity != InvalidID) {
-      useItem->UseOnEntity(state, *this, this->selectedEntity);
-    }
+    std::string skill = useItem->GetProperties().useSkill;
+    bool result = this->UseItem(state, useItem);
+    if (result && skill != "") this->baseStats.skills[skill]++;
   }
 
   // update map
@@ -195,57 +174,6 @@ Player::Update(RunningState &state) {
   }
 }
 
-void Player::UpdateSelection(RunningState &state) {
-  std::shared_ptr<Item> rightItem = this->inventory[InventorySlot::RightHand];
-  if (!rightItem) rightItem = this->rightHand;
-  std::shared_ptr<Item> leftItem = this->inventory[InventorySlot::LeftHand];
-  if (!leftItem) leftItem = this->leftHand;
-
-  float range = std::max(leftItem->GetRange(), rightItem->GetRange());
-
-  // update selection
-  Vector3 dir = (this->GetAngles()).EulerToVector();
-  Vector3 pos = this->smoothPosition + Vector3(0, this->properties->eyeOffset, 0);
-
-  float dist  = range;
-
-  AABB aabbRange;
-  aabbRange.center = pos;
-  aabbRange.extents = Vector3(range,range,range);
-  auto entitiesInRange = state.FindEntities(aabbRange);
-
-  float hitDist = range;
-  Vector3 hitPos;
-
-  this->selectedEntity = InvalidID;
-  this->selectedCell = nullptr;
-
-  // check entities in range
-  for (auto id : entitiesInRange) {
-    Entity *entity = state.GetEntity(id);
-    if (!entity || entity == this) continue;
-    if (entity->IsDead()) continue;
-    if (entity->GetProperties()->nohit) continue;
-
-    if (entity->GetAABB().Ray(pos, dir, hitDist, hitPos)) {
-      if (hitDist < dist) {
-        dist = hitDist;
-        this->selectedEntity = id;
-      }
-    }
-  }
-
-  // check cells
-  Cell &cell = state.GetWorld().CastRayCell(pos, dir, hitDist, this->selectedCellSide);
-  if (hitDist < dist) {
-    dist = hitDist;
-    this->selectedCell = &cell;
-    this->selectedEntity = InvalidID;
-  }
-
-  this->selectionRange = dist;
-}
-
 void
 Player::UpdateInput(
   RunningState &state
@@ -261,11 +189,8 @@ Player::UpdateInput(
   if (input.IsKeyDown(InputKey::DebugDie))     this->Die(state, HealthInfo());
 
   if (!state.IsShowingInventory()) {
-    if (input.IsKeyDown(InputKey::Use) && this->selectedEntity != InvalidID) {
-      Entity *entity = state.GetEntity(this->selectedEntity);
-      if (entity) entity->OnUse(state, *this);
-    } else if (input.IsKeyDown(InputKey::Use) && this->selectedCell) {
-      this->selectedCell->OnUse(state, *this);
+    if (input.IsKeyDown(InputKey::Use)) {
+      this->UseItem(state, nullptr);
     }
   }
   isSneaking = input.IsKeyActive(InputKey::Sneak);
@@ -308,15 +233,7 @@ Player::UpdateInput(
 }
 
 void Player::Draw(Gfx &gfx) const {
-  gfx.SetShader("default");
-
-  if (this->selectedCell) {
-    std::vector<Vertex> verts;
-    this->selectedCell->DrawHighlight(verts);
-    gfx.SetTextureFrame(loadTexture("cells/texture/select"));
-    gfx.SetColor(IColor(255,255,255), 0.5);
-    gfx.DrawTriangles(verts);
-  }
+  (void)gfx;
 }
 
 void
@@ -388,12 +305,12 @@ Player::DrawGUI(Gfx &gfx) const {
   // draw health bar
   gfx.SetColor(IColor(255,255,255));
   std::string strHealth;
-  int h = 10 * this->health / this->GetEffectiveStats().maxHealth;
+  int h = std::ceil(10 * this->health / this->GetEffectiveStats().maxHealth);
   for (int i=0; i<10; i++) {
     if (i < h)
       strHealth += u8"\u0081";
     else
-      strHealth += u8"\u0082";
+      strHealth += " "; //u8"\u0082";
   }
   RenderString rsHealth(strHealth + " " + ToString(int(this->health)), "big");
   rsHealth.Draw(gfx, 2, vsize.y-4, (int)Align::HorizLeft | (int)Align::VertBottom);
@@ -414,8 +331,13 @@ Player::DrawGUI(Gfx &gfx) const {
   }
   RenderString(buffstring).Draw(gfx, vsize - Point(4,40), int(Align::HorizRight|Align::VertBottom));
 
-  snprintf(tmp, sizeof(tmp), "%3.1f %f %f", fps, GetEffectiveStats().walkSpeed, GetEffectiveStats().cooldown);
-  RenderString(tmp, "small").Draw(gfx, 4, vsize.y-32-24);
+  std::string skills;
+  for (auto &s:GetEffectiveStats().skills) {
+    skills += s.first + ": " + ToString(Stats::GetLevelForSkillExp(s.second)) + "\n";
+  }
+
+  snprintf(tmp, sizeof(tmp), "%s%3.1f", skills.c_str(), fps);
+  RenderString(tmp, "small").Draw(gfx, 4, vsize.y-32-24, int(Align::VertBottom));
 }
 
 void
@@ -548,6 +470,74 @@ Player::OnEquip(RunningState &state, const Item &item, InventorySlot slot, bool 
     this->AddMessage("You take off the " + item.GetDisplayName() + ".");
     if (item.IsInited() && item.GetEffect().feeling != "")
       this->AddMessage("You no longer feel "+item.GetEffect().feeling+".");
+  }
+}
+
+
+Cell *Player::GetSelection(RunningState &state, const std::shared_ptr<Item> &item, Side &selectedCellSide, ID &entityId) {
+  Vector3 dir = this->GetForward();
+  Vector3 pos = this->GetSmoothEyePosition();
+
+  float range = item ? item->GetRange() : 5; // FIXME
+
+  AABB aabbRange;
+  aabbRange.center = pos;
+  aabbRange.extents = Vector3(range,range,range);
+
+  auto entitiesInRange = state.FindEntities(aabbRange);
+
+  float hitDist = range;
+  float dist  = range;
+  Vector3 hitPos;
+
+  entityId = InvalidID;
+
+  // check entities in range
+  for (auto id : entitiesInRange) {
+    Entity *entity = state.GetEntity(id);
+    if (!entity || entity == this) continue;
+    if (entity->IsDead()) continue;
+    if (entity->GetProperties()->nohit || (item && entity->GetProperties()->noItemUse)) continue;
+
+    if (entity->GetAABB().Ray(pos, dir, hitDist, hitPos)) {
+      if (hitDist < dist) {
+        dist = hitDist;
+        entityId = id;
+      }
+    }
+  }
+
+  // check cells
+  Cell &cell = state.GetWorld().CastRayCell(pos, dir, hitDist, selectedCellSide);
+  if (hitDist < dist) {
+    entityId = InvalidID;
+    return &cell;
+  } else {
+    return nullptr;
+  }
+}
+
+bool Player::UseItem(RunningState &state, const std::shared_ptr<Item> &item) {
+  ID entityID;
+  Side cellSide;
+  Cell *cell = this->GetSelection(state, item, cellSide, entityID);
+
+  if (item) {
+    if (entityID != InvalidID) {
+      return item->UseOnEntity(state, *this, entityID);
+    } else if (cell) {
+      return item->UseOnCell(state, *this, cell, cellSide);
+    } else {
+      return item->UseOnNothing(state, *this);
+    }
+  } else {
+    if (entityID != InvalidID) {
+      Entity *entity = state.GetEntity(entityID);
+      if (entity) entity->OnUse(state, *this);
+    } else if (cell) {
+      cell->OnUse(state, *this);
+    }
+    return true;
   }
 }
 

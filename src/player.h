@@ -21,20 +21,20 @@ public:
   virtual void Update(RunningState &state) override;
   virtual void Draw(Gfx &gfx) const override;
 
-  virtual void AddHealth(RunningState &state, const HealthInfo &info) override; 
-  
+  virtual void AddHealth(RunningState &state, const HealthInfo &info) override;
+
   void View(Gfx &gfx) const;
   void MapView(Gfx &gfx) const;
-  
+
   void DrawWeapons(Gfx &gfx) const;
   void DrawGUI(Gfx &gfx) const;
-  
+
   void HandleEvent(const InputEvent &event);
 
   void AddMessage(const std::string &text, const std::string &font = "default");
   void AddDeathMessage(const Entity &dead, const HealthInfo &info);
   void AddDeathMessage(const Entity &dead, const Entity &killer, const HealthInfo &info);
-  
+
   virtual void OnHealthDealt(RunningState &state, Entity &other, const HealthInfo &info) override;
   virtual void OnEquip(RunningState &, const Item &, InventorySlot, bool) override;
   virtual void OnLevelUp(RunningState &) override;
@@ -42,12 +42,13 @@ public:
 
   virtual std::string       GetName()                         const;
   float                     GetPain()                         const { return this->pain; }
-  ID                        GetSelectedEntity()               const { return this->selectedEntity; }
-  
+  Cell *                    GetSelection(RunningState &state, const std::shared_ptr<Item> &item, Side &selectedCellSide, ID &entityId);
+
   void SetUniforms(const std::shared_ptr<Shader> &shader) const;
-  
+
   virtual void              Serialize(Serializer &ser)        const;
-  
+  virtual SpawnClass        GetSpawnClass()                   const override { return SpawnClass::PlayerClass; }
+
 private:
 
   struct Message {
@@ -60,12 +61,12 @@ private:
       this->messageTime = other.messageTime;
       other.text = nullptr;
     }
-    
+
     ~Message();
-    
+
     Message &operator=(const Message &) = default;
   };
-  
+
   friend Serializer &operator << (Serializer &ser, const Message *msg);
   friend Deserializer &operator >> (Deserializer &ser, Message *&msg);
 
@@ -74,15 +75,10 @@ private:
   const Texture *slotTex;
   float bobPhase;
   float bobAmplitude;
-  
-  // gameplay
-  ID selectedEntity;
-  Cell *selectedCell;
-  Side selectedCellSide;
-  float selectionRange;
 
+  // gameplay
   bool itemActiveLeft, itemActiveRight;
-  
+
   std::unordered_map<uint32_t, float> lastHurtT;
   float pain;
 
@@ -92,15 +88,14 @@ private:
   float fps;
   RenderString *bigMessage;
   float bigMessageT;
-  
+
   float mapZoom;
-  
+
   std::shared_ptr<Item> leftHand, rightHand;
 
   void UpdateInput(RunningState &state);
-  void UpdateSelection(RunningState &state);
-  
-  virtual SpawnClass GetSpawnClass() const override { return SpawnClass::PlayerClass; }
+
+  bool UseItem(RunningState &state, const std::shared_ptr<Item> &item);
 };
 
 #endif

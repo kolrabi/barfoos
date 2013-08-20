@@ -71,6 +71,7 @@ EntityProperties::ParseProperty(const std::string &cmd) {
 
   else if (cmd == "box")              this->isBox           = true;
   else if (cmd == "nohit")            this->nohit           = true;
+  else if (cmd == "noitemuse")        this->noItemUse       = true;
   else if (cmd == "solid")            this->isSolid         = true;
   else if (cmd == "nocollideentity")  this->nocollideEntity = true;
   else if (cmd == "nocollidecell")    this->nocollideCell   = true;
@@ -121,6 +122,14 @@ EntityProperties::ParseProperty(const std::string &cmd) {
 
   } else if (cmd == "aggro") {
     this->aggressive      = true;
+    Parse(this->attackInterval);
+    Parse(this->aggroRangeNear);
+    Parse(this->aggroRangeFar);
+    Parse(this->meleeAttackRange);
+    Parse(this->attackItem);
+
+  } else if (cmd == "retaliate") {
+    this->retaliate      = true;
     Parse(this->attackInterval);
     Parse(this->aggroRangeNear);
     Parse(this->aggroRangeFar);
@@ -314,7 +323,7 @@ Entity::Start(RunningState &state, uint32_t id) {
     if (game.GetRandom().Chance(item.second)) {
       Item *ii;
       if (item.first[0] == '$') {
-        std::string itemName = getRandomItem(item.first.substr(1), state.GetRandom());
+        std::string itemName = getRandomItem(item.first.substr(1), state.GetLevel(), state.GetRandom());
         ii = new Item(itemName);
       } else {
         ii = new Item(item.first);

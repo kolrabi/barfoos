@@ -1,4 +1,5 @@
 Class       Monster
+Group       monster
 
 Tex       spider
 Frames    2

@@ -19,7 +19,7 @@ HealthInfo
 Stats::MeleeAttack(const Entity &attacker, const Entity &victim, const Item &item, Random &random) {
   HealthInfo info;
   info.dealerId = attacker.GetId();
-  info.skill    = item.GetProperties().weaponClass;
+  info.skill    = item.GetProperties().useSkill;
   info.type     = HealthType::Melee;
   info.element  = item.GetElement();
 
@@ -27,16 +27,19 @@ Stats::MeleeAttack(const Entity &attacker, const Entity &victim, const Item &ite
   Stats atkStat = attacker.GetEffectiveStats();
   Stats defStat = victim.GetEffectiveStats();
 
+  uint32_t atkSkillLevel = Stats::GetLevelForSkillExp(atkStat.skills[info.skill]);
+  uint32_t defSkillLevel = Stats::GetLevelForSkillExp(defStat.skills["evade"]);
+
   // determine hit
-  int dex = random.Integer(std::max(atkStat.dex, 1));
-  int agi = random.Integer(std::max(defStat.agi, 1));
+  int dex = random.Integer(std::max(atkStat.dex + atkSkillLevel, (uint32_t)1));
+  int agi = random.Integer(std::max(defStat.agi + defSkillLevel, (uint32_t)1));
 
   HitType hit = (dex < agi) ? HitType::Miss : HitType::Normal;
   if (random.Chance(atkStat.dex*0.001)) hit = HitType::Critical;
 
   info.hitType = hit;
 
-  int dmg = atkStat.str * 0.5 * item.GetDamage();
+  int dmg = atkStat.str * 0.5 * item.GetDamage() + atkSkillLevel*0.5;
   if (dmg < 1) dmg = 1;
 
   int amount = dmg - defStat.def * 0.1;
@@ -115,6 +118,24 @@ Stats::GetLevelForExp(float exp) {
   return std::log(exp + 1) / std::log(Const::ExpLevelBase) + 1;
 }
 
+/** Get the experience points neccessary for a given level.
+ * @param lvl Level
+ * @return Experience points
+ */
+float
+Stats::GetExpForSkillLevel(size_t lvl) {
+  return std::pow(Const::ExpLevelSkill, lvl - 1);
+}
+
+/** Get the level for the exp.
+ * @param exp Experience points
+ * @return Level
+ */
+size_t
+Stats::GetLevelForSkillExp(float exp) {
+  return std::log(exp + 1) / std::log(Const::ExpLevelSkill) + 1;
+}
+
 /** Get a summary of the stats as a string.
  * @return The tooltip.
  */
@@ -160,6 +181,7 @@ Serializer &operator << (Serializer &ser, const Stats &stats) {
   ser << stats.str;
   ser << stats.dex << stats.agi << stats.def;
   ser << stats.maxHealth << stats.exp << stats.sp << stats.walkSpeed;
+  ser << stats.skills;
   return ser;
 }
 
@@ -167,6 +189,7 @@ Deserializer &operator >> (Deserializer &deser, Stats &stats) {
   deser >> stats.str;
   deser >> stats.dex >> stats.agi >> stats.def;
   deser >> stats.maxHealth >> stats.exp >> stats.sp >> stats.walkSpeed;
+  deser >> stats.skills;
   return deser;
 }
 

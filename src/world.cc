@@ -4,6 +4,8 @@
 #include "cell.h"
 #include "simplex.h"
 #include "entity.h"
+#include "itementity.h"
+#include "item.h"
 
 #include "random.h"
 #include "worldedit.h"
@@ -106,6 +108,8 @@ World::Build() {
   size_t teleportCount = random.Integer(10)+2;
   size_t trapCount = random.Integer(10)+10;
   size_t decoCount = 500+random.Integer(200);
+  size_t itemCount = 10+random.Integer(20);
+  size_t monsterCount = 30+random.Integer(100);
 
   std::vector<FeatureInstance> instances;
 
@@ -319,6 +323,15 @@ World::Build() {
     instance.feature->SpawnEntities(state, instance.pos);
   }
 
+  Log("Placing %u items...\n", itemCount);
+  for (size_t i=0; i<itemCount; i++) {
+    IVector3 a = GetRandomTeleportTarget(random);
+    std::string itemName = getRandomItem("item", state.GetLevel(), state.GetRandom());
+    ItemEntity *entity = new ItemEntity(itemName);
+    entity->SetPosition(Vector3(a.x + 0.5, a.y + entity->GetAABB().extents.y+0.01, a.z + 0.5));
+    state.AddEntity(entity);
+  }
+
   Log("Placing some decoration (%u of them)...\n", decoCount);
   for (size_t i=0; i<decoCount; i++) {
     bool top = random.Coin();
@@ -349,7 +362,21 @@ World::Build() {
     } else {
       entity->SetPosition(Vector3(a.x + 0.5, a.y - entity->GetAABB().extents.y+0.99, a.z + 0.5));
     }
-    Log("deco: %u %f %f\n", a.y, entity->GetAABB().center.y, entity->GetAABB().extents.y);
+  }
+
+  Log("Placing %u enemies...\n", monsterCount);
+  weighted_map<std::string> monsters;
+  for (auto &m:GetEntitiesInGroup("monster")) {
+    monsters[m] = GetEntityProbability(m, state.GetLevel());
+  }
+  for (size_t i=0; i<monsterCount; i++) {
+    IVector3 a = GetRandomTeleportTarget(random);
+    std::string monster = monsters.select(random.Float01());
+    Entity *entity = Entity::Create(monster);
+    if (!entity) continue;
+
+    entity->SetPosition(Vector3(a.x + 0.5, a.y + entity->GetAABB().extents.y+0.01, a.z + 0.5));
+    state.AddEntity(entity);
   }
 
   // remove spilt liquids

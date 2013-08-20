@@ -11,6 +11,7 @@ namespace Const {
   static constexpr float WalkSpeedFactorPerAGI   = 0.2f; // double walk speed every 5 agi points
   static constexpr float AttackSpeedFactorPerAGI = 0.2f; // double speed every 5 agi points
   static constexpr float ExpLevelBase            = 1.7f; // 1.7^(lvl-1) exp
+  static constexpr float ExpLevelSkill           = 1.7f; // 1.1^(lvl-1) exp
 };
 
 enum class HealthType : size_t {
@@ -118,6 +119,8 @@ struct Stats {
   /** Current cooldown factor. */
   float cooldown = 1.0;
 
+  std::unordered_map<std::string, uint32_t> skills;
+
   bool operator==(const Stats &o);
   bool AddExp(float exp);
   std::string GetToolTip() const;
@@ -127,6 +130,8 @@ struct Stats {
 
   static float GetExpForLevel(size_t lvl);
   static size_t GetLevelForExp(float exp);
+  static float GetExpForSkillLevel(size_t lvl);
+  static size_t GetLevelForSkillExp(float exp);
 
   friend Serializer &operator << (Serializer &ser, const Stats &stats);
   friend Deserializer &operator >> (Deserializer &deser, Stats &stats);

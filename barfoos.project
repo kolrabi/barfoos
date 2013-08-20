@@ -1,0 +1,391 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeLite_Project Name="barfoos" InternalType="">
+  <VirtualDirectory Name="assets">
+    <VirtualDirectory Name="items">
+      <VirtualDirectory Name="texture">
+        <File Name="assets/items/texture/sword.png"/>
+        <File Name="assets/items/texture/sword2.png"/>
+        <File Name="assets/items/texture/torch.png"/>
+        <File Name="assets/items/texture/chain.png"/>
+        <File Name="assets/items/texture/scroll.png"/>
+        <File Name="assets/items/texture/leather.png"/>
+        <File Name="assets/items/texture/gem.earth.png"/>
+        <File Name="assets/items/texture/iron.png"/>
+        <File Name="assets/items/texture/steel.png"/>
+        <File Name="assets/items/texture/potion.empty.png"/>
+        <File Name="assets/items/texture/potion.red.png"/>
+        <File Name="assets/items/texture/gold.png"/>
+        <File Name="assets/items/texture/potion.blue.png"/>
+        <File Name="assets/items/texture/potion.purple.png"/>
+        <File Name="assets/items/texture/potion.yellow.png"/>
+        <File Name="assets/items/texture/potion.green.png"/>
+        <File Name="assets/items/texture/gem.fire.png"/>
+        <File Name="assets/items/texture/gem.life.png"/>
+        <File Name="assets/items/texture/gem.water.png"/>
+        <File Name="assets/items/texture/gem.wind.png"/>
+        <File Name="assets/items/texture/ring.gold.png"/>
+        <File Name="assets/items/texture/ring.iron.png"/>
+        <File Name="assets/items/texture/ring.ruby.png"/>
+        <File Name="assets/items/texture/ring.silver.png"/>
+        <File Name="assets/items/texture/ring.steel.png"/>
+        <File Name="assets/items/texture/wand.black.png"/>
+        <File Name="assets/items/texture/wand.empty.png"/>
+        <File Name="assets/items/texture/key.png"/>
+        <File Name="assets/items/texture/lockpick.png"/>
+        <File Name="assets/items/texture/fist.png"/>
+      </VirtualDirectory>
+      <File Name="assets/items/sword"/>
+      <File Name="assets/items/torch"/>
+      <File Name="assets/items/armor.1"/>
+      <File Name="assets/items/barehand.player"/>
+      <File Name="assets/items/boots.1"/>
+      <File Name="assets/items/helmet.1"/>
+      <File Name="assets/items/scroll.identify"/>
+      <File Name="assets/items/pants.1"/>
+      <File Name="assets/items/scroll.remove.curse"/>
+      <File Name="assets/items/gold"/>
+      <File Name="assets/items/key"/>
+      <File Name="assets/items/potion.poison"/>
+      <File Name="assets/items/potion.water"/>
+      <File Name="assets/items/barehand.1"/>
+      <File Name="assets/items/scroll.teleport"/>
+      <File Name="assets/items/wand.black"/>
+      <File Name="assets/items/wand.empty"/>
+      <File Name="assets/items/potion.heal"/>
+      <File Name="assets/items/potion.empty"/>
+      <File Name="assets/items/torch.burnt"/>
+      <File Name="assets/items/potion.oil"/>
+      <File Name="assets/items/lockpick"/>
+      <File Name="assets/items/gem.earth"/>
+      <File Name="assets/items/gem.fire"/>
+      <File Name="assets/items/gem.life"/>
+      <File Name="assets/items/gem.water"/>
+      <File Name="assets/items/gem.wind"/>
+    </VirtualDirectory>
+    <VirtualDirectory Name="entities">
+      <VirtualDirectory Name="texture">
+        <File Name="assets/entities/texture/chest.png"/>
+        <File Name="assets/entities/texture/slime.png"/>
+        <File Name="assets/entities/texture/torch.png"/>
+        <File Name="assets/entities/texture/particle.rock.png"/>
+        <File Name="assets/entities/texture/spider.png"/>
+        <File Name="assets/entities/texture/particle.bfw9k.png"/>
+        <File Name="assets/entities/texture/particle.bubble.png"/>
+        <File Name="assets/entities/texture/particle.teleport.png"/>
+        <File Name="assets/entities/texture/projectile.bfw9k.png"/>
+        <File Name="assets/entities/texture/grass.png"/>
+        <File Name="assets/entities/texture/hanging_moss.small.png"/>
+      </VirtualDirectory>
+      <File Name="assets/entities/box"/>
+      <File Name="assets/entities/item"/>
+      <File Name="assets/entities/player"/>
+      <File Name="assets/entities/slime"/>
+      <File Name="assets/entities/particle.rock"/>
+      <File Name="assets/entities/torch"/>
+      <File Name="assets/entities/spider"/>
+      <File Name="assets/entities/particle.bfw9k"/>
+      <File Name="assets/entities/particle.bubble"/>
+      <File Name="assets/entities/particle.teleport"/>
+      <File Name="assets/entities/projectile.test"/>
+      <File Name="assets/entities/projectile.bfw9k"/>
+      <File Name="assets/entities/deco.grass"/>
+      <File Name="assets/entities/deco.hanging_moss.small"/>
+    </VirtualDirectory>
+    <VirtualDirectory Name="cells">
+      <VirtualDirectory Name="texture">
+        <File Name="assets/cells/texture/bars.png"/>
+        <File Name="assets/cells/texture/bedrock.png"/>
+        <File Name="assets/cells/texture/brickstep.png"/>
+        <File Name="assets/cells/texture/brickstep_crack.png"/>
+        <File Name="assets/cells/texture/lava.png"/>
+        <File Name="assets/cells/texture/carpet.red.png"/>
+        <File Name="assets/cells/texture/dirt.png"/>
+        <File Name="assets/cells/texture/floor.png"/>
+        <File Name="assets/cells/texture/gate.png"/>
+        <File Name="assets/cells/texture/step.png"/>
+        <File Name="assets/cells/texture/planks.png"/>
+        <File Name="assets/cells/texture/planks2.png"/>
+        <File Name="assets/cells/texture/rock.png"/>
+        <File Name="assets/cells/texture/sand.png"/>
+        <File Name="assets/cells/texture/water.png"/>
+        <File Name="assets/cells/texture/ladder.png"/>
+        <File Name="assets/cells/texture/select.png"/>
+        <File Name="assets/cells/texture/teleport.off.png"/>
+        <File Name="assets/cells/texture/teleport.on.png"/>
+        <File Name="assets/cells/texture/trap.active.png"/>
+        <File Name="assets/cells/texture/trap.inactive.png"/>
+        <File Name="assets/cells/texture/brickstep_mossy.png"/>
+        <File Name="assets/cells/texture/shooter.png"/>
+      </VirtualDirectory>
+      <File Name="assets/cells/air"/>
+      <File Name="assets/cells/brick"/>
+      <File Name="assets/cells/bedrock"/>
+      <File Name="assets/cells/torch"/>
+      <File Name="assets/cells/carpet.red"/>
+      <File Name="assets/cells/default"/>
+      <File Name="assets/cells/dirt"/>
+      <File Name="assets/cells/frozenlava"/>
+      <File Name="assets/cells/gate"/>
+      <File Name="assets/cells/lava"/>
+      <File Name="assets/cells/pillar"/>
+      <File Name="assets/cells/rock"/>
+      <File Name="assets/cells/step"/>
+      <File Name="assets/cells/brick.secret"/>
+      <File Name="assets/cells/torch2"/>
+      <File Name="assets/cells/torch3"/>
+      <File Name="assets/cells/water"/>
+      <File Name="assets/cells/wood"/>
+      <File Name="assets/cells/ice"/>
+      <File Name="assets/cells/teleport"/>
+      <File Name="assets/cells/door.right.closed"/>
+      <File Name="assets/cells/door.right.open"/>
+      <File Name="assets/cells/ladder.right"/>
+      <File Name="assets/cells/shooter"/>
+      <File Name="assets/cells/bars"/>
+    </VirtualDirectory>
+    <VirtualDirectory Name="effects">
+      <File Name="assets/effects/buff.poison"/>
+      <File Name="assets/effects/heal.low"/>
+      <File Name="assets/effects/curse.remove"/>
+      <File Name="assets/effects/potion.water"/>
+      <File Name="assets/effects/identify"/>
+      <File Name="assets/effects/item.strength"/>
+    </VirtualDirectory>
+    <VirtualDirectory Name="features">
+      <File Name="assets/features/alcove"/>
+      <File Name="assets/features/doorway"/>
+      <File Name="assets/features/hallway"/>
+      <File Name="assets/features/hallway.ladder.down"/>
+      <File Name="assets/features/hallway.ladder.up"/>
+      <File Name="assets/features/hallway_lava"/>
+      <File Name="assets/features/hallway_small"/>
+      <File Name="assets/features/living_quarters.0"/>
+      <File Name="assets/features/start"/>
+      <File Name="assets/features/mote"/>
+      <File Name="assets/features/door"/>
+      <File Name="assets/features/bridge"/>
+      <File Name="assets/features/doorway_wood"/>
+      <File Name="assets/features/stairs_short"/>
+    </VirtualDirectory>
+    <VirtualDirectory Name="gui">
+      <File Name="assets/gui/crosshair.png"/>
+      <File Name="assets/gui/font.default.png"/>
+      <File Name="assets/gui/font.big.png"/>
+      <File Name="assets/gui/button.png"/>
+      <File Name="assets/gui/button.active.png"/>
+      <File Name="assets/gui/slot.png"/>
+      <File Name="assets/gui/font.small.png"/>
+      <File Name="assets/gui/durability.png"/>
+      <File Name="assets/gui/button.disabled.png"/>
+      <File Name="assets/gui/button.enabled.png"/>
+      <File Name="assets/gui/button.hover.png"/>
+      <File Name="assets/gui/white.png"/>
+      <File Name="assets/gui/maparrow.png"/>
+      <File Name="assets/gui/slot.amulet.png"/>
+      <File Name="assets/gui/slot.armor.png"/>
+      <File Name="assets/gui/slot.boots.png"/>
+      <File Name="assets/gui/slot.hand.png"/>
+      <File Name="assets/gui/slot.helmet.png"/>
+      <File Name="assets/gui/slot.pants.png"/>
+      <File Name="assets/gui/slot.ring.png"/>
+    </VirtualDirectory>
+    <VirtualDirectory Name="shaders">
+      <File Name="assets/shaders/default.fs"/>
+      <File Name="assets/shaders/default.vs"/>
+      <File Name="assets/shaders/gui.vs"/>
+      <File Name="assets/shaders/gui.fs"/>
+    </VirtualDirectory>
+    <VirtualDirectory Name="text">
+      <File Name="assets/text/scrolls"/>
+    </VirtualDirectory>
+  </VirtualDirectory>
+  <Description/>
+  <Dependencies/>
+  <Settings Type="Dynamic Library">
+    <GlobalSettings>
+      <Compiler Options="" C_Options="">
+        <IncludePath Value="."/>
+      </Compiler>
+      <Linker Options="">
+        <LibraryPath Value="."/>
+      </Linker>
+      <ResourceCompiler Options=""/>
+    </GlobalSettings>
+    <Configuration Name="Debug" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Dynamic Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+      <Compiler Options="-g" C_Options="-g" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" UseDifferentPCHFlags="no" PCHFlags="">
+        <IncludePath Value="."/>
+      </Compiler>
+      <Linker Options="" Required="yes"/>
+      <ResourceCompiler Options="" Required="no"/>
+      <General OutputFile="" IntermediateDirectory="./Debug" Command="" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes"/>
+      <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
+        <![CDATA[]]>
+      </Environment>
+      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
+        <DebuggerSearchPaths/>
+        <PostConnectCommands/>
+        <StartupCommands/>
+      </Debugger>
+      <PreBuild/>
+      <PostBuild/>
+      <CustomBuild Enabled="yes">
+        <RebuildCommand/>
+        <CleanCommand>make clean</CleanCommand>
+        <BuildCommand>make</BuildCommand>
+        <PreprocessFileCommand/>
+        <SingleFileCommand/>
+        <MakefileGenerationCommand/>
+        <ThirdPartyToolName>None</ThirdPartyToolName>
+        <WorkingDirectory>$(WorkspacePath)</WorkingDirectory>
+      </CustomBuild>
+      <AdditionalRules>
+        <CustomPostBuild/>
+        <CustomPreBuild/>
+      </AdditionalRules>
+      <Completion EnableCpp11="no">
+        <ClangCmpFlagsC/>
+        <ClangCmpFlags/>
+        <ClangPP/>
+        <SearchPaths/>
+      </Completion>
+    </Configuration>
+    <Configuration Name="Release" CompilerType="gnu g++" DebuggerType="GNU gdb debugger" Type="Dynamic Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+      <Compiler Options="" C_Options="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" UseDifferentPCHFlags="no" PCHFlags="">
+        <IncludePath Value="."/>
+      </Compiler>
+      <Linker Options="-O2" Required="yes"/>
+      <ResourceCompiler Options="" Required="no"/>
+      <General OutputFile="" IntermediateDirectory="./Release" Command="" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes"/>
+      <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
+        <![CDATA[]]>
+      </Environment>
+      <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
+        <DebuggerSearchPaths/>
+        <PostConnectCommands/>
+        <StartupCommands/>
+      </Debugger>
+      <PreBuild/>
+      <PostBuild/>
+      <CustomBuild Enabled="yes">
+        <RebuildCommand/>
+        <CleanCommand>make clean</CleanCommand>
+        <BuildCommand>make</BuildCommand>
+        <PreprocessFileCommand/>
+        <SingleFileCommand/>
+        <MakefileGenerationCommand/>
+        <ThirdPartyToolName>None</ThirdPartyToolName>
+        <WorkingDirectory>$(WorkspacePath)</WorkingDirectory>
+      </CustomBuild>
+      <AdditionalRules>
+        <CustomPostBuild/>
+        <CustomPreBuild/>
+      </AdditionalRules>
+      <Completion EnableCpp11="no">
+        <ClangCmpFlagsC/>
+        <ClangCmpFlags/>
+        <ClangPP/>
+        <SearchPaths/>
+      </Completion>
+    </Configuration>
+  </Settings>
+  <VirtualDirectory Name="src">
+    <File Name="src/GLee.c"/>
+    <File Name="src/GLee.h"/>
+    <File Name="src/cell.cc"/>
+    <File Name="src/cell.h"/>
+    <File Name="src/cellbase.h"/>
+    <File Name="src/config.h"/>
+    <File Name="src/common.h"/>
+    <File Name="src/entity.cc"/>
+    <File Name="src/entity.h"/>
+    <File Name="src/stamp-h1"/>
+    <File Name="src/feature.cc"/>
+    <File Name="src/inventory.cc"/>
+    <File Name="src/item.cc"/>
+    <File Name="src/feature.h"/>
+    <File Name="src/gfx.cc"/>
+    <File Name="src/gfx.h"/>
+    <File Name="src/mob.cc"/>
+    <File Name="src/game.cc"/>
+    <File Name="src/game.h"/>
+    <File Name="src/mob.h"/>
+    <File Name="src/player.cc"/>
+    <File Name="src/player.h"/>
+    <File Name="src/sprite.h"/>
+    <File Name="src/gui.cc"/>
+    <File Name="src/gui.h"/>
+    <File Name="src/icolor.h"/>
+    <File Name="src/input.cc"/>
+    <File Name="src/stats.h"/>
+    <File Name="src/input.h"/>
+    <File Name="src/inventorygui.cc"/>
+    <File Name="src/inventorygui.h"/>
+    <File Name="src/io.cc"/>
+    <File Name="src/item.h"/>
+    <File Name="src/itementity.cc"/>
+    <File Name="src/itementity.h"/>
+    <File Name="src/ivector3.h"/>
+    <File Name="src/world.cc"/>
+    <File Name="src/world.h"/>
+    <File Name="src/profile.cc"/>
+    <File Name="src/main.cc"/>
+    <File Name="src/shader.cc"/>
+    <File Name="src/profile.h"/>
+    <File Name="src/projectile.cc"/>
+    <File Name="src/shader.h"/>
+    <File Name="src/projectile.h"/>
+    <File Name="src/properties.cc"/>
+    <File Name="src/random.h"/>
+    <File Name="src/serializer.cc"/>
+    <File Name="src/serializer.h"/>
+    <File Name="src/stats.cc"/>
+    <File Name="src/texture.cc"/>
+    <File Name="src/simplex.cc"/>
+    <File Name="src/simplex.h"/>
+    <File Name="src/space.h"/>
+    <File Name="src/text.cc"/>
+    <File Name="src/text.h"/>
+    <File Name="src/util.h"/>
+    <File Name="src/util.cc"/>
+    <File Name="src/vector3.h"/>
+    <File Name="src/vertex.h"/>
+    <File Name="src/runningstate.cc"/>
+    <File Name="src/worldedit.cc"/>
+    <File Name="src/worldedit.h"/>
+    <File Name="src/Makefile"/>
+    <File Name="src/monster.h"/>
+    <File Name="src/gfxview.h"/>
+    <File Name="src/inventory.h"/>
+    <File Name="src/properties.h"/>
+    <File Name="src/log"/>
+    <File Name="src/texture.h"/>
+    <File Name="src/2d.h"/>
+    <File Name="src/mainmenugui.h"/>
+    <File Name="src/aabb.h"/>
+    <File Name="src/gfxview.cc"/>
+    <File Name="src/animation.h"/>
+    <File Name="src/matrix4.h"/>
+    <File Name="src/log.h"/>
+    <File Name="src/log.cc"/>
+    <File Name="src/trigger.h"/>
+    <File Name="src/trigger.cc"/>
+    <File Name="src/effect.h"/>
+    <File Name="src/monster.cc"/>
+    <File Name="src/smooth.h"/>
+    <File Name="src/weighted_map.h"/>
+    <File Name="src/effect.cc"/>
+    <File Name="src/runningstate.h"/>
+    <File Name="src/mainmenustate.h"/>
+    <File Name="src/mainmenustate.cc"/>
+    <File Name="src/mainmenugui.cc"/>
+    <File Name="src/deserializer.h"/>
+    <File Name="src/deserializer.cc"/>
+    <File Name="src/markov.h"/>
+    <File Name="src/cellproperties.cc"/>
+    <File Name="src/cellproperties.h"/>
+    <File Name="src/cellrender.cc"/>
+    <File Name="src/cellrender.h"/>
+    <File Name="src/itemproperties.h"/>
+    <File Name="src/itemproperties.cc"/>
+  </VirtualDirectory>
+</CodeLite_Project>

@@ -22,7 +22,7 @@ const ItemProperties &getItem(const std::string &name) {
   return allItems[name];
 }
 
-std::string getRandomItem(const std::string &group, Random &random) {
+std::string getRandomItem(const std::string &group, int level, Random &random) {
   const std::vector<std::string> &groupItems = allItemGroups[group];
 
   if (groupItems.empty()) {
@@ -30,7 +30,11 @@ std::string getRandomItem(const std::string &group, Random &random) {
     return "default";
   }
 
-  return groupItems[random.Integer(groupItems.size())];
+  weighted_map<std::string> items;
+  for (auto &s:groupItems) {
+    items[s] = GetItemProbability(s, level);
+  }
+  return items.select(random.Float01());
 }
 
 static void shuffleItems(Game &game, std::function<bool(ItemProperties&)> doShuffleFn) {
@@ -73,7 +77,11 @@ ItemProperties::ParseProperty(const std::string &cmd) {
     Parse(this->sprite.width);
     Parse(this->sprite.height);
   }
-
+  else if (cmd == "level") {
+    Parse(this->minLevel);
+    Parse(this->maxLevel);
+    Parse(this->maxProbability);
+  }
   else if (cmd == "stab")       this->useMovement = UseMovement::StabMovement;
   else if (cmd == "recoil")     this->useMovement = UseMovement::RecoilMovement;
   else if (cmd == "damage")     Parse(this->damage);
@@ -118,6 +126,7 @@ ItemProperties::ParseProperty(const std::string &cmd) {
   else if (cmd == "boots")          this->equippable |= (1<<(size_t)InventorySlot::Boots);
 
   else if (cmd == "stack")          this->stackable = true;
+  else if (cmd == "useskill")    Parse(this->useSkill);
 
   else if (cmd == "durability")       Parse(this->durability);
   else if (cmd == "usedurability")    Parse(this->useDurability);
@@ -193,4 +202,17 @@ LoadItems(Game &game) {
   shuffleItems(game, [](ItemProperties &p){return p.isWand;});
   shuffleItems(game, [](ItemProperties &p){return p.isRing;});
   shuffleItems(game, [](ItemProperties &p){return p.isAmulet;});
+}
+
+float GetItemProbability(const std::string &name, int level) {
+  if (allItems.find(name) == allItems.end()) return 0.0;
+
+  const ItemProperties &prop = allItems[name];
+
+  if (level < prop.minLevel) return 0;
+  if (prop.maxLevel < prop.minLevel) return prop.maxProbability;
+
+  // make highest chance right between min and max level
+  float levelFrac = (level-prop.minLevel)/(float)(prop.maxLevel-prop.minLevel + 1);
+  return prop.maxProbability * std::sin(Const::pi*levelFrac);
 }

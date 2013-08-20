@@ -20,6 +20,10 @@ struct ItemProperties : public Properties {
   std::string unidentifiedName = "<item>";
   std::vector<std::string> groups;
 
+  int     minLevel          = 0;
+  int     maxLevel          = -1;
+  float   maxProbability    = 1.0;
+
   bool isPotion = false;
   bool isWand   = false;
   bool isRing   = false;
@@ -49,7 +53,7 @@ struct ItemProperties : public Properties {
   int uneqAddDef = 0;
   int uneqAddHP  = 0;
 
-  std::string weaponClass = "";
+  std::string useSkill = "";
 
   uint32_t equippable = 0;
   bool twoHanded = false;
@@ -94,7 +98,8 @@ struct ItemProperties : public Properties {
 
 void LoadItems(Game &game);
 const ItemProperties &getItem(const std::string &name);
-std::string getRandomItem(const std::string &group, Random &random);
+std::string getRandomItem(const std::string &group, int level, Random &random);
+float GetItemProbability(const std::string &type, int level);
 
 #endif
 

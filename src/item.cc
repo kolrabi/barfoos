@@ -129,15 +129,16 @@ void Item::Update(RunningState &state) {
   if (cooldownFrac < 0) cooldownFrac = 0;
 }
 
-void Item::UseOnEntity(RunningState &state, Mob &user, uint32_t id) {
-  if (!this->CanUse(state)) return;
+bool Item::UseOnEntity(RunningState &state, Mob &user, uint32_t id) {
+  if (!this->CanUse(state)) return false;
 
   if (this->properties->canUseEntity) {
     Entity *entity = state.GetEntity(id);
-    if (!entity || entity->GetProperties()->nohit) {
-      this->UseOnNothing(state, user);
-      return;
+    if (!entity || entity->GetProperties()->nohit || entity->GetProperties()->noItemUse) {
+      return this->UseOnNothing(state, user);
     }
+
+    bool result = false;
 
     uint32_t entityLock = entity->GetLockedID();
     if (entityLock && this->properties->unlockChance > 0.0 && (this->unlockID == entityLock || this->unlockID == 0) && state.GetRandom().Chance(this->properties->unlockChance)) {
@@ -146,6 +147,7 @@ void Item::UseOnEntity(RunningState &state, Mob &user, uint32_t id) {
         if (this->amount > 1) this->amount--; else this->isRemovable = true;
       }
       state.GetPlayer().AddMessage("You unlock the "+entity->GetName());
+      result = true;
     }
 
     Mob *mob = dynamic_cast<Mob*>(entity);
@@ -158,11 +160,19 @@ void Item::UseOnEntity(RunningState &state, Mob &user, uint32_t id) {
 
     if (iter != entity->GetProperties()->onUseItemReplace.end()) {
       *this = Item(iter->second);
+      result = true;
     } else {
       HealthInfo healthInfo(Stats::MeleeAttack(user, *entity, *this, state.GetRandom()));
+
+      // TODO: if (entity->GetProperties()->learnEvade) ...
+      if (healthInfo.hitType == HitType::Miss && entity->GetSpawnClass() == SpawnClass::PlayerClass) {
+        entity->GetBaseStats().skills["evade"]++;
+      }
+
       entity->AddHealth(state, healthInfo);
       std::string effect = this->properties->onHitAddBuff.select(state.GetRandom().Float01());
       entity->AddBuff(state, effect);
+      result = true;
     }
 
     // replace entity
@@ -177,16 +187,18 @@ void Item::UseOnEntity(RunningState &state, Mob &user, uint32_t id) {
         state.AddEntity(entity2);
       }
       state.RemoveEntity(entity->GetId());
+      result = true;
     }
 
     this->StartCooldown(state, user);
+    return result;
   } else {
-    this->UseOnNothing(state, user);
+    return this->UseOnNothing(state, user);
   }
 }
 
-void Item::UseOnCell(RunningState &state, Mob &user, Cell *cell, Side) {
-  if (!this->CanUse(state)) return;
+bool Item::UseOnCell(RunningState &state, Mob &user, Cell *cell, Side) {
+  if (!this->CanUse(state)) return false;
 
   if (this->properties->canUseCell) {
     uint32_t cellLock = cell->GetLockedID();
@@ -196,21 +208,24 @@ void Item::UseOnCell(RunningState &state, Mob &user, Cell *cell, Side) {
         if (this->amount > 1) this->amount--; else this->isRemovable = true;
       }
       state.GetPlayer().AddMessage("You unlock it.");
+      return true;
     }
 
     if (this->GetBreakBlockStrength() && state.GetRandom().Chance(this->properties->breakBlockStrength / cell->GetInfo().breakStrength)) {
       cell->GetWorld()->BreakBlock(cell->GetPosition());
+      return true;
     }
 
     this->StartCooldown(state, user);
   } else {
-    this->UseOnNothing(state, user);
+    return this->UseOnNothing(state, user);
   }
+  return false;
 }
 
-void Item::UseOnNothing(RunningState &state, Mob &user) {
-  if (!this->CanUse(state)) return;
-  if (!this->properties->canUseNothing) return;
+bool Item::UseOnNothing(RunningState &state, Mob &user) {
+  if (!this->CanUse(state)) return false;
+  if (!this->properties->canUseNothing) return false;
 
   if (this->properties->spawnProjectile != "") {
     Projectile *proj = new Projectile(this->properties->spawnProjectile);
@@ -220,9 +235,11 @@ void Item::UseOnNothing(RunningState &state, Mob &user) {
     proj->AddVelocity(user.GetVelocity());
     state.AddEntity(proj);
     this->StartCooldown(state, user);
+    return true;
   } else {
     this->StartCooldown(state, user, false);
   }
+  return false;
 }
 
 void Item::Draw(Gfx &gfx, bool left) {

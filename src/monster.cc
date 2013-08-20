@@ -184,6 +184,14 @@ Monster::OnCollide(RunningState &state, Entity &other) {
 }
 
 void
+Monster::AddHealth(RunningState &state, const HealthInfo &info) {
+  Mob::AddHealth(state, info);
+  if (info.amount < 0 && info.dealerId != InvalidID && (this->properties->aggressive || this->properties->retaliate)) {
+    this->attackTarget = info.dealerId;
+  }
+}
+
+void
 Monster::Serialize(Serializer &ser) const {
   Mob::Serialize(ser);
 

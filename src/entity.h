@@ -75,6 +75,7 @@ struct EntityProperties : public Properties {
   float   lifetime          = 0.0;
   float   lifetimeRand      = 0.0;
   bool    nohit             = false;  //< Entity has no hitbox/selection box.
+  bool    noItemUse         = false;  //< Can't use items on entity
   bool    nocollideEntity   = false;  //< Entity does not collide with other entities.
   bool    nocollideCell     = false;  //< Don't call OnCollideCell.
   bool    nocollideOwner    = false;  //< Entity does not collide with owner entity.
@@ -83,6 +84,7 @@ struct EntityProperties : public Properties {
   bool    respawn           = false;  //< Entity will automatically respawn on death.
   bool    noStep            = false;
   bool    aggressive        = false;
+  bool    retaliate         = false;
   bool    onCollideUseCell  = false;
   bool    swim              = false;
   bool    flipLeft          = false;
@@ -223,6 +225,8 @@ public:
 
   virtual void              Serialize(Serializer &ser)        const;
 
+  virtual SpawnClass        GetSpawnClass()                   const { return SpawnClass::EntityClass; }
+
 protected:
 
   Entity(const std::string &type);
@@ -261,8 +265,6 @@ protected:
   bool drawAABB;
   IColor cellLight;
   std::vector<ParticleEmitter> emitters = std::vector<ParticleEmitter>(0);
-
-  virtual SpawnClass GetSpawnClass() const { return SpawnClass::EntityClass; }
 
   friend Serializer &operator << (Serializer &ser, const Entity *entity);
   friend Deserializer &operator >> (Deserializer &deser, Entity *&entity);

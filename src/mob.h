@@ -28,6 +28,7 @@ public:
   const Vector3 &           GetVelocity ()                                            const           { return velocity; }
 
   virtual void              Serialize   (Serializer &ser)                             const override;
+  virtual SpawnClass        GetSpawnClass()                                           const override { return SpawnClass::MobClass; }
 
 protected:
 
@@ -48,8 +49,6 @@ protected:
 
   void SetInLiquid(bool inLiquid);
   float GetMoveModifier() const;
-
-  virtual SpawnClass GetSpawnClass() const override { return SpawnClass::MobClass; }
 };
 
 

@@ -30,9 +30,9 @@ public:
   bool CanUse(RunningState &state) const;
   void StartCooldown(RunningState &state, Entity &user, bool damage = true);
 
-  void UseOnEntity(RunningState &state, Mob &user, uint32_t ent);
-  void UseOnCell(RunningState &state, Mob &user, Cell *cell, Side side);
-  void UseOnNothing(RunningState &state, Mob &user);
+  bool UseOnEntity(RunningState &state, Mob &user, uint32_t ent);
+  bool UseOnCell(RunningState &state, Mob &user, Cell *cell, Side side);
+  bool UseOnNothing(RunningState &state, Mob &user);
 
   uint32_t GetDurability()              const { return this->durability; }
   float GetRange()                      const { return this->properties->range * this->effect->range; }

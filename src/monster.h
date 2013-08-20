@@ -20,8 +20,10 @@ public:
   virtual void              Think       (RunningState &state)                         override;
 
   virtual void              OnCollide   (RunningState &state, Entity &other)          override;
+  virtual void              AddHealth(RunningState &state, const HealthInfo &info)    override;
 
   virtual void              Serialize   (Serializer &ser)                             const override;
+  virtual SpawnClass        GetSpawnClass()                                           const override { return SpawnClass::MonsterClass; }
 
 protected:
 
@@ -32,8 +34,6 @@ protected:
   ID                    attackTarget;
   float                 nextAttackT;
   std::shared_ptr<Item> attackItem;
-
-  virtual SpawnClass GetSpawnClass() const override { return SpawnClass::MonsterClass; }
 };
 
 

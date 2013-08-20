@@ -17,6 +17,7 @@ IdentifiedName   "Iron Sword"
 # CanUseNothing
 CanUseEntity
 CanUseCell
+UseSkill sword
 
 Effect  0.9 ""
 Effect  0.1 "$item"
