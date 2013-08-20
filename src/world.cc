@@ -1121,7 +1121,7 @@ World::IsCellValidCeiling(const IVector3 &pos) const {
   const Cell &cell = GetCell(pos);
   const Cell &cell2 = cell[Side::Down];
   const Cell &cell3 = cell2[Side::Down];
-  return cell.IsSolid() && !cell2.IsSolid() && !cell2.IsLiquid() && !cell3.IsSolid() && !cell3.IsLiquid();
+  return cell.IsBottomFlat() && cell.IsSolid() && !cell2.IsSolid() && !cell2.IsLiquid() && !cell3.IsSolid() && !cell3.IsLiquid();
 }
 
 IVector3 

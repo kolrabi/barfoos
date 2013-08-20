@@ -219,8 +219,8 @@ void Item::Draw(Gfx &gfx, bool left) {
   gfx.GetView().Translate(Vector3(1,-1,0));
   switch(properties->useMovement) {
     case UseMovement::SlashMovement:  gfx.GetView().Rotate(cooldownFrac*60-60, Vector3(0,0,1)); break;
-    case UseMovement::StabMovement:   gfx.GetView().Rotate(-60, Vector3(0,0,1));
-                                      gfx.GetView().Translate(Vector3(-cooldownFrac,0,0)); break;
+    case UseMovement::StabMovement:   gfx.GetView().Rotate(-50, Vector3(0,0,1));
+                                      gfx.GetView().Translate(Vector3(0.5+std::pow(1.0-cooldownFrac,3),0,0)); break;
     case UseMovement::RecoilMovement: gfx.GetView().Rotate(-60, Vector3(0,0,1));
                                       gfx.GetView().Translate(Vector3(cooldownFrac,0,0)); break;
   }

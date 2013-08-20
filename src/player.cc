@@ -331,8 +331,7 @@ Player::DrawWeapons(Gfx &gfx) const {
 
   gfx.GetView().Look(pos, fwd);
   gfx.SetColor(IColor(255,255,255));
-  gfx.SetLight(this->cellLight + this->inventory.GetLight());
-
+  gfx.SetLight((this->cellLight + this->inventory.GetLight()).Saturate());
   if (this->inventory[InventorySlot::RightHand]) {
     this->inventory[InventorySlot::RightHand]->Draw(gfx, false);
   } else {
@@ -340,7 +339,7 @@ Player::DrawWeapons(Gfx &gfx) const {
   }
   if (this->inventory[InventorySlot::LeftHand]) {
     this->inventory[InventorySlot::LeftHand]->Draw(gfx, true);
-  } else {
+  } else {   
     this->leftHand->Draw(gfx, true);
   }
 }

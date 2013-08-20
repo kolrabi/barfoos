@@ -185,10 +185,37 @@ InventorySlotGui::InventorySlotGui(
   parent(parent),
   slot(slot),
   hover(false),
-  slotTex(loadTexture("gui/slot")),
+  slotTex(nullptr),
   lastT(0.0),
   lastClickT(0.0)
-{}
+{
+  switch(slot) {
+    case InventorySlot::LeftHand:
+    case InventorySlot::RightHand:
+      slotTex = loadTexture("gui/slot.hand");
+      break;
+    case InventorySlot::LeftRing:
+    case InventorySlot::RightRing:
+      slotTex = loadTexture("gui/slot.ring");
+      break;
+    case InventorySlot::Armor:
+      slotTex = loadTexture("gui/slot.armor");
+      break;
+    case InventorySlot::Helmet:
+      slotTex = loadTexture("gui/slot.helmet");
+      break;
+    case InventorySlot::Boots:
+      slotTex = loadTexture("gui/slot.boots");
+      break;
+    case InventorySlot::Greaves:
+      slotTex = loadTexture("gui/slot.pants");
+      break;
+    case InventorySlot::Amulet:
+      slotTex = loadTexture("gui/slot.amulet");
+      break;
+    default: slotTex = loadTexture("gui/slot");
+  }
+}
 
 InventorySlotGui::~InventorySlotGui() {
 }
