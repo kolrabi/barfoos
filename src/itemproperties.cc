@@ -24,12 +24,12 @@ const ItemProperties &getItem(const std::string &name) {
 
 std::string getRandomItem(const std::string &group, Random &random) {
   const std::vector<std::string> &groupItems = allItemGroups[group];
-  
+
   if (groupItems.empty()) {
     Log("No entity properties in group '%s' found\n", group.c_str());
     return "default";
   }
-  
+
   return groupItems[random.Integer(groupItems.size())];
 }
 
@@ -40,7 +40,7 @@ static void shuffleItems(Game &game, std::function<bool(ItemProperties&)> doShuf
       items.push_back(i.first);
     }
   }
-  
+
   for (size_t i = 0; i < items.size(); i++) {
     // swap appearances and descriptions
     size_t j = game.GetRandom().Integer(items.size());
@@ -61,42 +61,42 @@ ItemProperties::ParseProperty(const std::string &cmd) {
     uint32_t firstFrame = 0;
     uint32_t frameCount = 0;
     float  fps = 0;
-    
+
     Parse(firstFrame);
     Parse(frameCount);
     Parse(fps);
-    
+
     this->sprite.animations.push_back(Animation(firstFrame, frameCount, fps));
     if (this->sprite.animations.size() == 1) this->sprite.StartAnim(0);
-    
+
   } else if (cmd == "size") {
     Parse(this->sprite.width);
     Parse(this->sprite.height);
-  } 
-  
+  }
+
   else if (cmd == "stab")       this->useMovement = UseMovement::StabMovement;
   else if (cmd == "recoil")     this->useMovement = UseMovement::RecoilMovement;
   else if (cmd == "damage")     Parse(this->damage);
   else if (cmd == "knockback")  Parse(this->knockback);
-  
+
   else if (cmd == "nomodifier")     this->noModifier = true;
   else if (cmd == "nobeatitude")    this->noBeatitude = true;
-  
+
   else if (cmd == "eqstr")      Parse(this->eqAddStr);
   else if (cmd == "eqdex")      Parse(this->eqAddDex);
   else if (cmd == "eqagi")      Parse(this->eqAddAgi);
   else if (cmd == "eqdef")      Parse(this->eqAddDef);
   else if (cmd == "eqhp")       Parse(this->eqAddHP);
-  
+
   else if (cmd == "uneqstr")    Parse(this->uneqAddStr);
   else if (cmd == "uneqdex")    Parse(this->uneqAddDex);
   else if (cmd == "uneqagi")    Parse(this->uneqAddAgi);
   else if (cmd == "uneqdef")    Parse(this->uneqAddDef);
   else if (cmd == "uneqhp")     Parse(this->uneqAddHP);
-    
+
   else if (cmd == "light")      Parse(this->light);
   else if (cmd == "flicker")    this->flicker = true;
-  
+
   else if (cmd == "cooldown")       Parse(this->cooldown);
   else if (cmd == "range")          Parse(this->range);
   else if (cmd == "canusecell")     this->canUseCell = true;
@@ -104,7 +104,7 @@ ItemProperties::ParseProperty(const std::string &cmd) {
   else if (cmd == "canusenothing")  this->canUseNothing = true;
   else if (cmd == "onusespawnprojectile") Parse(this->spawnProjectile);
   else if (cmd == "breakblockstrength") Parse(this->breakBlockStrength);
-  
+
   else if (cmd == "hand")           this->equippable |= (1<<(size_t)InventorySlot::LeftHand) | (1<<(size_t)InventorySlot::RightHand);
   else if (cmd == "lefthand")       this->equippable |= (1<<(size_t)InventorySlot::LeftHand);
   else if (cmd == "righthand")      this->equippable |= (1<<(size_t)InventorySlot::RightHand);
@@ -118,14 +118,15 @@ ItemProperties::ParseProperty(const std::string &cmd) {
   else if (cmd == "boots")          this->equippable |= (1<<(size_t)InventorySlot::Boots);
 
   else if (cmd == "stack")          this->stackable = true;
-    
+
   else if (cmd == "durability")       Parse(this->durability);
   else if (cmd == "usedurability")    Parse(this->useDurability);
   else if (cmd == "equipdurability")  Parse(this->equipDurability);
+  else if (cmd == "combinedurability")  Parse(this->combineDurability);
   else if (cmd == "equipanim")        Parse(this->equipAnim);
-    
+
   else if (cmd == "replacement")      Parse(this->replacement);
-  
+
   else if (cmd == "identifiedname")   Parse(this->identifiedName);
   else if (cmd == "unidentifiedname") Parse(this->unidentifiedName);
   else if (cmd == "name") {
@@ -135,7 +136,7 @@ ItemProperties::ParseProperty(const std::string &cmd) {
   else if (cmd == "scroll")         this->unidentifiedName = this->game->GetScrollName();
   else if (cmd == "potion")         this->isPotion = true;
   else if (cmd == "wand")           this->isWand = true;
-    
+
   else if (cmd == "onuseidentify")  this->onUseIdentify = true;
   else if (cmd == "oncombineeffect")  Parse(this->onCombineEffect);
   else if (cmd == "onconsumeeffect")  Parse(this->onConsumeEffect);
@@ -152,14 +153,16 @@ ItemProperties::ParseProperty(const std::string &cmd) {
   } else if (cmd == "effect") {
     float w;
     Parse(w);
-    
+
     std::string name;
     Parse(name);
-    
+
     this->effects[name] = w;
-    
+
   } else if (cmd == "unlockchance") {
     Parse(this->unlockChance);
+  } else if (cmd == "onunlockbreak") {
+    this->onUnlockBreak = true;
   } else if (cmd != "") {
     this->SetError("ignoring '" + cmd + "'");
   }
@@ -168,7 +171,7 @@ ItemProperties::ParseProperty(const std::string &cmd) {
 void
 LoadItems(Game &game) {
   allItems.clear();
-  
+
   std::vector<std::string> assets = findAssets("items");
   for (const std::string &name : assets) {
     FILE *f = openAsset("items/"+name);
@@ -185,7 +188,7 @@ LoadItems(Game &game) {
       fclose(f);
     }
   }
-  
+
   shuffleItems(game, [](ItemProperties &p){return p.isPotion;});
   shuffleItems(game, [](ItemProperties &p){return p.isWand;});
   shuffleItems(game, [](ItemProperties &p){return p.isRing;});

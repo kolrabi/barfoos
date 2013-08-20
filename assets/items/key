@@ -10,6 +10,7 @@ CanUseEntity
 CanUseCell
 
 UnlockChance      1.0
+OnUnlockBreak
 
 NoModifier
 NoBeatitude

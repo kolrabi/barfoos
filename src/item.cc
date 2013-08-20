@@ -9,11 +9,12 @@
 #include "texture.h"
 #include "text.h"
 #include "itementity.h"
+#include "player.h"
 
 #include "serializer.h"
 #include "deserializer.h"
 
-Item::Item(const std::string &type) : 
+Item::Item(const std::string &type) :
   initDone(false),
   properties(&getItem(type)),
   effect(nullptr),
@@ -49,28 +50,33 @@ void Item::ReplaceWith(const std::string &type) {
 }
 
 bool Item::CanUse(RunningState &state) const {
-  return (this->durability > 0 || this->properties->durability == 0.0) && 
-         this->properties->cooldown >= 0.0 && 
+  return (this->durability > 0 || this->properties->durability == 0.0) &&
+         this->properties->cooldown >= 0.0 &&
          this->nextUseT < state.GetGame().GetTime();
 }
-  
+
 void Item::StartCooldown(RunningState &state, Entity &user, bool damage) {
-  if (damage) this->durability -= this->properties->useDurability * this->effect->useDurability;
-  
-  this->nextUseT = state.GetGame().GetTime() + this->GetCooldown() / (1.0 + Const::AttackSpeedFactorPerAGI*user.GetEffectiveStats().agi);
+  if (damage) {
+    this->durability -= this->properties->useDurability * this->effect->useDurability;
+  }
+
+  Stats stats = user.GetEffectiveStats();
+  float cooldown = this->GetCooldown() / (1.0 + Const::AttackSpeedFactorPerAGI*stats.agi);
+  cooldown *= stats.cooldown;
+  this->nextUseT = state.GetGame().GetTime() + cooldown;
   if (this->properties->onUseIdentify) this->identified = true;
 }
 
 void Item::Update(RunningState &state) {
   Game &game = state.GetGame();
-  
+
   if (!this->initDone) {
     this->initDone = true;
-    
+
     if (!this->properties->noModifier) {
       this->modifier = state.GetRandom().Integer(2) + state.GetRandom().Integer(2) - 2;
     }
-    
+
     if (!this->properties->noBeatitude) {
       if (state.GetRandom().Chance(0.01)) {
         this->beatitude = Beatitude::Cursed;
@@ -79,16 +85,25 @@ void Item::Update(RunningState &state) {
         this->beatitude = Beatitude::Blessed;
       }
     }
-    
-    this->effect = this->properties->effects.size() == 0 ? &getEffect("") : &getEffect(this->properties->effects.select(game.GetRandom().Float01()));
+
+    std::string effectName = this->properties->effects.size() == 0 ? "" : this->properties->effects.select(game.GetRandom().Float01());
+    if (effectName[0] == '$') {
+      const std::vector<std::string> &effects = getEffectsInGroup(effectName.substr(1));
+      if (effects.empty()) {
+        effectName = "";
+      } else {
+        effectName = effects[state.GetRandom().Integer(effects.size())];
+      }
+    }
+    this->effect = &getEffect(effectName);
     this->durability *= this->effect->durability;
   }
 
   if (!this->identified) this->identified = game.IsIdentified(this->properties->name);
   else                   game.SetIdentified(this->properties->name);
 
-  // reduce durability while equipped  
-  if (this->isEquipped) { 
+  // reduce durability while equipped
+  if (this->isEquipped) {
     this->sprite.currentAnimation = this->properties->equipAnim;
     this->durability -= this->properties->equipDurability * game.GetDeltaT() * this->effect->equipDurability;
   } else {
@@ -96,20 +111,19 @@ void Item::Update(RunningState &state) {
   }
 
   this->sprite.Update(game.GetDeltaT());
-  
+
   // when broken, replace or remove
   if (this->durability <= 0 && this->properties->durability != 0.0) {
     std::string replacement = this->properties->replacement;
-    // TODO: message: your x broke
-    Log("Your %s broke...\n", this->GetDisplayName().c_str());
+    state.GetPlayer().AddMessage("Your "+this->GetDisplayName()+" broke...");
     if (replacement != "") {
       this->ReplaceWith(replacement);
       return;
     } else {
-      this->isRemovable = true;
+      if (this->amount > 1) this->amount--; else this->isRemovable = true;
     }
   }
-  
+
   // cooldown fraction: 1.0 full cooldown left, 0.0 cooldown over
   cooldownFrac = (nextUseT - game.GetTime())/this->properties->cooldown;
   if (cooldownFrac < 0) cooldownFrac = 0;
@@ -124,15 +138,16 @@ void Item::UseOnEntity(RunningState &state, Mob &user, uint32_t id) {
       this->UseOnNothing(state, user);
       return;
     }
-    
+
     uint32_t entityLock = entity->GetLockedID();
     if (entityLock && this->properties->unlockChance > 0.0 && (this->unlockID == entityLock || this->unlockID == 0) && state.GetRandom().Chance(this->properties->unlockChance)) {
       entity->Unlock();
-      this->isRemovable = true;
-      // TODO: message "unlocked!"
-      Log("unlocked!\n");
+      if (this->properties->onUnlockBreak) {
+        if (this->amount > 1) this->amount--; else this->isRemovable = true;
+      }
+      state.GetPlayer().AddMessage("You unlock the "+entity->GetName());
     }
-    
+
     Mob *mob = dynamic_cast<Mob*>(entity);
     if (mob) mob->AddImpulse(user.GetForward() * this->GetKnockback());
 
@@ -140,7 +155,7 @@ void Item::UseOnEntity(RunningState &state, Mob &user, uint32_t id) {
     auto iter = entity->GetProperties()->onUseItemReplace.find(this->properties->name);
     if (iter == entity->GetProperties()->onUseItemReplace.end())
       iter = entity->GetProperties()->onUseItemReplace.find("*");
-      
+
     if (iter != entity->GetProperties()->onUseItemReplace.end()) {
       *this = Item(iter->second);
     } else {
@@ -149,12 +164,12 @@ void Item::UseOnEntity(RunningState &state, Mob &user, uint32_t id) {
       std::string effect = this->properties->onHitAddBuff.select(state.GetRandom().Float01());
       entity->AddBuff(state, effect);
     }
-    
+
     // replace entity
     auto iter2 = entity->GetProperties()->onUseEntityReplace.find(this->properties->name);
     if (iter2 == entity->GetProperties()->onUseEntityReplace.end())
       iter2 = entity->GetProperties()->onUseEntityReplace.find("*");
-      
+
     if (iter2 != entity->GetProperties()->onUseEntityReplace.end()) {
       Entity *entity2 = Entity::Create(iter2->second);
       if (entity2) {
@@ -163,7 +178,7 @@ void Item::UseOnEntity(RunningState &state, Mob &user, uint32_t id) {
       }
       state.RemoveEntity(entity->GetId());
     }
-    
+
     this->StartCooldown(state, user);
   } else {
     this->UseOnNothing(state, user);
@@ -172,20 +187,21 @@ void Item::UseOnEntity(RunningState &state, Mob &user, uint32_t id) {
 
 void Item::UseOnCell(RunningState &state, Mob &user, Cell *cell, Side) {
   if (!this->CanUse(state)) return;
-  
+
   if (this->properties->canUseCell) {
     uint32_t cellLock = cell->GetLockedID();
     if (cellLock && this->properties->unlockChance > 0.0 && (this->unlockID == cellLock || this->unlockID == 0) && state.GetRandom().Chance(this->properties->unlockChance)) {
       cell->Unlock();
-      this->isRemovable = true;
-      // TODO: message "unlocked!"
-      Log("unlocked!\n");
+      if (this->properties->onUnlockBreak) {
+        if (this->amount > 1) this->amount--; else this->isRemovable = true;
+      }
+      state.GetPlayer().AddMessage("You unlock it.");
     }
-    
+
     if (this->GetBreakBlockStrength() && state.GetRandom().Chance(this->properties->breakBlockStrength / cell->GetInfo().breakStrength)) {
       cell->GetWorld()->BreakBlock(cell->GetPosition());
     }
-    
+
     this->StartCooldown(state, user);
   } else {
     this->UseOnNothing(state, user);
@@ -195,7 +211,7 @@ void Item::UseOnCell(RunningState &state, Mob &user, Cell *cell, Side) {
 void Item::UseOnNothing(RunningState &state, Mob &user) {
   if (!this->CanUse(state)) return;
   if (!this->properties->canUseNothing) return;
-  
+
   if (this->properties->spawnProjectile != "") {
     Projectile *proj = new Projectile(this->properties->spawnProjectile);
     proj->SetOwner(user);
@@ -213,7 +229,7 @@ void Item::Draw(Gfx &gfx, bool left) {
   gfx.GetView().Push();
   gfx.GetView().Scale(Vector3(left ? 1 : -1, 1, 1));
   gfx.GetView().Translate(Vector3(1, -2, 4));
-  
+
   gfx.GetView().Rotate(40, Vector3(0, 1, 0));
 
   gfx.GetView().Translate(Vector3(1,-1,0));
@@ -232,7 +248,7 @@ void Item::Draw(Gfx &gfx, bool left) {
 
 void Item::DrawIcon(Gfx &gfx, const Point &p) const {
   gfx.DrawIcon(this->sprite, p);
-  
+
   if (this->properties->durability != this->durability) {
     float dur = this->durability / this->properties->durability;
     int frame = 8 * dur;
@@ -242,7 +258,7 @@ void Item::DrawIcon(Gfx &gfx, const Point &p) const {
 
   if (amount > 1)
     RenderString(ToString(amount), "small").Draw(gfx, p - Point(12, 12));
-  
+
 }
 
 void
@@ -250,7 +266,7 @@ Item::DrawSprite(Gfx &gfx, const Vector3 &pos) const {
   gfx.DrawSprite(this->sprite, pos);
 }
 
-void 
+void
 Item::ModifyStats(Stats &stats, bool forceEquipped) const {
   if (this->isEquipped || forceEquipped) {
     stats.str += this->properties->eqAddStr   * (1 + 0.5*this->modifier);
@@ -273,11 +289,11 @@ Item::GetDisplayName(bool capitalize) const {
   std::string amountString;
   if (this->amount > 1)
     amountString = u8" \u00d7 " + ToString(this->amount);
-    
+
   if (!this->identified) return this->properties->unidentifiedName + amountString;
 
   const char *modifierString = "";
-  
+
   switch(this->modifier) {
     case -2: modifierString = "terrible "; break;
     case -1: modifierString = "bad "; break;
@@ -286,21 +302,21 @@ Item::GetDisplayName(bool capitalize) const {
     case  2: modifierString = "excellent "; break;
   }
 
-  if (this->modifier < 0) {  
+  if (this->modifier < 0) {
     Stats statsA = Stats();
     Stats statsB = Stats();
     ModifyStats(statsA);
     if (statsA == statsB) modifierString = "useless ";
   }
-  
+
   char tmp[1024];
   snprintf(tmp, sizeof(tmp), "%s%s%s", this->beatitude == Beatitude::Normal ? "" : (this->beatitude == Beatitude::Blessed ? "blessed " : "cursed "), modifierString, this->properties->identifiedName.c_str());
-  
+
   std::string name = tmp;
-  if (this->effect) { name += this->effect->name; }
+  if (this->effect) { name += this->effect->displayName; }
 
   if (capitalize && name != "") name[0] = ::toupper(name[0]);
-  
+  name += amountString;
   return name;
 }
 
@@ -313,7 +329,7 @@ Item::GetDisplayStats() const {
   return stats;
 }
 
-std::shared_ptr<Item> 
+std::shared_ptr<Item>
 Item::Combine(const std::shared_ptr<Item> &other) {
   if (this->amount > 1 || other->amount > 1) {
     // can only combine single items
@@ -321,7 +337,7 @@ Item::Combine(const std::shared_ptr<Item> &other) {
   }
 
   // TODO: check combination recipies
-  
+
   if (this->properties->onCombineEffect != "") {
     const EffectProperties &effect = getEffect(this->properties->onCombineEffect);
     other->modifier += effect.onCombineAddModifier;
@@ -330,21 +346,25 @@ Item::Combine(const std::shared_ptr<Item> &other) {
       other->identified = true;
     }
     this->identified = true;
-    this->isRemovable = true;
+    if (this->properties->durability != 0.0) {
+      this->durability -= this->properties->combineDurability;
+      if (this->durability <= 0.0) this->isRemovable = true;
+    }
+    if (effect.onCombineBreak) this->isRemovable = true;
     return other;
   }
-  
+
   return nullptr;
 }
 
-std::shared_ptr<Item> 
+std::shared_ptr<Item>
 Item::Consume(RunningState &state, Entity &user) {
   if (this->properties->onConsumeEffect != "") {
     const EffectProperties &effect = getEffect(this->properties->onConsumeEffect);
     effect.Consume(state, user);
     user.OnBuffAdded(state, effect);
   }
-  
+
   if (this->properties->onConsumeAddBuff != "") {
     user.AddBuff(state, this->properties->onConsumeAddBuff);
   }
@@ -352,11 +372,11 @@ Item::Consume(RunningState &state, Entity &user) {
   if (this->properties->onConsumeTeleport) {
     user.Teleport(state, Vector3(state.GetWorld().GetRandomTeleportTarget(state.GetRandom())));
   }
-  
+
   state.GetGame().SetIdentified(this->properties->name);
-  
+
   this->isRemovable = true;
-  
+
   if (this->properties->onConsumeResult != "") {
     return std::shared_ptr<Item>(new Item(this->properties->onConsumeResult));
   }
@@ -364,8 +384,8 @@ Item::Consume(RunningState &state, Entity &user) {
 }
 
 void
-Item::SetEquipped(bool equipped) { 
-  this->isEquipped = equipped; 
+Item::SetEquipped(bool equipped) {
+  this->isEquipped = equipped;
 }
 
 void
@@ -374,21 +394,21 @@ Item::AddAmount(int amt) {
     this->amount += amt;
     return;
   }
-  
+
   if (this->amount < (size_t)-amt) {
-    this->amount = 1; 
+    this->amount = 1;
   } else {
     this->amount += amt;
   }
 }
 
-bool 
+bool
 Item::CanStack(const Item &other) const {
-  return properties == other.properties && properties->stackable && 
-         durability == other.durability && beatitude == other.beatitude && 
+  return properties == other.properties && properties->stackable &&
+         durability == other.durability && beatitude == other.beatitude &&
          modifier == other.modifier;
 }
-  
+
 Serializer &operator << (Serializer &ser, const Item &item) {
   ser << item.properties->name;
   ser << (item.effect?item.effect->name:"");
@@ -396,21 +416,21 @@ Serializer &operator << (Serializer &ser, const Item &item) {
   ser << item.cooldownFrac;
   ser << item.durability;
   ser << item.nextUseT;
-  
+
   ser << (int8_t)item.beatitude << item.modifier;
   ser << item.amount;
-  
+
   return ser;
 }
 
 Deserializer &operator >> (Deserializer &deser, Item *&item) {
   Log("deser item\n");
-  
+
   std::string type, effect;
   deser >> type >> effect;
 
   item = new Item(type);
-  item->initDone = true; 
+  item->initDone = true;
 
   item->effect = &getEffect(effect);
 

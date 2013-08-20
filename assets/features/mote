@@ -1,5 +1,7 @@
 size 12 9 12
 
+NoRotate
+
 group hallway
 level 0 -1 10
 
@@ -28,14 +30,14 @@ next doorway
 conn 8 5 11 3
 next doorway
 
-entity 1 torch  1 4 4 5 
+entity 1 torch  1 4 4 5
 entity 1 torch  1 4 4 6
-entity 1 torch -1 7 4 5 
+entity 1 torch -1 7 4 5
 entity 1 torch -1 7 4 6
 
 entity 1 box    0 6 5.5 6
 
-def . 
+def .
 cell air
 
 def #

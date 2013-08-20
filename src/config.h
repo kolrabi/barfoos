@@ -11,7 +11,7 @@
 #define HAVE_INTTYPES_H 1
 
 /* Define to 1 if you have the `gdi32' library (-lgdi32). */
-/* #undef HAVE_LIBGDI32 */
+#define HAVE_LIBGDI32 1
 
 /* Define to 1 if you have the `GL' library (-lGL). */
 /* #undef HAVE_LIBGL */
@@ -23,19 +23,19 @@
 /* #undef HAVE_LIBGLU */
 
 /* Define to 1 if you have the `glu32' library (-lglu32). */
-/* #undef HAVE_LIBGLU32 */
+#define HAVE_LIBGLU32 1
 
 /* Define to 1 if you have the `opengl32' library (-lopengl32). */
-/* #undef HAVE_LIBOPENGL32 */
+#define HAVE_LIBOPENGL32 1
 
 /* Define to 1 if you have the `png' library (-lpng). */
-/* #undef HAVE_LIBPNG */
+#define HAVE_LIBPNG 1
 
 /* Define to 1 if you have the `pthread' library (-lpthread). */
 #define HAVE_LIBPTHREAD 1
 
 /* Define to 1 if you have the `winmm' library (-lwinmm). */
-/* #undef HAVE_LIBWINMM */
+#define HAVE_LIBWINMM 1
 
 /* Define to 1 if you have the `X11' library (-lX11). */
 /* #undef HAVE_LIBX11 */
@@ -91,7 +91,7 @@
 #define HAVE__BOOL 1
 
 /* define if compiling for Mac OS X */
-#define MACOSX 1
+/* #undef MACOSX */
 
 /* Define to 1 if your C compiler doesn't accept -c and -o together. */
 /* #undef NO_MINUS_C_MINUS_O */
@@ -111,6 +111,9 @@
 /* Define to the one symbol short name of this package. */
 #define PACKAGE_TARNAME "barfoos"
 
+/* Define to the home page for this package. */
+#define PACKAGE_URL ""
+
 /* Define to the version of this package. */
 #define PACKAGE_VERSION "0.1"
 
@@ -121,23 +124,23 @@
 #define VERSION "0.1"
 
 /* define if compiling for windows */
-/* #undef WIN32 */
+#define WIN32 1
 
 /* define if compiling for X11 */
 /* #undef X11 */
 
 /* Define for Solaris 2.5.1 so the uint32_t typedef from <sys/synch.h>,
-   <pthread.h>, or <semaphore.h> is not used. If the typedef was allowed, the
+   <pthread.h>, or <semaphore.h> is not used. If the typedef were allowed, the
    #define below would cause a syntax error. */
 /* #undef _UINT32_T */
 
 /* Define for Solaris 2.5.1 so the uint64_t typedef from <sys/synch.h>,
-   <pthread.h>, or <semaphore.h> is not used. If the typedef was allowed, the
+   <pthread.h>, or <semaphore.h> is not used. If the typedef were allowed, the
    #define below would cause a syntax error. */
 /* #undef _UINT64_T */
 
 /* Define for Solaris 2.5.1 so the uint8_t typedef from <sys/synch.h>,
-   <pthread.h>, or <semaphore.h> is not used. If the typedef was allowed, the
+   <pthread.h>, or <semaphore.h> is not used. If the typedef were allowed, the
    #define below would cause a syntax error. */
 /* #undef _UINT8_T */
 

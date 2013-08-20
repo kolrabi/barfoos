@@ -19,12 +19,12 @@ struct ItemProperties : public Properties {
   std::string identifiedName = "<item>";
   std::string unidentifiedName = "<item>";
   std::vector<std::string> groups;
-  
+
   bool isPotion = false;
   bool isWand   = false;
   bool isRing   = false;
   bool isAmulet = false;
-  
+
   // rendering
   Sprite sprite = Sprite();
   uint32_t equipAnim = 0;
@@ -36,7 +36,7 @@ struct ItemProperties : public Properties {
   float range = 5.0;
   float damage = 1.0;
   float knockback = 0.0;
-  
+
   int eqAddStr = 0;
   int eqAddDex = 0;
   int eqAddAgi = 0;
@@ -48,24 +48,25 @@ struct ItemProperties : public Properties {
   int uneqAddAgi = 0;
   int uneqAddDef = 0;
   int uneqAddHP  = 0;
-  
+
   std::string weaponClass = "";
-  
+
   uint32_t equippable = 0;
   bool twoHanded = false;
-  
+
   float cooldown = 1.0;
-  
+
   float durability = 10;
   float useDurability = 0.0;
   float equipDurability = 0.0;
-  
+  float combineDurability = 0.0;
+
   bool canUseCell = false;
   bool canUseEntity = false;
   bool canUseNothing = false;
   bool noModifier = false;
   bool noBeatitude = false;
-  
+
   std::string onCombineEffect = "";
   std::string onConsumeEffect = "";
   std::string onConsumeResult = "";
@@ -75,18 +76,19 @@ struct ItemProperties : public Properties {
   bool onUseIdentify = false;
 
   weighted_map<std::string> onHitAddBuff;
-  
+
   float breakBlockStrength = 0.0;
-  
+
   std::string replacement = "";
-  
+
   // std::string placeEntity = "";
   std::string spawnProjectile = "";
-  
+
   weighted_map<std::string> effects = weighted_map<std::string>();
   bool stackable = false;
- 
+
   float unlockChance = 0.0;
+  bool onUnlockBreak = false;
   virtual void ParseProperty(const std::string &name) override;
 };
 

@@ -1,0 +1,13 @@
+Name "ring"
+Group ring
+
+Tex ring.iron
+Frames 1
+
+Effect 1.0 item.strength
+
+Ring
+
+NoModifier
+# NoBeatitude
+

@@ -39,14 +39,17 @@ enum class Side : int8_t {
   InvalidSide = -1
 };
 
+/** Get the opposite side. */
 static inline Side operator-(Side side) {
   return (Side)(((int)side)^1);
 }
 
+/** Used to enable 1 << side to get flags. */
 static inline uint8_t operator << (uint8_t n, Side side) {
   return (n << (uint8_t)side);
 }
 
+/** Rotate 90 degrees around the Y axis. */
 static inline Side Rotate(Side side) {
   switch(side) {
     case Side::Right: return Side::Backward;

@@ -1,4 +1,5 @@
 Class       projectile
+Group       trap
 
 tex projectile.bfw9k
 frames 2
@@ -20,6 +21,6 @@ NoStep
 
 Glow 64 512 64
 
-# OnDieExplode 3.0 1.0 10.0 physical 
+# OnDieExplode 3.0 1.0 10.0 physical
 OnDieParticles 100 10.0 particle.bfw9k
 

@@ -8,7 +8,8 @@
 #include <unordered_map>
 
 static std::unordered_map<std::string, EffectProperties> allEffects;
-EffectProperties defaultEffect;
+static std::unordered_map<std::string, std::vector<std::string>> allEffectGroups;
+static EffectProperties defaultEffect;
 
 const EffectProperties &getEffect(const std::string &name) {
   if (name == "") return defaultEffect;
@@ -19,14 +20,18 @@ const EffectProperties &getEffect(const std::string &name) {
   return allEffects[name];
 }
 
+const std::vector<std::string> &getEffectsInGroup(const std::string &group) {
+  return allEffectGroups[group];
+}
+
 void
 EffectProperties::ParseProperty(const std::string &cmd) {
   if (cmd == "damage") {
     Parse(this->damage);
-  
-  } else if (cmd == "feeling") { 
+
+  } else if (cmd == "feeling") {
     Parse(this->feeling);
-    
+
   } else if (cmd == "eqstr") {
     Parse(this->eqAddStr);
   } else if (cmd == "eqdex") {
@@ -37,7 +42,7 @@ EffectProperties::ParseProperty(const std::string &cmd) {
     Parse(this->eqAddDef);
   } else if (cmd == "eqhp") {
     Parse(this->eqAddHP);
-    
+
   } else if (cmd == "uneqstr") {
     Parse(this->uneqAddStr);
   } else if (cmd == "uneqdex") {
@@ -48,7 +53,7 @@ EffectProperties::ParseProperty(const std::string &cmd) {
     Parse(this->uneqAddDef);
   } else if (cmd == "uneqhp") {
     Parse(this->uneqAddHP);
-    
+
   } else if (cmd == "cooldown") {
     Parse(this->cooldown);
   } else if (cmd == "range") {
@@ -57,19 +62,19 @@ EffectProperties::ParseProperty(const std::string &cmd) {
     Parse(this->walkSpeed);
   } else if (cmd == "knockback") {
     Parse(this->knockback);
-    
+
   } else if (cmd == "durability") {
     Parse(this->durability);
   } else if (cmd == "usedurability") {
     Parse(this->useDurability);
   } else if (cmd == "equipdurability") {
     Parse(this->equipDurability);
-    
+
   } else if (cmd == "duration") {
     Parse(this->duration);
   } else if (cmd == "extend") {
     this->extend = true;
-    
+
   } else if (cmd == "breakblockstrength") {
     Parse(this->breakBlockStrength);
 
@@ -79,12 +84,19 @@ EffectProperties::ParseProperty(const std::string &cmd) {
     this->onCombineIdentify = true;
   } else if (cmd == "oncombineaddmodifier") {
     Parse(this->onCombineAddModifier);
+  } else if (cmd == "oncombinebreak") {
+    this->onCombineBreak = true;
   } else if (cmd == "addhealth") {
     Parse(this->addHealth);
-    
+
   } else if (cmd == "name") {
     Parse(this->displayName);
-    
+
+  } else if (cmd == "group") {
+    Parse(this->groups);
+
+  } else if (cmd == "light") {
+    Parse(this->light);
   } else if (cmd != "") {
     this->SetError("ignoring '" + cmd + "'");
   }
@@ -93,19 +105,22 @@ EffectProperties::ParseProperty(const std::string &cmd) {
 void
 LoadEffects() {
   allEffects.clear();
-  
+
   std::vector<std::string> assets = findAssets("effects");
   for (const std::string &name : assets) {
     FILE *f = openAsset("effects/"+name);
     if (f) {
       allEffects[name].name = name;
       allEffects[name].ParseFile(f);
+      for (auto &g : allEffects[name].groups) {
+        allEffectGroups[g].push_back(name);
+      }
       fclose(f);
     }
   }
 }
 
-void 
+void
 EffectProperties::ModifyStats(Stats &stats, bool forceEquipped) const {
   if (forceEquipped) {
     stats.str += this->eqAddStr;
@@ -114,6 +129,7 @@ EffectProperties::ModifyStats(Stats &stats, bool forceEquipped) const {
     stats.def += this->eqAddDef;
     stats.maxHealth += this->eqAddHP;
     stats.walkSpeed *= this->walkSpeed;
+    stats.cooldown *= this->cooldown;
   } else {
     stats.str += this->uneqAddStr;
     stats.agi += this->uneqAddAgi;
@@ -132,7 +148,7 @@ EffectProperties::Consume(RunningState &state, Entity &user) const {
   }
 }
 
-void 
+void
 EffectProperties::Update(RunningState &state, Entity &owner) const {
   if (this->addHealth) {
     HealthInfo info(this->addHealth * state.GetGame().GetDeltaT());

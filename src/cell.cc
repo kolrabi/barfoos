@@ -3,14 +3,14 @@
 #include "world.h"
 #include "gfx.h"
 #include "runningstate.h"
-#include "mob.h"
 #include "projectile.h"
+#include "player.h"
 
 #include "random.h"
 #include "vertex.h"
 
 #include "texture.h"
- 
+
 #include "serializer.h"
 #include "deserializer.h"
 
@@ -34,29 +34,29 @@ CellBase::CellBase(const std::string &type) :
 {
   for (size_t i=0; i<6; i++)
     this->neighbours[i] = nullptr;
-    
+
   this->vertsDirty = false;
   this->colorDirty = false;
 }
 
 void CellBase::Lock(uint32_t id) {
   if (this->shared.lockedID == id) return;
-  
+
   this->shared.lockedID = id;
-  
+
   for (int i=0; i<6; i++) {
-    if (info->onUseCascade & (1<<i) && this->neighbours[i]->info == info) 
+    if (info->onUseCascade & (1<<i) && this->neighbours[i]->info == info)
       this->neighbours[i]->Lock(id);
   }
 }
 
 void CellBase::Unlock() {
   if (this->shared.lockedID == 0) return;
-  
+
   this->shared.lockedID = 0;
-  
+
   for (int i=0; i<6; i++) {
-    if (info->onUseCascade & (1<<i) && this->neighbours[i]->info == info) 
+    if (info->onUseCascade & (1<<i) && this->neighbours[i]->info == info)
       this->neighbours[i]->Unlock();
   }
 }
@@ -78,7 +78,7 @@ CellRender::CellRender(const std::string &type) :
 
 // -------------------------------------------------------------------------
 
-Cell::Cell(const std::string &type) : 
+Cell::Cell(const std::string &type) :
   CellRender(type),
   tickPhase(0),
   lightLevel(0,0,0),
@@ -89,12 +89,12 @@ Cell::Cell(const std::string &type) :
   this->SetYOffsetsBottom(0,0,0,0);
 }
 
-Cell::Cell(const Cell &that) : 
+Cell::Cell(const Cell &that) :
   CellRender(that.info->type),
-  
+
   tickPhase(0),
   lightLevel(0,0,0),
-  
+
   lastUseT(0.0)
 {
   (Triggerable&)self = that;
@@ -105,14 +105,14 @@ Cell &
 Cell::operator =(const Cell &that)
 {
   this->shared = that.shared;
-  
+
   // unique information
   this->info = that.info;
   this->world = nullptr;
   this->tickPhase = 0;
   this->visibility = 0;
   this->reversedSides = false;
-  
+
   for (size_t i=0; i<6; i++)
     this->neighbours[i] = nullptr;
 
@@ -121,7 +121,7 @@ Cell::operator =(const Cell &that)
   this->emissiveTexture = that.emissiveTexture;
   this->emissiveActiveTexture = that.emissiveActiveTexture;
   this->uscale = that.uscale;
-  
+
   this->lastUseT = 0.0;
   this->lastT = 0.0;
 
@@ -131,19 +131,19 @@ Cell::operator =(const Cell &that)
 Cell::~Cell() {
 }
 
-void 
+void
 CellRender::Draw(std::vector<Vertex> &verts) const {
   if (info->flags & CellFlags::DoNotRender || visibility == 0) return;
-  
+
   for (const Vertex &v : this->verts) {
     verts.push_back(v);
   }
 }
 
-void 
+void
 CellRender::DrawEmissive(std::vector<Vertex> &verts) const {
   if (info->flags & CellFlags::DoNotRender || visibility == 0) return;
-  
+
   for (const Vertex &v : this->verts) {
     Vertex vv = v;
     vv.rgb[0] = vv.rgb[1] = vv.rgb[2] = vv.rgb[3] = 1.0;
@@ -151,10 +151,10 @@ CellRender::DrawEmissive(std::vector<Vertex> &verts) const {
   }
 }
 
-void 
+void
 CellRender::DrawHighlight(std::vector<Vertex> &verts) const {
   if (info->flags & CellFlags::DoNotRender || visibility == 0) return;
-  
+
   for (const Vertex &v : this->verts) {
     Vertex vv(v);
     vv.xyz[0] = vv.xyz[0] + 0.01 * vv.n[0];
@@ -173,13 +173,13 @@ void
 Cell::Update(
   RunningState &state
 ) {
-  if (!world) return; 
- 
+  if (!world) return;
+
   float deltaT = state.GetGame().GetDeltaT();
   this->lastT = state.GetGame().GetTime();
 
   this->shared.smoothDetail = this->shared.smoothDetail + (this->shared.detail - this->shared.smoothDetail) * deltaT * 2;
-  
+
   if (spawnOnActiveMob != "" && IsTriggered()) {
     if (this->lastT > this->nextActivationT) {
       Vector3 v(spawnOnActiveSide);
@@ -190,7 +190,7 @@ Cell::Update(
         Log("adding velocity\n");
         proj->SetVelocity(v * proj->GetProperties()->maxSpeed);
       }
-      
+
       this->nextActivationT = this->lastT + spawnOnActiveRate;
       if (spawnOnActiveRate == 0.0) {
         this->TriggerOff();
@@ -209,7 +209,7 @@ Cell::Update(
 
     if (self[Side::Up].info == info && self[Side::Down].info == info) {
       // liquid and top and bottom cells are the same as this one
-      this->SetYOffsets(1,1,1,1); 
+      this->SetYOffsets(1,1,1,1);
       this->SetYOffsetsBottom(0,0,0,0);
     } else if (self[Side::Up].info == info && self[Side::Down].info != info) {
       // liquid and liquid above and nothing liquid below
@@ -230,10 +230,9 @@ void Cell::OnUse(RunningState &state, Mob &user, bool force) {
   if (!force && !state.GetRandom().Chance(this->info->useChance)) return;
 
   this->lastUseT = state.GetGame().GetTime();
-  
+
   if (this->shared.lockedID) {
-    // TODO: player message: "locked!"
-    Log("it's locked!\n");
+    state.GetPlayer().AddMessage("It is locked!");
     return;
   }
 
@@ -241,9 +240,9 @@ void Cell::OnUse(RunningState &state, Mob &user, bool force) {
   if (info->flags & CellFlags::OnUseReplace) {
     this->world->SetCell(GetPosition(), Cell(info->replace)).lastUseT = state.GetGame().GetTime();
   }
-  
+
   for (int i=0; i<6; i++) {
-    if (info->onUseCascade & (1<<i) && this->neighbours[i]->info == info) 
+    if (info->onUseCascade & (1<<i) && this->neighbours[i]->info == info)
       this->neighbours[i]->OnUse(state, user, true);
   }
 }
@@ -253,10 +252,10 @@ void Cell::Tick(RunningState &state) {
   //if (this->tickPhase) return;
 
   if (this->neighbours[0] == nullptr) return;
-  
+
   if ((this->info->flags & CellFlags::Liquid) && this->shared.detail > 0) {
     if (self[Side::Up].info == self.info && self.shared.detail < 16) return;
-    
+
     // if we can't flow down and have more than 1 unit of liquid
     if (!this->Flow(Side::Down) && this->shared.detail > 1) {
       // try flowing to one random side
@@ -267,12 +266,12 @@ void Cell::Tick(RunningState &state) {
           break;
         }
       }
-      
+
       // if we have too much liquid, even allow flowing up
       if (this->shared.detail > 16) this->Flow(Side::Up);
     }
   }
-  
+
   // if this cell wants to be replaced if detail falls below a certain level
   if (info->detailBelowReplace && this->shared.detail < this->info->detailBelowReplace && this->info->replace != "") {
     // check if we are connected to liquid neighbours
@@ -282,7 +281,7 @@ void Cell::Tick(RunningState &state) {
     liquidNeighbours |= this->neighbours[(int)Side::Forward]->info == this->info  && this->neighbours[(int)Side::Forward]->shared.detail > info->detailBelowReplace;
     liquidNeighbours |= this->neighbours[(int)Side::Backward]->info == this->info && this->neighbours[(int)Side::Backward]->shared.detail > info->detailBelowReplace;
     liquidNeighbours |= this->neighbours[(int)Side::Down]->info == this->info     && this->neighbours[(int)Side::Down]->shared.detail > info->detailBelowReplace;
-    
+
     // if not connected, take a chance and replace
     if (!liquidNeighbours && state.GetRandom().Chance(this->info->replaceChance)) {
       this->world->SetCell(GetPosition(), Cell(info->replace));
@@ -297,9 +296,9 @@ Cell::Flow(Side side) {
   if ((this->info->flags & CellFlags::Liquid) == 0) return false;
 
   Cell *cell = this->neighbours[(int)side];
-  
+
   if (cell->IsSolid()) return false;
-  
+
   if (cell->info->flags & CellFlags::Liquid) {
     // combine lava and water to rock
     if (this->info->onFlowOntoReplaceTarget.find(cell->info->type) != this->info->onFlowOntoReplaceTarget.end()) {
@@ -307,13 +306,13 @@ Cell::Flow(Side side) {
       this->world->SetCell(this->pos,       this->info->onFlowOntoReplaceTarget.at(cell->info->type));
       return true;
     }
-    
+
     // check if cell is full
     if ((cell->shared.detail >= this->shared.detail && side != Side::Down) || cell->shared.detail >= 16) return false;
   }
-  
+
   this->shared.detail -= 1;
-  
+
   if (cell->info != this->info) {
     // replace target cell if not already of this type
     this->world->SetCell(this->pos[side], Cell(info->type));
@@ -329,14 +328,14 @@ Cell::Flow(Side side) {
   return true;
 }
 
-float 
+float
 Cell::GetHeight(
-  float x, 
+  float x,
   float z
 ) const {
   x -= (int)x;
   z -= (int)z;
-  
+
   return GetHeightClamp(x, z);
 }
 
@@ -345,21 +344,21 @@ Cell::GetHeightClamp(
   float x,
   float z
 ) const {
-  if (x > 1.0) x = 1.0; 
+  if (x > 1.0) x = 1.0;
   if (x < 0.0) x = 0.0;
-  if (z > 1.0) z = 1.0; 
+  if (z > 1.0) z = 1.0;
   if (z < 0.0) z = 0.0;
-  
+
   float slopeX;
   float slopeZ;
- 
+
   if (this->shared.reversedTop) {
     // Z ^
     //   | 1---2
     //   | | \ |
     //   | 0---3
     //   +------> X
-   
+
     if (x < z) {
       // lower left triangle
       slopeX = YOfs(3) - YOfs(0);
@@ -369,13 +368,13 @@ Cell::GetHeightClamp(
       slopeX = YOfs(2) - YOfs(1);
       slopeZ = YOfs(2) - YOfs(3);
     }
-  } else { 
+  } else {
     // Z ^
     //   | 1---2
     //   | | / |
     //   | 0---3
     //   +------> X
-  
+
     if (x < z) {
       // upper left triangle
       slopeX = YOfs(2) - YOfs(1);
@@ -386,18 +385,18 @@ Cell::GetHeightClamp(
       slopeZ = YOfs(2) - YOfs(3);
     }
   }
-  
+
   return YOfs(0) + slopeX * x + slopeZ * z;
 }
 
-float 
+float
 Cell::GetHeightBottom(
-  float x, 
+  float x,
   float z
 ) const {
   x -= (int)x;
   z -= (int)z;
-  
+
   return GetHeightBottomClamp(x,z);
 }
 
@@ -406,21 +405,21 @@ Cell::GetHeightBottomClamp(
   float x,
   float z
 ) const {
-  if (x > 1.0) x = 1.0; 
+  if (x > 1.0) x = 1.0;
   if (x < 0.0) x = 0.0;
-  if (z > 1.0) z = 1.0; 
+  if (z > 1.0) z = 1.0;
   if (z < 0.0) z = 0.0;
 
   float slopeX;
   float slopeZ;
- 
+
   if (this->shared.reversedBottom) {
     // Z ^
     //   | 1---2
     //   | | \ |
     //   | 0---3
     //   +------> X
-   
+
     if (x < z) {
       // lower left triangle
       slopeX = YOfsb(3) - YOfsb(0);
@@ -430,13 +429,13 @@ Cell::GetHeightBottomClamp(
       slopeX = YOfsb(2) - YOfsb(1);
       slopeZ = YOfsb(2) - YOfsb(3);
     }
-  } else { 
+  } else {
     // Z ^
     //   | 1---2
     //   | | / |
     //   | 0---3
     //   +------> X
-  
+
     if (x < z) {
       // upper left triangle
       slopeX = YOfsb(2) - YOfsb(1);
@@ -447,7 +446,7 @@ Cell::GetHeightBottomClamp(
       slopeZ = YOfsb(2) - YOfsb(3);
     }
   }
-  
+
   return YOfsb(0) + slopeX * x + slopeZ * z;
 }
 
@@ -456,7 +455,7 @@ Cell::UpdateNeighbours(
   size_t
 ) {
   if (this->world == nullptr) return;
-  
+
   size_t oldvis = this->visibility;
   this->visibility = 0;
 
@@ -471,22 +470,22 @@ Cell::UpdateNeighbours(
       this->visibility |= 1<<i;
       continue;
     }
-    
+
     Cell &cell = *this->neighbours[i];
-    
+
     // show sides to transparent cells
     if (cell.IsTransparent() || cell.info->scale != Vector3(1,1,1)) {
       this->visibility |= 1<<i;
     }
-    
+
     // make interliquid sides transparent
     if (this->info == cell.info && this->info->flags & CellFlags::Liquid) {
       this->visibility &= ~(1<<i);
     }
-    
-    // TODO: instead hide sides with equals heights 
+
+    // TODO: instead hide sides with equals heights
   }
-  
+
   // if scaled, assume transparent
   if (info->scale.x != 1.0) this->visibility |= (1<<Side::Left)    | (1<<Side::Right);
   if (info->scale.y != 1.0) this->visibility |= (1<<Side::Up)      | (1<<Side::Down);
@@ -502,21 +501,21 @@ Cell::UpdateNeighbours(
 
   // only transparent cells can be lit
   IColor color;
-  if (this->IsTransparent()) { 
+  if (this->IsTransparent()) {
     // collect max light from neighbours
     for (size_t i=0; i<6; i++) {
       Cell &cell = *this->neighbours[i];
       color = color.Max(cell.lightLevel);
     }
-    
+
     // propagate light
     color = (color * this->info->lightFactor) - this->info->lightFade;
-    
+
     // emit light
     color = color.Max(this->info->light);
   }
 
-  
+
   // update this cell and neighbours recursively until nothing changes anymore
   bool lightChanged = this->SetLightLevel(color);
   bool visChanged = this->visibility != oldvis;
@@ -528,12 +527,12 @@ Cell::UpdateNeighbours(
     }
     this->colorDirty |= lightChanged;
   }
-  
+
   if (lightChanged) {
     for (size_t i=0; i<6; i++) {
       world->MarkForUpdateNeighbours(this->neighbours[i]);
     }
-    
+
     // update corner cells as well
     this->world->GetCell(this->pos + IVector3( 1,  1,  1)).colorDirty = true;
     this->world->GetCell(this->pos + IVector3(-1,  1,  1)).colorDirty = true;
@@ -548,17 +547,17 @@ Cell::UpdateNeighbours(
     }
   }
 }
-  
-IColor 
+
+IColor
 CellRender::SideCornerColor(Side side, size_t corner) const {
   if (!world) return IColor();
-  
+
   if (!GetInfo().light.IsBlack()) {
     return GetInfo().light;
   }
 
   IVector3 va(1,0,0), vb(0,1,0);
-  IVector3 p0 = pos[side]; 
+  IVector3 p0 = pos[side];
 
   if (side == Side::Right || side == Side::Left) va = IVector3(0,0,1);
   if (side == Side::Up    || side == Side::Down) vb = IVector3(0,0,1);
@@ -623,10 +622,10 @@ bool Cell::CheckSideSolid(Side side, const Vector3 &org) const {
 
   // check for clipping movement into cell from opposite side
   bool clipIn  = (cell->info->clipSidesIn  & (int)(1<<(-side)));
-  
+
   // check for clipping movement out the cell
   bool clipOut = (this->info->clipSidesOut & (1<<side));
-  
+
   if (side == Side::Up || side == Side::Down) {
     return (clipIn || clipOut);
   }
@@ -635,9 +634,9 @@ bool Cell::CheckSideSolid(Side side, const Vector3 &org) const {
   return (clipIn && heightCheck) || clipOut;
 }
 
-void Cell::SetWorld(World *world, const IVector3 &pos) { 
-  this->world = world; 
-  
+void Cell::SetWorld(World *world, const IVector3 &pos) {
+  this->world = world;
+
   if (info->textures.empty()) {
     this->SetTexture(0, info->flags & MultiSided);
   } else {
@@ -649,16 +648,16 @@ void Cell::SetWorld(World *world, const IVector3 &pos) {
 
   if (this->info->activeTexture != "") this->activeTexture = loadTexture("cells/texture/"+this->info->activeTexture);
   if (this->info->emissiveActiveTexture != "") this->emissiveActiveTexture = loadTexture("cells/texture/"+this->info->emissiveActiveTexture);
-  
-  this->pos = pos; 
+
+  this->pos = pos;
   for (size_t i=0; i<6; i++) {
     this->neighbours[i] = &this->world->GetCell(pos[(Side)i]);
   }
-  
+
   for (size_t i=0; i<6; i++) {
     world->MarkForUpdateNeighbours(this->neighbours[i]);
   }
-  
+
   world->MarkForUpdateNeighbours(this);
 }
 
@@ -668,10 +667,10 @@ AABB Cell::GetAABB() const {
   aabb.extents = Vector3(0.5,0.5,0.5);
   return aabb;
 }
-  
+
 bool Cell::IsSeen(size_t checkNeighbours) const {
   if (!this->world) return false;
-  
+
   if (checkNeighbours) {
     for (int xx=-checkNeighbours; xx <= (int)checkNeighbours; xx++) {
       for (int zz=-checkNeighbours; zz <= (int)checkNeighbours; zz++) {
@@ -679,38 +678,38 @@ bool Cell::IsSeen(size_t checkNeighbours) const {
       }
     }
   }
-  
+
   if (this->GetFeatureID() == InvalidID) return false;
   if (!this->visibility && (info->flags & CellFlags::DoNotRender) == 0) return false;
   return this->world->GetMap().IsFeatureSeen(this->GetFeatureID());
 }
 
-bool 
+bool
 Cell::Ray(const Vector3 &start, const Vector3 &dir, float &t, Vector3 &p) const {
   bool hit = false;
   float tt = INFINITY;
-  
+
   for (size_t i=0; i<verts.size(); i+=3) {
     Vector3 tri[3] = {
       Vector3(this->verts[i+0].xyz[0], this->verts[i+0].xyz[1], this->verts[i+0].xyz[2]),
       Vector3(this->verts[i+1].xyz[0], this->verts[i+1].xyz[1], this->verts[i+1].xyz[2]),
       Vector3(this->verts[i+2].xyz[0], this->verts[i+2].xyz[1], this->verts[i+2].xyz[2])
     };
-    
+
     float ttt;
     Vector3 pp;
-    
+
     if (TriangleRay(tri, start, dir, ttt, pp)) {
       hit = true;
       if (ttt < tt) tt = ttt;
     }
   }
-  
+
   if (hit) {
     t = tt;
     p = start + dir * t;
   }
-  
+
   return hit;
 }
 
@@ -724,7 +723,7 @@ void Cell::OnStepOn(RunningState &state, Mob &mob) {
 
     mob.Teleport(state, Vector3(target));
   }
-  
+
   if (this->isTrigger) {
     state.TriggerOn(this->triggerTargetId);
   }
@@ -748,10 +747,10 @@ void Cell::Rotate() {
   this->shared.bottomHeights[1] = this->shared.bottomHeights[2];
   this->shared.bottomHeights[2] = this->shared.bottomHeights[3];
   this->shared.bottomHeights[3] = tmp;
-  
+
   this->shared.scale = this->shared.scale.ZYX();
 }
-  
+
 Serializer &operator << (Serializer &ser, const Cell &cell) {
   ser << (Triggerable&)cell;
   ser << cell.info->type;
@@ -759,18 +758,18 @@ Serializer &operator << (Serializer &ser, const Cell &cell) {
   ser << cell.lastT << cell.tickPhase << cell.lastUseT;
   ser << cell.lightLevel;
   ser << cell.spawnOnActiveMob << (int8_t&)cell.spawnOnActiveSide << cell.spawnOnActiveRate;
-  
+
   ser << cell.shared.tickInterval;
   ser << cell.shared.featureID;
   ser << uint8_t((cell.shared.reversedTop ? 1 : 0) | (cell.shared.reversedBottom ? 2 : 0));
-  
+
   for (int i=0; i<4; i++) {
     ser << cell.shared.topHeights[i];
     ser << cell.shared.bottomHeights[i];
     ser << cell.shared.u[i];
     ser << cell.shared.v[i];
   }
-  
+
   ser << cell.shared.detail << cell.shared.smoothDetail;
   ser << cell.teleport << cell.teleportTarget;
   ser << cell.shared.lockedID;
@@ -779,40 +778,40 @@ Serializer &operator << (Serializer &ser, const Cell &cell) {
 
 Deserializer &operator >> (Deserializer &deser, Cell &cell) {
   deser >> (Triggerable&)cell;
-  
+
   std::string cellType;
   deser >> cellType;
-  
+
   cell = Cell(cellType);
-  
+
   std::string textureName;
   deser >> textureName;
   if (textureName != "") cell.texture = loadTexture(textureName);
-  
+
   deser >> cell.uscale;
   deser >> cell.lastT >> cell.tickPhase >> cell.lastUseT;
   deser >> cell.lightLevel;
-  
+
   deser >> cell.spawnOnActiveMob >> (int8_t&)cell.spawnOnActiveSide >> cell.spawnOnActiveRate;
-  
+
   deser >> cell.shared.tickInterval;
   deser >> cell.shared.featureID;
-  
+
   uint8_t flags;
   deser >> flags;
   cell.shared.reversedTop = flags & 1;
   cell.shared.reversedBottom = flags & 2;
-  
+
   for (int i=0; i<4; i++) {
     deser >> cell.shared.topHeights[i];
     deser >> cell.shared.bottomHeights[i];
     deser >> cell.shared.u[i];
     deser >> cell.shared.v[i];
   }
-  
+
   deser >> cell.shared.detail >> cell.shared.smoothDetail;
   deser >> cell.teleport >> cell.teleportTarget;
   deser >> cell.shared.lockedID;
-  
+
   return deser;
 }

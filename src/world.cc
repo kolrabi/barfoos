@@ -21,7 +21,7 @@
 #include "serializer.h"
 #include "deserializer.h"
 
-World::World(RunningState &state, const IVector3 &size) : 
+World::World(RunningState &state, const IVector3 &size) :
   state(state),
   size(size),
   dirty(true),
@@ -43,11 +43,11 @@ World::World(RunningState &state, const IVector3 &size) :
   vbo(0),
   checkOverwrite(false),
   checkOverwriteOK(true)
-{  
+{
   glGenBuffers(1, &this->vbo);
 }
 
-World::World(RunningState &state, Deserializer &deser) : 
+World::World(RunningState &state, Deserializer &deser) :
   state(state),
   dirty(true),
   firstDirty(true),
@@ -70,12 +70,12 @@ World::World(RunningState &state, Deserializer &deser) :
   for (size_t i = 0; i<cellCount; i++) {
     deser >> this->cells[i];
   }
-    
+
   deser >> this->defaultMask;
   deser >> this->nextTickT;
   deser >> this->tickInterval;
   deser >> this->ambientLight;
-  
+
   for (size_t i = 0; i<cellCount; i++) {
     this->cells[i].SetWorld(this, GetCellPos(i));
     this->MarkForUpdateNeighbours(i);
@@ -91,7 +91,7 @@ void
 World::Build() {
 
   // build features -------------------------------------------
-  
+
   // some basic parameters for this world
   Log("%p %p %p\n", &state, &state.GetGame(), &state.GetRandom());
   Random &random = state.GetRandom();
@@ -102,7 +102,7 @@ World::Build() {
   size_t caveLengthMin = random.Integer(20);
   size_t caveLengthMax = caveLengthMin + random.Integer(100);
   size_t caveRepeat    = random.Integer(20)+10;
- 
+
   size_t teleportCount = random.Integer(10)+2;
   size_t trapCount = random.Integer(10)+10;
   size_t decoCount = 500+random.Integer(200);
@@ -133,7 +133,6 @@ World::Build() {
       }
     }
   }
-  
   bool done = false;
   for (size_t tries=0; tries < 20 && !done; tries++) {
 
@@ -144,11 +143,11 @@ World::Build() {
     }
 
     this->defaultMask = std::vector<bool>(this->cellCount, true);
-  
+
     instances.clear();
     instances.push_back(getFeature("start")->BuildFeature(state, *this, IVector3(32-4, 32-8,32-4), 0, 0, 0, nullptr, 0));
     instances.back().prevID = InvalidID;
-  
+
     int loop = 0;
     int lastDir = 0;
     uint32_t minY = size.y;
@@ -158,13 +157,13 @@ World::Build() {
     do {
       loop++;
       if (loop > 100000) break;
-      
+
       // select a feature from which to go
       bool                      useLast     = random.Chance(useLastChance);
       bool                      useLastDir  = lastDir != 0 && useLast && random.Chance(useLastDirChance);
       ID                        featNum     = useLast ? instances.size()-1 : random.Integer(instances.size());
       const FeatureInstance &   instance    = instances[featNum];
-    
+
       // select a random connection from the current feature
       const Feature *           feature     = instance.feature;
       const FeatureConnection * conn        = useLastDir ? feature->GetRandomConnection(lastDir, state) : feature->GetRandomConnection(state);
@@ -173,45 +172,45 @@ World::Build() {
       // select next feature
       const Feature *           nextFeature = conn->GetRandomFeature(state, instance.pos);
       if (!nextFeature) continue;
-    
+
       // make sure both features can connect
       const FeatureConnection * revConn     = nextFeature->GetRandomConnection(-conn->dir, state);
       if (!revConn) continue;
 
       // snap both connection points together
       IVector3                  pos         = instance.pos + conn->pos - revConn->pos;
-    
+
       // check if feature can be built
       this->BeginCheckOverwrite();
       nextFeature->BuildFeature(state, *this, pos, conn->dir, instance.dist, instances.size(), nullptr, featNum);
       if (!this->FinishCheckOverwrite()) continue;
-      
+
       Log(".");
-      
+
       // build it
       FeatureInstance           nextInstance = nextFeature->BuildFeature(state, *this, pos, conn->dir, instance.dist, instances.size(), revConn, featNum);
       minY = std::min(minY, pos.y);
       maxY = std::max(maxY, nextFeature->GetSize().y + pos.y);
-      
+
       // replace some cells after connection if wanted
       feature->ReplaceChars(state, *this, instance.pos, conn->id, featNum);
-      
+
       lastDir = conn->dir;
       loop    = 0;
 
       // check if we accidentally connected properly to anything else
       for (auto &nextConn : nextInstance.feature->GetConnections()) {
         IVector3 nextConnPos = nextInstance.pos + nextConn.pos;
-        
+
         for (auto &inst : instances) {
           for (const FeatureConnection &c : inst.feature->GetConnections()) {
             // match direction
             if (c.dir != -nextConn.dir) continue;
-            
+
             // match position
             IVector3 connPos = inst.pos + c.pos;
             if (connPos != nextConnPos) continue;
-            
+
             // replace some cells after connection if wanted
             inst.feature->ReplaceChars(state, *this, inst.pos, c.id, inst.featureID);
             nextInstance.feature->ReplaceChars(state, *this, nextInstance.pos, nextConn.id, nextInstance.featureID);
@@ -222,11 +221,11 @@ World::Build() {
       // done :)
       instances.push_back(nextInstance);
       instances.back().prevID = featNum;
-    } while(instances.size() < featureCount); 
+    } while(instances.size() < featureCount);
     Log("\n");
-    
+
     int height = maxY - minY;
-  
+
     // want at least 150 features and at least 16 cells high
     if (instances.size() < 150 || height < 16) {
       if (!done) {
@@ -243,9 +242,9 @@ World::Build() {
   }
 
   WorldEdit e(this);
-  
+
   Log("Carving caves...\n");
-  
+
   // create caves
   e.SetBrush(Cell("air"));
   size_t caveCount     = instances.size()>10 ? random.Integer(instances.size()/10) : 0;
@@ -254,12 +253,12 @@ World::Build() {
     size_t featNum = random.Integer(instances.size());
     const FeatureInstance &instance = instances[featNum];
     IVector3 size = instance.feature->GetSize();
-   
+
     for (size_t k=0; k<caveRepeat; k++) {
       IVector3 cavePos(instance.pos + IVector3(random.Integer(size.x), random.Integer(size.y), random.Integer(size.z)));
       size_t caveLength = caveLengthMin + random.Integer(caveLengthMax-caveLengthMin);
       bool lastSolid = false;
-      
+
       for (size_t j=0; j<caveLength; j++) {
         Side nextSide = (Side)(random.Integer(6));
         bool solid = this->GetCell(cavePos).GetInfo().flags & CellFlags::Solid;
@@ -272,7 +271,7 @@ World::Build() {
     }
   }
 
-    
+
   Log("Placing %u teleports...\n", teleportCount);
   for (size_t i=0; i<teleportCount; i++) {
     IVector3 a = GetRandomTeleportTarget(random);
@@ -282,34 +281,39 @@ World::Build() {
     SetCell(a, Cell("teleport")).SetTeleportTarget(b);
     SetCell(b, Cell("teleport")).SetTeleportTarget(a);
   }
-  
+
   Log("Placing %u traps...\n", trapCount);
   for (size_t i=0; i<trapCount; i++) {
-    
+
     IVector3 a = GetRandomTeleportTarget(random);
-    
+
     Cell *aboveCell = &GetCell(a)[Side::Up][Side::Up];
     Side side = (Side)random.Integer(6);
     while (side == Side::Down) side = (Side)random.Integer(6);
-    
+
     size_t distance = 0;
     while(!aboveCell->IsSolid()) {
       aboveCell = &((*aboveCell)[side]);
       distance ++;
     }
-    
+
     if (distance > 5) { i--; continue; }
-    
+
     Cell &trigger = GetCell(a);
     Cell &spawner = SetCell(aboveCell->GetPosition(), Cell("shooter"));
     // TODO: get entity from group "trap"
-    spawner.SetSpawnOnActive("projectile.bfw9k", -side, 0.0);
-    
+    const std::vector<std::string> &traps = GetEntitiesInGroup("trap");
+    if (traps.empty()) {
+      spawner.SetSpawnOnActive("projectile.bfw9k", -side, 0.0);
+    } else {
+      spawner.SetSpawnOnActive(traps[state.GetRandom().Integer(traps.size())], -side, 0.0);
+    }
+
     ID id = state.GetNextTriggerId();
     spawner.SetTrigger(id, false);
     trigger.SetTriggerTarget(id);
   }
-  
+
   Log("Spawning feature entities...\n");
   for (auto instance : instances) {
     instance.feature->SpawnEntities(state, instance.pos);
@@ -327,18 +331,18 @@ World::Build() {
     Cell &cell = GetCell(a);
     ID decoID = cell.GetFeatureID();
     if (decoID == InvalidID) continue;
-    
+
     std::string decoGroup = "deco." + instances[decoID].feature->GetDecoGroup() + ".";
     decoGroup += top?"top":"bottom";
-    
+
     const std::vector<std::string> &decoEnts = GetEntitiesInGroup(decoGroup);
     if (decoEnts.empty()) continue;
-    
+
     std::string decoName = decoEnts[random.Integer(decoEnts.size())];
-    
+
     Entity *entity = Entity::Create(decoName);
     if (!entity) continue;
-    
+
     state.AddEntity(entity);
     if (top) {
       entity->SetPosition(Vector3(a.x + 0.5, a.y + entity->GetAABB().extents.y+0.01, a.z + 0.5));
@@ -347,7 +351,7 @@ World::Build() {
     }
     Log("deco: %u %f %f\n", a.y, entity->GetAABB().center.y, entity->GetAABB().extents.y);
   }
-  
+
   // remove spilt liquids
   Log("Wiping the floor...\n");
   bool foundLiquid = true;
@@ -355,7 +359,7 @@ World::Build() {
     foundLiquid = false;
     for (size_t i=0; i<this->cellCount; i++) {
       if (!this->cells[i].IsLiquid()) continue;
-      
+
       if (this->cells[i][Side::Down].GetType() == "air" ||
           this->cells[i][Side::Right].GetType() == "air" ||
           this->cells[i][Side::Left].GetType() == "air" ||
@@ -366,13 +370,13 @@ World::Build() {
       }
     }
   }
-  
+
   // update all cells
   Log("Updating all cells...\n");
   for (size_t i=0; i<this->cellCount; i++) {
     this->MarkForUpdateNeighbours(i);
   }
-  
+
   Update(state);
   Update(state);
 
@@ -389,14 +393,14 @@ World::SetCell(const IVector3 &pos, const Cell &cell, bool ignoreLock) {
   }
 
   if (!this->IsValidCellPosition(pos)) return this->defaultCell;
-  
+
   size_t i = this->GetCellIndex(pos);
   if (this->cells[i].GetIgnoreWrite()) return this->defaultCell;
 
   defaultMask[i] = false;
- 
+
   size_t featId = this->cells[i].GetFeatureID();
-  
+
   CellProperties info = this->cells[i].GetInfo();
   this->cells[i] = cell;
   this->cells[i].SetWorld(this, pos);
@@ -408,7 +412,7 @@ World::SetCell(const IVector3 &pos, const Cell &cell, bool ignoreLock) {
   this->dirty = !(((info.flags & CellFlags::DoNotRender) && (cell.GetInfo().flags & CellFlags::Dynamic)) ||
                   ((info.flags & CellFlags::Dynamic) && (cell.GetInfo().flags & CellFlags::DoNotRender)) );
                   */
-                  
+
   this->dirty = true;
   return this->cells[i];
 }
@@ -417,19 +421,19 @@ World::SetCell(const IVector3 &pos, const Cell &cell, bool ignoreLock) {
  * Update a cell after it was changed.
  * @param i Index of cell to update.
  */
-void 
+void
 World::UpdateCell(size_t i) {
   this->MarkForUpdateNeighbours(i);
   for (size_t n=0; n<6; n++) {
     this->MarkForUpdateNeighbours(&(this->cells[i][(Side)n]));
   }
 }
-  
+
 /**
  * Update a cell after it was changed.
  * @param pos Position of cell to update.
  */
-void 
+void
 World::UpdateCell(const IVector3 &pos) {
   if (!IsValidCellPosition(pos)) return;
   UpdateCell(GetCellIndex(pos));
@@ -438,10 +442,10 @@ World::UpdateCell(const IVector3 &pos) {
 /**
  * Render the entire world.
  */
-void 
+void
 World::Draw(Gfx &gfx) {
   PROFILE();
-  
+
   if (dirty) {
     PROFILE_NAMED("Vertex Update");
     // world has been changed, recreate vertex buffers
@@ -456,22 +460,22 @@ World::Draw(Gfx &gfx) {
       for (size_t i=0; i<this->cellCount; i++) {
         if (this->cells[i].IsLiquid() && this->cells[i][Side::Up].GetInfo() == this->cells[i].GetInfo()) {
           this->cells[i].SetDetail(16);
-        } 
+        }
       }
-      
+
       firstDirty = false;
     }
 
     std::unordered_map<const Texture *, std::vector<Vertex>> verticesNormal;
     std::unordered_map<const Texture *, std::vector<Vertex>> verticesEmissive;
-    
+
     size_t updateCount = 0;
 
     for (size_t i=0; i<this->cellCount; i++) {
       Cell &cell = this->cells[i];
       const CellProperties &info = cell.GetInfo();
 
-      // don't bother with invisible cells 
+      // don't bother with invisible cells
       if (info.flags & CellFlags::DoNotRender || !cell.GetVisibility()) continue;
 
       // don't add dynamic cells to static vertex buffer
@@ -485,19 +489,19 @@ World::Draw(Gfx &gfx) {
       }
 
       // group vertex buffers by texture
-      
+
       const Texture *tex = cell.GetTexture();
       if (tex) cell.Draw(verticesNormal[tex]);
-      
+
       const Texture *etex = cell.GetEmissiveTexture();
       if (etex) cell.DrawEmissive(verticesEmissive[etex]);
     }
-    
+
     if (updateCount) Log("%u cell vertex updates\n", updateCount);
-    
+
     size_t index = 0;
     this->allVerts.clear();
-    
+
     for (auto &iter : verticesNormal) {
       this->vertexStartsNormal[iter.first] = index;
       this->vertexCountsNormal[iter.first] = iter.second.size();
@@ -507,7 +511,7 @@ World::Draw(Gfx &gfx) {
         this->allVerts.push_back(v);
       }
     }
-    
+
     for (auto &iter : verticesEmissive) {
       this->vertexStartsEmissive[iter.first] = index;
       this->vertexCountsEmissive[iter.first] = iter.second.size();
@@ -538,30 +542,30 @@ World::Draw(Gfx &gfx) {
       gfx.SetTextureFrame(s.first);
       gfx.DrawTriangles(this->vbo, s.second, this->vertexCountsNormal[s.first]);
     }
-    
+
     gfx.SetBlendAdd();
     for (auto &s : this->vertexStartsEmissive) {
       gfx.SetTextureFrame(s.first);
       gfx.DrawTriangles(this->vbo, s.second, this->vertexCountsEmissive[s.first]);
     }
   }
-  
+
   {
     PROFILE_NAMED("Dynamic Draw");
-  
+
     // get vertices for dynamic cells
     std::unordered_map<const Texture *, std::vector<Vertex>> dynVerticesNormal;
     std::unordered_map<const Texture *, std::vector<Vertex>> dynVerticesEmissive;
-    
+
     for (size_t i : dynamicCells) {
       const Texture *tex = this->cells[i].GetTexture();
-      if (dynVerticesNormal.find(tex) == dynVerticesNormal.end()) 
+      if (dynVerticesNormal.find(tex) == dynVerticesNormal.end())
           dynVerticesNormal[tex] = std::vector<Vertex>();
 
       const Texture *etex = this->cells[i].GetEmissiveTexture();
-      if (dynVerticesEmissive.find(etex) == dynVerticesEmissive.end()) 
+      if (dynVerticesEmissive.find(etex) == dynVerticesEmissive.end())
           dynVerticesEmissive[etex] = std::vector<Vertex>();
-          
+
       this->cells[i].UpdateVertices();
       this->cells[i].Draw(dynVerticesNormal[tex]);
       this->cells[i].DrawEmissive(dynVerticesEmissive[etex]);
@@ -594,7 +598,7 @@ void World::MarkForUpdateNeighbours(size_t i) {
   this->neighbourUpdates.insert(i);
 }
 
-void 
+void
 World::Update(
   RunningState &state
 ) {
@@ -605,20 +609,20 @@ World::Update(
   for (size_t i : this->dynamicCells) {
     this->cells[i].Update(state);
   }
-  
+
   //Log("updating %u neighbours\n", this->neighbourUpdates.size());
   size_t neighbourCount = 0;
 
-  while(this->neighbourUpdates.size()) {  
+  while(this->neighbourUpdates.size()) {
     std::unordered_set<size_t> tmp = this->neighbourUpdates;
     this->neighbourUpdates.clear();
-    
+
     for (auto &i:tmp) {
       this->cells[i].UpdateNeighbours();
       neighbourCount++;
     }
   }
-  
+
   if (neighbourCount > 0) {
     this->dirty = true;
     Log("updated %u neighbours\n", neighbourCount);
@@ -644,17 +648,17 @@ World::Update(
  *         top of cell at that position is above the ray (hitting solid part
  *         of the cell).
  */
-bool 
+bool
 World::CastRayX(const Vector3 &org, float dir) {
   bool movingRight = dir > 0;
   size_t x = org.x - (movingRight?0.01f:-0.01f); // start cell x
   size_t y = org.y; // start cell y
   size_t z = org.z; // start cell z
-  
+
   // end cell x
   size_t x2 = (org.x+dir + 2*(movingRight?0.01f:-0.01f));
   if (x2 == x) return false; // not crossing cell borders
-  
+
   return this->GetCell(IVector3(x,y,z)).CheckSideSolid(movingRight ? Side::Right : Side::Left, org);
 }
 
@@ -666,7 +670,7 @@ World::CastRayX(const Vector3 &org, float dir) {
  *         top of cell at that position is above the ray (hitting solid part
  *         of the cell).
  */
-bool 
+bool
 World::CastRayZ(const Vector3 &org, float dir) {
   bool movingForward = dir > 0;
   size_t x = org.x; // start cell x
@@ -675,7 +679,7 @@ World::CastRayZ(const Vector3 &org, float dir) {
 
   size_t z2 = (org.z + dir + 2*(movingForward ? 0.01f : -0.01f));
   if (z2 == z) return false; // not crossing cell borders
-  
+
   return this->GetCell(IVector3(x,y,z)).CheckSideSolid(movingForward?Side::Forward:Side::Backward, org);
 }
 
@@ -685,16 +689,16 @@ World::CastRayZ(const Vector3 &org, float dir) {
  * @return The end position of the ray where it hits a solid cell. Takes into
  *         account the bottom y-offsets of the cell.
  */
-float 
+float
 World::CastRayYUp(const Vector3 &org) {
   size_t x = org.x; // start cell x
   size_t y = org.y; // start cell y
   size_t z = org.z; // start cell z
-  
+
   if (org.y < 0) return 0;
-  
+
   if (GetCell(IVector3(x,y,z)).IsSolid() && y > GetCell(IVector3(x,y,z)).GetHeightBottom(org.x, org.z)) return y;
-  
+
   while (y < this->size.y) {
     const Cell &cell = this->GetCell(IVector3(x,y,z));
     if (cell.GetInfo().flags & CellFlags::Solid) {
@@ -711,7 +715,7 @@ World::CastRayYUp(const Vector3 &org) {
  * @return The end position of the ray where it hits a solid cell. Takes into
  *         account the top y-offsets of the cell.
  */
-float 
+float
 World::CastRayYDown(const Vector3 &org) {
   size_t x = org.x; // start cell x
   size_t y = org.y; // start cell y
@@ -720,14 +724,14 @@ World::CastRayYDown(const Vector3 &org) {
   if (y >= this->size.y) return this->size.y;
 
   if (GetCell(IVector3(x,y,z)).IsSolid() && y < GetCell(IVector3(x,y,z)).GetHeight(org.x, org.z)) return y-1;
-  
+
   float endY = 0;
 
   // iterate from the bottom of the world up to the start cell
   for (size_t yy = 0; yy <= y; yy++) {
     const Cell &cell = this->GetCell(IVector3(x,yy,z));
     if (cell.GetInfo().flags & CellFlags::Solid) {
-      endY = yy + cell.GetHeight(org.x, org.z); 
+      endY = yy + cell.GetHeight(org.x, org.z);
     }
   }
   return endY;
@@ -743,7 +747,7 @@ World::IsPointSolid(const Vector3 &org) {
   size_t x = org.x; // start cell x
   size_t y = org.y; // start cell y
   size_t z = org.z; // start cell z
-  
+
   const Cell &cell = this->GetCell(IVector3(x,y,z));
   bool heightCheck = (org.y - y) >= cell.GetHeightBottom(org.x, org.z) && (org.y - y) <= cell.GetHeight(org.x, org.z);
   return cell.IsSolid() && heightCheck;
@@ -757,7 +761,7 @@ World::IsPointSolid(const Vector3 &org) {
  * @param aabb AABB to check
  * @return true if AABB intersects solid geometry.
  */
-bool 
+bool
 World::IsAABBSolid(const AABB &aabb) {
   std::vector<Vector3> verts;
   verts.push_back(Vector3(-aabb.extents.x, -aabb.extents.y, -aabb.extents.z));
@@ -768,23 +772,23 @@ World::IsAABBSolid(const AABB &aabb) {
   verts.push_back(Vector3( aabb.extents.x,  aabb.extents.y, -aabb.extents.z));
   verts.push_back(Vector3(-aabb.extents.x,  aabb.extents.y,  aabb.extents.z));
   verts.push_back(Vector3( aabb.extents.x,  aabb.extents.y,  aabb.extents.z));
-  
+
   for (Vector3 v : verts) {
     if (IsPointSolid(aabb.center + v)) return true;
   }
-  
+
   float top = aabb.center.y + aabb.extents.y + 0.01;
   if (CastRayYUp(verts[0]) < top) return true;
   if (CastRayYUp(verts[1]) < top) return true;
   if (CastRayYUp(verts[2]) < top) return true;
   if (CastRayYUp(verts[3]) < top) return true;
-  
+
   float bot = aabb.center.y - aabb.extents.y - 0.01;
   if (CastRayYDown(verts[4]) > bot) return true;
   if (CastRayYDown(verts[5]) > bot) return true;
   if (CastRayYDown(verts[6]) > bot) return true;
   if (CastRayYDown(verts[7]) > bot) return true;
-  
+
   return false;
 }
 
@@ -793,13 +797,13 @@ World::IsAABBSolid(const AABB &aabb) {
  * @param aabb The AABB to move.
  * @param targ The target position where to move the AABB.
  * @param axis Output of the colliding axis flags.
- * @param[out] cell Returns one of the cell with which the aabb collided. 
+ * @param[out] cell Returns one of the cell with which the aabb collided.
  * @param[out] side Returns the side of the cell that collided.
  * @return The final center position of the AABB.
  * @note Might not work for too big AABBs.
  */
 Vector3 World::MoveAABB(
-  const AABB &aabb, 
+  const AABB &aabb,
   const Vector3 &targ,
   uint8_t &axis,
   Cell **cell,
@@ -821,8 +825,8 @@ Vector3 World::MoveAABB(
   // one cell size apart for correct collision detection.
   std::vector<Vector3> verts;
   aabb.GetVertices(verts);
-  
-  Vector3 target = targ; 
+
+  Vector3 target = targ;
   while(true) {
     // CastRayX/Z only check nearest neighbouring cell, limit movement to 1.0
     // and reiterate if neccessary.
@@ -833,10 +837,10 @@ Vector3 World::MoveAABB(
       d = d.Normalize()*1.0;
       keepGoing = true;
     }
-    
+
     // try to move along the x axis
     Vector3 ddx(d.x + (d.x>0?0.01:-0.01), 0, 0);
-    
+
     for (const Vector3 &v : verts) {
       if (CastRayX(center + v, d.x) || IsPointSolid(center + v + ddx)) {
         float newX = d.x;
@@ -846,11 +850,11 @@ Vector3 World::MoveAABB(
           newX = ((int)center.x) + aabb.extents.x + 0.01f;
         }
 
-        if (std::abs(newX - center.x) < std::abs(d.x))        
+        if (std::abs(newX - center.x) < std::abs(d.x))
           d.x = newX - center.x;
-          
-        axis |= Axis::X; 
-        
+
+        axis |= Axis::X;
+
         if (storeCell) {
           *cell = &GetCell(center+v+ddx);
           if (side) *side = d.x > 0 ? Side::Left : Side::Right;
@@ -861,10 +865,10 @@ Vector3 World::MoveAABB(
 
     // update center to new position
     center.x += d.x;
-    
+
     // try to move along the z axis
     Vector3 ddz(0, 0, d.z + (d.z>0?0.01:-0.01));
-    
+
     for (const Vector3 &v : verts) {
       if (CastRayZ(center + v, d.z) || IsPointSolid(center + v + ddz)) {
         float newZ = d.z;
@@ -876,9 +880,9 @@ Vector3 World::MoveAABB(
 
         if (std::abs(newZ - center.z) < std::abs(d.z))
           d.z = newZ - center.z;
-          
-        axis |= Axis::Z; 
-        
+
+        axis |= Axis::Z;
+
         if (storeCell) {
           *cell = &GetCell(center+v+ddz);
           if (side) *side = d.z > 0 ? Side::Backward : Side::Forward;
@@ -886,10 +890,10 @@ Vector3 World::MoveAABB(
         }
       }
     }
-    
+
     // update center to new position
     center.z += d.z;
-    
+
     if (axis & Axis::X) target.x = center.x;
     if (axis & Axis::Z) target.z = center.z;
 
@@ -899,7 +903,7 @@ Vector3 World::MoveAABB(
     // was this the final pass?
     if (!keepGoing) break;
   }
-  
+
   // now try to move along y axis
   if (movingUp) {
     float endY = size.y;
@@ -909,7 +913,7 @@ Vector3 World::MoveAABB(
       float vY = CastRayYUp(center+v);
       if (vY < endY) {
         endY = vY;
-        
+
         if (storeCell && endY - aabb.extents.y < target.y) {
           Vector3 end = center + v;
           end.y = endY + 0.01;
@@ -933,7 +937,7 @@ Vector3 World::MoveAABB(
       float vY = CastRayYDown(center+v);
       if (vY > endY) {
         endY = vY;
-        
+
         if (storeCell && endY + aabb.extents.y > target.y) {
           Vector3 end = center + v;
           end.y = endY + 0.01;
@@ -949,24 +953,24 @@ Vector3 World::MoveAABB(
       target.y = endY + aabb.extents.y + 0.001f;
     }
   }
-  
+
   // update y position
-  center.y = target.y; 
+  center.y = target.y;
 
   // done
   return center;
 }
 
-Vector3 
+Vector3
 World::MoveAABB(
-  const AABB &aabb, 
+  const AABB &aabb,
   const Vector3 &target
 ) {
   uint8_t axis;
   return this->MoveAABB(aabb, target, axis);
 }
 
-IColor 
+IColor
 World::GetLight(const IVector3 &pos) const {
   return (GetCell(pos).GetLightLevel().Gamma(2.2)) + ambientLight;
 }
@@ -997,7 +1001,7 @@ World::Dump() {
   }
   fclose(f);
 }
-  
+
 /**
  * Find the final cell along a ray.
  * @param org Ray origin
@@ -1019,15 +1023,15 @@ World::CastRayCell(const Vector3 &org, const Vector3 &dir, float &distance, Side
   size_t x = pos.x; // start cell x
   size_t y = pos.y; // start cell y
   size_t z = pos.z; // start cell z
-  
+
   Cell *currentCell = nullptr;
 
   while (IsValidCellPosition(IVector3(x,y,z))) {
     currentCell = &this->GetCell(IVector3(x,y,z));
-    
+
     float tt;
     Vector3 p;
-    
+
     if ((currentCell->GetInfo().flags & flags) && currentCell->Ray(org, dir, tt, p) && tt > 0) {
       distance = tt;
       return *currentCell;
@@ -1036,14 +1040,14 @@ World::CastRayCell(const Vector3 &org, const Vector3 &dir, float &distance, Side
     float u = INFINITY;
     float v = INFINITY;
     float w = INFINITY;
- 
+
     if (dir.x>0) u = (x+1-pos.x)/dir.x;
     if (dir.x<0) u = (x  -pos.x)/dir.x;
     if (dir.y>0) v = (y+1-pos.y)/dir.y;
     if (dir.y<0) v = (y  -pos.y)/dir.y;
     if (dir.z>0) w = (z+1-pos.z)/dir.z;
     if (dir.z<0) w = (z  -pos.z)/dir.z;
-    
+
     if (u < v && u < w) {
       pos = pos + dir * u;
       x += dx;
@@ -1066,12 +1070,12 @@ World::CastRayCell(const Vector3 &org, const Vector3 &dir, float &distance, Side
 }
 
 /**
- * Check if a cell at a given position is still original or if it 
+ * Check if a cell at a given position is still original or if it
  * is part of a feature.
  * @param pos Cell position.
  * @return true if cell wasn't modified.
  */
-bool 
+bool
 World::IsDefault(const IVector3 &pos) {
   if (!IsValidCellPosition(pos)) return true;
   return defaultMask[GetCellIndex(pos)];
@@ -1080,26 +1084,26 @@ World::IsDefault(const IVector3 &pos) {
 void
 World::BreakBlock(const IVector3 &pos) {
   const CellProperties &info = this->GetCell(pos).GetInfo();
-  
+
   if (info.type == "air") return;
 
   std::string particleType = info.breakParticle;
   AABB aabb = this->SetCell(pos, Cell("air")).GetAABB();
-  
+
   if (particleType != "") {
     Random &random = state.GetRandom();
     for (size_t i=0; i<4; i++) {
-      state.SpawnInAABB(particleType, aabb, random.Vector()*10);
+      state.SpawnInAABB(particleType, aabb, random.Vector());
     }
   }
-  
+
   for (int i=0; i<6; i++) {
-    if (info.onUseCascade & (1<<i) && this->GetCell(pos[(Side)i]).GetInfo() == info) 
+    if (info.onUseCascade & (1<<i) && this->GetCell(pos[(Side)i]).GetInfo() == info)
       BreakBlock(pos[(Side)i]);
   }
 }
 
-bool 
+bool
 World::IsCellWalkable(const IVector3 &pos) const {
   const Cell &cell = GetCell(pos);
   const Cell &cell2 = cell[Side::Up];
@@ -1107,16 +1111,16 @@ World::IsCellWalkable(const IVector3 &pos) const {
   return cell.IsSolid() && !cell2.IsSolid() && !cell2.IsLiquid() && !cell3.IsSolid() && !cell3.IsLiquid();
 }
 
-bool 
+bool
 World::IsCellValidTeleportTarget(const IVector3 &pos) const {
-  return IsCellWalkable(pos) && ( 
+  return IsCellWalkable(pos) && (
     IsCellWalkable(pos[Side::Right]) ||
     IsCellWalkable(pos[Side::Left]) ||
     IsCellWalkable(pos[Side::Forward]) ||
     IsCellWalkable(pos[Side::Backward])); // TODO: check triggers
 }
 
-bool 
+bool
 World::IsCellValidCeiling(const IVector3 &pos) const {
   const Cell &cell = GetCell(pos);
   const Cell &cell2 = cell[Side::Down];
@@ -1124,25 +1128,25 @@ World::IsCellValidCeiling(const IVector3 &pos) const {
   return cell.IsBottomFlat() && cell.IsSolid() && !cell2.IsSolid() && !cell2.IsLiquid() && !cell3.IsSolid() && !cell3.IsLiquid();
 }
 
-IVector3 
+IVector3
 World::FindSolidBelow(const IVector3 &pos) const {
   IVector3 p(pos);
-  while(!GetCell(p).IsSolid()) 
+  while(!GetCell(p).IsSolid())
     p = p[Side::Down];
 
   return p;
 }
 
-IVector3 
+IVector3
 World::FindSolidAbove(const IVector3 &pos) const {
   IVector3 p(pos);
-  while(!GetCell(p).IsSolid()) 
+  while(!GetCell(p).IsSolid())
     p = p[Side::Up];
 
   return p;
 }
 
-IVector3 
+IVector3
 World::GetRandomTeleportTarget(Random &random) const {
   IVector3 pos;
   do {
@@ -1154,7 +1158,7 @@ World::GetRandomTeleportTarget(Random &random) const {
   return pos;
 }
 
-IVector3 
+IVector3
 World::GetRandomCeiling(Random &random) const {
   IVector3 pos;
   do {
@@ -1183,10 +1187,10 @@ void World::TriggerOff(size_t id) {
 Serializer &operator << (Serializer &ser, const World &world) {
   ser << world.minimap;
   ser << world.size;
-  
+
   for (auto &c:world.cells)
     ser << c;
-    
+
   ser << world.defaultMask;
   ser << world.nextTickT;
   ser << world.tickInterval;
@@ -1208,7 +1212,7 @@ MiniMap::MiniMap(const World &world) :
 {
 }
 
-MiniMap::MiniMap(const World &world, Deserializer &deser) : 
+MiniMap::MiniMap(const World &world, Deserializer &deser) :
   world(world),
   mapTexture(nullptr),
   viewY(0)
@@ -1218,20 +1222,20 @@ MiniMap::MiniMap(const World &world, Deserializer &deser) :
 
 void
 MiniMap::Draw(
-  Gfx &gfx, 
+  Gfx &gfx,
   const Vector3 &eyePos,
   float angle
 ) {
   PROFILE();
-  
+
   size_t y = eyePos.y;
   if (y != this->viewY) {
     this->viewY = y;
     this->RepaintMap();
   }
-  
+
   const IVector3 &size = world.GetSize();
-  
+
   gfx.SetTextureFrame(this->mapTexture);
   gfx.SetColor(IColor(255,255,255));
   gfx.SetLight(IColor(255,255,255));
@@ -1240,7 +1244,7 @@ MiniMap::Draw(
   gfx.GetView().Scale(Vector3(-1, 1, 1));
   gfx.DrawUnitQuad();
   gfx.GetView().Pop();
-  
+
   gfx.SetTextureFrame(loadTexture("gui/maparrow"));
   gfx.GetView().Push();
   gfx.GetView().Rotate(angle, Vector3(0,0,1));
@@ -1256,26 +1260,26 @@ MiniMap::Draw(
 void
 MiniMap::AddFeatureSeen(ID f) {
   if (f == InvalidID) return;
-  
+
   // make sure vector is large enough
   if (this->seenFeatures.size() <= f) {
     this->seenFeatures.resize(f+1, false);
   }
-  
+
   if (this->seenFeatures[f]) return;
-  
+
   this->seenFeatures[f] = true;
-  
+
   RepaintMap();
 }
 
-bool 
+bool
 MiniMap::IsFeatureSeen(ID id) const {
   if (id == InvalidID || id >= this->seenFeatures.size()) return false;
   return this->seenFeatures[id];
 }
 
-void 
+void
 MiniMap::RepaintMap() {
   const IVector3 &size = world.GetSize();
   uint8_t pixels[size.x*size.z*4];
@@ -1284,12 +1288,12 @@ MiniMap::RepaintMap() {
     for (size_t z=0; z<size.z; z++) {
       size_t index = (x+(size.z-1-z)*size.x)*4;
       pixels[index+3] = 0;
-      
+
       for (size_t yy=viewY; yy>0; yy--) {
         IVector3 pos(x,yy,z);
         Cell &cell = this->world.GetCell(pos);
-        if (!cell.IsSeen(2)) continue; 
-        
+        if (!cell.IsSeen(2)) continue;
+
         bool solid = !cell.IsTransparent() && !cell[Side::Up].IsTransparent() && !cell[Side::Down].IsTransparent();
         uint8_t v = yy - viewY + 64;
         if (solid) {
@@ -1307,7 +1311,7 @@ MiniMap::RepaintMap() {
       }
     }
   }
-  
+
   this->mapTexture = updateTexture("*minimap", Point(size.x, size.z), pixels);
 }
 

@@ -6,24 +6,23 @@ Mass      100.0
 Speed       8.0
 
 Health     10.0
+Heal        0.1
 
 Extents     0.2 0.8 0.2
 
 Respawn
 
-Inventory   1.0 pants.1
-Inventory   0.3 boots.1
-Inventory   0.3 helmet.1
-Inventory   0.3 armor.1
-Inventory   1.0 scroll.remove.curse
 Inventory   1.0 scroll.identify
 Inventory   1.0 scroll.identify
 Inventory   1.0 scroll.identify
-Inventory   1.0 wand.black
-Inventory   1.0 scroll.teleport
-Inventory   1.0 scroll.teleport
-Inventory   1.0 scroll.teleport
-Inventory   1.0 scroll.teleport
+Inventory   1.0 scroll.identify
+Inventory   1.0 scroll.identify
+Inventory   1.0 scroll.identify
+Inventory   1.0 $ring
+Inventory   1.0 $ring
+Inventory   1.0 $ring
+Inventory   1.0 $ring
+Inventory   1.0 $ring
 
 str 1
 agi 1

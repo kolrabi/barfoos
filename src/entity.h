@@ -71,6 +71,7 @@ struct EntityProperties : public Properties {
   float   eyeOffset         = 0.0;    //< Offset from the center.
   float   thinkInterval     = 0.0;    //< Time interval beetween calls to Entity::Think().
   float   maxHealth         = 5;      //< Health of entity after spawn.
+  float   heal              = 0.0;
   float   lifetime          = 0.0;
   float   lifetimeRand      = 0.0;
   bool    nohit             = false;  //< Entity has no hitbox/selection box.
@@ -218,7 +219,7 @@ public:
   bool                      CanOpenInventory()                const { return this->properties->openInventory && this->lockedID == 0; }
 
   // rendering
-  virtual IColor            GetLight()                        const { return this->properties->glow + inventory.GetLight(); }
+  virtual IColor            GetLight()                        const;
 
   virtual void              Serialize(Serializer &ser)        const;
 

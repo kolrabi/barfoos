@@ -8,13 +8,20 @@
 
 #include <cstring>
 
+/** Calculate the outcome of a melee attack with an item.
+ * @param attacker Entity that attacks
+ * @param victim Entity that defends
+ * @param item Item that is used to attack
+ * @param random A random number generator for variance
+ * @return Result of the attack.
+ */
 HealthInfo
 Stats::MeleeAttack(const Entity &attacker, const Entity &victim, const Item &item, Random &random) {
   HealthInfo info;
   info.dealerId = attacker.GetId();
-  info.skill = item.GetProperties().weaponClass;
-  info.type = HealthType::Melee;
-  info.element = item.GetElement();
+  info.skill    = item.GetProperties().weaponClass;
+  info.type     = HealthType::Melee;
+  info.element  = item.GetElement();
 
   // get stats
   Stats atkStat = attacker.GetEffectiveStats();
@@ -29,7 +36,7 @@ Stats::MeleeAttack(const Entity &attacker, const Entity &victim, const Item &ite
 
   info.hitType = hit;
 
-  int dmg = atkStat.str * 0.1 * item.GetDamage();
+  int dmg = atkStat.str * 0.5 * item.GetDamage();
   if (dmg < 1) dmg = 1;
 
   int amount = dmg - defStat.def * 0.1;
@@ -50,6 +57,13 @@ Stats::MeleeAttack(const Entity &attacker, const Entity &victim, const Item &ite
   return info;
 }
 
+  /** Calculate the outcome of an explosion attack.
+   * @param attacker Entity that attacks
+   * @param victim Entity that defends
+   * @param damage Damage to inflict
+   * @param random A random number generator for variance
+   * @return Result of the attack.
+   */
 HealthInfo
 Stats::ExplosionAttack(const Entity &attacker, const Entity &victim, float damage, Element element) {
   HealthInfo info;
@@ -60,7 +74,7 @@ Stats::ExplosionAttack(const Entity &attacker, const Entity &victim, float damag
   // get stats
   Stats defStat = victim.GetEffectiveStats();
 
-  info.amount = -(damage - defStat.def * 0.1);
+  info.amount = -(damage - defStat.def * 0.5);
   bool kill = -info.amount > victim.GetHealth();
   float expDmg = kill ? victim.GetHealth() : -info.amount;
   info.exp = (expDmg / defStat.maxHealth) * 0.5 * victim.GetProperties()->exp + kill ? victim.GetProperties()->exp : 0;
@@ -68,16 +82,14 @@ Stats::ExplosionAttack(const Entity &attacker, const Entity &victim, float damag
   return info;
 }
 
-size_t
-Stats::GetLevel() {
-  return std::log(this->exp + 1) / std::log(1.7) + 1;
-}
-
+/** Add some experience.
+ * @return true on level up.
+ */
 bool
 Stats::AddExp(float exp) {
-  size_t lvl = this->GetLevel();
+  size_t lvl = Stats::GetLevelForExp(this->exp);
   this->exp += exp;
-  if (this->GetLevel() != lvl) {
+  if (Stats::GetLevelForExp(this->exp) != lvl) {
     this->sp ++;
     this->maxHealth ++;
     return true;
@@ -85,11 +97,27 @@ Stats::AddExp(float exp) {
   return false;
 }
 
+/** Get the experience points neccessary for a given level.
+ * @param lvl Level
+ * @return Experience points
+ */
 float
 Stats::GetExpForLevel(size_t lvl) {
-  return std::pow(1.7, lvl - 1);
+  return std::pow(Const::ExpLevelBase, lvl - 1);
 }
 
+/** Get the level for the exp.
+ * @param exp Experience points
+ * @return Level
+ */
+size_t
+Stats::GetLevelForExp(float exp) {
+  return std::log(exp + 1) / std::log(Const::ExpLevelBase) + 1;
+}
+
+/** Get a summary of the stats as a string.
+ * @return The tooltip.
+ */
 std::string
 Stats::GetToolTip() const {
   std::string tooltip;
@@ -122,15 +150,16 @@ Stats::GetToolTip() const {
   return tooltip;
 }
 
+/** Compare two stats. Ignores sp and exp. */
+bool Stats::operator==(const Stats &o) {
+  return str == o.str && dex == o.dex && agi == o.agi && def == o.def &&
+         walkSpeed == o.walkSpeed && maxHealth == o.maxHealth;
+}
+
 Serializer &operator << (Serializer &ser, const Stats &stats) {
   ser << stats.str;
   ser << stats.dex << stats.agi << stats.def;
   ser << stats.maxHealth << stats.exp << stats.sp << stats.walkSpeed;
-  return ser;
-}
-
-Serializer &operator << (Serializer &ser, const Buff &buff) {
-  ser << buff.effect->name << buff.startT;
   return ser;
 }
 
@@ -141,6 +170,13 @@ Deserializer &operator >> (Deserializer &deser, Stats &stats) {
   return deser;
 }
 
+// ==========================================================================
+
+Serializer &operator << (Serializer &ser, const Buff &buff) {
+  ser << buff.effect->name << buff.startT;
+  return ser;
+}
+
 Deserializer &operator >> (Deserializer &deser, Buff &buff) {
   std::string effectName;
   deser >> effectName;
@@ -148,9 +184,4 @@ Deserializer &operator >> (Deserializer &deser, Buff &buff) {
 
   deser >> buff.startT;
   return deser;
-}
-
-bool Stats::operator==(const Stats &o) {
-  return str == o.str && dex == o.dex && agi == o.agi && def == o.def &&
-         walkSpeed == o.walkSpeed && maxHealth == o.maxHealth;
 }

@@ -1,0 +1,13 @@
+Name "ring"
+Group ring
+
+Tex ring.ruby
+Frames 1
+
+Effect 1.0 item.speed
+
+Ring
+
+NoModifier
+# NoBeatitude
+

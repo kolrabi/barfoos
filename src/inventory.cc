@@ -19,11 +19,11 @@ Inventory::Inventory() :
 {}
 
 std::shared_ptr<Item> &
-Inventory::operator[](InventorySlot slot) { 
-  return inventory[slot]; 
+Inventory::operator[](InventorySlot slot) {
+  return inventory[slot];
 }
 
-std::shared_ptr<Item> 
+std::shared_ptr<Item>
 Inventory::operator[](InventorySlot slot) const {
   if (inventory.find(slot) == inventory.end()) return std::shared_ptr<Item>(nullptr);
   return inventory.at(slot);
@@ -50,7 +50,7 @@ Inventory::AddToBackpack(const std::shared_ptr<Item> &item) {
       item->SetEquipped(false);
       return true;
     }
-    
+
     i = InventorySlot((size_t)i + 1);
   }
   return false;
@@ -62,7 +62,7 @@ Inventory::AddToBackpack(const std::shared_ptr<Item> &item) {
 void
 Inventory::AddToInventory(const std::shared_ptr<Item> &item, InventorySlot slot) {
   //Log("AddToInventory %s %u\n", item->GetDisplayName().c_str(), item->GetAmount());
-  
+
   if (!self[slot]) {
     // target slot is free
     if (slot >= InventorySlot::Backpack0 || item->IsEquippable(slot)) {
@@ -90,24 +90,25 @@ Inventory::AddToInventory(const std::shared_ptr<Item> &item, InventorySlot slot)
     item->SetAmount(1);
 
     //Log("%u %u\n", item->GetAmount(), rest->GetAmount());
-    
+
     //Log("Putting %u back into backpack\n", rest->GetAmount());
     if (!this->AddToBackpack(rest)) {
       this->DropItem(rest);
     }
   }
-  
+
   // combine
   std::shared_ptr<Item> combo(item->Combine(this->inventory[slot]));
-  
+
   if (combo) {
     // replace existing item with combination
     Log("Combined to %s\n", combo->GetDisplayName().c_str());
     this->inventory[slot] = nullptr;
     this->Equip(combo, slot);
+    if (!item->IsRemovable()) this->AddToBackpack(item);
     return;
   }
-  
+
   if (self[slot]->IsCursed() && slot < InventorySlot::Backpack0) {
     Log("Target is cursed, putting item in backpack\n");
     if (!this->AddToBackpack(item)) {
@@ -126,10 +127,10 @@ Inventory::AddToInventory(const std::shared_ptr<Item> &item, InventorySlot slot)
 
 /** Put item in the given slot, move any existing item to backpack.
   */
-void 
+void
 Inventory::Equip(const std::shared_ptr<Item> &item, InventorySlot slot) {
   bool equip = slot < InventorySlot::Backpack0;
-  
+
   // alredy an item there?
   if (self[slot] && item) {
     self[slot]->SetEquipped(false);
@@ -138,7 +139,7 @@ Inventory::Equip(const std::shared_ptr<Item> &item, InventorySlot slot) {
     }
   }
   self[slot] = item;
-  
+
   if (item && item->IsEquipped() != equip) {
     item->SetEquipped(equip);
     if (equip) this->equipped.push_back({slot, item});
@@ -149,7 +150,7 @@ Inventory::Equip(const std::shared_ptr<Item> &item, InventorySlot slot) {
 void
 Inventory::Update(RunningState &state, Entity &owner) {
   this->lastT = state.GetGame().GetTime();
-  
+
   for (auto &i:overflow) {
     i->Update(state);
     DropItem(state, owner, i);
@@ -164,7 +165,7 @@ Inventory::Update(RunningState &state, Entity &owner) {
     self[i.first] = self[i.first]->Consume(state, *user);
   }
   consumed.clear();
-  
+
   for (auto &i:equipped) {
     owner.OnEquip(state, *i.second, i.first, true);
   }
@@ -174,7 +175,7 @@ Inventory::Update(RunningState &state, Entity &owner) {
     owner.OnEquip(state, *i.second, i.first, false);
   }
   unequipped.clear();
-  
+
   for (auto &i:inventory) {
     if (i.second) {
       i.second->Update(state);
@@ -185,7 +186,7 @@ Inventory::Update(RunningState &state, Entity &owner) {
   }
 }
 
-/** Drop all items on the floor. 
+/** Drop all items on the floor.
 */
 void
 Inventory::Drop(RunningState &state, Entity &owner) {
@@ -197,12 +198,12 @@ Inventory::Drop(RunningState &state, Entity &owner) {
   }
 }
 
-void 
+void
 Inventory::DropItem(const std::shared_ptr<Item> &item) {
   overflow.push_back(item);
 }
 
-void 
+void
 Inventory::ConsumeItem(InventorySlot slot, Entity &user) {
   consumed.push_back(std::pair<InventorySlot, size_t>(slot, user.GetId()));
 }
@@ -214,39 +215,40 @@ Inventory::DropItem(RunningState &state, Entity &owner, const std::shared_ptr<It
   while(item->GetAmount() > 1) {
     DropItem(state, owner, std::shared_ptr<Item>(new Item(item->GetProperties().name)));
     item->DecAmount();
-  }  
-  
+  }
+
   ItemEntity *entity = new ItemEntity(item);
   entity->SetPosition(owner.GetPosition());
-  
+
   Vector3 offset(owner.GetForward() + state.GetRandom().Vector() * owner.GetAABB().extents);
-  
+
   entity->SetPosition(state.GetWorld().MoveAABB(entity->GetAABB(), offset + entity->GetPosition()));
   entity->AddVelocity(state.GetRandom().Vector()*1);
   entity->AddVelocity(owner.GetForward() + Vector3(0,1,0)*10);
-  
+
   state.AddEntity(entity);
 }
 
-IColor 
+IColor
 Inventory::GetLight() const {
   float t = lastT;
   IColor light;
-  
+
   for (auto item : this->inventory) {
     if (!item.second || !item.second->IsEquipped()) continue;
-    
+
     float f = 1.0;
     if (item.second->GetProperties().flicker) {
       f = simplexNoise(Vector3(t*3, 0, 0)) * simplexNoise(Vector3(t*2, -t, 0));
       f = f * 0.4 + 0.5;
     }
     light = light + item.second->GetProperties().light * f;
-  }  
+    light = light + item.second->GetEffect().light;
+  }
   return light;
 }
 
-void 
+void
 Inventory::ModifyStats(Stats &stats) const {
   for (auto item : this->inventory) {
     if (!item.second) continue;
@@ -259,7 +261,7 @@ Serializer &operator << (Serializer &ser, const Inventory &inventory) {
   for (auto item : inventory.inventory) {
     if (item.second) count ++;
   }
-  
+
   ser << count;
   for (auto item : inventory.inventory) {
     if (item.second) ser << (uint32_t)item.first << *item.second;
@@ -269,17 +271,17 @@ Serializer &operator << (Serializer &ser, const Inventory &inventory) {
 
 Deserializer &operator >> (Deserializer &deser, Inventory &inventory) {
   inventory.inventory.clear();
-  
+
   uint32_t count;
   deser >> count;
-  
+
   for (size_t i = 0; i<count; i++) {
     uint32_t slot;
     deser >> slot;
-    
+
     Item *item;
     deser >> item;
-    
+
     inventory.inventory[(InventorySlot)slot] = std::shared_ptr<Item>(item);
     item->isEquipped = slot < (int)InventorySlot::Backpack0;
   }

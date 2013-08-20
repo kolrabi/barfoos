@@ -19,6 +19,6 @@ CanUseEntity
 CanUseCell
 
 Effect  0.9 ""
-Effect  0.1 "strength"
+Effect  0.1 "$item"
 
 BreakBlockStrength 0.1

@@ -339,7 +339,7 @@ Player::DrawWeapons(Gfx &gfx) const {
   }
   if (this->inventory[InventorySlot::LeftHand]) {
     this->inventory[InventorySlot::LeftHand]->Draw(gfx, true);
-  } else {   
+  } else {
     this->leftHand->Draw(gfx, true);
   }
 }
@@ -405,7 +405,7 @@ Player::DrawGUI(Gfx &gfx) const {
   );
   RenderString(tmp, "small").Draw(gfx, 4, vsize.y-32);
 
-  snprintf(tmp, sizeof(tmp), "LVL: %3u EXP: %4d / %4d", (unsigned int)stats.GetLevel(), (int)stats.exp, (int)Stats::GetExpForLevel(stats.GetLevel() + 1));
+  snprintf(tmp, sizeof(tmp), "LVL: %3u EXP: %4d / %4d", (unsigned int)Stats::GetLevelForExp(stats.exp), (int)stats.exp, (int)Stats::GetExpForLevel(Stats::GetLevelForExp(stats.exp) + 1));
   RenderString(tmp, "small").Draw(gfx, 4, vsize.y-32-12);
 
   std::string buffstring;
@@ -414,7 +414,7 @@ Player::DrawGUI(Gfx &gfx) const {
   }
   RenderString(buffstring).Draw(gfx, vsize - Point(4,40), int(Align::HorizRight|Align::VertBottom));
 
-  snprintf(tmp, sizeof(tmp), "%3.1f", fps);
+  snprintf(tmp, sizeof(tmp), "%3.1f %f %f", fps, GetEffectiveStats().walkSpeed, GetEffectiveStats().cooldown);
   RenderString(tmp, "small").Draw(gfx, 4, vsize.y-32-24);
 }
 
@@ -542,8 +542,12 @@ Player::OnEquip(RunningState &state, const Item &item, InventorySlot slot, bool 
     if (item.IsCursed()) {
       this->AddMessage("It is freezing cold.");
     }
+    if (item.IsInited() && item.GetEffect().feeling != "")
+      this->AddMessage("You feel "+item.GetEffect().feeling+".");
   } else {
     this->AddMessage("You take off the " + item.GetDisplayName() + ".");
+    if (item.IsInited() && item.GetEffect().feeling != "")
+      this->AddMessage("You no longer feel "+item.GetEffect().feeling+".");
   }
 }
 
