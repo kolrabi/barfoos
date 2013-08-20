@@ -155,7 +155,7 @@ Gfx::Init(Game &game) {
   
   glfwSetWindowUserPointer(this->window, &game);
   
-  if (this->screenSize.x < 800) {
+  if (this->screenSize.x < 800 || this->screenSize.y < 600) {
     this->virtualScreenSize.x = this->screenSize.x;
     this->virtualScreenSize.y = this->screenSize.y;
   } else {

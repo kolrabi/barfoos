@@ -142,13 +142,14 @@ ItemProperties::ParseProperty(const std::string &cmd) {
     Parse(this->unidentifiedName);
     this->identifiedName = this->unidentifiedName;
   }
-  else if (cmd == "scroll")         this->unidentifiedName = this->game->GetScrollName();
+  else if (cmd == "scroll")         { this->unidentifiedName = this->game->GetScrollName(); this->isScroll = true; }
   else if (cmd == "potion")         this->isPotion = true;
   else if (cmd == "wand")           this->isWand = true;
 
   else if (cmd == "onuseidentify")  this->onUseIdentify = true;
   else if (cmd == "oncombineeffect")  Parse(this->onCombineEffect);
   else if (cmd == "onconsumeeffect")  Parse(this->onConsumeEffect);
+  else if (cmd == "onconsumeverb")  Parse(this->onConsumeVerb);
   else if (cmd == "onconsumeresult")  Parse(this->onConsumeResult);
   else if (cmd == "onconsumeaddbuff") Parse(this->onConsumeAddBuff);
   else if (cmd == "onconsumeteleport") this->onConsumeTeleport = true;

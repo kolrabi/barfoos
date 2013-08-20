@@ -28,6 +28,7 @@ Item::Item(const std::string &type) :
   beatitude(Beatitude::Normal),
   modifier(0),
   identified(false),
+  lastIdentified(false),
   amount(1),
   unlockID(0)
 {
@@ -46,6 +47,7 @@ void Item::ReplaceWith(const std::string &type) {
   this->durability = this->properties->durability;
   this->nextUseT = 0.0;
   this->identified = false;
+  this->lastIdentified = false;
   if (!this->sprite.animations.empty()) this->sprite.StartAnim(0);
 }
 
@@ -97,10 +99,21 @@ void Item::Update(RunningState &state) {
     }
     this->effect = &getEffect(effectName);
     this->durability *= this->effect->durability;
+    if (!this->identified) this->identified = game.IsIdentified(this->properties->name);
+    this->lastIdentified = identified;
   }
-
-  if (!this->identified) this->identified = game.IsIdentified(this->properties->name);
-  else                   game.SetIdentified(this->properties->name);
+  
+  if (this->properties->isScroll || this->properties->isRing || this->properties->isWand || this->properties->isPotion || this->properties->isAmulet) {
+    if (this->identified && !this->lastIdentified) {
+      state.GetPlayer().AddMessage("You learnt that a " + this->properties->unidentifiedName + " is a " + this->properties->identifiedName + this->effect->displayName);
+    }
+    if (!this->identified) {
+      this->identified = game.IsIdentified(this->properties->name);
+    } else {
+      game.SetIdentified(this->properties->name);
+    }
+  }
+  this->lastIdentified = this->identified;
 
   // reduce durability while equipped
   if (this->isEquipped) {
@@ -376,6 +389,10 @@ Item::Combine(const std::shared_ptr<Item> &other) {
 
 std::shared_ptr<Item>
 Item::Consume(RunningState &state, Entity &user) {
+  if (state.GetPlayer().GetId() == user.GetId() && this->properties->onConsumeVerb != "") {
+    state.GetPlayer().AddMessage("You "+this->properties->onConsumeVerb+" the "+this->GetDisplayName()+".");
+  }
+
   if (this->properties->onConsumeEffect != "") {
     const EffectProperties &effect = getEffect(this->properties->onConsumeEffect);
     effect.Consume(state, user);
@@ -389,7 +406,7 @@ Item::Consume(RunningState &state, Entity &user) {
   if (this->properties->onConsumeTeleport) {
     user.Teleport(state, Vector3(state.GetWorld().GetRandomTeleportTarget(state.GetRandom())));
   }
-
+  
   state.GetGame().SetIdentified(this->properties->name);
 
   this->isRemovable = true;

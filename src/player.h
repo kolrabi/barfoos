@@ -31,7 +31,7 @@ public:
 
   void HandleEvent(const InputEvent &event);
 
-  void AddMessage(const std::string &text, const std::string &font = "default");
+  void AddMessage(const std::string &text, const std::string &font = "small");
   void AddDeathMessage(const Entity &dead, const HealthInfo &info);
   void AddDeathMessage(const Entity &dead, const Entity &killer, const HealthInfo &info);
 

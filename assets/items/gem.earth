@@ -1,5 +1,6 @@
 Tex               gem.earth
 Group             elemental_gem
+Group             item
 
 Size              0.5 0.5
 

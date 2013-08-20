@@ -99,7 +99,7 @@ protected:
   Beatitude beatitude;
   int modifier;
 
-  bool identified;
+  bool identified, lastIdentified;
 
   uint32_t amount;
   uint32_t unlockID;

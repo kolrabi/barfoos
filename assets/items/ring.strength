@@ -1,5 +1,8 @@
-Name "ring"
-Group ring
+Group             item
+Group             ring
+
+UnidentifiedName  "ring made of iron"
+IdentifiedName    "ring"
 
 Tex ring.iron
 Frames 1

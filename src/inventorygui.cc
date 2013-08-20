@@ -33,13 +33,13 @@ InventoryGui::InventoryGui(RunningState &state, Entity &entity) :
   Point topRight = gfx.AlignTopRightScreen(Point(32,32), 16) + Point(0, 16);
 
   Gui *bg = new Gui();
-  bg->SetPosition(Point(8,24));
+  bg->SetPosition(Point(4,24));
   bg->SetSize(Point(124, 172));
   bg->SetBackground(NinePatch("gui/button"));
   this->children.push_back(bg);
   
   bg = new Gui();
-  bg->SetPosition(Point(vsize.x - (8+156),24));
+  bg->SetPosition(Point(vsize.x - (4+156),24));
   bg->SetSize(Point(156, 172));
   bg->SetBackground(NinePatch("gui/button"));
   bg->SetGravity(true, true, false, false);

@@ -28,6 +28,7 @@ struct ItemProperties : public Properties {
   bool isWand   = false;
   bool isRing   = false;
   bool isAmulet = false;
+  bool isScroll = false;
 
   // rendering
   Sprite sprite = Sprite();
@@ -73,6 +74,7 @@ struct ItemProperties : public Properties {
 
   std::string onCombineEffect = "";
   std::string onConsumeEffect = "";
+  std::string onConsumeVerb = "";
   std::string onConsumeResult = "";
   std::string onConsumeAddBuff = "";
   bool onConsumeTeleport = false;

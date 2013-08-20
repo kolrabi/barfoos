@@ -1,3 +1,4 @@
+Group             item
 Tex               potion.blue
 
 Size              0.5 0.5
@@ -11,3 +12,4 @@ NoModifier
 
 OnConsumeResult   potion.empty
 OnConsumeEffect   potion.water
+OnConsumeVerb     drink

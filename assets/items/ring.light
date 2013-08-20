@@ -1,5 +1,8 @@
-Name "ring"
-Group ring
+Group             item
+Group             ring
+
+UnidentifiedName  "golden ring"
+IdentifiedName    "ring"
 
 Tex ring.gold
 Frames 1

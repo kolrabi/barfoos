@@ -1,5 +1,6 @@
 #include "itementity.h"
 #include "item.h"
+#include "player.h"
 
 #include "runningstate.h"
 #include "gfx.h"
@@ -52,8 +53,11 @@ void ItemEntity::Draw(Gfx &gfx) const {
   this->item->DrawSprite(gfx, this->aabb.center + Vector3(0,yoffset,0));
 }
 
-void ItemEntity::OnUse(RunningState &, Entity &other) {
+void ItemEntity::OnUse(RunningState &state, Entity &other) {
   if (!this->removable && other.GetInventory().AddToBackpack(this->item)) {
+    if (other.GetId() == state.GetPlayer().GetId()) {
+      state.GetPlayer().AddMessage("You pick up the "+this->item->GetDisplayName()+".");
+    }
     this->removable = true;
   }
 }

@@ -153,7 +153,8 @@ Player::Update(RunningState &state) {
 
   // update messages
   auto iter = this->messages.begin();
-  while(iter!=this->messages.end()) {
+  size_t messageNum = 0;
+  while(iter!=this->messages.end() && messageNum++ < 2) {
     (*iter)->messageTime -= game.GetDeltaT();
     if ((*iter)->messageTime <= 0) {
       this->messageY += (*iter)->text->GetSize().y;
@@ -291,7 +292,9 @@ Player::DrawGUI(Gfx &gfx) const {
 
   // draw messages
   float y = this->messageY + 4;
+  size_t messageNum = 0;
   for (auto &msg : this->messages) {
+    if (messageNum++ >= 2) break;
     float a = msg->messageTime * 4;
     if (a > 1.0) a = 1.0;
     gfx.SetColor(IColor(255,255,255), a);
@@ -403,6 +406,8 @@ Player::AddMessage(const std::string &text, const std::string &font) {
 void
 Player::AddDeathMessage(const Entity &dead, const HealthInfo &info) {
   if (dead.GetName() == "") return;
+  
+  if ((dead.GetPosition()-this->GetPosition()).GetMag() > 10) return;
 
   switch(info.type) {
     case HealthType::Unspecified: AddMessage(dead.GetName() + " died"); break;
@@ -420,6 +425,7 @@ Player::AddDeathMessage(const Entity &dead, const HealthInfo &info) {
 void
 Player::AddDeathMessage(const Entity &dead, const Entity &killer, const HealthInfo &info) {
   if (dead.GetName() == "") return;
+  if ((dead.GetPosition()-this->GetPosition()).GetMag() > 10) return;
 
   switch(info.type) {
     case HealthType::Unspecified: AddMessage(dead.GetName() + " was killed by " + killer.GetName()); break;
@@ -562,7 +568,7 @@ Player::Serialize(Serializer &ser) const {
 
 Player::Message::Message(const std::string &txt, const std::string &font) :
   text(new RenderString(txt, font)),
-  messageTime(5)
+  messageTime(2)
 {}
 
 Player::Message::~Message() {

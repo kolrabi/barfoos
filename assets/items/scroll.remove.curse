@@ -1,3 +1,4 @@
+Group             item
 tex scroll
 
 Scroll
@@ -7,3 +8,4 @@ NoBeatitude
 NoModifier
 
 OnCombineEffect curse.remove
+OnConsumeVerb     read

@@ -1,3 +1,4 @@
+Group             item
 Tex               potion.green
 
 Size              0.5 0.5
@@ -11,4 +12,4 @@ NoModifier
 
 OnConsumeAddBuff  buff.poison
 OnConsumeResult   potion.empty
-
+OnConsumeVerb     drink
