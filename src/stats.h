@@ -127,6 +127,7 @@ struct Stats {
 
   static HealthInfo MeleeAttack(const Entity &attacker, const Entity &victim, const Item &item, Random &random);
   static HealthInfo ExplosionAttack(const Entity &attacker, const Entity &victim, float damage, Element element);
+  static HealthInfo ProjectileAttack(const Entity &projectile, const Entity &victim, float damage);
 
   static float GetExpForLevel(size_t lvl);
   static size_t GetLevelForExp(float exp);

@@ -1,0 +1,15 @@
+Group             item
+Tex               potion.purple
+
+Size              0.5 0.5
+
+Potion
+UnidentifiedName  "purple potion"
+IdentifiedName    "potion of regeneration"
+
+NoBeatitude
+NoModifier
+
+OnConsumeAddBuff  buff.regen
+OnConsumeResult   potion.empty
+OnConsumeVerb     drink

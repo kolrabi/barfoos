@@ -78,9 +78,11 @@ private:
 
   // gameplay
   bool itemActiveLeft, itemActiveRight;
+  bool lastItemActiveLeft, lastItemActiveRight;
 
   std::unordered_map<uint32_t, float> lastHurtT;
   float pain;
+  float hpFlashT;
 
   // display
   std::list<Message*> messages;

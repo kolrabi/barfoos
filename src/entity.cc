@@ -99,6 +99,7 @@ EntityProperties::ParseProperty(const std::string &cmd) {
   else if (cmd == "lifetime")         Parse(this->lifetime);
   else if (cmd == "lifetimerand")     Parse(this->lifetimeRand);
   else if (cmd == "lockedchance")     Parse(this->lockedChance);
+  else if (cmd == "impactdamage")     Parse(this->impactDamage);
   else if (cmd == "extents") {
     Parse(this->extents);
     this->sprite.width = this->extents.x*2.0;

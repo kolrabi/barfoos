@@ -100,6 +100,7 @@ struct EntityProperties : public Properties {
   float   attackJump        = 0.0;
   float   exp               = 0.0;
   float   lockedChance      = 0.0;
+  float   impactDamage      = 0.0;
 
   uint32_t  onDieExplodeRadius = 0;
   float   onDieExplodeStrength = 0.0;

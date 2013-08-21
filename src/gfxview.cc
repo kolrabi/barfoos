@@ -10,14 +10,14 @@ void GfxView::Look(const Vector3 &pos, const Vector3 &forward, float fovY, const
   float aspect = (float)gfx.viewportSize.x / (float)gfx.viewportSize.y;
 
   this->right = forward.Cross(up);
-  
+
   if (fovY > 0.0) {
     this->projStack.back() = Matrix4::Perspective(fovY, aspect, 0.0015f, 64.0f);
   } else {
     this->projStack.back() = Matrix4::Ortho(fovY*aspect, -fovY*aspect, fovY, -fovY, 0.0015f, 64.0f);
   }
-  
-  this->viewStack.back() = 
+
+  this->viewStack.back() =
   this->modelViewStack.back() = Matrix4::LookFrom(pos, forward, up);
   glEnable(GL_DEPTH_TEST);
 }
@@ -25,13 +25,13 @@ void GfxView::Look(const Vector3 &pos, const Vector3 &forward, float fovY, const
 void GfxView::GUI() {
   this->projStack.back() = Matrix4();
 
-  this->modelViewStack.back() = 
-    Matrix4::Scale(    Vector3(2.0/gfx.screenSize.x, -2.0/gfx.screenSize.y, 1)) *
-    Matrix4::Translate(Vector3( -gfx.screenSize.x/2, -gfx.screenSize.y/2,   0));
-    
-  if (gfx.screenSize.x > 640) {
+  this->modelViewStack.back() =
+    Matrix4::Scale(    Vector3(2.0/gfx.virtualScreenSize.x, -2.0/gfx.virtualScreenSize.y, 1)) *
+    Matrix4::Translate(Vector3( -gfx.virtualScreenSize.x/2, -gfx.virtualScreenSize.y/2,   0));
+
+  /*if (gfx.screenSize.x > 800 && gfx.screenSize.y > 600) {
     this->modelViewStack.back() = this->modelViewStack.back() * Matrix4::Scale(Vector3(2,2,1));
-  }
+  }*/
   this->viewStack.back() = this->modelViewStack.back();
   glDisable(GL_DEPTH_TEST);
 }
@@ -66,19 +66,19 @@ void GfxView::Scale(const Vector3 &p) {
 void GfxView::Rotate(float angle, const Vector3 &p)  {
   this->modelViewStack.back() = this->modelViewStack.back() * Matrix4::Rotate(angle, p);
 }
-  
+
 void GfxView::Billboard(bool flip, bool vertical) {
-  this->modelViewStack.back()(0,0) = flip?-1:1; 
+  this->modelViewStack.back()(0,0) = flip?-1:1;
   this->modelViewStack.back()(0,1) = 0;
   this->modelViewStack.back()(0,2) = 0;
 
   if (!vertical) {
-    this->modelViewStack.back()(1,0) = 0; 
+    this->modelViewStack.back()(1,0) = 0;
     this->modelViewStack.back()(1,1) = 1;
     this->modelViewStack.back()(1,2) = 0;
   }
-    
-  this->modelViewStack.back()(2,0) = 0; 
+
+  this->modelViewStack.back()(2,0) = 0;
   this->modelViewStack.back()(2,1) = 0;
   this->modelViewStack.back()(2,2) = 1;
 }

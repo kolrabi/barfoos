@@ -33,9 +33,12 @@ Player::Player() :
   // gameplay
   itemActiveLeft    (false),
   itemActiveRight   (false),
+  lastItemActiveLeft (false),
+  lastItemActiveRight(false),
 
   lastHurtT         (),
   pain              (0.0),
+  hpFlashT          (0.0),
 
   // display
   messages          (),
@@ -73,6 +76,9 @@ Player::Player(Deserializer &deser) : Mob("player", deser),
   // gameplay
   itemActiveLeft    (false),
   itemActiveRight   (false),
+  lastItemActiveLeft (false),
+  lastItemActiveRight(false),
+
   lastHurtT         (),
   pain              (0.0),
 
@@ -126,6 +132,8 @@ Player::Update(RunningState &state) {
   this->fps = game.GetFPS();
 
   this->blink = std::fmod(game.GetTime()*2, 1.0) > 0.3;
+  this->hpFlashT -= game.GetDeltaT();
+  if (this->hpFlashT < 0.0) this->hpFlashT = 0.0;
 
   this->pain -= game.GetDeltaT() * 0.1;
   if (this->pain < 0) this->pain = 0;
@@ -138,18 +146,47 @@ Player::Update(RunningState &state) {
   if (itemActiveLeft) {
     std::shared_ptr<Item> useItem = this->inventory[InventorySlot::RightHand];
     if (!useItem) useItem = this->rightHand;
-    std::string skill = useItem->GetProperties().useSkill;
-    bool result = this->UseItem(state, useItem);
-    if (result && skill != "") this->baseStats.skills[skill]++;
+
+    if (useItem->NeedsChargeUp()) {
+      useItem->SetCharging(true);
+    } else {
+      std::string skill = useItem->GetProperties().useSkill;
+      bool result = this->UseItem(state, useItem);
+      if (result && skill != "") this->baseStats.skills[skill]++;
+    }
+  } else {
+    std::shared_ptr<Item> useItem = this->inventory[InventorySlot::RightHand];
+    if (!useItem) useItem = this->rightHand;
+
+    if (useItem->NeedsChargeUp() && lastItemActiveLeft) {
+      std::string skill = useItem->GetProperties().useSkill;
+      bool result = this->UseItem(state, useItem);
+      if (result && skill != "") this->baseStats.skills[skill]++;
+    }
   }
+  lastItemActiveLeft = itemActiveLeft;
 
   if (itemActiveRight) {
     std::shared_ptr<Item> useItem = this->inventory[InventorySlot::LeftHand];
     if (!useItem) useItem = this->leftHand;
-    std::string skill = useItem->GetProperties().useSkill;
-    bool result = this->UseItem(state, useItem);
-    if (result && skill != "") this->baseStats.skills[skill]++;
+    if (useItem->NeedsChargeUp()) {
+      useItem->SetCharging(true);
+    } else {
+      std::string skill = useItem->GetProperties().useSkill;
+      bool result = this->UseItem(state, useItem);
+      if (result && skill != "") this->baseStats.skills[skill]++;
+    }
+  } else {
+    std::shared_ptr<Item> useItem = this->inventory[InventorySlot::LeftHand];
+    if (!useItem) useItem = this->leftHand;
+
+    if (useItem->NeedsChargeUp() && lastItemActiveRight) {
+      std::string skill = useItem->GetProperties().useSkill;
+      bool result = this->UseItem(state, useItem);
+      if (result && skill != "") this->baseStats.skills[skill]++;
+    }
   }
+  lastItemActiveRight = itemActiveRight;
 
   // update map
   if (headCell) {
@@ -317,11 +354,14 @@ Player::DrawGUI(Gfx &gfx) const {
   std::string strHeart = u8"\u0081";
   if (h<4 && blink) strHeart = u8"\u0082";
 
-  for (int i=0; i<h; i++) {
-    strHealth += strHeart;
+  for (int i=0; i<11; i++) {
+    if (i<h-1) strHealth += strHeart; else strHealth += " ";
   }
-  RenderString rsHealth(ToString(int(this->health)) + " " + strHealth, "big");
+  RenderString rsHealth(strHealth + " " + ToString(int(this->health)), "big");
+  gfx.SetColor(IColor(255, 255-255*this->hpFlashT, 255-255*this->hpFlashT));
   rsHealth.Draw(gfx, 2, vsize.y-4, (int)Align::HorizLeft | (int)Align::VertBottom);
+
+  gfx.SetColor(IColor(255, 255, 255));
 
   char tmp[1024];
   Stats stats = this->GetEffectiveStats();
@@ -386,18 +426,29 @@ Player::AddHealth(RunningState &state, const HealthInfo &info) {
   Mob::AddHealth(state, info);
   int hp2 = this->health;
   if (hp2 < hp) {
-    this->AddMessage("Ouch!");
     lastHurtT[(size_t)info.type] = game.GetTime();
+    this->hpFlashT = 1.0;
   }
 
   Entity *other = state.GetEntity(info.dealerId);
   if (other && other != this) {
-    if (info.hitType == HitType::Miss) {
-      this->AddMessage("The " + other->GetName() + " misses");
-    } else if (info.hitType == HitType::Normal) {
-      this->AddMessage("The " + other->GetName() + " hits you for " + ToString(info.amount) + " hp");
-    } else if (info.hitType == HitType::Critical) {
-      this->AddMessage("The " + other->GetName() + " hits you critically for " + ToString(info.amount) + " hp");
+    std::string otherName = other->GetName();
+    if (otherName == "") {
+      if (info.hitType == HitType::Miss) {
+        this->AddMessage("Something missed you.");
+      } else if (info.hitType == HitType::Normal) {
+        this->AddMessage("You were hit for " + ToString(info.amount) + " hp.");
+      } else if (info.hitType == HitType::Critical) {
+        this->AddMessage("You were critically hit for " + ToString(info.amount) + " hp.");
+      }
+    } else {
+      if (info.hitType == HitType::Miss) {
+        this->AddMessage("The " + other->GetName() + " misses you.");
+      } else if (info.hitType == HitType::Normal) {
+        this->AddMessage("The " + other->GetName() + " hits you for " + ToString(info.amount) + " hp.");
+      } else if (info.hitType == HitType::Critical) {
+        this->AddMessage("The " + other->GetName() + " hits you critically for " + ToString(info.amount) + " hp.");
+      }
     }
   }
 }

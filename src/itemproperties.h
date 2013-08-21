@@ -32,7 +32,8 @@ struct ItemProperties : public Properties {
 
   // rendering
   Sprite sprite = Sprite();
-  uint32_t equipAnim = 0;
+  ID equipAnim = 0;
+  ID chargeAnim = InvalidID;
   IColor light {0,0,0};
   bool flicker = false;
   UseMovement useMovement = UseMovement::SlashMovement;
@@ -71,6 +72,7 @@ struct ItemProperties : public Properties {
   bool canUseNothing = false;
   bool noModifier = false;
   bool noBeatitude = false;
+  float chargeTime = 0.0f;
 
   std::string onCombineEffect = "";
   std::unordered_map<std::string, std::string> combinations;

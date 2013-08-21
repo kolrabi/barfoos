@@ -1316,7 +1316,7 @@ MiniMap::RepaintMap() {
         if (!cell.IsSeen(2)) continue;
 
         bool solid = !cell.IsTransparent() && !cell[Side::Up].IsTransparent() && !cell[Side::Down].IsTransparent();
-        uint8_t v = yy - viewY + 64;
+        uint8_t v = yy - viewY + 192;
         if (solid) {
           pixels[index+0] = v;
           pixels[index+1] = v;

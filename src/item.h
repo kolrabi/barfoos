@@ -61,10 +61,12 @@ public:
   void AddAmount(int amt);
   void SetAmount(int amt)                     { this->amount = amt; }
   void SetUnlockID(uint32_t id)               { this->unlockID = id; }
+  void SetCharging(bool charging)             { this->charging = charging; if (!charging) this->chargeT = 0.0; }
+  float GetCharge()                     const { return this->charging ? this->chargeT : 0.0; }
 
   bool IsConsumable()                   const { return this->properties->onConsumeEffect != "" || this->properties->onConsumeResult != "" || this->properties->onConsumeTeleport; }
-
   bool IsRemovable()                    const { return isRemovable || this->amount == 0; }
+  bool NeedsChargeUp()                  const { return this->properties->chargeTime > 0.0; }
 
   const ItemProperties &GetProperties() const { return *this->properties; }
   const EffectProperties &GetEffect()   const { return *this->effect; }
@@ -95,6 +97,9 @@ protected:
   float durability;
   bool isEquipped;
   float nextUseT;
+
+  bool charging;
+  float chargeT;
 
   Beatitude beatitude;
   int modifier;

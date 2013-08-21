@@ -23,6 +23,8 @@ Stats::MeleeAttack(const Entity &attacker, const Entity &victim, const Item &ite
   info.type     = HealthType::Melee;
   info.element  = item.GetElement();
 
+  float charge = item.NeedsChargeUp() ? item.GetCharge() : 0.0;
+
   // get stats
   Stats atkStat = attacker.GetEffectiveStats();
   Stats defStat = victim.GetEffectiveStats();
@@ -39,7 +41,7 @@ Stats::MeleeAttack(const Entity &attacker, const Entity &victim, const Item &ite
 
   info.hitType = hit;
 
-  int dmg = atkStat.str * 0.5 * item.GetDamage() + atkSkillLevel*0.5;
+  int dmg = (atkStat.str * 0.5 * item.GetDamage() + atkSkillLevel*0.5) * charge;
   if (dmg < 1) dmg = 1;
 
   int amount = dmg - defStat.def * 0.1;
@@ -70,7 +72,7 @@ Stats::MeleeAttack(const Entity &attacker, const Entity &victim, const Item &ite
 HealthInfo
 Stats::ExplosionAttack(const Entity &attacker, const Entity &victim, float damage, Element element) {
   HealthInfo info;
-  info.dealerId = attacker.GetId();
+  info.dealerId = attacker.GetOwner() == InvalidID ? attacker.GetId() : attacker.GetOwner();
   info.type = HealthType::Explosion;
   info.element = element;
 
@@ -81,7 +83,25 @@ Stats::ExplosionAttack(const Entity &attacker, const Entity &victim, float damag
   bool kill = -info.amount > victim.GetHealth();
   float expDmg = kill ? victim.GetHealth() : -info.amount;
   info.exp = (expDmg / defStat.maxHealth) * 0.5 * victim.GetProperties()->exp + kill ? victim.GetProperties()->exp : 0;
+  if (info.amount > -1.0) info.amount = -1.0;
 
+  return info;
+}
+
+HealthInfo
+Stats::ProjectileAttack(const Entity &projectile, const Entity &victim, float damage) {
+  HealthInfo info;
+  info.dealerId = projectile.GetOwner();
+  info.type = HealthType::Arrow;
+  // TODO: info.element = projectile.GetElement();
+
+  // get stats
+  Stats defStat = victim.GetEffectiveStats();
+
+  info.amount = -(damage - defStat.def * 0.5);
+  bool kill = -info.amount > victim.GetHealth();
+  float expDmg = kill ? victim.GetHealth() : -info.amount;
+  info.exp = (expDmg / defStat.maxHealth) * 0.5 * victim.GetProperties()->exp + kill ? victim.GetProperties()->exp : 0;
   return info;
 }
 

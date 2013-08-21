@@ -1,5 +1,6 @@
 Group             item
 Group             ring
+Level             0 -1 0.2
 
 UnidentifiedName  "silver ring"
 IdentifiedName    "ring"

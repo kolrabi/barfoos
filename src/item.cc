@@ -25,6 +25,8 @@ Item::Item(const std::string &type) :
   durability(this->properties->durability),
   isEquipped(false),
   nextUseT(0.0),
+  charging(false),
+  chargeT(0.0),
   beatitude(Beatitude::Normal),
   modifier(0),
   typeIdentified(false),
@@ -48,6 +50,8 @@ void Item::ReplaceWith(const std::string &type) {
   this->nextUseT = 0.0;
   this->typeIdentified = false;
   this->itemIdentified = false;
+  this->charging = false;
+  this->chargeT = false;
   if (!this->sprite.animations.empty()) this->sprite.StartAnim(0);
 }
 
@@ -69,6 +73,9 @@ void Item::StartCooldown(RunningState &state, Entity &user, bool damage) {
   if (this->properties->onUseIdentify) {
     this->itemIdentified = true;
   }
+
+  this->charging = false;
+  this->chargeT = 0.0;
 }
 
 void Item::Update(RunningState &state) {
@@ -106,7 +113,11 @@ void Item::Update(RunningState &state) {
   if (!this->typeIdentified && this->itemIdentified) {
     this->typeIdentified = true;
     game.SetIdentified(this->properties->name);
-    state.GetPlayer().AddMessage("You learnt that a " + this->properties->unidentifiedName + " is a " + this->properties->identifiedName);
+    state.GetPlayer().AddMessage(
+      "You learnt that a " + this->properties->unidentifiedName +
+      " is a " + this->properties->identifiedName +
+      ((this->effect && this->properties->effects.size()==1) ? this->effect->displayName : "")
+    );
   } else {
     this->typeIdentified = game.IsIdentified(this->properties->name);
   }
@@ -136,10 +147,19 @@ void Item::Update(RunningState &state) {
   // cooldown fraction: 1.0 full cooldown left, 0.0 cooldown over
   cooldownFrac = (nextUseT - game.GetTime())/this->properties->cooldown;
   if (cooldownFrac < 0) cooldownFrac = 0;
+
+  if (this->charging && this->NeedsChargeUp()) {
+    this->chargeT += game.GetDeltaT() / this->properties->chargeTime;
+    if (this->chargeT > 1.0) this->chargeT = 1.0;
+  } else {
+    this->chargeT = 0.0;
+  }
 }
 
 bool Item::UseOnEntity(RunningState &state, Mob &user, uint32_t id) {
   if (!this->CanUse(state)) return false;
+
+  float charge = this->NeedsChargeUp() ? this->chargeT : 1.0;
 
   if (this->properties->canUseEntity) {
     Entity *entity = state.GetEntity(id);
@@ -160,7 +180,7 @@ bool Item::UseOnEntity(RunningState &state, Mob &user, uint32_t id) {
     }
 
     Mob *mob = dynamic_cast<Mob*>(entity);
-    if (mob) mob->AddImpulse(user.GetForward() * this->GetKnockback());
+    if (mob) mob->AddImpulse(user.GetForward() * this->GetKnockback() * charge);
 
     // replace item
     auto iter = entity->GetProperties()->onUseItemReplace.find(this->properties->name);
@@ -208,6 +228,8 @@ bool Item::UseOnEntity(RunningState &state, Mob &user, uint32_t id) {
 bool Item::UseOnCell(RunningState &state, Mob &user, Cell *cell, Side) {
   if (!this->CanUse(state)) return false;
 
+  float charge = this->NeedsChargeUp() ? this->chargeT : 1.0;
+
   if (this->properties->canUseCell) {
     uint32_t cellLock = cell->GetLockedID();
     if (cellLock && this->properties->unlockChance > 0.0 && (this->unlockID == cellLock || this->unlockID == 0) && state.GetRandom().Chance(this->properties->unlockChance)) {
@@ -219,7 +241,7 @@ bool Item::UseOnCell(RunningState &state, Mob &user, Cell *cell, Side) {
       return true;
     }
 
-    if (this->GetBreakBlockStrength() && state.GetRandom().Chance(this->properties->breakBlockStrength / cell->GetInfo().breakStrength)) {
+    if (this->GetBreakBlockStrength() && state.GetRandom().Chance((this->properties->breakBlockStrength * charge) / cell->GetInfo().breakStrength)) {
       cell->GetWorld()->BreakBlock(cell->GetPosition());
       return true;
     }
@@ -235,13 +257,16 @@ bool Item::UseOnNothing(RunningState &state, Mob &user) {
   if (!this->CanUse(state)) return false;
   if (!this->properties->canUseNothing) return false;
 
+  float charge = this->NeedsChargeUp() ? this->chargeT : 1.0;
+
   if (this->properties->spawnProjectile != "") {
     Projectile *proj = new Projectile(this->properties->spawnProjectile);
     proj->SetOwner(user);
     proj->SetAngles(user.GetAngles());
     proj->SetPosition(user.GetPosition() + Vector3(0,user.GetProperties()->eyeOffset,0));
-    proj->AddVelocity(user.GetVelocity());
     state.AddEntity(proj);
+    proj->SetVelocity(proj->GetVelocity() * charge);
+    proj->AddVelocity(user.GetVelocity());
     this->StartCooldown(state, user);
     return true;
   } else {
@@ -265,7 +290,7 @@ void Item::Draw(Gfx &gfx, bool left) {
     case UseMovement::RecoilMovement: gfx.GetView().Rotate(-60, Vector3(0,0,1));
                                       gfx.GetView().Translate(Vector3(cooldownFrac,0,0)); break;
   }
-  gfx.GetView().Translate(Vector3(-1,1,0));
+  gfx.GetView().Translate(Vector3(-1 + this->GetCharge(),1,0));
   gfx.GetView().Scale(Vector3(2,2,2));
   gfx.DrawSprite(this->sprite, Vector3(0,0,0), left, false);
   gfx.GetView().Pop();
@@ -440,6 +465,9 @@ Item::Consume(RunningState &state, Entity &user) {
 void
 Item::SetEquipped(bool equipped) {
   this->isEquipped = equipped;
+  if (!equipped) {
+    this->charging = false;
+  }
 }
 
 void

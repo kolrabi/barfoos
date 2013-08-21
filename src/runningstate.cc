@@ -445,7 +445,6 @@ Vector3 RunningState::MoveAABB(
 
 void
 RunningState::Explosion(Entity &entity, const Vector3 &pos, size_t radius, float strength, float damage, Element element) {
-
   AABB aabb(pos, radius);
 
   ID ownerID = entity.GetOwner();

@@ -133,6 +133,8 @@ ItemProperties::ParseProperty(const std::string &cmd) {
   else if (cmd == "equipdurability")  Parse(this->equipDurability);
   else if (cmd == "combinedurability")  Parse(this->combineDurability);
   else if (cmd == "equipanim")        Parse(this->equipAnim);
+  else if (cmd == "chargeanim")        Parse(this->chargeAnim);
+  else if (cmd == "chargetime")         Parse(this->chargeTime);
 
   else if (cmd == "replacement")      Parse(this->replacement);
 
