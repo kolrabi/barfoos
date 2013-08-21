@@ -27,8 +27,8 @@ Item::Item(const std::string &type) :
   nextUseT(0.0),
   beatitude(Beatitude::Normal),
   modifier(0),
-  identified(false),
-  lastIdentified(false),
+  typeIdentified(false),
+  itemIdentified(false),
   amount(1),
   unlockID(0)
 {
@@ -46,8 +46,8 @@ void Item::ReplaceWith(const std::string &type) {
   this->cooldownFrac = 0;
   this->durability = this->properties->durability;
   this->nextUseT = 0.0;
-  this->identified = false;
-  this->lastIdentified = false;
+  this->typeIdentified = false;
+  this->itemIdentified = false;
   if (!this->sprite.animations.empty()) this->sprite.StartAnim(0);
 }
 
@@ -66,7 +66,9 @@ void Item::StartCooldown(RunningState &state, Entity &user, bool damage) {
   float cooldown = this->GetCooldown() / (1.0 + Const::AttackSpeedFactorPerAGI*stats.agi);
   cooldown *= stats.cooldown;
   this->nextUseT = state.GetGame().GetTime() + cooldown;
-  if (this->properties->onUseIdentify) this->identified = true;
+  if (this->properties->onUseIdentify) {
+    this->itemIdentified = true;
+  }
 }
 
 void Item::Update(RunningState &state) {
@@ -99,21 +101,15 @@ void Item::Update(RunningState &state) {
     }
     this->effect = &getEffect(effectName);
     this->durability *= this->effect->durability;
-    if (!this->identified) this->identified = game.IsIdentified(this->properties->name);
-    this->lastIdentified = identified;
   }
-  
-  if (this->properties->isScroll || this->properties->isRing || this->properties->isWand || this->properties->isPotion || this->properties->isAmulet) {
-    if (this->identified && !this->lastIdentified) {
-      state.GetPlayer().AddMessage("You learnt that a " + this->properties->unidentifiedName + " is a " + this->properties->identifiedName + this->effect->displayName);
-    }
-    if (!this->identified) {
-      this->identified = game.IsIdentified(this->properties->name);
-    } else {
-      game.SetIdentified(this->properties->name);
-    }
+    
+  if (!this->typeIdentified && this->itemIdentified) {
+    this->typeIdentified = true;
+    game.SetIdentified(this->properties->name);
+    state.GetPlayer().AddMessage("You learnt that a " + this->properties->unidentifiedName + " is a " + this->properties->identifiedName);
+  } else { 
+    this->typeIdentified = game.IsIdentified(this->properties->name);
   }
-  this->lastIdentified = this->identified;
 
   // reduce durability while equipped
   if (this->isEquipped) {
@@ -320,10 +316,10 @@ Item::GetDisplayName(bool capitalize) const {
   if (this->amount > 1)
     amountString = u8" \u00d7 " + ToString(this->amount);
 
-  if (!this->identified) return this->properties->unidentifiedName + amountString;
-
   const char *modifierString = "";
+  const char *beatitudeString = "";
 
+  if (this->itemIdentified) {
   switch(this->modifier) {
     case -2: modifierString = "terrible "; break;
     case -1: modifierString = "bad "; break;
@@ -338,12 +334,23 @@ Item::GetDisplayName(bool capitalize) const {
     ModifyStats(statsA);
     if (statsA == statsB) modifierString = "useless ";
   }
+  switch(this->beatitude) {
+    case Beatitude::Blessed: beatitudeString = "blessed";
+    case Beatitude::Cursed:  beatitudeString = "cursed";
+    default: beatitudeString = "";
+  }
+  }
 
   char tmp[1024];
-  snprintf(tmp, sizeof(tmp), "%s%s%s", this->beatitude == Beatitude::Normal ? "" : (this->beatitude == Beatitude::Blessed ? "blessed " : "cursed "), modifierString, this->properties->identifiedName.c_str());
-
+  if (this->typeIdentified) {
+    snprintf(tmp, sizeof(tmp), "%s%s%s", beatitudeString, modifierString, this->properties->identifiedName.c_str());
+  } else {
+    snprintf(tmp, sizeof(tmp), "%s%s%s", beatitudeString, modifierString, this->properties->unidentifiedName.c_str());
+  }
   std::string name = tmp;
-  if (this->effect) { name += this->effect->displayName; }
+  if (this->effect && this->itemIdentified) { 
+    name += this->effect->displayName; 
+  }
 
   if (capitalize && name != "") name[0] = ::toupper(name[0]);
   name += amountString;
@@ -373,14 +380,16 @@ Item::Combine(const std::shared_ptr<Item> &other) {
     other->modifier += effect.onCombineAddModifier;
     if (effect.onCombineRemoveCurse && other->IsCursed()) other->beatitude = Beatitude::Normal;
     if (effect.onCombineIdentify) {
-      other->identified = true;
+      other->itemIdentified = true;
     }
-    this->identified = true;
+    this->itemIdentified = true;
     if (this->properties->durability != 0.0) {
       this->durability -= this->properties->combineDurability;
       if (this->durability <= 0.0) this->isRemovable = true;
     }
-    if (effect.onCombineBreak) this->isRemovable = true;
+    if (effect.onCombineBreak) {
+      this->isRemovable = true;
+    }
     return other;
   }
 

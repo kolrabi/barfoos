@@ -232,13 +232,8 @@ World::Build() {
 
     // want at least 150 features and at least 16 cells high
     if (instances.size() < 150 || height < 16) {
-      if (!done) {
-        done = true;
-        Log("Made world with %u features and height %d, sick of waiting :/ ...\n", instances.size(), height);
-      } else {
-        done = false;
-        Log("Discarding boring world with %u features and height %d :( ...\n", instances.size(), height);
-      }
+      done = false;
+      Log("Discarding boring world with %u features and height %d :( ...\n", instances.size(), height);
     } else {
       done = true;
       Log("Made a nice world with %u features and height %d :) ...\n", instances.size(), height);
