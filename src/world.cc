@@ -300,7 +300,7 @@ World::Build() {
 
     Cell &trigger = GetCell(a);
     Cell &spawner = SetCell(aboveCell->GetPosition(), Cell("shooter"));
-    // TODO: get entity from group "trap"
+
     const std::vector<std::string> &traps = GetEntitiesInGroup("trap");
     if (traps.empty()) {
       spawner.SetSpawnOnActive("projectile.bfw9k", -side, 0.0);
@@ -743,20 +743,15 @@ World::CastRayYDown(const Vector3 &org) {
   size_t y = org.y; // start cell y
   size_t z = org.z; // start cell z
 
-  if (y >= this->size.y) return this->size.y;
+  if (y >= this->size.y) y = this->size.y - 1;
 
-  if (GetCell(IVector3(x,y,z)).IsSolid() && y < GetCell(IVector3(x,y,z)).GetHeight(org.x, org.z)) return y-1;
-
-  float endY = 0;
-
-  // iterate from the bottom of the world up to the start cell
-  for (size_t yy = 0; yy <= y; yy++) {
-    const Cell &cell = this->GetCell(IVector3(x,yy,z));
-    if (cell.GetInfo().flags & CellFlags::Solid) {
-      endY = yy + cell.GetHeight(org.x, org.z);
-    }
+  Cell *cell = &GetCell(IVector3(x,y,z));
+  while(!cell->IsSolid()) {
+    cell = &((*cell)[Side::Down]);
+    y--;
   }
-  return endY;
+
+  return cell->GetHeight(org.x, org.z) + y;
 }
 
 /**
@@ -771,8 +766,12 @@ World::IsPointSolid(const Vector3 &org) {
   size_t z = org.z; // start cell z
 
   const Cell &cell = this->GetCell(IVector3(x,y,z));
-  bool heightCheck = (org.y - y) >= cell.GetHeightBottom(org.x, org.z) && (org.y - y) <= cell.GetHeight(org.x, org.z);
-  return cell.IsSolid() && heightCheck;
+  if (!cell.IsSolid()) return false;
+
+  float cellY = org.y - y;
+  if (cellY > cell.GetHeight(org.x, org.z)) return false;
+  if (cellY < cell.GetHeightBottom(org.x, org.z)) return false;
+  return true;
 }
 
 /**

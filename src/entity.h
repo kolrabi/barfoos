@@ -89,6 +89,7 @@ struct EntityProperties : public Properties {
   bool    swim              = false;
   bool    flipLeft          = false;
   bool    openInventory     = false;
+  bool    learnEvade        = false;
   float   jumpSpeed         = 8.0;
   float   attackInterval    = 0.0;
   float   aggroRangeNear    = 0.0;

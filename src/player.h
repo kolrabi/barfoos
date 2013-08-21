@@ -93,6 +93,8 @@ private:
 
   std::shared_ptr<Item> leftHand, rightHand;
 
+  bool blink;
+
   void UpdateInput(RunningState &state);
 
   bool UseItem(RunningState &state, const std::shared_ptr<Item> &item);

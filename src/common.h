@@ -4,7 +4,7 @@
 // ====================================================================================
 
 // autoconf
-#include <config.h>
+#include "config.h"
 
 // often needed types and functions
 #include <cstdint>
@@ -88,6 +88,6 @@ constexpr float operator"" _deg(unsigned long long f) { return (float)f / 180 * 
 
 typedef uint32_t ID;
 constexpr ID InvalidID = (ID)0xFFFFFFFF;
- 
+
 #endif
 

@@ -102,12 +102,12 @@ void Item::Update(RunningState &state) {
     this->effect = &getEffect(effectName);
     this->durability *= this->effect->durability;
   }
-    
+
   if (!this->typeIdentified && this->itemIdentified) {
     this->typeIdentified = true;
     game.SetIdentified(this->properties->name);
     state.GetPlayer().AddMessage("You learnt that a " + this->properties->unidentifiedName + " is a " + this->properties->identifiedName);
-  } else { 
+  } else {
     this->typeIdentified = game.IsIdentified(this->properties->name);
   }
 
@@ -173,8 +173,7 @@ bool Item::UseOnEntity(RunningState &state, Mob &user, uint32_t id) {
     } else {
       HealthInfo healthInfo(Stats::MeleeAttack(user, *entity, *this, state.GetRandom()));
 
-      // TODO: if (entity->GetProperties()->learnEvade) ...
-      if (healthInfo.hitType == HitType::Miss && entity->GetSpawnClass() == SpawnClass::PlayerClass) {
+      if (entity->GetProperties()->learnEvade && healthInfo.hitType == HitType::Miss && entity->GetSpawnClass() == SpawnClass::PlayerClass) {
         entity->GetBaseStats().skills["evade"]++;
       }
 
@@ -318,49 +317,55 @@ Item::GetDisplayName(bool capitalize) const {
 
   const char *modifierString = "";
   const char *beatitudeString = "";
+  const char *nameString = this->properties->unidentifiedName.c_str();
+  const char *effectString = "";
 
   if (this->itemIdentified) {
-  switch(this->modifier) {
-    case -2: modifierString = "terrible "; break;
-    case -1: modifierString = "bad "; break;
-    case  0: modifierString = ""; break;
-    case  1: modifierString = "good "; break;
-    case  2: modifierString = "excellent "; break;
+    switch(this->modifier) {
+      case -2: modifierString = "terrible "; break;
+      case -1: modifierString = "bad "; break;
+      case  0: modifierString = ""; break;
+      case  1: modifierString = "good "; break;
+      case  2: modifierString = "excellent "; break;
+    }
+
+    if (this->modifier < 0) {
+      Stats statsA = Stats();
+      Stats statsB = Stats();
+      ModifyStats(statsA);
+      if (statsA == statsB) modifierString = "useless ";
+    }
+    switch(this->beatitude) {
+      case Beatitude::Blessed: beatitudeString = "blessed";
+      case Beatitude::Cursed:  beatitudeString = "cursed";
+      default: beatitudeString = "";
+    }
+
+    nameString = this->properties->identifiedName.c_str();
   }
 
-  if (this->modifier < 0) {
-    Stats statsA = Stats();
-    Stats statsB = Stats();
-    ModifyStats(statsA);
-    if (statsA == statsB) modifierString = "useless ";
-  }
-  switch(this->beatitude) {
-    case Beatitude::Blessed: beatitudeString = "blessed";
-    case Beatitude::Cursed:  beatitudeString = "cursed";
-    default: beatitudeString = "";
-  }
+  if (this->effect && (this->itemIdentified || (this->typeIdentified && this->properties->effects.size()==1)) ) {
+    effectString = this->effect->displayName.c_str();
   }
 
-  char tmp[1024];
-  if (this->typeIdentified) {
-    snprintf(tmp, sizeof(tmp), "%s%s%s", beatitudeString, modifierString, this->properties->identifiedName.c_str());
-  } else {
-    snprintf(tmp, sizeof(tmp), "%s%s%s", beatitudeString, modifierString, this->properties->unidentifiedName.c_str());
-  }
-  std::string name = tmp;
-  if (this->effect && this->itemIdentified) { 
-    name += this->effect->displayName; 
-  }
+  std::string name;
+  name += beatitudeString;
+  name += modifierString;
+  name += nameString;
+  name += effectString;
+  name += amountString;
 
   if (capitalize && name != "") name[0] = ::toupper(name[0]);
-  name += amountString;
   return name;
 }
 
 Stats
 Item::GetDisplayStats() const {
   Stats stats;
-  stats.str = 0; stats.agi = 0; stats.dex = 0; stats.def = 0;
+  stats.str = 0;
+  stats.agi = 0;
+  stats.dex = 0;
+  stats.def = 0;
   stats.maxHealth = 0;
   this->ModifyStats(stats, true);
   return stats;
@@ -373,7 +378,7 @@ Item::Combine(const std::shared_ptr<Item> &other) {
     return nullptr;
   }
 
-  // TODO: check combination recipies
+  std::shared_ptr<Item> result;
 
   if (this->properties->onCombineEffect != "") {
     const EffectProperties &effect = getEffect(this->properties->onCombineEffect);
@@ -390,10 +395,16 @@ Item::Combine(const std::shared_ptr<Item> &other) {
     if (effect.onCombineBreak) {
       this->isRemovable = true;
     }
-    return other;
+    result = other;
+  }
+  // check combination recipies
+  auto iter = this->properties->combinations.find(other->properties->name);
+  if (iter != this->properties->combinations.end()) {
+    result = other;
+    result->ReplaceWith(iter->second);
   }
 
-  return nullptr;
+  return result;
 }
 
 std::shared_ptr<Item>
@@ -415,7 +426,7 @@ Item::Consume(RunningState &state, Entity &user) {
   if (this->properties->onConsumeTeleport) {
     user.Teleport(state, Vector3(state.GetWorld().GetRandomTeleportTarget(state.GetRandom())));
   }
-  
+
   state.GetGame().SetIdentified(this->properties->name);
 
   this->isRemovable = true;

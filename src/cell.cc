@@ -328,128 +328,6 @@ Cell::Flow(Side side) {
   return true;
 }
 
-float
-Cell::GetHeight(
-  float x,
-  float z
-) const {
-  x -= (int)x;
-  z -= (int)z;
-
-  return GetHeightClamp(x, z);
-}
-
-float
-Cell::GetHeightClamp(
-  float x,
-  float z
-) const {
-  if (x > 1.0) x = 1.0;
-  if (x < 0.0) x = 0.0;
-  if (z > 1.0) z = 1.0;
-  if (z < 0.0) z = 0.0;
-
-  float slopeX;
-  float slopeZ;
-
-  if (this->shared.reversedTop) {
-    // Z ^
-    //   | 1---2
-    //   | | \ |
-    //   | 0---3
-    //   +------> X
-
-    if (x < z) {
-      // lower left triangle
-      slopeX = YOfs(3) - YOfs(0);
-      slopeZ = YOfs(1) - YOfs(0);
-    } else {
-      // upper right triangle
-      slopeX = YOfs(2) - YOfs(1);
-      slopeZ = YOfs(2) - YOfs(3);
-    }
-  } else {
-    // Z ^
-    //   | 1---2
-    //   | | / |
-    //   | 0---3
-    //   +------> X
-
-    if (x < z) {
-      // upper left triangle
-      slopeX = YOfs(2) - YOfs(1);
-      slopeZ = YOfs(1) - YOfs(0);
-    } else {
-      // lower right triangle
-      slopeX = YOfs(3) - YOfs(0);
-      slopeZ = YOfs(2) - YOfs(3);
-    }
-  }
-
-  return YOfs(0) + slopeX * x + slopeZ * z;
-}
-
-float
-Cell::GetHeightBottom(
-  float x,
-  float z
-) const {
-  x -= (int)x;
-  z -= (int)z;
-
-  return GetHeightBottomClamp(x,z);
-}
-
-float
-Cell::GetHeightBottomClamp(
-  float x,
-  float z
-) const {
-  if (x > 1.0) x = 1.0;
-  if (x < 0.0) x = 0.0;
-  if (z > 1.0) z = 1.0;
-  if (z < 0.0) z = 0.0;
-
-  float slopeX;
-  float slopeZ;
-
-  if (this->shared.reversedBottom) {
-    // Z ^
-    //   | 1---2
-    //   | | \ |
-    //   | 0---3
-    //   +------> X
-
-    if (x < z) {
-      // lower left triangle
-      slopeX = YOfsb(3) - YOfsb(0);
-      slopeZ = YOfsb(1) - YOfsb(0);
-    } else {
-      // upper right triangle
-      slopeX = YOfsb(2) - YOfsb(1);
-      slopeZ = YOfsb(2) - YOfsb(3);
-    }
-  } else {
-    // Z ^
-    //   | 1---2
-    //   | | / |
-    //   | 0---3
-    //   +------> X
-
-    if (x < z) {
-      // upper left triangle
-      slopeX = YOfsb(2) - YOfsb(1);
-      slopeZ = YOfsb(1) - YOfsb(0);
-    } else {
-      // lower right triangle
-      slopeX = YOfsb(3) - YOfsb(0);
-      slopeZ = YOfsb(2) - YOfsb(3);
-    }
-  }
-
-  return YOfsb(0) + slopeX * x + slopeZ * z;
-}
-
 void
 Cell::UpdateNeighbours(
   size_t
@@ -594,6 +472,7 @@ Cell::SetYOffsets(float a, float b, float c, float d) {
   this->shared.topHeights[2] = c * OffsetScale;
   this->shared.topHeights[3] = d * OffsetScale;
   if (world && !IsDynamic()) world->MarkForUpdateNeighbours(this);
+  this->shared.topFlat = a == b && b == c && c == d;
   return *this;
 }
 
@@ -604,6 +483,7 @@ Cell::SetYOffsetsBottom(float a, float b, float c, float d) {
   this->shared.bottomHeights[2] = c * OffsetScale;
   this->shared.bottomHeights[3] = d * OffsetScale;
   if (world && !IsDynamic()) world->MarkForUpdateNeighbours(this);
+  this->shared.bottomFlat = a == b && b == c && c == d;
   return *this;
 }
 
@@ -668,18 +548,18 @@ AABB Cell::GetAABB() const {
   return aabb;
 }
 
-bool Cell::IsSeen(size_t checkNeighbours) const {
+bool Cell::IsSeen(size_t) const {
   if (!this->world) return false;
-
+  if (this->GetFeatureID() == InvalidID) return false;
+/*
   if (checkNeighbours) {
     for (int xx=-checkNeighbours; xx <= (int)checkNeighbours; xx++) {
       for (int zz=-checkNeighbours; zz <= (int)checkNeighbours; zz++) {
         if (this->world->GetCell(IVector3(this->pos.x+xx, this->pos.y, this->pos.z+zz)).IsSeen()) return true;
       }
     }
-  }
+  }*/
 
-  if (this->GetFeatureID() == InvalidID) return false;
   if (!this->visibility && (info->flags & CellFlags::DoNotRender) == 0) return false;
   return this->world->GetMap().IsFeatureSeen(this->GetFeatureID());
 }

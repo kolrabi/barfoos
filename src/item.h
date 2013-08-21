@@ -99,7 +99,7 @@ protected:
   Beatitude beatitude;
   int modifier;
 
-  bool typeIdentified, lastTypeIdentified;
+  bool typeIdentified;
   bool itemIdentified;
 
   uint32_t amount;

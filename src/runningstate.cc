@@ -160,24 +160,24 @@ RunningState::Update() {
   // handle collision between entities
   {
     PROFILE_NAMED("Entity Collision");
-    std::vector<size_t> entityIds;
+    std::vector<Entity*> collideEntities;
     for (auto entity : this->entities) {
       if (entity.second->GetProperties()->nocollideEntity) continue;
       if (entity.second->IsDead()) continue;
-      entityIds.push_back(entity.first);
+      collideEntities.push_back(entity.second);
     }
-    for (size_t i=0; i<entityIds.size(); i++) {
-      size_t e1 = entityIds[i];
-      for (size_t j=i+1; j<entityIds.size(); j++) {
-        size_t e2 = entityIds[j];
+    for (size_t i=0; i<collideEntities.size(); i++) {
+      Entity *e1 = collideEntities[i];
+      for (size_t j=i+1; j<collideEntities.size(); j++) {
+        Entity *e2 = collideEntities[j];
 
         // don't collide with owners if not wanted
-        if (entities[e1]->GetOwner() == e2 && entities[e1]->GetProperties()->nocollideOwner) continue;
-        if (entities[e2]->GetOwner() == e1 && entities[e2]->GetProperties()->nocollideOwner) continue;
+        if (e1->GetOwner() == e2->GetId() && e1->GetProperties()->nocollideOwner) continue;
+        if (e2->GetOwner() == e1->GetId() && e2->GetProperties()->nocollideOwner) continue;
 
-        if (entities[e1]->GetAABB().Overlap(entities[e2]->GetAABB())) {
-          entities[e1]->OnCollide(*this, *entities[e2]);
-          entities[e2]->OnCollide(*this, *entities[e1]);
+        if (e1->GetAABB().Overlap(e2->GetAABB())) {
+          e1->OnCollide(*this, *e2);
+          e2->OnCollide(*this, *e1);
         }
       }
     }
@@ -226,6 +226,8 @@ RunningState::AddEntity(Entity *entity) {
   this->entities[entityId] = entity;
   entity->Start(*this, entityId);
 
+  if (entity->IsSolid()) this->solidEntities.push_back(entity);
+
   if (dynamic_cast<Player*>(entity)) {
     this->player = dynamic_cast<Player*>(entity);
     GetGame().GetGfx().SetPlayer(player);
@@ -248,6 +250,11 @@ RunningState::RemoveEntity(ID entityId) {
   if (this->player == iter->second) {
     this->player = nullptr;
     GetGame().GetGfx().SetPlayer(nullptr);
+  }
+
+  auto solidIter = std::find(this->solidEntities.begin(), this->solidEntities.end(), iter->second);
+  if (solidIter != this->solidEntities.end()) {
+    this->solidEntities.erase(solidIter);
   }
 
   delete iter->second;
@@ -278,9 +285,9 @@ std::vector<ID>
 RunningState::FindSolidEntities(const AABB &aabb) const {
   std::vector<ID> entities;
 
-  for (auto entity : this->entities) {
-    if (entity.second->IsSolid() && aabb.Overlap(entity.second->GetAABB())) {
-      entities.push_back(entity.first);
+  for (auto ent : this->solidEntities) {
+    if (aabb.Overlap(ent->GetAABB())) {
+      entities.push_back(ent->GetId());
     }
   }
 
@@ -567,7 +574,7 @@ RunningState::Save() {
 
   FILE *f = createUserFile("game");
   if (f) {
-    serGame.WriteToFile(f);
+// TEST    serGame.WriteToFile(f);
     fclose(f);
     f = nullptr;
   }
@@ -588,7 +595,7 @@ RunningState::SaveLevel() {
 
   //std::thread([=](){
     if (f) {
-      ser.WriteToFile(f);
+// TEST      ser.WriteToFile(f);
       fclose(f);
     }
   //}).detach();

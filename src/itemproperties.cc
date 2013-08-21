@@ -153,6 +153,13 @@ ItemProperties::ParseProperty(const std::string &cmd) {
   else if (cmd == "onconsumeresult")  Parse(this->onConsumeResult);
   else if (cmd == "onconsumeaddbuff") Parse(this->onConsumeAddBuff);
   else if (cmd == "onconsumeteleport") this->onConsumeTeleport = true;
+  else if (cmd == "combine") {
+    std::string combineWith;
+    std::string combineResult;
+    Parse(combineWith);
+    Parse(combineResult);
+    this->combinations[combineWith] = combineResult;
+  }
   else if (cmd == "onhitaddbuff") {
     std::string effect;
     Parse(effect);

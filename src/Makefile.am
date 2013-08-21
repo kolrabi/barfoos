@@ -2,8 +2,8 @@
 
 ## Build ----------------------------------------------------------
 
-CF=$(GL_CFLAGS) -Werror -Wall -Wextra -I$(top_srcdir)/src -DDATA_PATH=\"$(pkgdatadir)\" -pthread
-# -D_GLIBCXX_DEBUG 
+CF=$(GL_CFLAGS) -Werror -Wall -Wextra -I$(top_srcdir)/src -DDATA_PATH=\"$(pkgdatadir)\"
+# -D_GLIBCXX_DEBUG
 
 if WINDOOF
 RESFILE=res.rc icon.ico
@@ -21,7 +21,7 @@ endif
 bin_PROGRAMS=barfoos
 
 barfoos_CXXFLAGS=$(CF) -std=c++11 $(CCMACOSXFLAGS)
-barfoos_CFLAGS=$(CF) -std=c99 
+barfoos_CFLAGS=$(CF) -std=c99
 barfoos_LDADD=
 barfoos_LDFLAGS=$(LDWINFLAGS) $(LDMACOSXFLAGS)
 barfoos_SOURCES=\

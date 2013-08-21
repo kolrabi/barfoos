@@ -73,6 +73,8 @@ struct ItemProperties : public Properties {
   bool noBeatitude = false;
 
   std::string onCombineEffect = "";
+  std::unordered_map<std::string, std::string> combinations;
+
   std::string onConsumeEffect = "";
   std::string onConsumeVerb = "";
   std::string onConsumeResult = "";

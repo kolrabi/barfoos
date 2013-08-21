@@ -82,6 +82,7 @@ EntityProperties::ParseProperty(const std::string &cmd) {
   else if (cmd == "flipleft")         this->flipLeft = true;
   else if (cmd == "bubble")           this->createBubbles   = true;
   else if (cmd == "openinventory")    this->openInventory   = true;
+  else if (cmd == "learnevade")       this->learnEvade = true;
 
   else if (cmd == "level") {
     Parse(this->minLevel);

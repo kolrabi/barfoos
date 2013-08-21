@@ -50,13 +50,16 @@ Player::Player() :
   mapZoom           (-32.0f),
 
   leftHand          (new Item("barehand.player")),
-  rightHand         (new Item("barehand.player"))
+  rightHand         (new Item("barehand.player")),
+
+  blink(false)
 {
   // TEST:
   this->inventory.Equip(std::make_shared<Item>(Item("sword")), InventorySlot::RightHand);
   this->inventory.Equip(std::make_shared<Item>(Item("torch")), InventorySlot::LeftHand);
   this->inventory.AddToBackpack(std::make_shared<Item>(Item("torch")));
 
+  this->baseStats.skills["magic"] = 0;
 }
 
 Player::Player(Deserializer &deser) : Mob("player", deser),
@@ -121,6 +124,8 @@ Player::Update(RunningState &state) {
   Game &game = state.GetGame();
 
   this->fps = game.GetFPS();
+
+  this->blink = std::fmod(game.GetTime()*2, 1.0) > 0.3;
 
   this->pain -= game.GetDeltaT() * 0.1;
   if (this->pain < 0) this->pain = 0;
@@ -309,13 +314,13 @@ Player::DrawGUI(Gfx &gfx) const {
   gfx.SetColor(IColor(255,255,255));
   std::string strHealth;
   int h = std::ceil(10 * this->health / this->GetEffectiveStats().maxHealth);
-  for (int i=0; i<10; i++) {
-    if (i < h)
-      strHealth += u8"\u0081";
-    else
-      strHealth += " "; //u8"\u0082";
+  std::string strHeart = u8"\u0081";
+  if (h<4 && blink) strHeart = u8"\u0082";
+
+  for (int i=0; i<h; i++) {
+    strHealth += strHeart;
   }
-  RenderString rsHealth(strHealth + " " + ToString(int(this->health)), "big");
+  RenderString rsHealth(ToString(int(this->health)) + " " + strHealth, "big");
   rsHealth.Draw(gfx, 2, vsize.y-4, (int)Align::HorizLeft | (int)Align::VertBottom);
 
   char tmp[1024];
@@ -406,7 +411,7 @@ Player::AddMessage(const std::string &text, const std::string &font) {
 void
 Player::AddDeathMessage(const Entity &dead, const HealthInfo &info) {
   if (dead.GetName() == "") return;
-  
+
   if ((dead.GetPosition()-this->GetPosition()).GetMag() > 10) return;
 
   switch(info.type) {

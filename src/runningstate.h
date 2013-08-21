@@ -60,6 +60,8 @@ private:
   std::unordered_map<ID, Entity*> entities;
   Player *player;
 
+  std::vector<Entity*> solidEntities;
+
   bool showInventory;
 
   float lastSaveT;
