@@ -221,6 +221,7 @@ public:
   void                      Unlock()                                { this->lockedID = 0; }
   ID                        GetLockedID()                     const { return this->lockedID; }
   bool                      CanOpenInventory()                const { return this->properties->openInventory && this->lockedID == 0; }
+  uint32_t                  GetGold()                         const { return this->inventory.GetGold(); };
 
   // rendering
   virtual IColor            GetLight()                        const;

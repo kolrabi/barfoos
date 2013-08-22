@@ -4,8 +4,9 @@
 #include "common.h"
 
 #include "stats.h"
-
 #include "properties.h"
+
+enum class Beatitude : int8_t;
 
 struct EffectProperties : public Properties {
 
@@ -87,7 +88,7 @@ struct EffectProperties : public Properties {
 
   virtual void ParseProperty(const std::string &name) override;
 
-  void ModifyStats(Stats &stats, bool equipped) const;
+  void ModifyStats(Stats &stats, bool equipped, int modifier, Beatitude beatitude) const;
   void Consume(RunningState &state, Entity &user) const;
   void Update(RunningState &state, Entity &user) const;
 };

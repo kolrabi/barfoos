@@ -21,9 +21,9 @@
 
 #include <algorithm>
 
-Game::Game(const Point &screenSize) : 
+Game::Game(const Point &screenSize) :
   isInit        (false),
-  input         (new Input()), 
+  input         (new Input()),
   gfx           (new Gfx(Point(1920, 32), screenSize, false)),
   handlerId     (this->input->AddHandler( [this](const InputEvent &event){ this->HandleEvent(event); } )),
   activeGameState(nullptr),
@@ -36,7 +36,7 @@ Game::Game(const Point &screenSize) :
   realFrame     (0),
   lastFPST      (0.0),
   fps           (0.0),
-  seed          (""), 
+  seed          (""),
   random        ("")
 {
 }
@@ -44,20 +44,20 @@ Game::Game(const Point &screenSize) :
 Game::~Game() {
   if (activeGameState) activeGameState->Leave(nullptr);
   delete activeGameState;
-  
+
   this->input->RemoveHandler(this->handlerId);
-  
+
   delete gfx;
   delete input;
 }
 
-bool 
+bool
 Game::Init() {
   if (this->isInit) return true;
-  
+
   Log("Initializing game\n");
   if (!this->gfx->Init(*this)) return false;
-  
+
   this->lastT = 0;
   this->deltaT = 0;
   this->frame = 0;
@@ -66,10 +66,10 @@ Game::Init() {
   this->fps = 0;
 
   this->isInit = true;
-  
+
   MainMenuState *state = new MainMenuState(*this);
   nextGameState = state;
-  
+
   return true;
 }
 
@@ -80,7 +80,7 @@ Game::NewGame(const std::string &seed) {
 
   std::string scrolls = loadAssetAsString("text/scrolls");
   scrollMarkov.add(0, scrolls.begin(), scrolls.end());
-  
+
   LoadCells();
   LoadFeatures();
   LoadEntities();
@@ -92,15 +92,15 @@ Game::NewGame(const std::string &seed) {
 
 bool Game::Frame() {
   PROFILE();
-  
+
   if (nextGameState != activeGameState) {
     if (activeGameState) activeGameState->Leave(nextGameState);
     activeGameState = nextGameState;
     if (activeGameState) activeGameState->Enter();
   }
-  
+
 //  float t = lastT + 1.0/25.0;
-  
+
   // update game (at most 0.1s at a time)
   float t = this->gfx->GetTime() - this->startT;
   while(t - this->lastT > 0.1) {
@@ -111,7 +111,7 @@ bool Game::Frame() {
 
   this->Update(t, t - this->lastT);
   this->lastT = t;
-  
+
   // render game
   this->Render();
 
@@ -122,7 +122,7 @@ bool Game::Frame() {
   */
 
   this->gfx->Update(*this);
-  
+
   this->frame ++;
   this->realFrame++;
   if (t - this->lastFPST >= 1.0) {
@@ -130,9 +130,9 @@ bool Game::Frame() {
     this->frame = 0;
     this->lastFPST += 1.0;
   }
-  
+
   if (!this->gfx->Swap()) nextGameState = nullptr;
-  
+
   this->gfx->ClearColor(IColor());
   this->gfx->ClearDepth(1.0);
 
@@ -143,30 +143,30 @@ void
 Game::Render() const {
   PROFILE();
 
-  if (activeGameState) activeGameState->Render(*this->gfx);  
+  if (activeGameState) activeGameState->Render(*this->gfx);
 
   // next draw gui stuff
   this->gfx->GetView().GUI();
-  
+
   if (this->activeGui) {
     this->activeGui->Draw(*this->gfx, Point());
     this->activeGui->DrawTooltip(*this->gfx, Point());
   }
 }
 
-void 
+void
 Game::Update(float t, float deltaT) {
   PROFILE();
 
   this->lastT = t;
   this->deltaT = deltaT;
-  
+
   if (activeGameState) {
     nextGameState = activeGameState->Update();
   }
- 
+
   if (this->activeGui) this->activeGui->Update(*this);
-  
+
   this->input->Update();
 }
 
@@ -178,11 +178,11 @@ void Game::HandleEvent(const InputEvent &event) {
   }
 }
 
-std::string 
+std::string
 Game::GetScrollName() {
   if (scrollMarkov.size() == 0) return "ERROR";
 
-  std::string name = "Scroll of ";
+  std::string name = "scroll of ";
   char c = ' ';
   size_t l = 0;
   while(true) {
@@ -239,12 +239,12 @@ Deserializer &operator >> (Deserializer &deser, Game &game) {
   std::string scrolls = loadAssetAsString("text/scrolls");
   game.scrollMarkov.clear();
   game.scrollMarkov.add(0, scrolls.begin(), scrolls.end());
-  
+
   LoadCells();
   LoadFeatures();
   LoadEntities();
   LoadEffects();
   LoadItems(game);
-  
+
   return deser;
 }

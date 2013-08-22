@@ -61,6 +61,10 @@
       <File Name="assets/items/gem.life"/>
       <File Name="assets/items/gem.water"/>
       <File Name="assets/items/gem.wind"/>
+      <File Name="assets/items/ring.haste"/>
+      <File Name="assets/items/ring.light"/>
+      <File Name="assets/items/ring.speed"/>
+      <File Name="assets/items/ring.strength"/>
     </VirtualDirectory>
     <VirtualDirectory Name="entities">
       <VirtualDirectory Name="texture">
@@ -317,14 +321,14 @@
       </Compiler>
       <Linker Options="" Required="yes"/>
       <ResourceCompiler Options="" Required="no"/>
-      <General OutputFile="" IntermediateDirectory="./Debug" Command="src/barfoos.exe" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes"/>
+      <General OutputFile="src/barfoos.exe" IntermediateDirectory="" Command="src/barfoos.exe" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="yes"/>
       <Environment EnvVarSetName="&lt;Use Defaults&gt;" DbgSetName="&lt;Use Defaults&gt;">
         <![CDATA[]]>
       </Environment>
       <Debugger IsRemote="no" RemoteHostName="" RemoteHostPort="" DebuggerPath="">
         <DebuggerSearchPaths/>
         <PostConnectCommands/>
-        <StartupCommands/>
+        <StartupCommands>target src/barfoos.exe</StartupCommands>
       </Debugger>
       <PreBuild/>
       <PostBuild/>

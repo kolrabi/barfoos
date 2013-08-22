@@ -18,16 +18,18 @@ public:
   virtual void Draw(Gfx &gfx) const override;
   virtual void Start(RunningState &state, uint32_t id) override;
   virtual void Update(RunningState &state) override;
-  
+
   virtual void OnUse(RunningState &state, Entity &other) override;
 
+  const std::shared_ptr<Item> &GetItem() const { return item; }
+
   virtual void              Serialize(Serializer &ser)        const;
-  
+
 protected:
 
   std::shared_ptr<Item> item;
   float yoffset;
-  
+
   virtual SpawnClass GetSpawnClass() const override { return SpawnClass::ItemEntityClass; }
 };
 

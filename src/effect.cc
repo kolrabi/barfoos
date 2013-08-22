@@ -4,6 +4,7 @@
 #include "runningstate.h"
 #include "gfx.h"
 #include "texture.h"
+#include "item.h"
 
 #include <unordered_map>
 
@@ -121,27 +122,36 @@ LoadEffects() {
 }
 
 void
-EffectProperties::ModifyStats(Stats &stats, bool forceEquipped) const {
+EffectProperties::ModifyStats(Stats &stats, bool forceEquipped, int modifier, Beatitude beatitude) const {
+  float f = 1.0 + 0.75*modifier;
+  if (beatitude == Beatitude::Blessed) f *=  1.5;
+
   if (forceEquipped) {
-    stats.str += this->eqAddStr;
-    stats.agi += this->eqAddAgi;
-    stats.dex += this->eqAddDex;
-    stats.def += this->eqAddDef;
-    stats.maxHealth += this->eqAddHP;
-    stats.walkSpeed *= this->walkSpeed;
-    stats.cooldown *= this->cooldown;
+    stats.str += this->eqAddStr * f;
+    stats.agi += this->eqAddAgi * f;
+    stats.dex += this->eqAddDex * f;
+    stats.def += this->eqAddDef * f;
+    stats.maxHealth += this->eqAddHP * f;
+
+    if (beatitude == Beatitude::Normal) {
+      stats.walkSpeed *= std::pow(this->walkSpeed, modifier*0.25) * this->walkSpeed;
+      stats.cooldown  *= std::pow(this->cooldown,  modifier*0.25) * this->cooldown;
+    } else {
+      stats.walkSpeed *= this->walkSpeed * this->walkSpeed;
+      stats.cooldown  *= this->cooldown  * this->cooldown;
+    }
   } else {
-    stats.str += this->uneqAddStr;
-    stats.agi += this->uneqAddAgi;
-    stats.dex += this->uneqAddDex;
-    stats.def += this->uneqAddDef;
-    stats.maxHealth += this->uneqAddHP;
+    stats.str += this->uneqAddStr * f;
+    stats.agi += this->uneqAddAgi * f;
+    stats.dex += this->uneqAddDex * f;
+    stats.def += this->uneqAddDef * f;
+    stats.maxHealth += this->uneqAddHP * f;
   }
 }
 
 void
 EffectProperties::Consume(RunningState &state, Entity &user) const {
-  this->ModifyStats(user.GetBaseStats(), true);
+  this->ModifyStats(user.GetBaseStats(), true, 0, Beatitude::Normal);
   if (this->addHealth) {
     HealthInfo info(this->addHealth);
     user.AddHealth(state, info);

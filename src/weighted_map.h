@@ -15,7 +15,7 @@ public:
     float total = 0;
     for (auto &entry : *this) {
       total += entry.second;
-      
+
       weighted_object w;
       w.object = entry.first;
       w.weight = total;
@@ -23,7 +23,7 @@ public:
     }
     if (total == 0) return T();
     index *= total;
-    
+
     for (weighted_object w : totals) {
       if (index < w.weight) {
         return w.object;

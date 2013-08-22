@@ -2,20 +2,24 @@
 #define BARFOOS_PROFILE_H
 
 #ifdef MACOSX
+#define NO_PROFILE
+#endif
+
+#ifdef NO_PROFILE
 
 // broken
 
 #define PROFILE()
-#define PROFILE_NAMED(n) 
+#define PROFILE_NAMED(n)
 
 class Profile {
 public:
 
   static void Dump();
   static std::string GetDump();
-  
+
 private:
-  
+
   std::string name;
   unsigned long long startTick;
 };
@@ -28,12 +32,12 @@ public:
 
   Profile(const char *func, const char *file, int line);
   ~Profile();
-  
+
   static void Dump();
   static std::string GetDump();
-  
+
 private:
-  
+
   std::string name;
   unsigned long long startTick;
 };

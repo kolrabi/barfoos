@@ -16,23 +16,23 @@
 
 /** Enum to identify inventory slots. */
 enum class InventorySlot : size_t {
-  Helmet     =  0, 
-  Armor      =  1, 
-  Greaves    =  2, 
+  Helmet     =  0,
+  Armor      =  1,
+  Greaves    =  2,
   Boots      =  3,
-  LeftHand   =  4, 
+  LeftHand   =  4,
   RightHand  =  5,
-  LeftRing   =  6, 
+  LeftRing   =  6,
   RightRing  =  7,
-  Amulet     =  8, 
-  
+  Amulet     =  8,
+
   Reserved9  =  9,
   Reserved10 = 10,
   Reserved11 = 11,
   Reserved12 = 12,
   Reserved13 = 13,
-  Reserved14 = 14,
-  Reserved15 = 15,
+  Quiver     = 14,
+  Purse      = 15,
 
   Backpack0  = 16,
   Backpack1,
@@ -50,7 +50,7 @@ enum class InventorySlot : size_t {
   Backpack13,
   Backpack14,
   Backpack15,
-  
+
   End
 };
 
@@ -62,7 +62,7 @@ class Inventory final {
 public:
 
   Inventory();
-  
+
   void Update(RunningState &state, Entity &owner);
 
   std::shared_ptr<Item> &operator[](InventorySlot slot);
@@ -71,13 +71,14 @@ public:
   bool AddToBackpack(const std::shared_ptr<Item> &item);
   void AddToInventory(const std::shared_ptr<Item> &item, InventorySlot slot);
   void Equip(const std::shared_ptr<Item> &item, InventorySlot slot);
-  
+
   void Drop(RunningState &state, Entity &owner);
   void DropItem(const std::shared_ptr<Item> &item);
   void ConsumeItem(InventorySlot slot, Entity &user);
-  
+
   IColor GetLight() const;
-  
+  uint32_t                  GetGold()                         const;
+
   void ModifyStats(Stats &stats) const;
 
 private:
@@ -91,7 +92,7 @@ private:
   std::vector<std::pair<InventorySlot, size_t>> consumed;
 
   float lastT;
-  
+
   friend Serializer &operator << (Serializer &ser, const Inventory &inventory);
   friend Deserializer &operator >> (Deserializer &ser, Inventory &inventory);
 };

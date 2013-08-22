@@ -85,15 +85,16 @@ void Item::Update(RunningState &state) {
     this->initDone = true;
 
     if (!this->properties->noModifier) {
-      this->modifier = state.GetRandom().Integer(2) + state.GetRandom().Integer(2) - 2;
+      this->modifier = state.GetRandom().Integer(3) + state.GetRandom().Integer(3) - 2;
     }
 
     if (!this->properties->noBeatitude) {
       if (state.GetRandom().Chance(0.01)) {
         this->beatitude = Beatitude::Cursed;
         this->modifier = -2;
-      } else if (state.GetRandom().Chance(0.1) && this->modifier == 2) {
+      } else if (state.GetRandom().Chance(0.1)) {
         this->beatitude = Beatitude::Blessed;
+        this->modifier = 2;
       }
     }
 
@@ -318,20 +319,23 @@ Item::DrawSprite(Gfx &gfx, const Vector3 &pos) const {
 
 void
 Item::ModifyStats(Stats &stats, bool forceEquipped) const {
+  float f = 1.0 + 0.75*this->modifier;
+  if (this->beatitude == Beatitude::Blessed) f *=  1.5;
+
   if (this->isEquipped || forceEquipped) {
-    stats.str += this->properties->eqAddStr   * (1 + 0.5*this->modifier);
-    stats.agi += this->properties->eqAddAgi   * (1 + 0.5*this->modifier);
-    stats.dex += this->properties->eqAddDex   * (1 + 0.5*this->modifier);
-    stats.def += this->properties->eqAddDef   * (1 + 0.5*this->modifier);
-    stats.maxHealth += this->properties->eqAddHP * (1 + 0.5*this->modifier);
+    stats.str += this->properties->eqAddStr   * f;
+    stats.agi += this->properties->eqAddAgi   * f;
+    stats.dex += this->properties->eqAddDex   * f;
+    stats.def += this->properties->eqAddDef   * f;
+    stats.maxHealth += this->properties->eqAddHP * f;
   } else {
-    stats.str += this->properties->uneqAddStr * (1 + 0.5*this->modifier);
-    stats.agi += this->properties->uneqAddAgi * (1 + 0.5*this->modifier);
-    stats.dex += this->properties->uneqAddDex * (1 + 0.5*this->modifier);
-    stats.def += this->properties->uneqAddDef * (1 + 0.5*this->modifier);
-    stats.maxHealth += this->properties->uneqAddHP * (1 + 0.5*this->modifier);
+    stats.str += this->properties->uneqAddStr * f;
+    stats.agi += this->properties->uneqAddAgi * f;
+    stats.dex += this->properties->uneqAddDex * f;
+    stats.def += this->properties->uneqAddDef * f;
+    stats.maxHealth += this->properties->uneqAddHP * f;
   }
-  if (this->effect) this->effect->ModifyStats(stats, this->isEquipped);
+  if (this->effect) this->effect->ModifyStats(stats, this->isEquipped, this->modifier, this->beatitude);
 }
 
 std::string
@@ -345,7 +349,7 @@ Item::GetDisplayName(bool capitalize) const {
   const char *nameString = this->properties->unidentifiedName.c_str();
   const char *effectString = "";
 
-  if (this->itemIdentified) {
+  if (this->itemIdentified || (this->typeIdentified && this->properties->effects.size()==1)) {
     switch(this->modifier) {
       case -2: modifierString = "terrible "; break;
       case -1: modifierString = "bad "; break;

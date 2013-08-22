@@ -33,7 +33,22 @@ Inventory::operator[](InventorySlot slot) const {
   */
 bool
 Inventory::AddToBackpack(const std::shared_ptr<Item> &item) {
-  //Log("AddToBackpack %s %u\n", item->GetDisplayName().c_str(), item->GetAmount());
+  if (!item) return true;
+
+  Log("AddToBackpack %s %u %s\n", item->GetDisplayName().c_str(), item->GetAmount(), item->GetType().c_str());
+
+  if (item->GetType()=="gold") {
+    // gold goes to the purse
+    if (self[InventorySlot::Purse]) {
+      self[InventorySlot::Purse]->AddAmount(item->GetAmount());
+      return true;
+    } else {
+      self[InventorySlot::Purse] = item;
+    }
+
+    return true;
+  }
+
   InventorySlot i = InventorySlot::Backpack0;
   while(i < InventorySlot::End) {
     if (self[i] && self[i]->CanStack(*item)) {
@@ -66,17 +81,17 @@ Inventory::AddToInventory(const std::shared_ptr<Item> &item, InventorySlot slot)
   if (!self[slot]) {
     // target slot is free
     if (slot >= InventorySlot::Backpack0 || item->IsEquippable(slot)) {
-      // replace item
+      // place item
       this->Equip(item, slot);
       return;
     }
 
-    // put somewhere
+    // not allowed in that slot, put somewhere
     this->AddToBackpack(item);
     return;
   }
 
-  // try stacking them together
+  // slot is occupied, try stacking things together
   if (self[slot]->CanStack(*item)) {
     //Log("Can Stack!\n");
     self[slot]->AddAmount(item->GetAmount());
@@ -254,6 +269,12 @@ Inventory::ModifyStats(Stats &stats) const {
     if (!item.second) continue;
     item.second->ModifyStats(stats);
   }
+}
+
+uint32_t
+Inventory::GetGold() const {
+  if (!self[InventorySlot::Purse]) return 0;
+  return self[InventorySlot::Purse]->GetAmount();
 }
 
 Serializer &operator << (Serializer &ser, const Inventory &inventory) {

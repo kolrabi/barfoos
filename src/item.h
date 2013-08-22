@@ -46,7 +46,7 @@ public:
 
   bool IsEquippable(InventorySlot slot) const { return this->properties->equippable & 1<<(size_t)slot; }
   uint32_t GetEquippableSlots()         const { return this->properties->equippable; }
-  bool IsEquipped()                     const { return isEquipped; }
+  bool IsEquipped()                     const { return this->isEquipped; }
 
   void SetEquipped(bool equipped);
   bool IsCursed()                       const { return this->beatitude == Beatitude::Cursed; }
@@ -54,6 +54,7 @@ public:
   bool IsInited()                       const { return this->initDone; }
 
   std::string GetDisplayName(bool capitalize = false)          const;
+  const std::string &GetType()          const { return this->properties->name; }
   Stats GetDisplayStats()               const;
   uint32_t GetAmount()                  const { return this->amount; }
   void DecAmount()                            { if (this->amount > 1) this->amount --; }

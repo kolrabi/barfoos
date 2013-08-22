@@ -39,6 +39,7 @@ public:
   virtual void OnEquip(RunningState &, const Item &, InventorySlot, bool) override;
   virtual void OnLevelUp(RunningState &) override;
   virtual void OnBuffAdded(RunningState &, const EffectProperties &) override;
+  virtual void OnCollide(RunningState &, Entity &) override;
 
   virtual std::string       GetName()                         const;
   float                     GetPain()                         const { return this->pain; }

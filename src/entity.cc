@@ -587,7 +587,7 @@ Entity::GetEffectiveStats() const {
   Stats stats = this->baseStats;
   this->inventory.ModifyStats(stats);
   for (auto &b : this->activeBuffs) {
-    b.effect->ModifyStats(stats, true);
+    b.effect->ModifyStats(stats, true, 0, Beatitude::Normal); // TODO: modifiers for buffs (aka minor, major, ...)
   }
   return stats;
 }

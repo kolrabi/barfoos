@@ -2,6 +2,7 @@
 
 #include "runningstate.h"
 #include "item.h"
+#include "itementity.h"
 
 #include "world.h"
 #include "cell.h"
@@ -384,7 +385,7 @@ Player::DrawGUI(Gfx &gfx) const {
     skills += s.first + ": " + ToString(Stats::GetLevelForSkillExp(s.second)) + "\n";
   }
 
-  snprintf(tmp, sizeof(tmp), "%s%3.1f", skills.c_str(), fps);
+  snprintf(tmp, sizeof(tmp), u8"%s%3.1f\n\u0080 %5u", skills.c_str(), fps, this->GetGold());
   RenderString(tmp, "small").Draw(gfx, 4, vsize.y-32-24, int(Align::VertBottom));
 }
 
@@ -611,6 +612,15 @@ void Player::OnLevelUp(RunningState &) {
 
 void Player::OnBuffAdded(RunningState &, const EffectProperties &effect) {
   this->AddMessage("You feel "+effect.feeling);
+}
+
+void
+Player::OnCollide(RunningState &state, Entity &other) {
+  // auto pickup gold
+  ItemEntity *itemEnt = dynamic_cast<ItemEntity*>(&other);
+  if (itemEnt && itemEnt->GetItem()->GetType() == "gold") {
+    itemEnt->OnUse(state, *this);
+  }
 }
 
 void
