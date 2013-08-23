@@ -23,7 +23,7 @@ rm -rf $APP
 mkdir $APP $APPCONTENTS $APPCONTENTS/Resources $APPBIN
 cp -r ../assets $APPCONTENTS/assets
 cp $EXEC $APPBIN
-cp $BUNDLE.icns $APPCONTENTS/Resources
+cp $BUNDLE.icns $APPCONTENTS/Resources/icon.icns
 
 # Rewire dynamic libraries
 otool -L $EXEC | cut -f 2 | grep -v "^/System"|grep "^/"|while read LIB REST; do
@@ -41,19 +41,18 @@ chmod +x $APPBIN/$EXEC.sh
 # Property list
 cat > $APPCONTENTS/Info.plist << EOF
 <?xml version="1.0" encoding="UTF-8"?>
-!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-  <key>CFBundleGetInfoString</key>          <string>$BUNDLE</string>
+  <key>CFBundleDevelopmentRegion</key>      <string>English</string>
   <key>CFBundleExecutable</key>             <string>$EXEC.sh</string>
-  <key>CFBundleIdentifier</key>             <string>$BUNDLEID</string>
-  <key>CFBundleName</key>                   <string>$BUNDLE</string>
-  <key>CFBundleIconFile</key>               <string>$BUNDLE.icns</string>
-  <key>CFBundleShortVersionString</key>     <string>$VERSION</string>
   <key>CFBundleInfoDictionaryVersion</key>  <string>6.0</string>
+  <key>CFBundleName</key>                   <string>$BUNDLE</string>
+  <key>CFBundleIconFile</key>               <string>icon.icns</string>
   <key>CFBundlePackageType</key>            <string>APPL</string>
-  <key>IFMajorVersion</key>                 <integer>$MAJOR</integer>
-  <key>IFMinorVersion</key>                 <integer>$MINOR</integer>
+  <key>CFBundleVersion</key>                <string>$BUNDLE $VERSION</string>
+  <key>CFBundleShortVersionString</key>     <string>$BUNDLE $VERSION</string>
+  <key>CFResourcesFileMapped</key>          <true/>
 </dict>
 </plist>
 EOF
