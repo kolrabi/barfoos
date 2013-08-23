@@ -47,6 +47,9 @@ public:
 
   void SetUniforms(const std::shared_ptr<Shader> &shader) const;
 
+  void                      SetAngles(const Vector3 &angles)        { this->angles = angles; }
+  const Vector3 &           GetAngles()                       const { return this->angles; }
+
   virtual void              Serialize(Serializer &ser)        const;
   virtual SpawnClass        GetSpawnClass()                   const override { return SpawnClass::PlayerClass; }
 
@@ -80,6 +83,7 @@ private:
   // gameplay
   bool itemActiveLeft, itemActiveRight;
   bool lastItemActiveLeft, lastItemActiveRight;
+  Vector3 angles;
 
   std::unordered_map<uint32_t, float> lastHurtT;
   float pain;

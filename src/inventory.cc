@@ -35,7 +35,7 @@ bool
 Inventory::AddToBackpack(const std::shared_ptr<Item> &item) {
   if (!item) return true;
 
-  Log("AddToBackpack %s %u %s\n", item->GetDisplayName().c_str(), item->GetAmount(), item->GetType().c_str());
+  //Log("AddToBackpack %s %u %s\n", item->GetDisplayName().c_str(), item->GetAmount(), item->GetType().c_str());
 
   if (item->GetType()=="gold") {
     // gold goes to the purse

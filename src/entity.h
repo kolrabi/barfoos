@@ -96,11 +96,14 @@ struct EntityProperties : public Properties {
   float   aggroRangeFar     = 0.0;
   float   meleeAttackRange  = 0.0;
   std::string attackItem    = "";
+  float   keepDistance      = 0.0;
   float   attackForwardStep = 0.0;
   float   attackJump        = 0.0;
   float   exp               = 0.0;
   float   lockedChance      = 0.0;
   float   impactDamage      = 0.0;
+  bool    randomAngle       = false;
+  bool    isQuad            = false;
 
   uint32_t  onDieExplodeRadius = 0;
   float   onDieExplodeStrength = 0.0;
@@ -204,10 +207,9 @@ public:
 
   void                      Teleport(RunningState &state, const Vector3 &target);
 
-  void                      SetAngles(const Vector3 &angles)        { this->angles = angles; }
-  const Vector3 &           GetAngles()                       const { return this->angles; }
-  Vector3                   GetForward()                      const { return this->GetAngles().EulerToVector(); }
-  Vector3                   GetRight()                        const { return (this->GetAngles() + Vector3(Const::pi_2, 0, 0)).EulerToVector(); }
+  void                      SetForward(const Vector3 &fwd)          { this->forward = fwd; }
+  Vector3                   GetForward()                      const { return this->forward; }
+  Vector3                   GetRight()                        const { return this->forward.Cross(Vector3(0,1,0)); }
 
   const AABB &              GetAABB()                         const { return this->aabb; }
   Stats                     GetEffectiveStats()               const;
@@ -249,7 +251,7 @@ protected:
   Smooth<Vector3> smoothPosition = Smooth<Vector3>(30.0);
   Vector3 lastPos;
   Vector3 spawnPos;
-  Vector3 angles;
+  Vector3 forward;
 
   Stats baseStats;
   std::vector<Buff> activeBuffs;
@@ -268,6 +270,7 @@ protected:
   bool drawAABB;
   IColor cellLight;
   std::vector<ParticleEmitter> emitters = std::vector<ParticleEmitter>(0);
+  float renderAngle;
 
   friend Serializer &operator << (Serializer &ser, const Entity *entity);
   friend Deserializer &operator >> (Deserializer &deser, Entity *&entity);

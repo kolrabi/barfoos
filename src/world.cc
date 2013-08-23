@@ -109,7 +109,7 @@ World::Build() {
   size_t trapCount = random.Integer(10)+10;
   size_t decoCount = 500+random.Integer(200);
   size_t itemCount = 100+random.Integer(120);
-  size_t monsterCount = 30+random.Integer(100);
+  size_t monsterCount = 50+random.Integer(100);
 
   std::vector<FeatureInstance> instances;
 

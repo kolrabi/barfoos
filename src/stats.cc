@@ -70,9 +70,9 @@ Stats::MeleeAttack(const Entity &attacker, const Entity &victim, const Item &ite
    * @return Result of the attack.
    */
 HealthInfo
-Stats::ExplosionAttack(const Entity &attacker, const Entity &victim, float damage, Element element) {
+Stats::ExplosionAttack(ID attackerID, const Entity &victim, float damage, Element element) {
   HealthInfo info;
-  info.dealerId = attacker.GetOwner() == InvalidID ? attacker.GetId() : attacker.GetOwner();
+  info.dealerId = attackerID;
   info.type = HealthType::Explosion;
   info.element = element;
 
@@ -83,7 +83,8 @@ Stats::ExplosionAttack(const Entity &attacker, const Entity &victim, float damag
   bool kill = -info.amount > victim.GetHealth();
   float expDmg = kill ? victim.GetHealth() : -info.amount;
   info.exp = (expDmg / defStat.maxHealth) * 0.5 * victim.GetProperties()->exp + kill ? victim.GetProperties()->exp : 0;
-  if (info.amount > -1.0) info.amount = -1.0;
+  if (damage > 0.0 && info.amount > -1.0) info.amount = -1.0;
+  if (damage < 0.0 && info.amount <  1.0) info.amount =  1.0;
 
   return info;
 }

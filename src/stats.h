@@ -126,7 +126,7 @@ struct Stats {
   std::string GetToolTip() const;
 
   static HealthInfo MeleeAttack(const Entity &attacker, const Entity &victim, const Item &item, Random &random);
-  static HealthInfo ExplosionAttack(const Entity &attacker, const Entity &victim, float damage, Element element);
+  static HealthInfo ExplosionAttack(ID attackerID, const Entity &victim, float damage, Element element);
   static HealthInfo ProjectileAttack(const Entity &projectile, const Entity &victim, float damage);
 
   static float GetExpForLevel(size_t lvl);

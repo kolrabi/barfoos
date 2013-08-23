@@ -41,16 +41,16 @@ void main() {
 /*
   vec4 t0 = texture2D(u_texture, v_tex);
   if (t0.a == 0.0) discard;
- 
+
   t0.rgb = pow(t0.rgb, vec3(1.0/gamma));
- 
+
   vec3 light = (v_color.rgb + getTotalLight()) * contrast;
-  
+
   float fogDepth = length(v_pos)*0.1;
   float fogIntensity = 0.0; //pow(max(0.0, u_fogLin * fogDepth), 0.5);
-  
+
   vec3 color = mix(pow(t0.rgb * light * u_color.rgb, vec3(gamma)), u_fogColor.rgb, min(1.0, fogIntensity)) + u_fade.rgb;
- 
+
   gl_FragColor = vec4(color, t0.a);
 */
 }

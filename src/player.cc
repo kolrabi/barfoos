@@ -37,6 +37,8 @@ Player::Player() :
   lastItemActiveLeft (false),
   lastItemActiveRight(false),
 
+  angles            (0,0,0),
+
   lastHurtT         (),
   pain              (0.0),
   hpFlashT          (0.0),
@@ -95,6 +97,7 @@ Player::Player(Deserializer &deser) : Mob("player", deser),
   deser >> pain;
   deser >> messages >> messageY >> messageVY;
   deser >> lastHurtT;
+  deser >> angles;
 }
 
 Player::~Player() {
@@ -242,6 +245,8 @@ Player::UpdateInput(
   if (angles.y >  89_deg) angles.y =  89_deg;
   if (angles.y < -89_deg) angles.y = -89_deg;
 
+  this->SetForward(this->angles.EulerToVector());
+
   Vector3 fwd   = this->GetForward().Horiz().Normalize();
   Vector3 right = this->GetRight().Horiz().Normalize();
   float   speed = this->properties->maxSpeed * this->GetMoveModifier();
@@ -385,7 +390,7 @@ Player::DrawGUI(Gfx &gfx) const {
     skills += s.first + ": " + ToString(Stats::GetLevelForSkillExp(s.second)) + "\n";
   }
 
-  snprintf(tmp, sizeof(tmp), u8"%s%3.1f\n\u0080 %5u", skills.c_str(), fps, this->GetGold());
+  snprintf(tmp, sizeof(tmp), u8"%s%3.1f\n\u0080 %-5u", skills.c_str(), fps, this->GetGold());
   RenderString(tmp, "small").Draw(gfx, 4, vsize.y-32-24, int(Align::VertBottom));
 }
 
@@ -630,6 +635,7 @@ Player::Serialize(Serializer &ser) const {
   ser << pain;
   ser << messages << messageY << messageVY;
   ser << lastHurtT;
+  ser << angles;
 }
 
 Player::Message::Message(const std::string &txt, const std::string &font) :

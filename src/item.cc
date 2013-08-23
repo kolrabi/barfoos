@@ -263,7 +263,7 @@ bool Item::UseOnNothing(RunningState &state, Mob &user) {
   if (this->properties->spawnProjectile != "") {
     Projectile *proj = new Projectile(this->properties->spawnProjectile);
     proj->SetOwner(user);
-    proj->SetAngles(user.GetAngles());
+    proj->SetForward(user.GetForward());
     proj->SetPosition(user.GetPosition() + Vector3(0,user.GetProperties()->eyeOffset,0));
     state.AddEntity(proj);
     proj->SetVelocity(proj->GetVelocity() * charge);

@@ -83,6 +83,8 @@ EntityProperties::ParseProperty(const std::string &cmd) {
   else if (cmd == "bubble")           this->createBubbles   = true;
   else if (cmd == "openinventory")    this->openInventory   = true;
   else if (cmd == "learnevade")       this->learnEvade = true;
+  else if (cmd == "randomangle")      this->randomAngle = true;
+  else if (cmd == "quad")             this->isQuad = true;
 
   else if (cmd == "level") {
     Parse(this->minLevel);
@@ -122,6 +124,8 @@ EntityProperties::ParseProperty(const std::string &cmd) {
     emitter.state = 0.0;
     this->emitters.push_back(emitter);
 
+  } else if (cmd == "keepdistance") {
+    Parse(this->keepDistance);
   } else if (cmd == "aggro") {
     this->aggressive      = true;
     Parse(this->attackInterval);
@@ -268,7 +272,7 @@ Entity::Entity(const std::string &type) :
   isDead(false),
   lastPos(),
   spawnPos(),
-  angles(),
+  forward(0,0,1),
   baseStats(),
   aabb(this->properties->extents),
   health(this->properties->maxHealth),
@@ -279,7 +283,8 @@ Entity::Entity(const std::string &type) :
   sprite(this->properties->sprite),
   drawAABB(false),
   cellLight(0,0,0),
-  emitters(this->properties->emitters)
+  emitters(this->properties->emitters),
+  renderAngle(0.0)
 {
 }
 
@@ -288,7 +293,7 @@ Entity::Entity(const std::string &type, Deserializer &deser) : Entity(type) {
   deser >> ownerId;
   deser >> nextThinkT;
   deser >> startT;
-  deser >> lastPos >> spawnPos >> angles;
+  deser >> lastPos >> spawnPos >> forward;
 
   deser >> baseStats;
   deser >> activeBuffs;
@@ -298,6 +303,7 @@ Entity::Entity(const std::string &type, Deserializer &deser) : Entity(type) {
   deser >> inventory;
   deser >> lockedID;
   //deser >> sprite;
+  deser >> renderAngle;
 }
 
 Entity::~Entity() {
@@ -311,6 +317,10 @@ Entity::Start(RunningState &state, uint32_t id) {
   this->id = id;
   this->nextThinkT = game.GetTime();
   this->startT = game.GetTime();
+
+  if (this->properties->randomAngle) {
+    this->renderAngle = state.GetRandom().Float01() * 360.0;
+  }
 
   if (this->properties->lifetime) {
     this->dieT = game.GetTime() + this->properties->lifetime + state.GetRandom().Float() * this->properties->lifetimeRand;
@@ -498,6 +508,8 @@ Entity::Draw(Gfx &gfx) const {
   }
 
   if (this->properties->isBox) {
+    gfx.GetView().Push();
+    gfx.GetView().Rotate(this->renderAngle, Vector3(0,1,0));
     if (this->properties->sprite.texture) {
       gfx.SetTextureFrame(this->properties->sprite.texture,0,0,8);
       gfx.DrawAABB(this->aabb);
@@ -508,8 +520,9 @@ Entity::Draw(Gfx &gfx) const {
       gfx.DrawAABB(this->aabb);
       gfx.SetBlendNormal();
     }
+    gfx.GetView().Pop();
   } else {
-    gfx.DrawSprite(this->sprite, this->aabb.center, gfx.GetView().GetRight().Dot(GetForward())<0);
+    gfx.DrawSprite(this->sprite, this->aabb.center, this->properties->flipLeft && gfx.GetView().GetRight().Dot(GetForward())<0, !this->properties->isQuad, this->renderAngle);
   }
 
   if (this->drawAABB) {
@@ -531,6 +544,8 @@ Entity::AddHealth(RunningState &state, const HealthInfo &info) {
 
   this->health += info.amount;
 
+  Log("Entity::AddHealth: %f to %u\n", info.amount, this->GetId());
+
   Entity *dealer = state.GetEntity(info.dealerId);
   if (dealer) dealer->OnHealthDealt(state, *this, info);
 
@@ -551,9 +566,11 @@ void
 Entity::Die(RunningState &state, const HealthInfo &info) {
   this->isDead = true;
 
+  Log("Entity::Die: from %f damage to %u\n", info.amount, this->GetId());
+
   this->activeBuffs.clear();
 
-  if (info.dealerId != InvalidID) {
+  if (info.dealerId != InvalidID && state.GetEntity(info.dealerId)) {
     state.GetPlayer().AddDeathMessage(*this, *state.GetEntity(info.dealerId), info);
   } else {
     state.GetPlayer().AddDeathMessage(*this, info);
@@ -662,7 +679,7 @@ Entity::Serialize(Serializer &ser) const {
   ser << ownerId;
   ser << nextThinkT;
   ser << startT;
-  ser << lastPos << spawnPos << angles;
+  ser << lastPos << spawnPos << forward;
 
   ser << baseStats;
   ser << activeBuffs;
@@ -672,6 +689,7 @@ Entity::Serialize(Serializer &ser) const {
   ser << inventory;
   ser << lockedID;
   //ser << sprite;
+  ser << renderAngle;
 }
 
 Serializer &operator << (Serializer &ser, const Entity *entity) {

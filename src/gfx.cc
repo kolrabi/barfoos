@@ -122,10 +122,10 @@ Gfx::Gfx(const Point &pos, const Point &size, bool fullscreen) :
   this->cubeVerts.push_back(Vertex(Vector3(-1,-1,  1), IColor(255,255,255), 5,0, Vector3( 0,-1, 0)));
 
   // quad
-  this->quadVerts.push_back(Vertex(Vector3(-1,-1,  0), IColor(255,255,255), 0,0, Vector3( 0, 0, 0)));
-  this->quadVerts.push_back(Vertex(Vector3( 1,-1,  0), IColor(255,255,255), 1,0, Vector3( 0, 0, 0)));
-  this->quadVerts.push_back(Vertex(Vector3( 1, 1,  0), IColor(255,255,255), 1,1, Vector3( 0, 0, 0)));
-  this->quadVerts.push_back(Vertex(Vector3(-1, 1,  0), IColor(255,255,255), 0,1, Vector3( 0, 0, 0)));
+  this->quadVerts.push_back(Vertex(Vector3(-1,-1,  0), IColor(255,255,255), 0,0, Vector3( 0, 0, 1)));
+  this->quadVerts.push_back(Vertex(Vector3( 1,-1,  0), IColor(255,255,255), 1,0, Vector3( 0, 0, 1)));
+  this->quadVerts.push_back(Vertex(Vector3( 1, 1,  0), IColor(255,255,255), 1,1, Vector3( 0, 0, 1)));
+  this->quadVerts.push_back(Vertex(Vector3(-1, 1,  0), IColor(255,255,255), 0,1, Vector3( 0, 0, 1)));
 }
 
 Gfx::~Gfx() {
@@ -589,7 +589,7 @@ void Gfx::DrawAABB(const AABB &aabb) {
   this->view->Pop();
 }
 
-void Gfx::DrawSprite(const Sprite &sprite, const Vector3 &pos, bool flip, bool billboard) {
+void Gfx::DrawSprite(const Sprite &sprite, const Vector3 &pos, bool flip, bool billboard, float angleV) {
   this->view->Push();
   this->view->Translate(pos);
 
@@ -597,10 +597,10 @@ void Gfx::DrawSprite(const Sprite &sprite, const Vector3 &pos, bool flip, bool b
     this->view->Billboard(flip, sprite.vertical);
     this->view->Translate(Vector3(sprite.offsetX, sprite.offsetY, 0));
   }
-
+  this->view->Rotate(angleV, Vector3(0,1,0));
   this->view->Scale(Vector3(sprite.width/2, sprite.height/2, 1));
-  SetBackfaceCulling(!flip);
 
+  SetBackfaceCulling(false);
   if (sprite.texture) {
     this->SetTextureFrame(sprite.texture, 0, sprite.currentFrame, sprite.totalFrames);
     this->DrawUnitQuad();

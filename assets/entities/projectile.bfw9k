@@ -12,7 +12,7 @@ speed 20
 health 0
 
 extents 0.2 0.2 0.2
-size 1 1
+size 0.5 0.5
 gravity 0.0
 NoCollideOwner
 NoHit
@@ -21,6 +21,6 @@ NoStep
 
 Glow 64 512 64
 
-OnDieExplode 3.0 1.0 10.0 physical
-OnDieParticles 100 10.0 particle.bfw9k
+OnDieExplode 3.0 1.0 0.0 physical
+OnDieParticles 10 3.0 particle.bfw9k
 

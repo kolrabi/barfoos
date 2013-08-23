@@ -273,6 +273,7 @@ RunningState::FindEntities(const AABB &aabb) const {
   std::vector<ID> entities;
 
   for (auto entity : this->entities) {
+    if (!entity.second || entity.second->IsDead()) continue;
     if (aabb.Overlap(entity.second->GetAABB())) {
       entities.push_back(entity.first);
     }
@@ -449,7 +450,6 @@ RunningState::Explosion(Entity &entity, const Vector3 &pos, size_t radius, float
 
   ID ownerID = entity.GetOwner();
   if (ownerID == InvalidID) ownerID = entity.GetId();
-  Entity &owner = *this->entities[ownerID];
 
   std::vector<ID> entIDs = this->FindEntities(aabb);
   for (ID entID : entIDs) {
@@ -457,7 +457,8 @@ RunningState::Explosion(Entity &entity, const Vector3 &pos, size_t radius, float
     Vector3 d = ent.GetPosition() - pos;
     float dmg = damage / (1.0 + d.GetSquareMag());
 
-    HealthInfo info = Stats::ExplosionAttack(owner, ent, dmg, element);
+    Log("boom! %f damage to %u %s\n", dmg, entID, ent.GetName().c_str());
+    HealthInfo info = Stats::ExplosionAttack(ownerID, ent, dmg, element);
     ent.AddHealth(*this, info);
 
     try {
