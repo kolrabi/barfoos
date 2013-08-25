@@ -8,29 +8,29 @@
 
 #include <unordered_map>
 
-struct Font {
+struct TextFont {
   const Texture *texture;
   Point size;
   
   std::string name;  
   
-  Font() :
+  TextFont() :
     texture(0),
     size(0,0)
   {}
   
-  Font(const std::string &name) :
+  TextFont(const std::string &name) :
     texture(loadTexture("gui/font."+name)),
     size( texture->size.x / 32, texture->size.y / 8 ),
     name(name)
   {}
 };
 
-static std::unordered_map<std::string, Font> fonts;
+static std::unordered_map<std::string, TextFont> fonts;
 
-static const Font &loadFont(const std::string &name) {
+static const TextFont &loadTextFont(const std::string &name) {
   if (fonts.find(name) != fonts.end()) return fonts[name];
-  fonts[name] = Font(name);
+  fonts[name] = TextFont(name);
   return fonts[name];
 }
 
@@ -105,7 +105,7 @@ decode_error:
 }
 
 RenderString::RenderString(const std::string &text, const std::string &fontName) : 
-  font(loadFont(fontName)), 
+  font(loadTextFont(fontName)), 
   mbString(""),
   text(L""),
   wrappedText(L""),

@@ -27,16 +27,10 @@ static std::string credits() {
   return str;
 }
 
-int main(int, char **argv) {
+int main(int, char **) {
   std::setlocale(LC_ALL, "en_US.utf8");
 
   Log("%s", credits().c_str());
-  
-  char tmp[256];
-  getcwd(tmp, sizeof(tmp));
-  
-  Log("%s\n", argv[0]);
-  Log("%s\n", tmp);
   
   // Set up glfw
   if (!glfwInit()) {
