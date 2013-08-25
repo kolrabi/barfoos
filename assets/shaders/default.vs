@@ -45,7 +45,7 @@ void main() {
     vec3 v_l = vec3(u_matView * vec4(u_lightPos[i], 1.0));
     vec3 ld = v_l - v_pos;
     vec3 L = normalize(ld);
-    float d = max(1.0, length(ld)*0.5);
-    v_light += u_lightColor[i].rgb * max(0.0, dot(v_norm, L)) / (1.0+d*d);
+    float d = length(ld)/5.0;
+    v_light += max(vec3(0), u_lightColor[i].rgb * max(0.0, dot(v_norm, L)) - vec3(d));
   }
 }

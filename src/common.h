@@ -57,6 +57,7 @@ struct Texture;
 struct Vector3;
 struct Vertex;
 
+class Audio;
 class Cell;
 class Deserializer;
 class Entity;

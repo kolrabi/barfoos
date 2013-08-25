@@ -320,9 +320,11 @@ World::Build() {
 
   Log("Placing %u items...\n", itemCount);
   for (size_t i=0; i<itemCount; i++) {
-    IVector3 a = GetRandomTeleportTarget(random);
     std::string itemName = getRandomItem("item", state.GetLevel(), state.GetRandom());
     ItemEntity *entity = new ItemEntity(itemName);
+    if (!entity) continue;
+
+    IVector3 a = GetRandomTeleportTarget(random, entity->GetAABB().extents);
     entity->SetPosition(Vector3(a.x + 0.5, a.y + entity->GetAABB().extents.y+0.01, a.z + 0.5));
     state.AddEntity(entity);
   }
@@ -365,13 +367,15 @@ World::Build() {
     monsters[m] = GetEntityProbability(m, state.GetLevel());
   }
   for (size_t i=0; i<monsterCount; i++) {
-    IVector3 a = GetRandomTeleportTarget(random);
     std::string monster = monsters.select(random.Float01());
     Entity *entity = Entity::Create(monster);
     if (!entity) continue;
 
-    entity->SetPosition(Vector3(a.x + 0.5, a.y + entity->GetAABB().extents.y+0.01, a.z + 0.5));
+    IVector3 a = GetRandomTeleportTarget(random, entity->GetAABB().extents);
+
     state.AddEntity(entity);
+    entity->SetPosition(Vector3(a.x + 0.5, a.y + entity->GetAABB().extents.y+1.01, a.z + 0.5));
+    Log("%u is solid: %d\n", entity->GetId(), IsAABBSolid(entity->GetAABB()));
   }
 
   // remove spilt liquids
@@ -671,7 +675,7 @@ World::Update(
  *         of the cell).
  */
 bool
-World::CastRayX(const Vector3 &org, float dir) {
+World::CastRayX(const Vector3 &org, float dir) const {
   bool movingRight = dir > 0;
   size_t x = org.x - (movingRight?0.01f:-0.01f); // start cell x
   size_t y = org.y; // start cell y
@@ -693,7 +697,7 @@ World::CastRayX(const Vector3 &org, float dir) {
  *         of the cell).
  */
 bool
-World::CastRayZ(const Vector3 &org, float dir) {
+World::CastRayZ(const Vector3 &org, float dir) const {
   bool movingForward = dir > 0;
   size_t x = org.x; // start cell x
   size_t y = org.y; // start cell y
@@ -712,18 +716,20 @@ World::CastRayZ(const Vector3 &org, float dir) {
  *         account the bottom y-offsets of the cell.
  */
 float
-World::CastRayYUp(const Vector3 &org) {
+World::CastRayYUp(const Vector3 &org) const {
+  //Log("CastRayYUP: %f %f %f\n", org.x, org.y, org.z);
+
+  if (org.y < 0) return 0;
+
   size_t x = org.x; // start cell x
   size_t y = org.y; // start cell y
   size_t z = org.z; // start cell z
 
-  if (org.y < 0) return 0;
-
-  if (GetCell(IVector3(x,y,z)).IsSolid() && y > GetCell(IVector3(x,y,z)).GetHeightBottom(org.x, org.z)) return y;
+  //if (GetCell(IVector3(x,y,z)).IsSolid() && y > GetCell(IVector3(x,y,z)).GetHeightBottom(org.x, org.z)) return y;
 
   while (y < this->size.y) {
     const Cell &cell = this->GetCell(IVector3(x,y,z));
-    if (cell.GetInfo().flags & CellFlags::Solid) {
+    if (cell.IsSolid()) {
       return y + cell.GetHeightBottom(org.x, org.z);
     }
     y++;
@@ -738,7 +744,7 @@ World::CastRayYUp(const Vector3 &org) {
  *         account the top y-offsets of the cell.
  */
 float
-World::CastRayYDown(const Vector3 &org) {
+World::CastRayYDown(const Vector3 &org) const {
   size_t x = org.x; // start cell x
   size_t y = org.y; // start cell y
   size_t z = org.z; // start cell z
@@ -760,7 +766,7 @@ World::CastRayYDown(const Vector3 &org) {
  * @return true if point is inside a solid.
  */
 bool
-World::IsPointSolid(const Vector3 &org) {
+World::IsPointSolid(const Vector3 &org) const {
   size_t x = org.x; // start cell x
   size_t y = org.y; // start cell y
   size_t z = org.z; // start cell z
@@ -769,6 +775,7 @@ World::IsPointSolid(const Vector3 &org) {
   if (!cell.IsSolid()) return false;
 
   float cellY = org.y - y;
+  //Log("%f %f %f %s\n", cellY, cell.GetHeight(org.x, org.z), cell.GetHeightBottom(org.x, org.z), cell.GetType().c_str());
   if (cellY > cell.GetHeight(org.x, org.z)) return false;
   if (cellY < cell.GetHeightBottom(org.x, org.z)) return false;
   return true;
@@ -783,7 +790,7 @@ World::IsPointSolid(const Vector3 &org) {
  * @return true if AABB intersects solid geometry.
  */
 bool
-World::IsAABBSolid(const AABB &aabb) {
+World::IsAABBSolid(const AABB &aabb) const {
   std::vector<Vector3> verts;
   verts.push_back(Vector3(-aabb.extents.x, -aabb.extents.y, -aabb.extents.z));
   verts.push_back(Vector3( aabb.extents.x, -aabb.extents.y, -aabb.extents.z));
@@ -794,21 +801,24 @@ World::IsAABBSolid(const AABB &aabb) {
   verts.push_back(Vector3(-aabb.extents.x,  aabb.extents.y,  aabb.extents.z));
   verts.push_back(Vector3( aabb.extents.x,  aabb.extents.y,  aabb.extents.z));
 
-  for (Vector3 v : verts) {
+  for (auto &v : verts) {
     if (IsPointSolid(aabb.center + v)) return true;
   }
 
   float top = aabb.center.y + aabb.extents.y + 0.01;
-  if (CastRayYUp(verts[0]) < top) return true;
-  if (CastRayYUp(verts[1]) < top) return true;
-  if (CastRayYUp(verts[2]) < top) return true;
-  if (CastRayYUp(verts[3]) < top) return true;
+  //Log("%f < %f? (from %f+%f)\n", CastRayYUp(verts[0]), top, verts[0].y, aabb.center.y);
+  if (CastRayYUp(verts[0]+aabb.center) < top) return true;
+  if (CastRayYUp(verts[1]+aabb.center) < top) return true;
+  if (CastRayYUp(verts[2]+aabb.center) < top) return true;
+  if (CastRayYUp(verts[3]+aabb.center) < top) return true;
+  //Log("meh..\n");
 
   float bot = aabb.center.y - aabb.extents.y - 0.01;
-  if (CastRayYDown(verts[4]) > bot) return true;
-  if (CastRayYDown(verts[5]) > bot) return true;
-  if (CastRayYDown(verts[6]) > bot) return true;
-  if (CastRayYDown(verts[7]) > bot) return true;
+  if (CastRayYDown(verts[4]+aabb.center) > bot) return true;
+  if (CastRayYDown(verts[5]+aabb.center) > bot) return true;
+  if (CastRayYDown(verts[6]+aabb.center) > bot) return true;
+  if (CastRayYDown(verts[7]+aabb.center) > bot) return true;
+  //Log("muh..\n");
 
   return false;
 }
@@ -1035,7 +1045,7 @@ World::Dump() {
  *       it will be the default cell, which has no world or position value.
  */
 Cell &
-World::CastRayCell(const Vector3 &org, const Vector3 &dir, float &distance, Side &side, size_t flags) {
+World::CastRayCell(const Vector3 &org, const Vector3 &dir, float &distance, Side &side, size_t flags) const {
   int dx = dir.x == 0 ? 0 : (dir.x > 0 ? 1 : -1);
   int dy = dir.y == 0 ? 0 : (dir.y > 0 ? 1 : -1);
   int dz = dir.z == 0 ? 0 : (dir.z > 0 ? 1 : -1);
@@ -1097,7 +1107,7 @@ World::CastRayCell(const Vector3 &org, const Vector3 &dir, float &distance, Side
  * @return true if cell wasn't modified.
  */
 bool
-World::IsDefault(const IVector3 &pos) {
+World::IsDefault(const IVector3 &pos) const {
   if (!IsValidCellPosition(pos)) return true;
   return defaultMask[GetCellIndex(pos)];
 }
@@ -1133,12 +1143,22 @@ World::IsCellWalkable(const IVector3 &pos) const {
 }
 
 bool
-World::IsCellValidTeleportTarget(const IVector3 &pos) const {
-  return IsCellWalkable(pos) && (
-    IsCellWalkable(pos[Side::Right]) ||
-    IsCellWalkable(pos[Side::Left]) ||
-    IsCellWalkable(pos[Side::Forward]) ||
-    IsCellWalkable(pos[Side::Backward])); // TODO: check triggers
+World::IsCellValidTeleportTarget(const IVector3 &pos, const Vector3 &extents) const {
+  AABB aabb;
+  aabb.center = Vector3(pos.x+0.5, pos.y + 1.01 + extents.y, pos.z + 0.5);
+  aabb.extents = extents;
+
+  return
+
+    IsCellWalkable(pos) &&
+    IsCellWalkable(pos[Side::Right]) &&
+    IsCellWalkable(pos[Side::Left]) &&
+    IsCellWalkable(pos[Side::Forward]) &&
+    IsCellWalkable(pos[Side::Backward]) &&
+    !IsAABBSolid(aabb)
+    ;
+
+  // TODO: check for existing triggers, teleports
 }
 
 bool
@@ -1168,14 +1188,14 @@ World::FindSolidAbove(const IVector3 &pos) const {
 }
 
 IVector3
-World::GetRandomTeleportTarget(Random &random) const {
+World::GetRandomTeleportTarget(Random &random, const Vector3 &extents) const {
   IVector3 pos;
   do {
     pos.x = random.Integer(size.x);
     pos.y = random.Integer(size.y);
     pos.z = random.Integer(size.z);
     pos = FindSolidBelow(pos);
-  } while(!IsCellValidTeleportTarget(pos));
+  } while(!IsCellValidTeleportTarget(pos, extents));
   return pos;
 }
 

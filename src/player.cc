@@ -14,6 +14,7 @@
 #include "text.h"
 #include "vertex.h"
 
+#include "audio.h"
 #include "input.h"
 
 #include "serializer.h"
@@ -258,6 +259,8 @@ Player::UpdateInput(
   if (input.IsKeyActive(InputKey::Forward))   move = move + fwd   * speed;
   if (input.IsKeyActive(InputKey::Backward))  move = move - fwd   * speed;
 
+  if (move.GetMag() > speed) move = move.Normalize() * speed;
+
   if (!this->isInLiquid && move.GetMag() > 1.5) {
     bobAmplitude += deltaT*4;
     if (bobAmplitude > 1.0) bobAmplitude = 1.0;
@@ -270,12 +273,35 @@ Player::UpdateInput(
   }
 
   float lastPhase = bobPhase;
-  bobPhase += (deltaT * this->GetMoveModifier()) * move.GetMag()/4;
+  bobPhase += (deltaT * this->GetMoveModifier()) * move.GetMag()/5;
   if (bobPhase >= 1.0) {
     bobPhase -= 1.0;
-    // TODO: play step sound
+
+    // TODO: get step sound from ground cell
+    if (this->groundCell) {
+      float pitch = 1.0 + state.GetRandom().Float()*0.1;
+      std::string name = "step_a";
+      switch(state.GetRandom().Integer(4)) {
+        case 0: name = "step_a"; break;
+        case 1: name = "step_b"; break;
+        case 2: name = "step_c"; break;
+        case 3: name = "step_d"; break;
+      }
+      state.GetGame().GetAudio().PlaySound("step_a", this->GetSmoothPosition() - this->GetRight(), pitch);
+    }
   } else if (bobPhase >= 0.5 && lastPhase < 0.5) {
-    // TODO: play step sound
+    // TODO: get step sound from ground cell
+    if (this->groundCell) {
+      float pitch = 1.0 + state.GetRandom().Float()*0.1;
+      std::string name = "step_a";
+      switch(state.GetRandom().Integer(4)) {
+        case 0: name = "step_a"; break;
+        case 1: name = "step_b"; break;
+        case 2: name = "step_c"; break;
+        case 3: name = "step_d"; break;
+      }
+      state.GetGame().GetAudio().PlaySound("step_a", this->GetSmoothPosition() + this->GetRight(), pitch);
+    }
   }
 
   if ((isOnGround || isInLiquid || isNoclip) && input.IsKeyActive(InputKey::Jump)) doesWantJump = true;

@@ -4,6 +4,7 @@
 #include "util.h"
 #include "runningstate.h"
 #include "item.h"
+#include "audio.h"
 
 #include "serializer.h"
 #include "deserializer.h"
@@ -13,6 +14,7 @@
 Mob::Mob(const std::string &propertyName) :
   Entity          (propertyName),
 
+  lastKnownGoodPos(0, 0, 0),
   velocity        (0, 0, 0),
   move            (0, 0, 0),
 
@@ -85,6 +87,12 @@ Mob::Update(RunningState &state) {
     this->move = Vector3();
   }
 
+  if (state.GetWorld().IsAABBSolid(this->aabb)) {
+    //if (!this->isNoclip) this->aabb.center = this->lastKnownGoodPos;
+  } else {
+    this->lastKnownGoodPos = this->aabb.center;
+  }
+
   // clip move speed
   float speed = move.GetMag();
   float maxSpeed = this->properties->maxSpeed * this->GetMoveModifier() * this->GetEffectiveStats().walkSpeed;
@@ -121,6 +129,7 @@ Mob::Update(RunningState &state) {
     if (doesWantJump && isOnGround) {
       if (game.GetTime() - lastJumpT > 0.5) {
         tvy = velocity.y = properties->jumpSpeed;
+        state.GetGame().GetAudio().PlaySound("jump", this->GetSmoothPosition());
         lastJumpT = game.GetTime();
       }
     }
@@ -258,9 +267,9 @@ Mob::SetInLiquid(bool inLiquid) {
   this->isInLiquid = inLiquid;
   /*
   if (inLiquid) {
-    // enter liquid
+    // play splash sound
   } else {
-    // exit liquid
+    // play splash sound
   }
   */
 }

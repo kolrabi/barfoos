@@ -1,10 +1,10 @@
 Group             item
-Tex               potion.blue
+Tex               potion.clear
 
 Size              0.5 0.5
 
-Potion
-UnidentifiedName  "blue potion"
+# Potion
+UnidentifiedName  "clear potion"
 IdentifiedName    "water"
 
 NoBeatitude

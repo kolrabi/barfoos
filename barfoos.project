@@ -304,6 +304,8 @@
     <File Name="src/cellrender.h"/>
     <File Name="src/itemproperties.h"/>
     <File Name="src/itemproperties.cc"/>
+    <File Name="src/audio.cc"/>
+    <File Name="src/audio.h"/>
   </VirtualDirectory>
   <Settings Type="Dynamic Library">
     <GlobalSettings>

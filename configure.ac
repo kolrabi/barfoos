@@ -17,6 +17,10 @@ AC_PROG_CC
 AM_PROG_CC_C_O
 AC_PROG_CXX
 
+LDFLAGS="-L/opt/local/lib"
+CFLAGS="-I/opt/local/include"
+CXXFLAGS="-I/opt/local/include"
+
 # Checks for libraries.
 AC_CHECK_LIB(pthread, pthread_create)
 
@@ -35,7 +39,10 @@ else
   AC_CHECK_LIB(GLU, main)
 fi
 
-AC_CHECK_HEADERS([GLFW/glfw3.h])
+AC_CHECK_HEADER(GLFW/glfw3.h)
+AC_CHECK_HEADER(AL/al.h)
+AC_CHECK_HEADER(vorbis/vorbisfile.h)
+AC_CHECK_HEADER(vorbis/vorbisenc.h)
 
 AC_CHECK_LIB(X11, [XOpenDisplay], [AC_DEFINE(X11)])
 AC_CHECK_LIB(X11, XConvertSelection)
@@ -45,6 +52,8 @@ AC_CHECK_LIB(Xi, main)
 AC_CHECK_LIB(glfw3, main)
 AC_CHECK_LIB(z, main)
 AC_CHECK_LIB(png, main)
+AC_CHECK_LIB(openal, main)
+AC_CHECK_LIB(vorbisfile, main)
 
 AC_CHECK_FUNCS([clock_gettime])
 AC_FUNC_MALLOC
@@ -70,10 +79,10 @@ AH_TEMPLATE(MACOSX, [define if compiling for Mac OS X])
 
 #CFLAGS="-O0 -ggdb"
 #CXXFLAGS="-O0 -ggdb"
-CFLAGS="-O2 -ggdb"
-CXXFLAGS="-O2 -ggdb"
+CFLAGS="$CFLAGS -O2 -ggdb"
+CXXFLAGS="$CXXFLAGS -O2 -ggdb"
 
-AC_CONFIG_FILES([Makefile 
+AC_CONFIG_FILES([Makefile
                  src/Makefile
                  src/res.rc
                  ])

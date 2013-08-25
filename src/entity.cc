@@ -544,7 +544,7 @@ Entity::AddHealth(RunningState &state, const HealthInfo &info) {
 
   this->health += info.amount;
 
-  Log("Entity::AddHealth: %f to %u\n", info.amount, this->GetId());
+  // Log("Entity::AddHealth: %f to %u\n", info.amount, this->GetId());
 
   Entity *dealer = state.GetEntity(info.dealerId);
   if (dealer) dealer->OnHealthDealt(state, *this, info);
@@ -554,7 +554,7 @@ Entity::AddHealth(RunningState &state, const HealthInfo &info) {
     this->sprite.QueueAnim(0);
   }
 
-  if (this->health <= 0) {
+  if (this->health <= 0 && info.amount < 0.0) {
     this->health = 0;
     this->Die(state, info);
   } else if (this->health > this->GetEffectiveStats().maxHealth) {
@@ -566,7 +566,7 @@ void
 Entity::Die(RunningState &state, const HealthInfo &info) {
   this->isDead = true;
 
-  Log("Entity::Die: from %f damage to %u\n", info.amount, this->GetId());
+  // Log("Entity::Die: from %f damage to %u\n", info.amount, this->GetId());
 
   this->activeBuffs.clear();
 

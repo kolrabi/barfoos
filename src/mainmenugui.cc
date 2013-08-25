@@ -1,6 +1,7 @@
 #include "mainmenugui.h"
 #include "mainmenustate.h"
 #include "gfx.h"
+#include "audio.h"
 
 MainMenuGui::MainMenuGui(MainMenuState &state) :
   state(state)
@@ -13,7 +14,7 @@ MainMenuGui::MainMenuGui(MainMenuState &state) :
   NinePatch npBtnDisabled("gui/button.disabled", btnRect);
   NinePatch npBtnHover   ("gui/button.hover",    btnRect);
   NinePatch npBtnActive  ("gui/button.active",   btnRect);
-  
+
   Gui *btnExit = new Gui();
   btnExit->SetSize(Point(128, 32));
   btnExit->SetCenter(vscreen/2 + Point(0, 64));
@@ -31,7 +32,10 @@ MainMenuGui::MainMenuGui(MainMenuState &state) :
   btnNewGame->SetCenter(vscreen/2 + Point(0, -64));
   btnNewGame->SetGravity(false, false, false, false);
   btnNewGame->SetText("New Game");
-  btnNewGame->SetOnActivate([&](Gui*){state.NewGame();});
+  btnNewGame->SetOnActivate([&](Gui*){
+    state.GetGame().GetAudio().PlaySound("test");
+    state.NewGame();
+    });
   btnNewGame->SetBackground(GuiState::Normal,   npBtnEnabled);
   btnNewGame->SetBackground(GuiState::Disabled, npBtnDisabled);
   btnNewGame->SetBackground(GuiState::Hover,    npBtnHover);

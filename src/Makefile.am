@@ -11,8 +11,8 @@ LDWINFLAGS=-mwindows -Wl,-Map=barfoos.map
 endif
 
 if MECKES
-LDMACOSXFLAGS:=-framework OpenGL -framework cocoa -framework IOKit `libpng-config --ldflags`
-CCMACOSXFLAGS:=`libpng-config --cflags`
+LDMACOSXFLAGS=-framework OpenGL -framework cocoa -framework IOKit -framework OpenAL
+CCMACOSXFLAGS=
 endif
 
 .rc.o:
@@ -27,6 +27,7 @@ barfoos_LDFLAGS=$(LDWINFLAGS) $(LDMACOSXFLAGS)
 barfoos_SOURCES=\
   main.cc \
   gfx.cc gfx.h gfxview.cc gfxview.h \
+  audio.cc audio.h \
   io.cc texture.cc \
   GLee.c GLee.h \
   game.cc game.h \

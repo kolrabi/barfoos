@@ -5,6 +5,8 @@
 #include "runningstate.h"
 #include "item.h"
 
+#include "audio.h"
+
 #include "serializer.h"
 #include "deserializer.h"
 
@@ -131,7 +133,8 @@ Monster::Think(RunningState &state) {
       // suitable? -> set attack target
       if (entity->GetProperties()->name == "player" && CanSee(state, entity->GetPosition())) {
         enemy = entity;
-        Log("  Found one: %u %s\n", enemy->GetId(), enemy->GetName().c_str());
+        // Log("  Found one: %u %s\n", enemy->GetId(), enemy->GetName().c_str());
+        // TODO: play engage sound... state.GetGame().GetAudio().PlaySound("test", this->GetPosition());
         break;
       }
     }

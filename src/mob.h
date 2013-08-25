@@ -32,6 +32,7 @@ public:
 
 protected:
 
+  Vector3               lastKnownGoodPos;
   Vector3               velocity;
   Vector3               move;
   bool                  doesWantJump;

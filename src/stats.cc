@@ -79,13 +79,17 @@ Stats::ExplosionAttack(ID attackerID, const Entity &victim, float damage, Elemen
   // get stats
   Stats defStat = victim.GetEffectiveStats();
 
-  info.amount = -(damage - defStat.def * 0.5);
-  bool kill = -info.amount > victim.GetHealth();
-  float expDmg = kill ? victim.GetHealth() : -info.amount;
-  info.exp = (expDmg / defStat.maxHealth) * 0.5 * victim.GetProperties()->exp + kill ? victim.GetProperties()->exp : 0;
-  if (damage > 0.0 && info.amount > -1.0) info.amount = -1.0;
-  if (damage < 0.0 && info.amount <  1.0) info.amount =  1.0;
+  if (damage > 0.0) {
+    info.amount = -(damage - defStat.def * 0.5);
+    if (info.amount > 0.0) info.amount = 0.0;
 
+    bool kill = -info.amount > victim.GetHealth();
+    float expDmg = kill ? victim.GetHealth() : -info.amount;
+    info.exp = (expDmg / defStat.maxHealth) * 0.5 * victim.GetProperties()->exp + kill ? victim.GetProperties()->exp : 0;
+  } else {
+    info.amount = -damage;
+    info.exp = 0.0;
+  }
   return info;
 }
 
@@ -99,10 +103,17 @@ Stats::ProjectileAttack(const Entity &projectile, const Entity &victim, float da
   // get stats
   Stats defStat = victim.GetEffectiveStats();
 
-  info.amount = -(damage - defStat.def * 0.5);
-  bool kill = -info.amount > victim.GetHealth();
-  float expDmg = kill ? victim.GetHealth() : -info.amount;
-  info.exp = (expDmg / defStat.maxHealth) * 0.5 * victim.GetProperties()->exp + kill ? victim.GetProperties()->exp : 0;
+  if (damage > 0.0) {
+    info.amount = -(damage - defStat.def * 0.5);
+    if (info.amount > 0.0) info.amount = 0.0;
+    bool kill = -info.amount > victim.GetHealth();
+    float expDmg = kill ? victim.GetHealth() : -info.amount;
+    info.exp = (expDmg / defStat.maxHealth) * 0.5 * victim.GetProperties()->exp + kill ? victim.GetProperties()->exp : 0;
+  } else {
+    // just healing
+    info.amount = damage;
+    info.exp = 0.0;
+  }
   return info;
 }
 

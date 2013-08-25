@@ -4,14 +4,11 @@
 /* Define to 1 if you have the `clock_gettime' function. */
 /* #undef HAVE_CLOCK_GETTIME */
 
-/* Define to 1 if you have the <GLFW/glfw3.h> header file. */
-#define HAVE_GLFW_GLFW3_H 1
-
 /* Define to 1 if you have the <inttypes.h> header file. */
 #define HAVE_INTTYPES_H 1
 
 /* Define to 1 if you have the `gdi32' library (-lgdi32). */
-#define HAVE_LIBGDI32 1
+/* #undef HAVE_LIBGDI32 */
 
 /* Define to 1 if you have the `GL' library (-lGL). */
 /* #undef HAVE_LIBGL */
@@ -23,19 +20,25 @@
 /* #undef HAVE_LIBGLU */
 
 /* Define to 1 if you have the `glu32' library (-lglu32). */
-#define HAVE_LIBGLU32 1
+/* #undef HAVE_LIBGLU32 */
+
+/* Define to 1 if you have the `openal' library (-lopenal). */
+#define HAVE_LIBOPENAL 1
 
 /* Define to 1 if you have the `opengl32' library (-lopengl32). */
-#define HAVE_LIBOPENGL32 1
+/* #undef HAVE_LIBOPENGL32 */
 
 /* Define to 1 if you have the `png' library (-lpng). */
 #define HAVE_LIBPNG 1
 
 /* Define to 1 if you have the `pthread' library (-lpthread). */
-/* #undef HAVE_LIBPTHREAD */
+#define HAVE_LIBPTHREAD 1
+
+/* Define to 1 if you have the `vorbisfile' library (-lvorbisfile). */
+#define HAVE_LIBVORBISFILE 1
 
 /* Define to 1 if you have the `winmm' library (-lwinmm). */
-#define HAVE_LIBWINMM 1
+/* #undef HAVE_LIBWINMM */
 
 /* Define to 1 if you have the `X11' library (-lX11). */
 /* #undef HAVE_LIBX11 */
@@ -91,7 +94,7 @@
 #define HAVE__BOOL 1
 
 /* define if compiling for Mac OS X */
-/* #undef MACOSX */
+#define MACOSX 1
 
 /* Define to 1 if your C compiler doesn't accept -c and -o together. */
 /* #undef NO_MINUS_C_MINUS_O */
@@ -111,9 +114,6 @@
 /* Define to the one symbol short name of this package. */
 #define PACKAGE_TARNAME "barfoos"
 
-/* Define to the home page for this package. */
-#define PACKAGE_URL ""
-
 /* Define to the version of this package. */
 #define PACKAGE_VERSION "0.1"
 
@@ -124,23 +124,23 @@
 #define VERSION "0.1"
 
 /* define if compiling for windows */
-#define WIN32 1
+/* #undef WIN32 */
 
 /* define if compiling for X11 */
 /* #undef X11 */
 
 /* Define for Solaris 2.5.1 so the uint32_t typedef from <sys/synch.h>,
-   <pthread.h>, or <semaphore.h> is not used. If the typedef were allowed, the
+   <pthread.h>, or <semaphore.h> is not used. If the typedef was allowed, the
    #define below would cause a syntax error. */
 /* #undef _UINT32_T */
 
 /* Define for Solaris 2.5.1 so the uint64_t typedef from <sys/synch.h>,
-   <pthread.h>, or <semaphore.h> is not used. If the typedef were allowed, the
+   <pthread.h>, or <semaphore.h> is not used. If the typedef was allowed, the
    #define below would cause a syntax error. */
 /* #undef _UINT64_T */
 
 /* Define for Solaris 2.5.1 so the uint8_t typedef from <sys/synch.h>,
-   <pthread.h>, or <semaphore.h> is not used. If the typedef were allowed, the
+   <pthread.h>, or <semaphore.h> is not used. If the typedef was allowed, the
    #define below would cause a syntax error. */
 /* #undef _UINT8_T */
 

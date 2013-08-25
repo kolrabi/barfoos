@@ -2,7 +2,7 @@ Class       Entity
 group       deco.misc.top
 
 tex grass
-vert
+#vert
 
 step 0
 mass 1
@@ -15,3 +15,6 @@ nohit
 extents 0.5 0.25 0.5
 #size 0.5 0.5
 # size 1 1
+
+quad
+randomangle

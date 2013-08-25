@@ -8,6 +8,8 @@
 #include "inventorygui.h"
 #include "gfx.h"
 #include "gfxview.h"
+
+#include "audio.h"
 #include "input.h"
 
 #include "item.h"
@@ -231,6 +233,7 @@ RunningState::AddEntity(Entity *entity) {
   if (dynamic_cast<Player*>(entity)) {
     this->player = dynamic_cast<Player*>(entity);
     GetGame().GetGfx().SetPlayer(player);
+    GetGame().GetAudio().SetPlayer(player);
   }
   return entityId;
 }
@@ -250,6 +253,7 @@ RunningState::RemoveEntity(ID entityId) {
   if (this->player == iter->second) {
     this->player = nullptr;
     GetGame().GetGfx().SetPlayer(nullptr);
+    GetGame().GetAudio().SetPlayer(nullptr);
   }
 
   auto solidIter = std::find(this->solidEntities.begin(), this->solidEntities.end(), iter->second);

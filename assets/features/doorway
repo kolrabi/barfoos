@@ -56,8 +56,8 @@ slice 3 3
 &\&
 &#&
 
-Entity 1 "torch" -3  1 2 1
-Entity 1 "torch"  3  1 2 3
+Entity 0.5 "torch" -3  1 2 1
+Entity 0.5 "torch"  3  1 2 3
 
 slice 4 4
 &#&

@@ -10,6 +10,8 @@
 #include "gfx.h"
 #include "gfxview.h"
 
+#include "audio.h"
+
 #include "input.h"
 
 #include "gui.h"
@@ -24,7 +26,8 @@
 Game::Game(const Point &screenSize) :
   isInit        (false),
   input         (new Input()),
-  gfx           (new Gfx(Point(1920, 32), screenSize, false)),
+  gfx           (new Gfx(Point(32, 32), screenSize, false)),
+  audio         (new Audio()),
   handlerId     (this->input->AddHandler( [this](const InputEvent &event){ this->HandleEvent(event); } )),
   activeGameState(nullptr),
   nextGameState(nullptr),
@@ -48,6 +51,7 @@ Game::~Game() {
   this->input->RemoveHandler(this->handlerId);
 
   delete gfx;
+  delete audio;
   delete input;
 }
 
@@ -57,18 +61,19 @@ Game::Init() {
 
   Log("Initializing game\n");
   if (!this->gfx->Init(*this)) return false;
+  if (!this->audio->Init()) return false;
 
-  this->lastT = 0;
-  this->deltaT = 0;
-  this->frame = 0;
+  this->lastT     = 0;
+  this->deltaT    = 0;
+  this->frame     = 0;
   this->realFrame = 0;
-  this->lastFPST = 0;
-  this->fps = 0;
+  this->lastFPST  = 0;
+  this->fps       = 0;
 
-  this->isInit = true;
+  this->isInit    = true;
 
   MainMenuState *state = new MainMenuState(*this);
-  nextGameState = state;
+  nextGameState   = state;
 
   return true;
 }
@@ -122,6 +127,7 @@ bool Game::Frame() {
   */
 
   this->gfx->Update(*this);
+  this->audio->Update(*this);
 
   this->frame ++;
   this->realFrame++;

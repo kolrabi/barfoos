@@ -2,7 +2,8 @@ Class           Monster
 Group           monster
 Name            wizard
 
-Tex             monk
+Tex             wizard
+EmissiveTex     wizard.emissive
 Frames          1
 
 Vert
@@ -17,8 +18,8 @@ Move            10.0
 Speed           1.0
 ThinkInterval   0.1
 
-Extents         0.6 0.9 0.6
-Size            1.2 2.4
+Extents         0.2 0.9 0.2
+Size            0.9 1.8
 
 Health          10
 Dex             1
