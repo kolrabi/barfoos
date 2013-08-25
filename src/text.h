@@ -5,7 +5,7 @@
 #include "2d.h"
 #include "vertex.h"
 
-struct Font;
+struct TextFont;
 
 enum class Align {
   HorizLeft = 0,
@@ -31,7 +31,7 @@ public:
   
   void WrapWords(size_t width);
   
-  const Font & GetFont()  const { return font; }
+  const TextFont & GetFont()  const { return font; }
   const std::string & GetFontName()  const;
   const Point &GetSize();
   
@@ -39,7 +39,7 @@ public:
 
 private:
 
-  const Font &font;
+  const TextFont &font;
   std::string mbString;
   std::wstring text;
   std::wstring wrappedText;
