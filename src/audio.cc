@@ -6,9 +6,9 @@
 #include <AL/al.h>
 #include <AL/alc.h>
 #include <AL/alext.h>
-#include <ogg/ogg.h>
-#include <vorbis/codec.h>
-#include <vorbis/vorbisenc.h>
+//#include <ogg/ogg.h>
+//#include <vorbis/codec.h>
+//#include <vorbis/vorbisenc.h>
 #include <vorbis/vorbisfile.h>
 
 Audio::Audio() :
@@ -142,7 +142,7 @@ Audio::Buffer *Audio::Buffer::LoadOgg(const std::string &name) {
     readPos += readCount;
   }
 
-  Log("Read %u / %u bytes from sound %s\n", readPos, length, name.c_str());
+  Log("Read %llu / %llu bytes from sound %s\n", readPos, length, name.c_str());
   Log("Format is: %u channels, %u hz\n", info->channels, rate);
 
   alBufferData(buffer->buffer, format, data, readPos, rate);
