@@ -26,7 +26,7 @@
 Game::Game(const Point &screenSize) :
   isInit        (false),
   input         (new Input()),
-  gfx           (new Gfx(Point(32, 32), screenSize, false)),
+  gfx           (new Gfx(Point(1920, 32), screenSize, false)),
   audio         (new Audio()),
   handlerId     (this->input->AddHandler( [this](const InputEvent &event){ this->HandleEvent(event); } )),
   activeGameState(nullptr),
