@@ -6,21 +6,22 @@
 struct IColor;
 
 struct Properties {
-  
+
   Properties() :
     game(nullptr),
     tokens(),
     lastError("")
   {}
-  
+
   virtual ~Properties() {}
 
   void ParseFile(FILE *f);
-  
+
   virtual void ParseProperty(const std::string &name) = 0;
-  
+
   void Parse(int &i);
   void Parse(uint32_t &i);
+  void Parse(int16_t &i);
   void Parse(float &f);
   void Parse(Vector3 &v);
   void Parse(IVector3 &iv);
@@ -34,7 +35,7 @@ struct Properties {
   void ParseSideMask(uint32_t &i);
 
   Game *game;
-  
+
   bool operator==(const Properties &that) const {
     return this == &that;
   }
@@ -42,12 +43,12 @@ struct Properties {
   bool operator!=(const Properties &that) const {
     return this != &that;
   }
-  
+
 private:
 
   std::vector<std::string> tokens;
   std::string lastError;
- 
+
 protected:
 
   void SetError(const std::string &);

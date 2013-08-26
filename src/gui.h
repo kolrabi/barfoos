@@ -10,7 +10,7 @@
 struct NinePatch {
   const Texture *texture;
   Rect srcRects[9];
-  
+
   NinePatch() : texture(nullptr) {}
   NinePatch(const std::string &name);
   NinePatch(const std::string &name, const Rect &innerRect);
@@ -18,7 +18,7 @@ struct NinePatch {
 };
 
 enum class GuiState : size_t {
-  Normal   = 0,
+  Enabled  = 0,
   Disabled = 1,
   Hover    = 2,
   Active   = 3
@@ -43,36 +43,36 @@ public:
   virtual void DrawTooltip(Gfx &gfx, const Point &parentPos);
 
   bool IsOver(const Point &p) const;
-  
+
   void AddChild(Gui *child);
   Gui *GetChildAt(const Point &p);
- 
+
   void SetSize(const Point &s);
   void SetPosition(const Point &p);
   void SetCenter(const Point &p);
   void SetGravity(bool gravN, bool gravE, bool gravS, bool gravW);
 
   void SetText(const std::string &str, const std::string &font = "default");
-  
+
   std::function<void(Gui *)> GetOnActivate() { return onActivate; }
   void SetOnActivate(std::function<void(Gui *)> func) { onActivate = func; }
-  
+
   void SetBackground(GuiState state, const NinePatch &patch) { this->backgrounds[state] = patch; }
   void SetColor(GuiState state, const IColor &color) { this->colors[state] = color; }
 
-  void SetBackground(const NinePatch &patch) { 
-    this->backgrounds[GuiState::Normal] = patch; 
-    this->backgrounds[GuiState::Disabled] = patch; 
-    this->backgrounds[GuiState::Hover] = patch; 
-    this->backgrounds[GuiState::Active] = patch; 
+  void SetBackground(const NinePatch &patch) {
+    this->backgrounds[GuiState::Enabled] = patch;
+    this->backgrounds[GuiState::Disabled] = patch;
+    this->backgrounds[GuiState::Hover] = patch;
+    this->backgrounds[GuiState::Active] = patch;
   }
-  void SetColor(const IColor &color) { 
-    this->colors[GuiState::Normal] = color; 
-    this->colors[GuiState::Disabled] = color; 
-    this->colors[GuiState::Hover] = color; 
-    this->colors[GuiState::Active] = color; 
+  void SetColor(const IColor &color) {
+    this->colors[GuiState::Enabled] = color;
+    this->colors[GuiState::Disabled] = color;
+    this->colors[GuiState::Hover] = color;
+    this->colors[GuiState::Active] = color;
   }
-  
+
   void SetEnabled(bool enable);
   GuiState GetGuiState() const { return state; }
 
@@ -85,14 +85,14 @@ protected:
 
   bool gravN, gravE, gravS, gravW;
   bool updateGravity;
-  
+
   RenderString *text;
-  
+
   GuiState state;
-  
+
   std::unordered_map<GuiState, NinePatch> backgrounds;
   std::unordered_map<GuiState, IColor> colors;
-  
+
   std::function<void(Gui *)> onActivate;
 };
 

@@ -15,6 +15,7 @@
 #include "gfxview.h"
 #include "texture.h"
 
+#include "audio.h"
 #include "input.h"
 
 #include "runningstate.h"
@@ -38,11 +39,11 @@ const EntityProperties *getEntity(const std::string &name) {
 
 void
 EntityProperties::ParseProperty(const std::string &cmd) {
-  if (cmd == "tex")             Parse("entities/texture/", this->sprite.texture);
-  else if (cmd == "class")       Parse(this->klass);
-  else if (cmd == "emissivetex") Parse("entities/texture/", this->sprite.emissiveTexture);
-  else if (cmd == "frames")     Parse(this->sprite.totalFrames);
-  else if (cmd == "group")      Parse(this->groups);
+  if (cmd == "tex")                   Parse("entities/texture/", this->sprite.texture);
+  else if (cmd == "class")            Parse(this->klass);
+  else if (cmd == "emissivetex")      Parse("entities/texture/", this->sprite.emissiveTexture);
+  else if (cmd == "frames")           Parse(this->sprite.totalFrames);
+  else if (cmd == "group")            Parse(this->groups);
   else if (cmd == "anim") {
     uint32_t firstFrame = 0;
     uint32_t frameCount = 0;
@@ -56,14 +57,13 @@ EntityProperties::ParseProperty(const std::string &cmd) {
   } else if (cmd == "size") {
     Parse(this->sprite.width);
     Parse(this->sprite.height);
-  } else if (cmd == "sizerand") {
-    Parse(this->sizeRand);
+  } else if (cmd == "sizerand")       Parse(this->sizeRand);
 
-  } else if (cmd == "name")     Parse(this->displayName);
+  else if (cmd == "name")             Parse(this->displayName);
 
-  else if (cmd == "flinchanim") Parse(this->flinchAnim);
-  else if (cmd == "dyinganim")  Parse(this->dyingAnim);
-  else if (cmd == "attackanim") Parse(this->attackAnim);
+  else if (cmd == "flinchanim")       Parse(this->flinchAnim);
+  else if (cmd == "dyinganim")        Parse(this->dyingAnim);
+  else if (cmd == "attackanim")       Parse(this->attackAnim);
 
   else if (cmd == "respawn")          this->respawn         = true;
   else if (cmd == "nostep")           this->noStep          = true;
@@ -85,6 +85,8 @@ EntityProperties::ParseProperty(const std::string &cmd) {
   else if (cmd == "learnevade")       this->learnEvade = true;
   else if (cmd == "randomangle")      this->randomAngle = true;
   else if (cmd == "quad")             this->isQuad = true;
+
+  else if (cmd == "element")          Parse(this->element);
 
   else if (cmd == "level") {
     Parse(this->minLevel);
@@ -171,6 +173,9 @@ EntityProperties::ParseProperty(const std::string &cmd) {
     Parse(this->onDieExplodeDamage);
     Parse(this->onDieExplodeElement);
 
+  } else if (cmd == "ondieexplodeaddbuff") {
+    Parse(this->onDieExplodeAddBuff);
+
   } else if (cmd == "ondieparticles") {
     Parse(this->onDieParticles);
     Parse(this->onDieParticleSpeed);
@@ -186,7 +191,13 @@ EntityProperties::ParseProperty(const std::string &cmd) {
   } else if (cmd == "cell") {
     Parse(this->cellEnter);
     Parse(this->cellLeave);
-  } else if (cmd != "") {
+
+  }
+  else if (cmd == "soundattack") Parse(this->soundAttack);
+  else if (cmd == "soundengage") Parse(this->soundEngage);
+  else if (cmd == "soundhurt")   Parse(this->soundHurt);
+  else if (cmd == "sounddeath")  Parse(this->soundDeath);
+  else if (cmd != "") {
     this->SetError("Ignoring '" + cmd + "'");;
   }
 }
@@ -288,7 +299,9 @@ Entity::Entity(const std::string &type) :
 {
 }
 
-Entity::Entity(const std::string &type, Deserializer &deser) : Entity(type) {
+Entity::Entity(const std::string &type, Deserializer &deser) :
+  Entity(type)
+{
   deser >> (Triggerable&)*this;
   deser >> ownerId;
   deser >> nextThinkT;
@@ -317,6 +330,8 @@ Entity::Start(RunningState &state, uint32_t id) {
   this->id = id;
   this->nextThinkT = game.GetTime();
   this->startT = game.GetTime();
+
+  // TODO: play start sound
 
   if (this->properties->randomAngle) {
     this->renderAngle = state.GetRandom().Float01() * 360.0;
@@ -516,6 +531,7 @@ Entity::Draw(Gfx &gfx) const {
     }
     if (this->properties->sprite.emissiveTexture) {
       gfx.SetBlendAdd();
+      gfx.SetLight(IColor());
       gfx.SetTextureFrame(this->properties->sprite.emissiveTexture,0,0,8);
       gfx.DrawAABB(this->aabb);
       gfx.SetBlendNormal();
@@ -568,6 +584,8 @@ Entity::Die(RunningState &state, const HealthInfo &info) {
 
   // Log("Entity::Die: from %f damage to %u\n", info.amount, this->GetId());
 
+  state.GetGame().GetAudio().PlaySound(this->properties->soundDeath, this->GetPosition());
+
   this->activeBuffs.clear();
 
   if (info.dealerId != InvalidID && state.GetEntity(info.dealerId)) {
@@ -582,6 +600,13 @@ Entity::Die(RunningState &state, const HealthInfo &info) {
 
   if (this->properties->onDieExplodeRadius) {
     state.Explosion(*this, this->GetPosition(), this->properties->onDieExplodeRadius, this->properties->onDieExplodeStrength, this->properties->onDieExplodeDamage, this->properties->onDieExplodeElement);
+    if (this->properties->onDieExplodeAddBuff != "") {
+      std::vector<ID> ents = state.FindEntities(this->GetPosition(), this->properties->onDieExplodeRadius);
+      for (ID eid:ents) {
+        Entity *ent = state.GetEntity(eid);
+        ent->AddBuff(state, this->properties->onDieExplodeAddBuff);
+      }
+    }
   }
 
   if (this->properties->onDieParticles) {
@@ -621,6 +646,8 @@ Entity::AddBuff(RunningState &state, const std::string &name) {
   Buff buff;
   buff.effect = &getEffect(name);
   buff.startT = state.GetGame().GetTime();
+
+  // TODO: sound effect
 
   for (auto &b:this->activeBuffs) {
     if (b.effect == buff.effect) {

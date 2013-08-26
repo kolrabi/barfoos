@@ -19,6 +19,8 @@ varying vec4 v_color;
 varying vec3 v_light;
 //varying vec3 v_norm;
 
+const float gamma = 2.2;
+
 vec3 Distort(vec4 vertex) {
   float t = u_time * 2.0 * 3.14159;
   return vec3(
@@ -45,7 +47,7 @@ void main() {
     vec3 v_l = vec3(u_matView * vec4(u_lightPos[i], 1.0));
     vec3 ld = v_l - v_pos;
     vec3 L = normalize(ld);
-    float d = length(ld)/5.0;
-    v_light += max(vec3(0), u_lightColor[i].rgb * max(0.0, dot(v_norm, L)) - vec3(d));
+    float d = 1.0+dot(ld, ld)/8.0;
+    v_light += pow(u_lightColor[i].rgb, vec3(1.0/gamma)) * max(0.0, dot(v_norm, L)) / d;
   }
 }

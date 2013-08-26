@@ -287,7 +287,7 @@ Player::UpdateInput(
         case 2: name = "step_c"; break;
         case 3: name = "step_d"; break;
       }
-      state.GetGame().GetAudio().PlaySound("step_a", this->GetSmoothPosition() - (this->GetRight()*0.2), pitch);
+      state.GetGame().GetAudio().PlaySound(name, this->GetSmoothPosition() - (this->GetRight()*0.2), pitch);
     }
   } else if (bobPhase >= 0.5 && lastPhase < 0.5) {
     // TODO: get step sound from ground cell
@@ -300,7 +300,7 @@ Player::UpdateInput(
         case 2: name = "step_c"; break;
         case 3: name = "step_d"; break;
       }
-      state.GetGame().GetAudio().PlaySound("step_a", this->GetSmoothPosition() + (this->GetRight()*0.2), pitch);
+      state.GetGame().GetAudio().PlaySound(name, this->GetSmoothPosition() + (this->GetRight()*0.2), pitch);
     }
   }
 

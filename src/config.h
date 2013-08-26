@@ -40,6 +40,9 @@
 /* Define to 1 if you have the `pthread' library (-lpthread). */
 /* #undef HAVE_LIBPTHREAD */
 
+/* Define to 1 if you have the `pthreadGC2' library (-lpthreadGC2). */
+#define HAVE_LIBPTHREADGC2 1
+
 /* Define to 1 if you have the `vorbis' library (-lvorbis). */
 #define HAVE_LIBVORBIS 1
 

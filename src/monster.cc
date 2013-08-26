@@ -73,12 +73,12 @@ Monster::Think(RunningState &state) {
   //Log("Monster::Think: %u %s\n", this->GetId(), this->GetName().c_str());
 
   if (this->attackTarget != InvalidID) {
-    Log("  I have a target %u\n", this->attackTarget);
+    //Log("  I have a target %u\n", this->attackTarget);
 
     Entity *enemy = state.GetEntity(this->attackTarget);
 
     if (enemy) {
-      Log("  It is valid: %p (%s)\n", enemy, enemy->GetName().c_str());
+      //Log("  It is valid: %p (%s)\n", enemy, enemy->GetName().c_str());
 
       float dist = (enemy->GetPosition() - GetPosition()).GetMag();
 
@@ -86,7 +86,7 @@ Monster::Think(RunningState &state) {
         // out of range? -> unset attack target
         this->attackTarget = InvalidID;
 
-        Log("  It is out of range, bummer...\n");
+        //Log("  It is out of range, bummer...\n");
 
       } else if (!CanSee(state, enemy->GetPosition())) {
         // not visible? -> set move target to last known location, unset attack target
@@ -94,11 +94,11 @@ Monster::Think(RunningState &state) {
         this->moveTarget = enemy->GetPosition();
         this->attackTarget = InvalidID;
 
-        Log("  I can not see it...\n");
+        //Log("  I can not see it...\n");
       } else if (dist < this->properties->meleeAttackRange &&
                  dist >= this->properties->keepDistance &&
                  state.GetGame().GetTime() > nextAttackT) {
-        Log("  I chose to attack it...\n");
+        //Log("  I chose to attack it...\n");
         this->sprite.StartAnim(this->properties->attackAnim);
 
         if (this->properties->attackForwardStep) {
@@ -111,10 +111,11 @@ Monster::Think(RunningState &state) {
 
         this->velocity.y += this->properties->attackJump;
         nextAttackT = state.GetGame().GetTime() + this->properties->attackInterval;
+        state.GetGame().GetAudio().PlaySound(this->properties->soundAttack, this->GetPosition());
       }
 
     } else {
-      Log("  It is invalid...\n");
+      //Log("  It is invalid...\n");
       this->attackTarget = InvalidID;
     }
   }
@@ -134,7 +135,7 @@ Monster::Think(RunningState &state) {
       if (entity->GetProperties()->name == "player" && CanSee(state, entity->GetPosition())) {
         enemy = entity;
         // Log("  Found one: %u %s\n", enemy->GetId(), enemy->GetName().c_str());
-        // TODO: play engage sound... state.GetGame().GetAudio().PlaySound("test", this->GetPosition());
+        state.GetGame().GetAudio().PlaySound(this->properties->soundEngage, this->GetPosition());
         break;
       }
     }

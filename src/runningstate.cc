@@ -287,6 +287,20 @@ RunningState::FindEntities(const AABB &aabb) const {
 }
 
 std::vector<ID>
+RunningState::FindEntities(const Vector3 &center, float radius) const {
+  std::vector<ID> entities;
+
+  for (auto entity : this->entities) {
+    if (!entity.second || entity.second->IsDead()) continue;
+    float d = (center - entity.second->GetPosition()).GetMag();
+    if (d < radius) {
+      entities.push_back(entity.first);
+    }
+  }
+
+  return entities;
+}
+std::vector<ID>
 RunningState::FindSolidEntities(const AABB &aabb) const {
   std::vector<ID> entities;
 
@@ -461,7 +475,6 @@ RunningState::Explosion(Entity &entity, const Vector3 &pos, size_t radius, float
     Vector3 d = ent.GetPosition() - pos;
     float dmg = damage / (1.0 + d.GetSquareMag());
 
-    Log("boom! %f damage to %u %s\n", dmg, entID, ent.GetName().c_str());
     HealthInfo info = Stats::ExplosionAttack(ownerID, ent, dmg, element);
     ent.AddHealth(*this, info);
 

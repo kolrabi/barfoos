@@ -3,7 +3,7 @@
 
 #include "common.h"
 #include "2d.h"
-#include "vertex.h"
+#include "vertexbuffer.h"
 
 struct TextFont;
 
@@ -11,7 +11,7 @@ enum class Align {
   HorizLeft = 0,
   HorizRight = 1,
   HorizCenter = 2,
-  
+
   VertTop = 0,
   VertMiddle = 4,
   VertBottom = 8
@@ -28,13 +28,13 @@ public:
 
   void Draw(Gfx &gfx, float x, float y, int align = 0);
   void Draw(Gfx &gfx, const Point &pos, int align = 0);
-  
+
   void WrapWords(size_t width);
-  
+
   const TextFont & GetFont()  const { return font; }
   const std::string & GetFontName()  const;
   const Point &GetSize();
-  
+
   const std::string &GetText() const { return mbString; }
 
 private:
@@ -44,12 +44,12 @@ private:
   std::wstring text;
   std::wstring wrappedText;
   size_t dirty;
-  std::vector<Vertex> vertices;
+  VertexBuffer vertices;
   Point size;
-  
+
   void DrawChar(float x, float y, wchar_t c, const IColor &color);
   void DrawString();
-  
+
   void SetText(const std::string &text);
 };
 

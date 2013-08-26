@@ -22,10 +22,11 @@ CFLAGS="-I/opt/local/include"
 CXXFLAGS="-I/opt/local/include"
 
 # Checks for libraries.
-AC_CHECK_LIB(pthread, pthread_create)
+AC_CHECK_LIB(pthread, main, [], AC_CHECK_LIB(pthreadGC2, main))
 
 AM_CONDITIONAL([WINDOOF], [test x$OS = xWindows_NT])
 AM_CONDITIONAL([MECKES], [test x$OSTYPE = xdarwin11])
+
 if test x$OS = xWindows_NT; then
   AC_DEFINE(WIN32)
   AC_CHECK_LIB(winmm, main)
@@ -37,26 +38,29 @@ elif test x$OSTYPE = xdarwin11; then
 else
   AC_CHECK_LIB(GL, main)
   AC_CHECK_LIB(GLU, main)
-fi
-
-AC_CHECK_HEADER(GLFW/glfw3.h)
-AC_CHECK_HEADER(AL/al.h)
-AC_CHECK_HEADER(vorbis/vorbisfile.h)
-AC_CHECK_HEADER(vorbis/vorbisenc.h)
 
 AC_CHECK_LIB(X11, [XOpenDisplay], [AC_DEFINE(X11)])
 AC_CHECK_LIB(X11, XConvertSelection)
 AC_CHECK_LIB(Xxf86vm, XF86VidModeQueryExtension)
 AC_CHECK_LIB(Xrandr, main)
 AC_CHECK_LIB(Xi, main)
+
+fi
+
+AC_CHECK_HEADER(GLFW/glfw3.h)
 AC_CHECK_LIB(glfw3, main)
-AC_CHECK_LIB(z, main)
-AC_CHECK_LIB(png, main)
+
+AC_CHECK_HEADER(AL/al.h)
+AC_CHECK_HEADER(vorbis/vorbisfile.h)
+AC_CHECK_HEADER(vorbis/vorbisenc.h)
 AC_CHECK_LIB(openal, main)
 AC_CHECK_LIB(OpenAL32, main)
 AC_CHECK_LIB(ogg, main)
 AC_CHECK_LIB(vorbis, main)
 AC_CHECK_LIB(vorbisfile, main)
+
+AC_CHECK_LIB(z, main)
+AC_CHECK_LIB(png, main)
 
 AC_CHECK_FUNCS([clock_gettime])
 AC_FUNC_MALLOC
@@ -82,8 +86,8 @@ AH_TEMPLATE(MACOSX, [define if compiling for Mac OS X])
 
 #CFLAGS="-O0 -ggdb"
 #CXXFLAGS="-O0 -ggdb"
-CFLAGS="$CFLAGS -O2 -ggdb"
-CXXFLAGS="$CXXFLAGS -O2 -ggdb"
+CFLAGS="$CFLAGS -O3"
+CXXFLAGS="$CXXFLAGS -O3"
 
 AC_CONFIG_FILES([Makefile
                  src/Makefile

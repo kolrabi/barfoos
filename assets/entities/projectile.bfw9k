@@ -1,7 +1,7 @@
 Class       projectile
 Group       trap
 
-tex projectile.bfw9k
+EmissiveTex projectile.bfw9k
 frames 2
 Anim 0 2 20
 
@@ -19,7 +19,7 @@ NoHit
 NoFriction
 NoStep
 
-Glow 64 512 64
+Glow 32 128 32
 
 OnDieExplode 3.0 1.0 0.0 physical
 OnDieParticles 10 3.0 particle.bfw9k

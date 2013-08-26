@@ -196,6 +196,8 @@ bool Item::UseOnEntity(RunningState &state, Mob &user, uint32_t id) {
 
       if (entity->GetProperties()->learnEvade && healthInfo.hitType == HitType::Miss && entity->GetSpawnClass() == SpawnClass::PlayerClass) {
         entity->GetBaseStats().skills["evade"]++;
+      } else {
+        // TODO: state.GetGame().GetAudio().PlaySound(this->properties->soundHit, this->GetPosition());
       }
 
       entity->AddHealth(state, healthInfo);
@@ -271,6 +273,7 @@ bool Item::UseOnNothing(RunningState &state, Mob &user) {
     this->StartCooldown(state, user);
     return true;
   } else {
+    // TODO: swoosh! state.GetGame().GetAudio().PlaySound(this->properties->soundHurt, this->GetPosition());
     this->StartCooldown(state, user, false);
   }
   return false;
@@ -365,8 +368,8 @@ Item::GetDisplayName(bool capitalize) const {
       if (statsA == statsB) modifierString = "useless ";
     }
     switch(this->beatitude) {
-      case Beatitude::Blessed: beatitudeString = "blessed";
-      case Beatitude::Cursed:  beatitudeString = "cursed";
+      case Beatitude::Blessed: beatitudeString = "blessed"; break;
+      case Beatitude::Cursed:  beatitudeString = "cursed";  break;
       default: beatitudeString = "";
     }
 

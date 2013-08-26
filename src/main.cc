@@ -4,6 +4,7 @@
 
 #include <png.h>
 #include <zlib.h>
+#include <pthread.h>
 
 static std::string credits() {
   std::string str;
@@ -13,7 +14,7 @@ static std::string credits() {
          "   Copyright (c) 2002-2006 Marcus Geelnard\n"
          "   Copyright (c) 2006-2010 Camilla Berglund\n";
   str += "\n";
-  
+
   str += " GLee (OpenGL Easy Extension library) Version 5.2\n"
          "   Copyright (c)2006  Ben Woodhouse  All rights reserved.\n";
   str += "\n";
@@ -22,8 +23,8 @@ static std::string credits() {
   str += ZLIB_VERSION;
   str += "\n"
          "   Copyright (C) 1995-2012 Jean-loup Gailly and Mark Adler\n";
-         
-  str += png_get_copyright(nullptr);  
+
+  str += png_get_copyright(nullptr);
   return str;
 }
 
@@ -31,7 +32,7 @@ int main(int, char **) {
   std::setlocale(LC_ALL, "en_US.utf8");
 
   Log("%s", credits().c_str());
-  
+  pthread_yield_np();
   // Set up glfw
   if (!glfwInit()) {
     Log("Could not initialize GLFW\n");
@@ -46,18 +47,18 @@ int main(int, char **) {
     glfwTerminate();
     return -1;
   }
-  
+
   Log("Game object initialized %p, new game\n", game);
-  
+
   Log("entering mainloop\n");
-    while(game->Frame()) 
+    while(game->Frame())
       ;
   Log("Shutting down\n");
-  
+
   delete game;
-  
+
   glfwTerminate();
-  
+
   Profile::Dump();
 
   return 0;

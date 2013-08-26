@@ -37,18 +37,14 @@ World::World(RunningState &state, const IVector3 &size) :
   nextTickT(0.0),
   tickInterval(0.1),
   ambientLight(32, 32, 32),
-  allVerts(0),
+  allVerts(),
   vertexStartsNormal(),
   vertexCountsNormal(),
   vertexStartsEmissive(),
   vertexCountsEmissive(),
-  vbo(0),
   checkOverwrite(false),
   checkOverwriteOK(true)
 {
-#if USE_VBO
-  glGenBuffers(1, &this->vbo);
-#endif
 }
 
 World::World(RunningState &state, Deserializer &deser) :
@@ -58,12 +54,11 @@ World::World(RunningState &state, Deserializer &deser) :
   minimap(*this, deser),
   defaultCell("default"),
   dynamicCells(0),
-  allVerts(0),
+  allVerts(),
   vertexStartsNormal(),
   vertexCountsNormal(),
   vertexStartsEmissive(),
   vertexCountsEmissive(),
-  vbo(0),
   checkOverwrite(false),
   checkOverwriteOK(true)
 {
@@ -84,14 +79,9 @@ World::World(RunningState &state, Deserializer &deser) :
     this->cells[i].SetWorld(this, GetCellPos(i));
     this->MarkForUpdateNeighbours(i);
   }
-
-#if USE_VBO
-  glGenBuffers(1, &this->vbo);
-#endif
 }
 
 World::~World() {
-  if (this->vbo) glDeleteBuffersARB(1, &this->vbo);
 }
 
 void
@@ -483,7 +473,6 @@ World::Draw(Gfx &gfx) {
 
     this->defaultCell = Cell("default");
 
-    this->allVerts.clear();
     this->dynamicCells.clear();
 
     if (firstDirty) {
@@ -531,7 +520,7 @@ World::Draw(Gfx &gfx) {
     if (updateCount) Log("%u cell vertex updates\n", updateCount);
 
     size_t index = 0;
-    this->allVerts.clear();
+    this->allVerts.Clear();
 
     for (auto &iter : verticesNormal) {
       this->vertexStartsNormal[iter.first] = index;
@@ -539,7 +528,7 @@ World::Draw(Gfx &gfx) {
       index += iter.second.size();
 
       for (auto &v : iter.second) {
-        this->allVerts.push_back(v);
+        this->allVerts.Add(v);
       }
     }
 
@@ -549,7 +538,7 @@ World::Draw(Gfx &gfx) {
       index += iter.second.size();
 
       for (auto &v : iter.second) {
-        this->allVerts.push_back(v);
+        this->allVerts.Add(v);
       }
     }
 
@@ -572,21 +561,13 @@ World::Draw(Gfx &gfx) {
 
     for (auto &s : this->vertexStartsNormal) {
       gfx.SetTextureFrame(s.first);
-#if USE_VBO
-      gfx.DrawTriangles(this->vbo, s.second, this->vertexCountsNormal[s.first]);
-#else
       gfx.DrawTriangles(this->allVerts, s.second, this->vertexCountsNormal[s.first]);
-#endif
     }
 
     gfx.SetBlendAdd();
     for (auto &s : this->vertexStartsEmissive) {
       gfx.SetTextureFrame(s.first);
-#if USE_VBO
-      gfx.DrawTriangles(this->vbo, s.second, this->vertexCountsEmissive[s.first]);
-#else
       gfx.DrawTriangles(this->allVerts, s.second, this->vertexCountsEmissive[s.first]);
-#endif
     }
   }
 
@@ -594,8 +575,8 @@ World::Draw(Gfx &gfx) {
     PROFILE_NAMED("Dynamic Draw");
 
     // get vertices for dynamic cells
-    std::unordered_map<const Texture *, std::vector<Vertex>> dynVerticesNormal;
-    std::unordered_map<const Texture *, std::vector<Vertex>> dynVerticesEmissive;
+    std::unordered_map<const Texture *, VertexBuffer> dynVerticesNormal;
+    std::unordered_map<const Texture *, VertexBuffer> dynVerticesEmissive;
 
     for (size_t i : dynamicCells) {
       const Texture *tex = this->cells[i].GetTexture();
@@ -607,8 +588,14 @@ World::Draw(Gfx &gfx) {
           dynVerticesEmissive[etex] = std::vector<Vertex>();
 
       this->cells[i].UpdateVertices();
-      this->cells[i].Draw(dynVerticesNormal[tex]);
-      this->cells[i].DrawEmissive(dynVerticesEmissive[etex]);
+      std::vector<Vertex> tmp;
+
+      this->cells[i].Draw(tmp);
+      dynVerticesNormal[tex].Add(tmp);
+      tmp.clear();
+
+      this->cells[i].DrawEmissive(tmp);
+      dynVerticesEmissive[etex].Add(tmp);
     }
 
     // render vertices for dynamic cells
@@ -1162,17 +1149,18 @@ World::IsCellValidTeleportTarget(const IVector3 &pos, const Vector3 &extents) co
   aabb.center = Vector3(pos.x+0.5, pos.y + 1.01 + extents.y, pos.z + 0.5);
   aabb.extents = extents;
 
-  return
+  Cell &cell = GetCell(pos);
 
+  return
+    !cell.IsTrigger() &&
+    !cell.IsTeleport() &&
     IsCellWalkable(pos) &&
     IsCellWalkable(pos[Side::Right]) &&
     IsCellWalkable(pos[Side::Left]) &&
     IsCellWalkable(pos[Side::Forward]) &&
     IsCellWalkable(pos[Side::Backward]) &&
     !IsAABBSolid(aabb)
-    ;
-
-  // TODO: check for existing triggers, teleports
+  ;
 }
 
 bool

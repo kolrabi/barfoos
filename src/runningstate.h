@@ -32,6 +32,7 @@ public:
   bool                  CheckEntities(const IVector3 &pos);
 
   std::vector<ID>       FindEntities(const AABB &aabb)      const;
+  std::vector<ID>       FindEntities(const Vector3 &center, float radius)      const;
   std::vector<ID>       FindSolidEntities(const AABB &aabb) const;
 
   // misc.

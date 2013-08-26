@@ -11,7 +11,7 @@
 #include "texture.h"
 #include "player.h"
 #include "sprite.h"
-#include "vertex.h"
+#include "vertexbuffer.h"
 
 static InputKey MapMouseButton(int b) {
   InputKey key;
@@ -53,11 +53,13 @@ static InputKey MapKey(int k) {
   return key;
 }
 
+// ====================================================================
+
 Gfx::Gfx(const Point &pos, const Point &size, bool fullscreen) :
   window(nullptr),
   isInit(false),
   startTime(glfwGetTime()),
-  vbo(0),
+  vb(nullptr),
   player(nullptr),
 
   screenPos(pos),
@@ -90,49 +92,12 @@ Gfx::Gfx(const Point &pos, const Point &size, bool fullscreen) :
   lightPositions(MaxLights),
   lightColors(MaxLights)
 {
-  // unit cube vertices
-  this->cubeVerts.push_back(Vertex(Vector3( 1, 1, -1), IColor(255,255,255), 0,1, Vector3( 1, 0, 0)));
-  this->cubeVerts.push_back(Vertex(Vector3( 1, 1,  1), IColor(255,255,255), 1,1, Vector3( 1, 0, 0)));
-  this->cubeVerts.push_back(Vertex(Vector3( 1,-1,  1), IColor(255,255,255), 1,0, Vector3( 1, 0, 0)));
-  this->cubeVerts.push_back(Vertex(Vector3( 1,-1, -1), IColor(255,255,255), 0,0, Vector3( 1, 0, 0)));
-
-  this->cubeVerts.push_back(Vertex(Vector3(-1,-1, -1), IColor(255,255,255), 1,0, Vector3(-1, 0, 0)));
-  this->cubeVerts.push_back(Vertex(Vector3(-1,-1,  1), IColor(255,255,255), 2,0, Vector3(-1, 0, 0)));
-  this->cubeVerts.push_back(Vertex(Vector3(-1, 1,  1), IColor(255,255,255), 2,1, Vector3(-1, 0, 0)));
-  this->cubeVerts.push_back(Vertex(Vector3(-1, 1, -1), IColor(255,255,255), 1,1, Vector3(-1, 0, 0)));
-
-  this->cubeVerts.push_back(Vertex(Vector3(-1,-1,  1), IColor(255,255,255), 2,0, Vector3( 0, 0, 1)));
-  this->cubeVerts.push_back(Vertex(Vector3( 1,-1,  1), IColor(255,255,255), 3,0, Vector3( 0, 0, 1)));
-  this->cubeVerts.push_back(Vertex(Vector3( 1, 1,  1), IColor(255,255,255), 3,1, Vector3( 0, 0, 1)));
-  this->cubeVerts.push_back(Vertex(Vector3(-1, 1,  1), IColor(255,255,255), 2,1, Vector3( 0, 0, 1)));
-
-  this->cubeVerts.push_back(Vertex(Vector3(-1, 1, -1), IColor(255,255,255), 3,1, Vector3( 0, 0,-1)));
-  this->cubeVerts.push_back(Vertex(Vector3( 1, 1, -1), IColor(255,255,255), 4,1, Vector3( 0, 0,-1)));
-  this->cubeVerts.push_back(Vertex(Vector3( 1,-1, -1), IColor(255,255,255), 4,0, Vector3( 0, 0,-1)));
-  this->cubeVerts.push_back(Vertex(Vector3(-1,-1, -1), IColor(255,255,255), 3,0, Vector3( 0, 0,-1)));
-
-  this->cubeVerts.push_back(Vertex(Vector3(-1, 1,  1), IColor(255,255,255), 4,0, Vector3( 0, 1, 0)));
-  this->cubeVerts.push_back(Vertex(Vector3( 1, 1,  1), IColor(255,255,255), 5,0, Vector3( 0, 1, 0)));
-  this->cubeVerts.push_back(Vertex(Vector3( 1, 1, -1), IColor(255,255,255), 5,1, Vector3( 0, 1, 0)));
-  this->cubeVerts.push_back(Vertex(Vector3(-1, 1, -1), IColor(255,255,255), 4,1, Vector3( 0, 1, 0)));
-
-  this->cubeVerts.push_back(Vertex(Vector3(-1,-1, -1), IColor(255,255,255), 5,1, Vector3( 0,-1, 0)));
-  this->cubeVerts.push_back(Vertex(Vector3( 1,-1, -1), IColor(255,255,255), 6,1, Vector3( 0,-1, 0)));
-  this->cubeVerts.push_back(Vertex(Vector3( 1,-1,  1), IColor(255,255,255), 6,0, Vector3( 0,-1, 0)));
-  this->cubeVerts.push_back(Vertex(Vector3(-1,-1,  1), IColor(255,255,255), 5,0, Vector3( 0,-1, 0)));
-
-  // quad
-  this->quadVerts.push_back(Vertex(Vector3(-1,-1,  0), IColor(255,255,255), 0,0, Vector3( 0, 0, 0.5)));
-  this->quadVerts.push_back(Vertex(Vector3( 1,-1,  0), IColor(255,255,255), 1,0, Vector3( 0, 0, 0.5)));
-  this->quadVerts.push_back(Vertex(Vector3( 1, 1,  0), IColor(255,255,255), 1,1, Vector3( 0, 0, 0.5)));
-  this->quadVerts.push_back(Vertex(Vector3(-1, 1,  0), IColor(255,255,255), 0,1, Vector3( 0, 0, 0.5)));
 }
 
 Gfx::~Gfx() {
   if (isInit) {
     this->Deinit();
   }
-
   delete this->view;
 }
 
@@ -291,17 +256,46 @@ Gfx::Init(Game &game) {
   glEnableClientState(GL_COLOR_ARRAY);
   glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
-  std::vector<Vertex> verts;
-  for (auto &v:quadVerts) verts.push_back(v);
-  for (auto &v:cubeVerts) verts.push_back(v);
-#if USE_VBO
-  glGenBuffers(1, &this->vbo);
-  glBindBuffer(GL_ARRAY_BUFFER, this->vbo);
-  glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex)*(verts.size()), &verts[0], GL_STATIC_DRAW);
+  this->vb = new VertexBuffer();
 
-  glBindBuffer(GL_ARRAY_BUFFER, 0);
-#endif
-  this->BindVertexPointer(&this->quadVerts[0]);
+  // quad
+  this->vb->Add(Vertex(Vector3(-1,-1,  0), IColor(255,255,255), 0,0, Vector3( 0, 0, 1)));
+  this->vb->Add(Vertex(Vector3( 1,-1,  0), IColor(255,255,255), 1,0, Vector3( 0, 0, 1)));
+  this->vb->Add(Vertex(Vector3( 1, 1,  0), IColor(255,255,255), 1,1, Vector3( 0, 0, 1)));
+  this->vb->Add(Vertex(Vector3(-1, 1,  0), IColor(255,255,255), 0,1, Vector3( 0, 0, 1)));
+
+  // unit cube vertices
+  this->vb->Add(Vertex(Vector3( 1, 1, -1), IColor(255,255,255), 0,1, Vector3( 1, 0, 0)));
+  this->vb->Add(Vertex(Vector3( 1, 1,  1), IColor(255,255,255), 1,1, Vector3( 1, 0, 0)));
+  this->vb->Add(Vertex(Vector3( 1,-1,  1), IColor(255,255,255), 1,0, Vector3( 1, 0, 0)));
+  this->vb->Add(Vertex(Vector3( 1,-1, -1), IColor(255,255,255), 0,0, Vector3( 1, 0, 0)));
+
+  this->vb->Add(Vertex(Vector3(-1,-1, -1), IColor(255,255,255), 1,0, Vector3(-1, 0, 0)));
+  this->vb->Add(Vertex(Vector3(-1,-1,  1), IColor(255,255,255), 2,0, Vector3(-1, 0, 0)));
+  this->vb->Add(Vertex(Vector3(-1, 1,  1), IColor(255,255,255), 2,1, Vector3(-1, 0, 0)));
+  this->vb->Add(Vertex(Vector3(-1, 1, -1), IColor(255,255,255), 1,1, Vector3(-1, 0, 0)));
+
+  this->vb->Add(Vertex(Vector3(-1,-1,  1), IColor(255,255,255), 2,0, Vector3( 0, 0, 1)));
+  this->vb->Add(Vertex(Vector3( 1,-1,  1), IColor(255,255,255), 3,0, Vector3( 0, 0, 1)));
+  this->vb->Add(Vertex(Vector3( 1, 1,  1), IColor(255,255,255), 3,1, Vector3( 0, 0, 1)));
+  this->vb->Add(Vertex(Vector3(-1, 1,  1), IColor(255,255,255), 2,1, Vector3( 0, 0, 1)));
+
+  this->vb->Add(Vertex(Vector3(-1, 1, -1), IColor(255,255,255), 3,1, Vector3( 0, 0,-1)));
+  this->vb->Add(Vertex(Vector3( 1, 1, -1), IColor(255,255,255), 4,1, Vector3( 0, 0,-1)));
+  this->vb->Add(Vertex(Vector3( 1,-1, -1), IColor(255,255,255), 4,0, Vector3( 0, 0,-1)));
+  this->vb->Add(Vertex(Vector3(-1,-1, -1), IColor(255,255,255), 3,0, Vector3( 0, 0,-1)));
+
+  this->vb->Add(Vertex(Vector3(-1, 1,  1), IColor(255,255,255), 4,0, Vector3( 0, 1, 0)));
+  this->vb->Add(Vertex(Vector3( 1, 1,  1), IColor(255,255,255), 5,0, Vector3( 0, 1, 0)));
+  this->vb->Add(Vertex(Vector3( 1, 1, -1), IColor(255,255,255), 5,1, Vector3( 0, 1, 0)));
+  this->vb->Add(Vertex(Vector3(-1, 1, -1), IColor(255,255,255), 4,1, Vector3( 0, 1, 0)));
+
+  this->vb->Add(Vertex(Vector3(-1,-1, -1), IColor(255,255,255), 5,1, Vector3( 0,-1, 0)));
+  this->vb->Add(Vertex(Vector3( 1,-1, -1), IColor(255,255,255), 6,1, Vector3( 0,-1, 0)));
+  this->vb->Add(Vertex(Vector3( 1,-1,  1), IColor(255,255,255), 6,0, Vector3( 0,-1, 0)));
+  this->vb->Add(Vertex(Vector3(-1,-1,  1), IColor(255,255,255), 5,0, Vector3( 0,-1, 0)));
+
+  glInterleavedArrays(GL_T2F_C4F_N3F_V3F,  sizeof(Vertex), nullptr);
 
   isInit = true;
   return true;
@@ -309,7 +303,7 @@ Gfx::Init(Game &game) {
 
 void
 Gfx::Deinit() {
-  if (this->vbo) glDeleteBuffersARB(1, &this->vbo);
+  delete this->vb;
 
   glfwSetWindowSizeCallback( this->window, nullptr);
   glfwSetCursorPosCallback(  this->window, nullptr);
@@ -532,69 +526,23 @@ Gfx::SetUniforms() const {
 }
 
 void
-Gfx::BindVertexPointer(const Vertex *ptr) {
-  if (this->activeVertexPointer != ptr) glInterleavedArrays(GL_T2F_C4F_N3F_V3F,  sizeof(Vertex), ptr);
-  this->activeVertexPointer = ptr;
+Gfx::DrawTriangles(VertexBuffer &vb, size_t first, size_t count) {
+  this->SetUniforms();
+  vb.DrawTriangles(first, count);
 }
 
 void
-Gfx::DrawTriangles(const std::vector<Vertex> &vertices, size_t first, size_t vertexCount) {
-  if (vertices.empty()) return;
-
-  if (vertexCount == 0) vertexCount = vertices.size() - first;
-
+Gfx::DrawQuads(VertexBuffer &vb, size_t first, size_t count) {
   this->SetUniforms();
-  this->BindVertexPointer(&vertices[0]);
-  glDrawArrays(GL_TRIANGLES, first, vertexCount);
-}
-
-void
-Gfx::DrawQuads(const std::vector<Vertex> &vertices, size_t first, size_t vertexCount) {
-  if (vertices.empty()) return;
-  
-  if (vertexCount == 0) vertexCount = vertices.size() - first;
-  
-  this->SetUniforms();
-  this->BindVertexPointer(&vertices[0]);
-  glDrawArrays(GL_QUADS, first, vertexCount);
-}
-
-void
-Gfx::DrawTriangles(unsigned int vbo, size_t first, size_t vertexCount) {
-  if (!vertexCount) return;
-  this->SetUniforms();
-
-  glBindBuffer(GL_ARRAY_BUFFER, vbo);
-  this->BindVertexPointer(nullptr);
-  glDrawArrays(GL_TRIANGLES,    first, vertexCount);
-  glBindBuffer(GL_ARRAY_BUFFER, 0);
-}
-
-void
-Gfx::DrawQuads(unsigned int vbo, size_t first, size_t vertexCount) {
-  if (!vertexCount) return;
-  this->SetUniforms();
-
-  glBindBuffer(GL_ARRAY_BUFFER, vbo);
-  this->BindVertexPointer(nullptr);
-  glDrawArrays(GL_QUADS,        first, vertexCount);
-  glBindBuffer(GL_ARRAY_BUFFER, 0);
+  vb.DrawQuads(first, count);
 }
 
 void Gfx::DrawUnitCube() {
-#if USE_VBO
-  this->DrawQuads(this->vbo, 4, 24); // this->cubeVerts);
-#else  
-  this->DrawQuads(this->cubeVerts);
-#endif
+  this->DrawQuads(*this->vb, 4, 24);
 }
 
 void Gfx::DrawUnitQuad() {
-#if USE_VBO
-  this->DrawQuads(this->vbo, 0, 4); //this->quadVerts);
-#else  
-  this->DrawQuads(this->quadVerts);
-#endif
+  this->DrawQuads(*this->vb, 0, 4);
 }
 
 void Gfx::DrawAABB(const AABB &aabb) {

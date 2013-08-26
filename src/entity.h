@@ -105,11 +105,13 @@ struct EntityProperties : public Properties {
   bool    randomAngle       = false;
   bool    isQuad            = false;
 
+  Element element           = Element::Physical;
+
   uint32_t  onDieExplodeRadius = 0;
   float   onDieExplodeStrength = 0.0;
   float   onDieExplodeDamage = 0.0;
   Element onDieExplodeElement = Element::Physical;
-  // TODO: onDieExplodeAddBuff
+  std::string onDieExplodeAddBuff = "";
 
   uint32_t  onDieParticles    = 0;
   float   onDieParticleSpeed = 0.0;
@@ -141,6 +143,12 @@ struct EntityProperties : public Properties {
 
   /** Replace entity if used with an item. itemname -> new entityname */
   std::unordered_map<std::string, std::string> onUseEntityReplace;
+
+
+  std::string soundEngage   = "";
+  std::string soundAttack   = "";
+  std::string soundHurt     = "";
+  std::string soundDeath    = "";
 
   virtual void ParseProperty(const std::string &name) override;
 };
@@ -215,6 +223,8 @@ public:
   Stats                     GetEffectiveStats()               const;
   Stats &                   GetBaseStats()                          { return this->baseStats; }
   float                     GetHealth()                       const { return this->health; }
+
+  Element                   GetElement()                      const { return this->properties->element; }
 
   bool                      CanSee(RunningState &state, const Vector3 &pos);
 

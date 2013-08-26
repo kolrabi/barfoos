@@ -11,14 +11,14 @@
 struct TextFont {
   const Texture *texture;
   Point size;
-  
-  std::string name;  
-  
+
+  std::string name;
+
   TextFont() :
     texture(0),
     size(0,0)
   {}
-  
+
   TextFont(const std::string &name) :
     texture(loadTexture("gui/font."+name)),
     size( texture->size.x / 32, texture->size.y / 8 ),
@@ -104,13 +104,13 @@ decode_error:
   return p;
 }
 
-RenderString::RenderString(const std::string &text, const std::string &fontName) : 
-  font(loadTextFont(fontName)), 
+RenderString::RenderString(const std::string &text, const std::string &fontName) :
+  font(loadTextFont(fontName)),
   mbString(""),
   text(L""),
   wrappedText(L""),
   dirty(true),
-  vertices(0),
+  vertices(),
   size(0,0)
 {
   this->SetText(text);
@@ -124,12 +124,12 @@ RenderString& RenderString::operator =(const std::string &text) {
 
 RenderString::~RenderString() {
 }
-  
+
 void RenderString::Draw(Gfx &gfx, float x, float y, int align) {
-  if (dirty) { 
+  if (dirty) {
     this->DrawString();
   }
-  
+
   if (align & (int)Align::HorizRight) {
     x = x - size.x;
   } else if (align & (int)Align::HorizCenter) {
@@ -141,7 +141,7 @@ void RenderString::Draw(Gfx &gfx, float x, float y, int align) {
   } else if (align & (int)Align::VertMiddle) {
     y = y - size.y / 2;
   }
-  
+
   gfx.SetTextureFrame(this->font.texture);
   gfx.GetView().Push();
   gfx.GetView().Translate(Vector3(x,y,0));
@@ -149,7 +149,7 @@ void RenderString::Draw(Gfx &gfx, float x, float y, int align) {
   gfx.GetView().Pop();
 }
 
-void RenderString::Draw(Gfx &gfx, const Point &pos, int align) { 
+void RenderString::Draw(Gfx &gfx, const Point &pos, int align) {
   Draw(gfx, pos.x, pos.y, align);
 }
 
@@ -159,16 +159,16 @@ void RenderString::DrawChar(float x, float y, wchar_t c, const IColor &color) {
   Point size = font.size;
 
   for (int xx = -1; xx<2; xx++) for (int yy = -1; yy<2; yy++) {
-    this->vertices.push_back(Vertex(Vector3(x+size.x+xx,      0+yy+y, 0.1), IColor(), u+1.0/32.0,v));
-    this->vertices.push_back(Vertex(Vector3(x       +xx,      0+yy+y, 0.1), IColor(), u,v));
-    this->vertices.push_back(Vertex(Vector3(x       +xx, size.y+yy+y, 0.1), IColor(), u,v-1.0/8.0));
-    this->vertices.push_back(Vertex(Vector3(x+size.x+xx, size.y+yy+y, 0.1), IColor(), u+1.0/32.0,v-1.0/8.0));
+    this->vertices.Add(Vertex(Vector3(x+size.x+xx,      0+yy+y, 0.1), IColor(), u+1.0/32.0,v));
+    this->vertices.Add(Vertex(Vector3(x       +xx,      0+yy+y, 0.1), IColor(), u,v));
+    this->vertices.Add(Vertex(Vector3(x       +xx, size.y+yy+y, 0.1), IColor(), u,v-1.0/8.0));
+    this->vertices.Add(Vertex(Vector3(x+size.x+xx, size.y+yy+y, 0.1), IColor(), u+1.0/32.0,v-1.0/8.0));
   }
 
-  this->vertices.push_back(Vertex(Vector3(x+size.x,      0+y, 0), color, u+1.0/32.0,v));
-  this->vertices.push_back(Vertex(Vector3(x       ,      0+y, 0), color, u,v));
-  this->vertices.push_back(Vertex(Vector3(x       , size.y+y, 0), color, u,v-1.0/8.0));
-  this->vertices.push_back(Vertex(Vector3(x+size.x, size.y+y, 0), color, u+1.0/32.0,v-1.0/8.0));
+  this->vertices.Add(Vertex(Vector3(x+size.x,      0+y, 0), color, u+1.0/32.0,v));
+  this->vertices.Add(Vertex(Vector3(x       ,      0+y, 0), color, u,v));
+  this->vertices.Add(Vertex(Vector3(x       , size.y+y, 0), color, u,v-1.0/8.0));
+  this->vertices.Add(Vertex(Vector3(x+size.x, size.y+y, 0), color, u+1.0/32.0,v-1.0/8.0));
 }
 
 void RenderString::DrawString() {
@@ -177,18 +177,18 @@ void RenderString::DrawString() {
   const Point &size = font.size;
   IColor color(255,255,255);
 
-  this->vertices = std::vector<Vertex>(); 
+  this->vertices.Clear();
   this->dirty = false;
 
   if (this->text == L"") return;
-  
+
   const wchar_t *p = this->wrappedText.c_str();
   float maxX = 0;
   float maxY = size.y;
-  
+
   while (*p) {
     wchar_t wchar = *p++;
-    
+
     switch(wchar) {
       // handle newlines
       case L'\n': {
@@ -197,7 +197,7 @@ void RenderString::DrawString() {
         maxY += size.y;
         continue;
       }
-      
+
       case 0xFE00: color = IColor(  0,   0,   0); continue;
       case 0xFE01: color = IColor(  0,   0, 128); continue;
       case 0xFE02: color = IColor(  0, 128,   0); continue;
@@ -214,22 +214,22 @@ void RenderString::DrawString() {
       case 0xFE0D: color = IColor(255,   0, 255); continue;
       case 0xFE0E: color = IColor(255, 255,   0); continue;
       case 0xFE0F: color = IColor(255, 255, 255); continue;
-      
+
       default: break;
     }
-    
+
     this->DrawChar(x, y, wchar, color);
-    
+
     x += size.x;
     if (x > maxX) maxX = x;
   }
-  
+
   this->size = Point(maxX, maxY);
 }
 
 const Point &
 RenderString::GetSize() {
-  if (dirty) { 
+  if (dirty) {
     this->DrawString();
   }
   return size;
@@ -239,43 +239,43 @@ const std::string &RenderString::GetFontName() const {
   return this->font.name;
 }
 
-void 
+void
 RenderString::WrapWords(size_t width) {
   this->dirty = true;
-  
+
   int lastSpace = -1;
   size_t p = 0;
   size_t x = 0;
-  
+
   this->wrappedText = this->text;
-  
+
   while(p < this->wrappedText.size()) {
     size_t w = this->font.size.x;
     wchar_t c = this->wrappedText[p];
-    
+
     if (c == L'\n') {
       p++;
       lastSpace = -1;
       x = 0;
       continue;
-    } 
-    
+    }
+
     if (c >= 0xFE00 && c <= 0xFE0F) {
       p++;
       continue;
     }
-    
+
     if (c == L' ') {
       lastSpace = p;
     }
-    
+
     if (x+w > width && lastSpace != -1) {
       this->wrappedText[lastSpace] = '\n';
       lastSpace = -1;
-      x = 0; 
+      x = 0;
       w = 0;
     }
-    
+
     x += w;
     p++;
   }
@@ -295,6 +295,6 @@ RenderString::SetText(const std::string &text) {
     this->text += wchar;
   }
   this->wrappedText = this->text;
-  
+
   this->dirty = true;
 }

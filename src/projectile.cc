@@ -9,7 +9,7 @@ Projectile::Projectile(const std::string &type, Deserializer &deser) : Mob(type,
 }
 
 void Projectile::Start(RunningState &state, uint32_t id) {
-  Log("Projectile::Start()\n");
+  //Log("Projectile::Start()\n");
   Mob::Start(state, id);
 
   Vector3 fwd   = GetForward();

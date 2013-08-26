@@ -64,6 +64,7 @@ class Entity;
 class Game;
 class GameState;
 class Gfx;
+class GfxView;
 class GLFWwindow;
 class Gui;
 class Item;
@@ -76,6 +77,7 @@ class RenderString;
 class RunningState;
 class Serializer;
 class Shader;
+class VertexBuffer;
 class World;
 
 namespace Const {

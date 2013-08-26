@@ -16,7 +16,7 @@ EquipDurability   1
 Replacement       torch.burnt
 
 Cooldown          0.4
-Light             512 512 255
+Light             1024 1024 192
 Flicker
 
 NoModifier

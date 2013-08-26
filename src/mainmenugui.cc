@@ -21,7 +21,7 @@ MainMenuGui::MainMenuGui(MainMenuState &state) :
   btnExit->SetGravity(false, false, false, false);
   btnExit->SetText("Exit");
   btnExit->SetOnActivate([&](Gui*){state.ExitGame();});
-  btnExit->SetBackground(GuiState::Normal,   npBtnEnabled);
+  btnExit->SetBackground(GuiState::Enabled,   npBtnEnabled);
   btnExit->SetBackground(GuiState::Disabled, npBtnDisabled);
   btnExit->SetBackground(GuiState::Hover,    npBtnHover);
   btnExit->SetBackground(GuiState::Active,   npBtnActive);
@@ -36,7 +36,7 @@ MainMenuGui::MainMenuGui(MainMenuState &state) :
     state.GetGame().GetAudio().PlaySound("test");
     state.NewGame();
     });
-  btnNewGame->SetBackground(GuiState::Normal,   npBtnEnabled);
+  btnNewGame->SetBackground(GuiState::Enabled,   npBtnEnabled);
   btnNewGame->SetBackground(GuiState::Disabled, npBtnDisabled);
   btnNewGame->SetBackground(GuiState::Hover,    npBtnHover);
   btnNewGame->SetBackground(GuiState::Active,   npBtnActive);
@@ -48,7 +48,7 @@ MainMenuGui::MainMenuGui(MainMenuState &state) :
   btnContinue->SetGravity(false, false, false, false);
   btnContinue->SetText("Continue");
   btnContinue->SetOnActivate([&](Gui*){state.ContinueGame();});
-  btnContinue->SetBackground(GuiState::Normal,   npBtnEnabled);
+  btnContinue->SetBackground(GuiState::Enabled,   npBtnEnabled);
   btnContinue->SetBackground(GuiState::Disabled, npBtnDisabled);
   btnContinue->SetBackground(GuiState::Hover,    npBtnHover);
   btnContinue->SetBackground(GuiState::Active,   npBtnActive);

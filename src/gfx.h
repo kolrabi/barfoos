@@ -9,10 +9,6 @@
 
 #include <unordered_map>
 
-class GfxView;
-
-#define USE_VBO 0
-
 class Gfx final {
 public:
 
@@ -26,11 +22,6 @@ public:
 
   float GetTime() const;
   void Update(Game &game);
-  void SaveScreen(const std::string &name);
-
-  const Point &GetScreenSize()        const { return screenSize; }
-  const Point &GetVirtualScreenSize() const { return virtualScreenSize; }
-  const Point &GetMousePos()          const { return mousePos; }
   GfxView     &GetView()                    { return *view; }
 
   void IncGuiCount();
@@ -55,10 +46,8 @@ public:
 
   void Viewport(const Rect &view);
 
-  void DrawTriangles(const std::vector<Vertex> &vertices, size_t first=0, size_t vertexCount=0);
-  void DrawQuads(const std::vector<Vertex> &vertices, size_t first=0, size_t vertexCount=0);
-  void DrawTriangles(unsigned int vbo, size_t first, size_t vertexCount);
-  void DrawQuads(unsigned int vbo, size_t first, size_t vertexCount);
+  void DrawTriangles(VertexBuffer &buffer, size_t first=0, size_t vertexCount=0);
+  void DrawQuads(VertexBuffer &buffer, size_t first=0, size_t vertexCount=0);
 
   void DrawUnitCube();
   void DrawUnitQuad();
@@ -68,12 +57,19 @@ public:
   void DrawIconQuad(const Point &pos, const Point &size = Point(32, 32));
   void DrawStretched(const Texture *tex, const Rect &src, const Rect &dest);
 
+  static const size_t MaxLights = 4;
+
+  // TODO: move to separate GfxScreen class
+  void SaveScreen(const std::string &name);
+
+  const Point &GetScreenSize()        const { return screenSize; }
+  const Point &GetVirtualScreenSize() const { return virtualScreenSize; }
+  const Point &GetMousePos()          const { return mousePos; }
+
   Point AlignBottomLeftScreen(const Point &size, int padding = 0);
   Point AlignBottomRightScreen(const Point &size, int padding = 0);
   Point AlignTopLeftScreen(const Point &size, int padding = 0);
   Point AlignTopRightScreen(const Point &size, int padding = 0);
-
-  static const size_t MaxLights = 4;
 
 private:
 
@@ -83,7 +79,9 @@ private:
 
   bool isInit;
   float startTime;
-  unsigned int vbo;
+
+  VertexBuffer *vb;
+//  unsigned int vbo;
 
   const Player *player;
 
@@ -123,7 +121,6 @@ private:
   std::vector<IColor> lightColors;
 
   void SetUniforms() const;
-  void BindVertexPointer(const Vertex *ptr);
 };
 
 #endif

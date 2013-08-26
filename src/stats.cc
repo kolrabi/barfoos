@@ -98,7 +98,7 @@ Stats::ProjectileAttack(const Entity &projectile, const Entity &victim, float da
   HealthInfo info;
   info.dealerId = projectile.GetOwner();
   info.type = HealthType::Arrow;
-  // TODO: info.element = projectile.GetElement();
+  info.element = projectile.GetElement();
 
   // get stats
   Stats defStat = victim.GetEffectiveStats();

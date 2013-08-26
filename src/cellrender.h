@@ -8,7 +8,7 @@ public:
 
   void  SetTexture(const Texture *tex, bool multi = false);
   const Texture *GetTexture() const;
-  
+
   void  SetEmissiveTexture(const Texture *tex);
   const Texture *GetEmissiveTexture() const;
 
@@ -22,7 +22,7 @@ public:
 protected:
 
   CellRender(const std::string &type);
-  
+
   uint8_t visibility;
   bool reversedSides;
   Vector3 corners[8];
@@ -30,25 +30,25 @@ protected:
   const Texture *texture, *emissiveTexture;
   const Texture *activeTexture, *emissiveActiveTexture;
   float uscale;
-  
+
   IColor SideCornerColor(Side side, size_t corner) const;
   void SideColors(Side side, IColor *colors) const;
   void SideColors(Side side, std::vector<IColor> &outcolors, bool reverse) const;
   void SideVerts(Side side, std::vector<Vertex> &verts, bool reverse = false) const;
 };
 
-inline const Texture *CellRender::GetTexture() const { 
+inline const Texture *CellRender::GetTexture() const {
   if (this->activeTexture && this->lastT < this->nextActivationT) {
     return this->activeTexture;
   }
-  return this->texture; 
+  return this->texture;
 }
 
-inline const Texture *CellRender::GetEmissiveTexture() const { 
+inline const Texture *CellRender::GetEmissiveTexture() const {
   if (this->emissiveActiveTexture && this->lastT < this->nextActivationT) {
     return this->emissiveActiveTexture;
   }
-  return this->emissiveTexture; 
+  return this->emissiveTexture;
 }
 
 #endif

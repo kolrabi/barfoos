@@ -20,7 +20,7 @@ varying vec3 v_norm;
 
 varying vec3 v_light;
 
-const float gamma = 1.8;
+const float gamma = 2.2;
 const float contrast = 1.0;
 
 void main() {
@@ -30,9 +30,9 @@ void main() {
   vec3 texLin  = pow(texSRGB.rgb, vec3(1.0/gamma));
 
   vec3 lightLin  = v_light;
-  vec3 vColorLin = v_color.rgb;
-  vec3 uColorLin = u_color.rgb;
-  vec3 uLightLin = u_light.rgb;
+  vec3 vColorLin = pow(v_color.rgb, vec3(1.0/gamma));
+  vec3 uColorLin = pow(u_color.rgb, vec3(1.0/gamma));
+  vec3 uLightLin = pow(u_light.rgb, vec3(1.0/gamma));
 
   vec3 colorLin = (lightLin + uLightLin) * (vColorLin * uColorLin * texLin);
 

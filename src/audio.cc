@@ -96,8 +96,9 @@ Audio::Buffer *Audio::GetSoundBuffer(const std::string &name) {
 
 void Audio::PlaySound(const std::string &name, const Vector3 &pos, float pitch) {
   if (!this->isInited) return;
+  if (name == "") return;
 
-  Log("trying to play sound %s\n", name.c_str());
+  //Log("trying to play sound %s\n", name.c_str());
   this->sources.push_back(std::shared_ptr<Audio::Source>(new Audio::Source(this->GetSoundBuffer(name), pos, pitch)));
 }
 
@@ -106,7 +107,7 @@ void Audio::PlaySound(const std::string &name, const Vector3 &pos, float pitch) 
 Audio::Buffer *Audio::Buffer::LoadOgg(const std::string &name) {
   Audio::Buffer *buffer = new Audio::Buffer();
 
-  Log("loading sound %s\n", name.c_str());
+  Log("Loading sound %s\n", name.c_str());
   FILE *f = openAsset("audio/"+name+".ogg");
   if (!f) {
     perror(name.c_str());
@@ -170,16 +171,16 @@ Audio::Source::Source(Buffer *buffer, const Vector3 &pos, float pitch) :
   source(0)
 {
   alGenSources(1, &this->source);
-  Log("alGenSources: %04x\n", alGetError());
+  //Log("alGenSources: %04x\n", alGetError());
 
   alSource3f(this->source, AL_POSITION, pos.x, pos.y, pos.z);
   alSourcef(this->source, AL_PITCH, pitch);
   alSourcei(this->source, AL_BUFFER, buffer->GetBuffer());
-  Log("alSourcei: %04x\n", alGetError());
+  //Log("alSourcei: %04x\n", alGetError());
   alSourcePlay(this->source);
-  Log("alSourcePlay: %04x\n", alGetError());
+  //Log("alSourcePlay: %04x\n", alGetError());
 
-  Log("playing source %u with buffer %u at pos %f %f %f\n", this->source, buffer->GetBuffer(), pos.x, pos.y, pos.z);
+  //Log("playing source %u with buffer %u at pos %f %f %f\n", this->source, buffer->GetBuffer(), pos.x, pos.y, pos.z);
 }
 
 Audio::Source::~Source() {

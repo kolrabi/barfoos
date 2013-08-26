@@ -32,7 +32,7 @@ Texture::Texture(Texture &&rhs) :
 
 const Texture *loadTexture(const std::string &name, const Texture * tex) {
   if (name == "") return nullptr;
-  
+
   GLuint textureHandle = 0;
   if (tex) {
     textureHandle = tex->handle;
@@ -44,18 +44,18 @@ const Texture *loadTexture(const std::string &name, const Texture * tex) {
     }
     glGenTextures(1, &textureHandle);
     lastUpdate = time(0);
-    
+
     textures[name] = std::unique_ptr<Texture>(new Texture());
     textures[name]->handle = textureHandle;
     textures[name]->name = name;
-    
+
     Log("Loading texture %s as %u\n", name.c_str(), textureHandle);
   }
 
   png_uint_32 w,h;
   FILE *fp = openAsset(name+".png");
   if (!fp) return nullptr;
-  
+
   // read the header
   png_byte header[8];
   int res = fread(header, 1, 8, fp);
@@ -130,7 +130,7 @@ const Texture *loadTexture(const std::string &name, const Texture * tex) {
 
   // row_pointers is for pointing to image_data for reading the png with libpng
   png_bytep * row_pointers = new png_bytep[h];
-  
+
   // set the individual row_pointers to point at the correct offsets of image_data
   unsigned int i;
   for (i = 0; i < h; i++)
@@ -142,7 +142,7 @@ const Texture *loadTexture(const std::string &name, const Texture * tex) {
   png_read_image(png_ptr, row_pointers);
 
   uint8_t *rgba = new uint8_t[w*h*4];
-  
+
   // convert image to rgba
   if (color_type == 6) {
     memcpy(rgba, image_data, w*h*4);
@@ -165,7 +165,7 @@ const Texture *loadTexture(const std::string &name, const Texture * tex) {
       rgba[i*4+3] = 255;
     }
   }
-  
+
   updateTexture(name, Point(w,h), rgba);
   delete [] rgba;
 
@@ -183,37 +183,21 @@ const Texture *updateTexture(const std::string &name, const Point &size, const u
     textures[name] = std::unique_ptr<Texture>(new Texture());
     glGenTextures(1, &textures[name]->handle);
   }
-  
+
   Texture *tex = textures[name].get();
   tex->size = size;
-  
+
   glBindTexture(GL_TEXTURE_2D, tex->handle);
-  
+
   glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, size.x, size.y, 0, GL_RGBA, GL_UNSIGNED_BYTE, rgba);
   //glGenerateMipmapEXT(GL_TEXTURE_2D);
   glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
   glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-  
+
   return tex;
 }
 
-void updateTextures() {
-  if (time(nullptr) - lastUpdate < 2) return;
-  
-  Log("Checking for updated textures...\n");
-
-  for (auto &t : textures) {
-    if (t.first[0] == '*') continue;
-    time_t mtime = getFileChangeTime(t.first+".png"); 
-    if (mtime > lastUpdate) {
-      loadTexture(t.first, t.second.get());
-    }
-  }
-  
-  lastUpdate = time(nullptr);
-}
-
-const Texture * 
+const Texture *
 noiseTexture(const Point &size, const Vector3 &scale, const Vector3 &offset) {
   float *image_data = new float[size.x*size.y*4];
   for (int y=0; y<size.y; y++) {
@@ -221,35 +205,35 @@ noiseTexture(const Point &size, const Vector3 &scale, const Vector3 &offset) {
       Vector3 pr = Vector3( x*scale.x/size.x, y*scale.y/size.y, 0 ) + offset;
       Vector3 pg = Vector3( x*scale.x/size.x, y*scale.y/size.y, 1 ) + offset;
       Vector3 pb = Vector3( x*scale.x/size.x, y*scale.y/size.y,-1 ) + offset;
-      
+
       image_data[(x+y*size.x)*4+0] = simplexNoise(pr)*0.5+0.5;
       image_data[(x+y*size.x)*4+1] = simplexNoise(pg)*0.5+0.5;
       image_data[(x+y*size.x)*4+2] = simplexNoise(pb)*0.5+0.5;
       image_data[(x+y*size.x)*4+3] = 1;
     }
   }
-  
-  unsigned int texture = 0;  
+
+  unsigned int texture = 0;
   glGenTextures(1, &texture);
-  
+
   glBindTexture(GL_TEXTURE_2D, texture);
   glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, size.x, size.y, 0, GL_RGBA, GL_FLOAT, image_data);
   glGenerateMipmapEXT(GL_TEXTURE_2D);
   glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
   glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
   delete [] image_data;
-  
+
   std::string name = "*";
   name += size;
   name += scale;
   name += offset;
-  
+
   Log("Generated noise texture '%s' as %u.\n", name.c_str(), texture);
-  
+
   textures[name] = std::unique_ptr<Texture>(new Texture());
   textures[name]->handle = texture;
   textures[name]->size = size;
-  
+
   return textures[name].get();
 }
 
@@ -259,31 +243,31 @@ int saveImage(const std::string &fileName, size_t w, size_t h, const uint8_t *rg
   png_infop info_ptr = NULL;
   size_t x, y;
   png_byte ** row_pointers = NULL;
-  
+
   int status = -1;
   int pixel_size = 3;
   int depth = 8;
-    
+
   fp = fopen (fileName.c_str(), "wb");
   if (! fp) {
     goto fopen_failed;
   }
-  
+
   png_ptr = png_create_write_struct (PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
   if (png_ptr == NULL) {
     goto png_create_write_struct_failed;
   }
-    
+
   info_ptr = png_create_info_struct (png_ptr);
   if (info_ptr == NULL) {
      goto png_create_info_struct_failed;
   }
-    
+
   /* Set up error handling. */
   if (setjmp (png_jmpbuf (png_ptr))) {
     goto png_failure;
   }
-    
+
   /* Set image attributes. */
 
   png_set_IHDR (png_ptr,
@@ -295,7 +279,7 @@ int saveImage(const std::string &fileName, size_t w, size_t h, const uint8_t *rg
                 PNG_INTERLACE_NONE,
                 PNG_COMPRESSION_TYPE_DEFAULT,
                 PNG_FILTER_TYPE_DEFAULT);
-    
+
   /* Initialize rows of PNG. */
 
   row_pointers = (png_byte**)png_malloc (png_ptr, h * sizeof (png_byte *));
@@ -308,7 +292,7 @@ int saveImage(const std::string &fileName, size_t w, size_t h, const uint8_t *rg
       *row++ = rgb[(x+y*w)*3+2];
     }
   }
-  
+
   /* Write the image data to "fp". */
 
   png_init_io (png_ptr, fp);
@@ -319,21 +303,41 @@ int saveImage(const std::string &fileName, size_t w, size_t h, const uint8_t *rg
      "status" to a value which indicates success. */
 
   status = 0;
-    
+
   for (y = 0; y < h; y++) {
     png_free (png_ptr, row_pointers[y]);
   }
   png_free (png_ptr, row_pointers);
-    
+
 png_failure:
 png_create_info_struct_failed:
 
   png_destroy_write_struct (&png_ptr, &info_ptr);
-    
+
 png_create_write_struct_failed:
 
   fclose (fp);
-  
+
 fopen_failed:
     return status;
 }
+
+
+void updateTextures() {
+  time_t now = time(nullptr);
+  if (now - lastUpdate < 2) return;
+
+  // Log("Checking for updated textures since %u...\n", lastUpdate);
+
+  for (auto &t : textures) {
+    if (t.first[0] == '*') continue;
+    time_t mtime = getFileChangeTime(t.first+".png");
+    if (mtime > lastUpdate) {
+      Log("Texture %s updated since %u...\n", t.first.c_str(), lastUpdate);
+      loadTexture(t.first, t.second.get());
+    }
+  }
+
+  lastUpdate = now;
+}
+

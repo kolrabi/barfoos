@@ -12,7 +12,10 @@ public:
   const CellProperties &GetInfo() const;
 
   void SetTeleportTarget(const IVector3 &target);
+  bool IsTeleport() const { return this->teleport; }
+
   void SetTriggerTarget(uint32_t triggerTargetId);
+  bool IsTrigger() const { return this->isTrigger; }
 
   void SetSpawnOnActive(const std::string &mob, Side side, float rate);
 
@@ -91,7 +94,7 @@ protected:
       u { 0,0,0,0 },
       v { 0,0,0,0 },
       detail( info->flags & CellFlags::Liquid ? 15 : 0 ),
-      smoothDetail( detail ),
+      smoothDetail(detail),
       lockedID(0),
       scale(info->scale),
       topFlat(true),

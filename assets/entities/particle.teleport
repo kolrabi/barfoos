@@ -1,9 +1,9 @@
 Class       Mob
 
-tex particle.teleport
+EmissiveTex particle.teleport
 frames 2
 
-anim 0 2 10
+anim 0 2 67
 dyinganim 0
 
 Name ""

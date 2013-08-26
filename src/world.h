@@ -4,6 +4,7 @@
 #include "common.h"
 #include "cell.h"
 #include "icolor.h"
+#include "vertexbuffer.h"
 
 #include <unordered_map>
 #include <unordered_set>
@@ -115,12 +116,11 @@ private:
 
   IColor ambientLight;
 
-  std::vector<Vertex> allVerts;
+  VertexBuffer allVerts;
   std::unordered_map<const Texture *, size_t> vertexStartsNormal;
   std::unordered_map<const Texture *, size_t> vertexCountsNormal;
   std::unordered_map<const Texture *, size_t> vertexStartsEmissive;
   std::unordered_map<const Texture *, size_t> vertexCountsEmissive;
-  unsigned int vbo;
 
   bool checkOverwrite;
   bool checkOverwriteOK;

@@ -1,6 +1,6 @@
 Class       Mob
 
-tex particle.bfw9k
+EmissiveTex particle.bfw9k
 frames 2
 
 anim 0 2 10
