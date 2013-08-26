@@ -47,8 +47,6 @@ private:
   std::vector<Vertex> vertices;
   Point size;
   
-  unsigned int vbo;
-  
   void DrawChar(float x, float y, wchar_t c, const IColor &color);
   void DrawString();
   

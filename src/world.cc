@@ -46,7 +46,9 @@ World::World(RunningState &state, const IVector3 &size) :
   checkOverwrite(false),
   checkOverwriteOK(true)
 {
+#if USE_VBO
   glGenBuffers(1, &this->vbo);
+#endif
 }
 
 World::World(RunningState &state, Deserializer &deser) :
@@ -82,7 +84,10 @@ World::World(RunningState &state, Deserializer &deser) :
     this->cells[i].SetWorld(this, GetCellPos(i));
     this->MarkForUpdateNeighbours(i);
   }
+
+#if USE_VBO
   glGenBuffers(1, &this->vbo);
+#endif
 }
 
 World::~World() {
@@ -548,11 +553,12 @@ World::Draw(Gfx &gfx) {
       }
     }
 
+#if USE_VBO
     // set vertex buffer data
     glBindBuffer(GL_ARRAY_BUFFER, this->vbo);
     if (this->allVerts.size())
       glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex)*(this->allVerts.size()), &this->allVerts[0], GL_STATIC_DRAW);
-
+#endif
     dirty = false;
   }
 
@@ -566,13 +572,21 @@ World::Draw(Gfx &gfx) {
 
     for (auto &s : this->vertexStartsNormal) {
       gfx.SetTextureFrame(s.first);
+#if USE_VBO
       gfx.DrawTriangles(this->vbo, s.second, this->vertexCountsNormal[s.first]);
+#else
+      gfx.DrawTriangles(this->allVerts, s.second, this->vertexCountsNormal[s.first]);
+#endif
     }
 
     gfx.SetBlendAdd();
     for (auto &s : this->vertexStartsEmissive) {
       gfx.SetTextureFrame(s.first);
+#if USE_VBO
       gfx.DrawTriangles(this->vbo, s.second, this->vertexCountsEmissive[s.first]);
+#else
+      gfx.DrawTriangles(this->allVerts, s.second, this->vertexCountsEmissive[s.first]);
+#endif
     }
   }
 

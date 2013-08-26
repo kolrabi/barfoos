@@ -294,11 +294,13 @@ Gfx::Init(Game &game) {
   std::vector<Vertex> verts;
   for (auto &v:quadVerts) verts.push_back(v);
   for (auto &v:cubeVerts) verts.push_back(v);
+#if USE_VBO
   glGenBuffers(1, &this->vbo);
   glBindBuffer(GL_ARRAY_BUFFER, this->vbo);
   glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex)*(verts.size()), &verts[0], GL_STATIC_DRAW);
 
   glBindBuffer(GL_ARRAY_BUFFER, 0);
+#endif
   this->BindVertexPointer(&this->quadVerts[0]);
 
   isInit = true;
@@ -536,19 +538,25 @@ Gfx::BindVertexPointer(const Vertex *ptr) {
 }
 
 void
-Gfx::DrawTriangles(const std::vector<Vertex> &vertices) {
+Gfx::DrawTriangles(const std::vector<Vertex> &vertices, size_t first, size_t vertexCount) {
   if (vertices.empty()) return;
+
+  if (vertexCount == 0) vertexCount = vertices.size() - first;
+
   this->SetUniforms();
   this->BindVertexPointer(&vertices[0]);
-  glDrawArrays(GL_TRIANGLES, 0, vertices.size());
+  glDrawArrays(GL_TRIANGLES, first, vertexCount);
 }
 
 void
-Gfx::DrawQuads(const std::vector<Vertex> &vertices) {
+Gfx::DrawQuads(const std::vector<Vertex> &vertices, size_t first, size_t vertexCount) {
   if (vertices.empty()) return;
+  
+  if (vertexCount == 0) vertexCount = vertices.size() - first;
+  
   this->SetUniforms();
   this->BindVertexPointer(&vertices[0]);
-  glDrawArrays(GL_QUADS, 0, vertices.size());
+  glDrawArrays(GL_QUADS, first, vertexCount);
 }
 
 void
@@ -574,11 +582,19 @@ Gfx::DrawQuads(unsigned int vbo, size_t first, size_t vertexCount) {
 }
 
 void Gfx::DrawUnitCube() {
+#if USE_VBO
   this->DrawQuads(this->vbo, 4, 24); // this->cubeVerts);
+#else  
+  this->DrawQuads(this->cubeVerts);
+#endif
 }
 
 void Gfx::DrawUnitQuad() {
+#if USE_VBO
   this->DrawQuads(this->vbo, 0, 4); //this->quadVerts);
+#else  
+  this->DrawQuads(this->quadVerts);
+#endif
 }
 
 void Gfx::DrawAABB(const AABB &aabb) {

@@ -266,20 +266,20 @@ Player::UpdateInput(
     if (bobAmplitude > 1.0) bobAmplitude = 1.0;
   } else {
     bobAmplitude -= deltaT*4;
-    if (bobAmplitude < 0.0) {
+    if (bobAmplitude <= 0.0) {
       bobAmplitude = 0.0;
-      bobPhase = 0;
+      bobPhase = 1.0;
     }
   }
 
   float lastPhase = bobPhase;
-  bobPhase += (deltaT * this->GetMoveModifier()) * move.GetMag()/5;
-  if (bobPhase >= 1.0) {
+  if (bobAmplitude > 0.0) bobPhase += deltaT; // (deltaT * this->GetMoveModifier()) * move.GetMag()/5;
+  if (bobPhase > 1.0) {
     bobPhase -= 1.0;
 
     // TODO: get step sound from ground cell
     if (this->groundCell) {
-      float pitch = 1.0 + state.GetRandom().Float()*0.1;
+      float pitch = 1.0 + state.GetRandom().Float()*0.05;
       std::string name = "step_a";
       switch(state.GetRandom().Integer(4)) {
         case 0: name = "step_a"; break;
@@ -287,12 +287,12 @@ Player::UpdateInput(
         case 2: name = "step_c"; break;
         case 3: name = "step_d"; break;
       }
-      state.GetGame().GetAudio().PlaySound("step_a", this->GetSmoothPosition() - this->GetRight(), pitch);
+      state.GetGame().GetAudio().PlaySound("step_a", this->GetSmoothPosition() - (this->GetRight()*0.2), pitch);
     }
   } else if (bobPhase >= 0.5 && lastPhase < 0.5) {
     // TODO: get step sound from ground cell
     if (this->groundCell) {
-      float pitch = 1.0 + state.GetRandom().Float()*0.1;
+      float pitch = 1.0 + state.GetRandom().Float()*0.05;
       std::string name = "step_a";
       switch(state.GetRandom().Integer(4)) {
         case 0: name = "step_a"; break;
@@ -300,7 +300,7 @@ Player::UpdateInput(
         case 2: name = "step_c"; break;
         case 3: name = "step_d"; break;
       }
-      state.GetGame().GetAudio().PlaySound("step_a", this->GetSmoothPosition() + this->GetRight(), pitch);
+      state.GetGame().GetAudio().PlaySound("step_a", this->GetSmoothPosition() + (this->GetRight()*0.2), pitch);
     }
   }
 

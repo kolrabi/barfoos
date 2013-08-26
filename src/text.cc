@@ -111,8 +111,7 @@ RenderString::RenderString(const std::string &text, const std::string &fontName)
   wrappedText(L""),
   dirty(true),
   vertices(0),
-  size(0,0),
-  vbo(0)
+  size(0,0)
 {
   this->SetText(text);
 }

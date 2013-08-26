@@ -11,6 +11,8 @@
 
 class GfxView;
 
+#define USE_VBO 0
+
 class Gfx final {
 public:
 
@@ -53,8 +55,8 @@ public:
 
   void Viewport(const Rect &view);
 
-  void DrawTriangles(const std::vector<Vertex> &vertices);
-  void DrawQuads(const std::vector<Vertex> &vertices);
+  void DrawTriangles(const std::vector<Vertex> &vertices, size_t first=0, size_t vertexCount=0);
+  void DrawQuads(const std::vector<Vertex> &vertices, size_t first=0, size_t vertexCount=0);
   void DrawTriangles(unsigned int vbo, size_t first, size_t vertexCount);
   void DrawQuads(unsigned int vbo, size_t first, size_t vertexCount);
 
