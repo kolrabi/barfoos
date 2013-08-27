@@ -13,6 +13,7 @@
 
 static const std::vector<const char *> assetPrefix { 
   "../assets/", 
+  "assets/",
   DATA_PATH "/" 
 };
 

@@ -4,7 +4,6 @@
 
 #include <png.h>
 #include <zlib.h>
-#include <pthread.h>
 
 static std::string credits() {
   std::string str;
@@ -32,7 +31,7 @@ int main(int, char **) {
   std::setlocale(LC_ALL, "en_US.utf8");
 
   Log("%s", credits().c_str());
-  pthread_yield_np();
+
   // Set up glfw
   if (!glfwInit()) {
     Log("Could not initialize GLFW\n");
