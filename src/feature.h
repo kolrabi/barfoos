@@ -80,7 +80,7 @@ struct FeatureCharDef {
   std::string type;
   float top[4]; 
   float bot[4];
-  bool botRev, topRev;
+  bool botRev, topRev, sideRev;
   bool revRand;
   bool lockCell;
   bool ignoreLock;
@@ -99,6 +99,7 @@ struct FeatureCharDef {
     bot{ 0, 0, 0, 0 },
     botRev(false),
     topRev(false),
+    sideRev(false),
     revRand(true),
     lockCell(true),
     ignoreLock(false),

@@ -68,13 +68,20 @@ struct IColor {
   bool operator!=(const IColor &o) const {
     return !(r==o.r && g==o.g && b==o.b);
   }
-
+  
   IColor Gamma(float gamma, int max=255) const {
     return IColor( std::pow(r/(float)max, gamma)*max,
                    std::pow(g/(float)max, gamma)*max,
                    std::pow(b/(float)max, gamma)*max );
   }
 
+  static IColor Lerp(const IColor &a, const IColor &b, float t) {
+    return IColor( a.r * (1.0-t) + b.r * t,
+                   a.g * (1.0-t) + b.g * t,
+                   a.b * (1.0-t) + b.b * t );
+  }
+
+  
   operator std::string() const;
 };
 

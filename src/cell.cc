@@ -629,6 +629,7 @@ void Cell::Rotate() {
   this->shared.bottomHeights[3] = tmp;
 
   this->shared.scale = this->shared.scale.ZYX();
+  this->reversedSides = !this->reversedSides;
 }
 
 Serializer &operator << (Serializer &ser, const Cell &cell) {

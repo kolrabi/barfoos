@@ -3,6 +3,8 @@
 #include "vertex.h"
 #include "util.h"
 
+#include "world.h"
+
 static bool sidesDatasInited = false;
 
 struct SideData {
@@ -125,7 +127,13 @@ CellRender::SideVerts(Side side, std::vector<Vertex> &verts, bool reverse) const
     }
   }
   
-  IColor colors[4];
+  IColor colors[4];/*
+  = {
+    this->world->GetLight(pos[0]+this->pos),
+    this->world->GetLight(pos[1]+this->pos),
+    this->world->GetLight(pos[2]+this->pos),
+    this->world->GetLight(pos[3]+this->pos)
+  };*/
   SideColors(side, colors);
   bool doubleSided = info->flags & CellFlags::DoubleSided;
 

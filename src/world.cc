@@ -17,6 +17,7 @@
 #include "gfxview.h"
 
 #include "vertex.h"
+#include "image.h"
 #include "texture.h"
 #include "aabb.h"
 
@@ -104,7 +105,7 @@ World::Build() {
   size_t trapCount = random.Integer(10)+10;
   size_t decoCount = 500+random.Integer(200);
   size_t itemCount = 100+random.Integer(120);
-  size_t monsterCount = 50+random.Integer(100);
+  size_t monsterCount = 0; //50+random.Integer(100);
 
   std::vector<FeatureInstance> instances;
 
@@ -312,7 +313,7 @@ World::Build() {
   for (auto instance : instances) {
     instance.feature->SpawnEntities(state, instance.pos);
   }
-
+  
   Log("Placing %u items...\n", itemCount);
   for (size_t i=0; i<itemCount; i++) {
     std::string itemName = getRandomItem("item", state.GetLevel(), state.GetRandom());
@@ -1004,7 +1005,36 @@ World::MoveAABB(
 
 IColor
 World::GetLight(const IVector3 &pos) const {
-  return (GetCell(pos).GetLightLevel().Gamma(2.2)) + ambientLight;
+  return (GetCell(pos).GetLightLevel()) + ambientLight;
+}
+
+IColor
+World::GetLight(const Vector3 &pos) const {
+  IVector3 ipos(pos.x - 1.0, pos.y - 1.0, pos.z - 1.0);
+  
+  IColor c_000 = GetLight(IVector3(ipos.x,   ipos.y,   ipos.z));
+  IColor c_100 = GetLight(IVector3(ipos.x+1, ipos.y,   ipos.z));
+  IColor c_010 = GetLight(IVector3(ipos.x,   ipos.y,   ipos.z));
+  IColor c_110 = GetLight(IVector3(ipos.x+1, ipos.y+1, ipos.z));
+  IColor c_001 = GetLight(IVector3(ipos.x,   ipos.y+1, ipos.z+1));
+  IColor c_101 = GetLight(IVector3(ipos.x+1, ipos.y,   ipos.z+1));
+  IColor c_011 = GetLight(IVector3(ipos.x,   ipos.y+1, ipos.z+1));
+  IColor c_111 = GetLight(IVector3(ipos.x+1, ipos.y+1, ipos.z+1));
+
+  float dx = pos.x - 0.5 - ipos.x;
+  
+  IColor c_00  = IColor::Lerp(c_000, c_100, dx);
+  IColor c_10  = IColor::Lerp(c_010, c_110, dx);
+  IColor c_01  = IColor::Lerp(c_001, c_101, dx);
+  IColor c_11  = IColor::Lerp(c_011, c_111, dx);
+
+  float dy = pos.y - 0.5 - ipos.y;
+  
+  IColor c_0   = IColor::Lerp(c_00,  c_10,  dy);
+  IColor c_1   = IColor::Lerp(c_01,  c_11,  dy);
+  
+  float dz = pos.z - 0.5 - ipos.z;
+  return         IColor::Lerp(c_0,   c_1,   dz);
 }
 
 /**
@@ -1325,7 +1355,7 @@ MiniMap::IsFeatureSeen(ID id) const {
 void
 MiniMap::RepaintMap() {
   const IVector3 &size = world.GetSize();
-  uint8_t pixels[size.x*size.z*4];
+  uint8_t *pixels = new uint8_t[size.x*size.z*4];
 
   for (size_t x=0; x<size.x; x++) {
     for (size_t z=0; z<size.z; z++) {
@@ -1355,7 +1385,7 @@ MiniMap::RepaintMap() {
     }
   }
 
-  this->mapTexture = updateTexture("*minimap", Point(size.x, size.z), pixels);
+  this->mapTexture = updateTexture("*minimap", Image(Point(size.x, size.z), pixels, true));
 }
 
 Serializer &operator << (Serializer &ser, const MiniMap &map) {

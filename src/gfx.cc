@@ -9,6 +9,7 @@
 #include "shader.h"
 #include "input.h"
 #include "texture.h"
+#include "image.h"
 #include "player.h"
 #include "sprite.h"
 #include "vertexbuffer.h"
@@ -378,8 +379,7 @@ void
 Gfx::SaveScreen(const std::string &name) {
   uint8_t *data = new uint8_t[screenSize.x*screenSize.y*3];
   glReadPixels(0,0,screenSize.x, screenSize.y, GL_RGB, GL_UNSIGNED_BYTE, data);
-  saveImage(name, screenSize.x, screenSize.y, data);
-  delete [] data;
+  Image(screenSize, data, false);
   Log("%s saved\n", name.c_str());
 }
 

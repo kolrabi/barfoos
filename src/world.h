@@ -56,6 +56,7 @@ public:
   Cell &SetCell(const IVector3 &pos, const Cell &cell, bool ignoreLock = false);
   std::vector<const Cell *> GetCellNeighbours(const IVector3 &pos) const;
   IColor GetLight(const IVector3 &pos) const;
+  IColor GetLight(const Vector3 &pos) const;
 
   bool CastRayX(const Vector3 &org, float dir) const;
   bool CastRayZ(const Vector3 &org, float dir) const;

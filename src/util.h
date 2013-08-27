@@ -21,8 +21,6 @@ float Wave(float x, float z, float t, float a = 0.2);
 std::vector<std::string> Tokenize(const char *line);
 uint32_t ParseSidesMask(const std::string &str);
 
-int saveImage(const std::string &fileName, size_t w, size_t h, const uint8_t *rgb);
-
 /** Raycast against a triangle.
   * @param[in] tri The three points of the triangle.
   * @param[in] start The ray start point.

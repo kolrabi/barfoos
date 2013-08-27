@@ -142,6 +142,9 @@ Feature::Feature(FILE *f, const std::string &name) :
     } else if (tokens[0] == "trev") {
       defs[lastDef].topRev = true;
       defs[lastDef].revRand = false;
+    } else if (tokens[0] == "srev") {
+      defs[lastDef].sideRev = true;
+      defs[lastDef].revRand = false;
     } else if (tokens[0] == "topnoise") {
       defs[lastDef].topNoise = std::atof(tokens[1].c_str());
       defs[lastDef].topFreq = std::atof(tokens[2].c_str());
@@ -296,6 +299,7 @@ void Feature::ReplaceChars(RunningState &state, World &world, const IVector3 &po
         } else {
           cell.SetOrder(def.topRev, def.botRev);
         }
+        cell.SetReversedSides(def.sideRev);
         cell.SetLocked(def.lockCell);
         cell.SetIgnoreLock(true);
         cell.SetIgnoreWrite(def.ignoreWrite);

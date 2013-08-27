@@ -23,11 +23,12 @@ Def      .
 
 Def      \
   Cell   brick
-  Bottom 1 0 0 1
+  Bottom 0.75 0 0 0.75
 
 Def /
   Cell   brick
-  Bottom 0 1 1 0
+  Bottom 0 0.75 0.75 0
+  srev
 
 Def &
   Cell   brick

@@ -416,8 +416,8 @@ Player::DrawGUI(Gfx &gfx) const {
     skills += s.first + ": " + ToString(Stats::GetLevelForSkillExp(s.second)) + "\n";
   }
 
-  snprintf(tmp, sizeof(tmp), u8"%s%3.1f\n\u0080 %-5u", skills.c_str(), fps, this->GetGold());
-  RenderString(tmp, "small").Draw(gfx, 4, vsize.y-32-24, int(Align::VertBottom));
+  snprintf(tmp, sizeof(tmp), u8"%s%3.1f\n\u0080 %-5u %3.3f %3.3f %3u %u", skills.c_str(), fps, this->GetGold(), this->GetPosition().x, this->GetPosition().z, (unsigned int)(this->GetPosition().x-0.5), (unsigned int)(this->GetPosition().z-0.5));
+  RenderString(tmp).Draw(gfx, 4, vsize.y-32-24, int(Align::VertBottom));
 }
 
 void

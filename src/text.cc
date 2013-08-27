@@ -23,7 +23,8 @@ struct TextFont {
     texture(loadTexture("gui/font."+name)),
     size( texture->size.x / 32, texture->size.y / 8 ),
     name(name)
-  {}
+  {
+  }
 };
 
 static std::unordered_map<std::string, TextFont> fonts;

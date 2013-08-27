@@ -18,6 +18,8 @@ public:
   void Draw(std::vector<Vertex> &vertices) const;
   void DrawEmissive(std::vector<Vertex> &vertices) const;
   void DrawHighlight(std::vector<Vertex> &vertices) const;
+  
+  void SetReversedSides(bool rev) { this->reversedSides = rev; }
 
 protected:
 

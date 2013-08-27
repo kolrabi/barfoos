@@ -17,10 +17,6 @@ AC_PROG_CC
 AM_PROG_CC_C_O
 AC_PROG_CXX
 
-#LDFLAGS="-L/opt/local/lib"
-#CFLAGS="-I/opt/local/include"
-#CXXFLAGS="-I/opt/local/include"
-
 # Checks for libraries.
 AM_CONDITIONAL([WINDOOF], [test x$OS     = xWindows_NT])
 AM_CONDITIONAL([MECKES],  [test x$OSTYPE = xdarwin11  ])
