@@ -21,6 +21,8 @@ AC_PROG_CXX
 AM_CONDITIONAL([WINDOOF], [test x$OS     = xWindows_NT])
 AM_CONDITIONAL([MECKES],  [test x$OSTYPE = xdarwin11  ])
 
+LDFLAGS="-L/opt/local/lib"
+
 if test x$OS = xWindows_NT; then
   AC_DEFINE(WIN32)
   AC_CHECK_LIB(winmm, main)
