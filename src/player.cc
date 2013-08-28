@@ -441,7 +441,9 @@ Player::HandleEvent(const InputEvent &event) {
 }
 
 void Player::SetUniforms(const std::shared_ptr<Shader> &shader) const {
-  shader->Uniform("u_fade", IColor(std::sqrt(this->pain)*255, 0, 0));
+  if (shader) {
+    shader->Uniform("u_fade", IColor(std::sqrt(this->pain)*255, 0, 0));
+  }
 }
 
 void

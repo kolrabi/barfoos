@@ -118,6 +118,8 @@ World::Build() {
       defaultCells[i].SetLocked(true);
       defaultCells[i].SetIgnoreWrite(true);
     } else {
+      defaultCells[i] = Cell("rock");
+      /*
       IVector3 ppp(pos+r);
       ppp.x %= 256;
       ppp.y %= 256;
@@ -130,7 +132,7 @@ World::Build() {
         defaultCells[i] = Cell("rock");
       } else {
         defaultCells[i] = Cell("dirt");
-      }
+      }*/
     }
   }
   bool done = false;
@@ -543,12 +545,6 @@ World::Draw(Gfx &gfx) {
       }
     }
 
-#if USE_VBO
-    // set vertex buffer data
-    glBindBuffer(GL_ARRAY_BUFFER, this->vbo);
-    if (this->allVerts.size())
-      glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex)*(this->allVerts.size()), &this->allVerts[0], GL_STATIC_DRAW);
-#endif
     dirty = false;
   }
 
@@ -580,23 +576,27 @@ World::Draw(Gfx &gfx) {
     std::unordered_map<const Texture *, VertexBuffer> dynVerticesEmissive;
 
     for (size_t i : dynamicCells) {
+      this->cells[i].UpdateVertices();
+      
       const Texture *tex = this->cells[i].GetTexture();
-      if (dynVerticesNormal.find(tex) == dynVerticesNormal.end())
-          dynVerticesNormal[tex] = std::vector<Vertex>();
+      if (tex) {
+        if (dynVerticesNormal.find(tex) == dynVerticesNormal.end())
+            dynVerticesNormal[tex] = std::vector<Vertex>();
+            
+        std::vector<Vertex> tmp;
+        this->cells[i].Draw(tmp);
+        dynVerticesNormal[tex].Add(tmp);
+      }
 
       const Texture *etex = this->cells[i].GetEmissiveTexture();
-      if (dynVerticesEmissive.find(etex) == dynVerticesEmissive.end())
-          dynVerticesEmissive[etex] = std::vector<Vertex>();
+      if (etex) {
+        if (dynVerticesEmissive.find(etex) == dynVerticesEmissive.end())
+            dynVerticesEmissive[etex] = std::vector<Vertex>();
 
-      this->cells[i].UpdateVertices();
-      std::vector<Vertex> tmp;
-
-      this->cells[i].Draw(tmp);
-      dynVerticesNormal[tex].Add(tmp);
-      tmp.clear();
-
-      this->cells[i].DrawEmissive(tmp);
-      dynVerticesEmissive[etex].Add(tmp);
+        std::vector<Vertex> tmp;
+        this->cells[i].DrawEmissive(tmp);
+        dynVerticesEmissive[etex].Add(tmp);
+      }
     }
 
     // render vertices for dynamic cells

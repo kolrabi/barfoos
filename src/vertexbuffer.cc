@@ -51,6 +51,7 @@ VertexBuffer::Add(const std::vector<Vertex> &verts) {
 void
 VertexBuffer::DrawTriangles(size_t first, size_t count) {
   if (count == 0) count = this->verts.size() - first;
+  if (count == 0) return;
 
 #if USE_VBO
   if (this->dirty) {
@@ -72,6 +73,7 @@ VertexBuffer::DrawTriangles(size_t first, size_t count) {
 void
 VertexBuffer::DrawQuads(size_t first, size_t count) {
   if (count == 0) count = this->verts.size() - first;
+  if (count == 0) return;
 
 #if USE_VBO
   if (this->dirty) {

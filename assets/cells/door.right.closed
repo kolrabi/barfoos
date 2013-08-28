@@ -1,7 +1,7 @@
 tex           gate
 
 Dynamic
-Transparent
+# Transparent
 DoubleSided
 Pickable
 OnUseReplace

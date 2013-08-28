@@ -58,6 +58,7 @@ static InputKey MapKey(int k) {
 
 Gfx::Gfx(const Point &pos, const Point &size, bool fullscreen) :
   window(nullptr),
+  useFixedFunction(false),
   isInit(false),
   startTime(glfwGetTime()),
   vb(nullptr),
@@ -105,7 +106,7 @@ Gfx::~Gfx() {
 bool
 Gfx::Init(Game &game) {
   Log("Initializing GFX\n");
-
+  
   // Create window
   this->window = glfwCreateWindow(screenSize.x, screenSize.y, "foobar", NULL, NULL);
   if (!this->window) {
@@ -118,7 +119,18 @@ Gfx::Init(Game &game) {
     glfwSetWindowPos(this->window, this->screenPos.x, this->screenPos.y);
 
   glfwMakeContextCurrent(this->window);
-
+  
+  // We'd like extensions with that
+  GLeeInit();
+  
+  if (!GLEE_ARB_shader_objects) {
+    Log("\n******************************************************************\n");
+    Log("  Your OpenGL does not support the ARB_shader_objects extension!\n");
+    Log("  Falling back to stone age rendering path!\n");
+    Log("******************************************************************\n\n");
+    this->useFixedFunction = true;
+  }  
+  
   glfwSetWindowUserPointer(this->window, &game);
 
   if (this->screenSize.x < 800 || this->screenSize.y < 600) {
@@ -226,35 +238,37 @@ Gfx::Init(Game &game) {
   //
   //glfwSwapInterval(1);
 
-  // We'd like extensions with that
-  GLeeInit();
-
   // Basic GL settings
   glCullFace(GL_BACK);
   glEnable(GL_CULL_FACE);
 
-  //glEnable(GL_ALPHA_TEST);
-  //glAlphaFunc(GL_GREATER, 0);
+  if (this->useFixedFunction) {
+    glEnable(GL_ALPHA_TEST);
+    glAlphaFunc(GL_GREATER, 0);
+    
+    //glEnable(GL_COLOR_MATERIAL);
+    //glColorMaterial(GL_FRONT_AND_BACK, GL_DIFFUSE);
+  }
 
   glEnable(GL_TEXTURE_2D);
-  glEnable(GL_SCISSOR_TEST);
+  //glEnable(GL_SCISSOR_TEST);
 
   glEnable(GL_DEPTH_TEST);
   glDepthFunc(GL_LEQUAL);
   glEnable(GL_BLEND);
   SetBlendNormal();
 
- // Colors look nicer unclamped
+  // Colors look nicer unclamped
   if (GLEE_ARB_color_buffer_float) {
     glClampColorARB(GL_CLAMP_VERTEX_COLOR_ARB, GL_FALSE);
     glClampColorARB(GL_CLAMP_FRAGMENT_COLOR_ARB, GL_FALSE);
   }
 
   this->noiseTex = noiseTexture(Point(256,256), Vector3(32,32,32));
-  SetTextureFrame(this->noiseTex, 1);
+  //SetTextureFrame(this->noiseTex, 1);
 
   glEnableClientState(GL_VERTEX_ARRAY);
-  glEnableClientState(GL_COLOR_ARRAY);
+  // glEnableClientState(GL_COLOR_ARRAY);
   glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
   this->vb = new VertexBuffer();
@@ -295,9 +309,7 @@ Gfx::Init(Game &game) {
   this->vb->Add(Vertex(Vector3( 1,-1, -1), IColor(255,255,255), 6,1, Vector3( 0,-1, 0)));
   this->vb->Add(Vertex(Vector3( 1,-1,  1), IColor(255,255,255), 6,0, Vector3( 0,-1, 0)));
   this->vb->Add(Vertex(Vector3(-1,-1,  1), IColor(255,255,255), 5,0, Vector3( 0,-1, 0)));
-
-  glInterleavedArrays(GL_T2F_C4F_N3F_V3F,  sizeof(Vertex), nullptr);
-
+  
   isInit = true;
   return true;
 }
@@ -404,6 +416,8 @@ void Gfx::Viewport(const Rect &view) {
 }
 
 void Gfx::SetShader(const std::string &name) {
+  if (this->useFixedFunction) return;
+  
   if (name == "") {
     glUseProgramObjectARB(0);
     this->activeShader = nullptr;
@@ -493,6 +507,14 @@ Gfx::SetPlayer(const Player *player) {
 
 void
 Gfx::SetUniforms() const {
+  if (this->useFixedFunction) {
+    // TODO: lights
+    
+    this->view->SetUniforms(nullptr);
+    if (this->player) this->player->SetUniforms(nullptr);
+    return;
+  }
+  
   if (!this->activeShader) return;
 
   std::vector<Vector3> lightPos;
@@ -566,8 +588,18 @@ void Gfx::DrawSprite(const Sprite &sprite, const Vector3 &pos, bool flip, bool b
 
   SetBackfaceCulling(false);
   if (sprite.texture) {
+    if (this->useFixedFunction) {
+      glEnable(GL_LIGHTING);
+      float e[] = { 
+        this->light.r / 255.0f, this->light.g / 255.0f, this->light.b / 255.0f, 1.0f
+      };
+      glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, e);
+    }
     this->SetTextureFrame(sprite.texture, 0, sprite.currentFrame, sprite.totalFrames);
     this->DrawUnitQuad();
+    if (this->useFixedFunction) {
+      glDisable(GL_LIGHTING);
+    }
   }
   if (sprite.emissiveTexture) {
     this->SetTextureFrame(sprite.emissiveTexture, 0, sprite.currentFrame, sprite.totalFrames);

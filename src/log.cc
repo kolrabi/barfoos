@@ -18,9 +18,9 @@ void Log(const char *fmt, ...) {
   fputs(str, stderr);
   fflush(stderr);
   
-  /*
+  
   FILE *f = fopen("log.txt", "a");
   fputs(str, f);
   fclose(f);
-  */
+  
 }

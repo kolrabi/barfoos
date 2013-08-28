@@ -23,6 +23,8 @@ public:
   float GetTime() const;
   void Update(Game &game);
   GfxView     &GetView()                    { return *view; }
+  
+  bool UseFixedFunction() const { return this->useFixedFunction; }
 
   void IncGuiCount();
   void DecGuiCount();
@@ -76,6 +78,7 @@ private:
   friend class GfxView;
 
   GLFWwindow *window;
+  bool useFixedFunction;
 
   bool isInit;
   float startTime;

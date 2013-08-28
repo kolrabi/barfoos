@@ -84,12 +84,21 @@ void GfxView::Billboard(bool flip, bool vertical) {
 }
 
 void GfxView::SetUniforms(const std::shared_ptr<Shader> &shader) const {
-  shader->Uniform("u_matProjection",    this->projStack.back());
-  shader->Uniform("u_matModelView",     this->modelViewStack.back());
-  shader->Uniform("u_matView",          this->viewStack.back());
-  shader->Uniform("u_matInvModelView",  this->modelViewStack.back().Inverse());
-  shader->Uniform("u_matTexture",       this->textureStack.back());
-  shader->Uniform("u_matNormal",        this->modelViewStack.back().Mat3().Inverse().Transpose());
+  if (gfx.UseFixedFunction()) {
+    glMatrixMode(GL_PROJECTION);
+    glLoadMatrixf(this->projStack.back().m);
+    glMatrixMode(GL_MODELVIEW);
+    glLoadMatrixf(this->modelViewStack.back().m);
+    glMatrixMode(GL_TEXTURE);
+    glLoadMatrixf(this->textureStack.back().m);
+  } else {
+    shader->Uniform("u_matProjection",    this->projStack.back());
+    shader->Uniform("u_matModelView",     this->modelViewStack.back());
+    shader->Uniform("u_matView",          this->viewStack.back());
+    shader->Uniform("u_matInvModelView",  this->modelViewStack.back().Inverse());
+    shader->Uniform("u_matTexture",       this->textureStack.back());
+    shader->Uniform("u_matNormal",        this->modelViewStack.back().Mat3().Inverse().Transpose());
+  }
 }
 
 bool GfxView::IsPointVisible(const Vector3 &p) const {
