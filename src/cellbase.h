@@ -31,7 +31,7 @@ public:
   bool IsTopFlat() const;
   bool IsBottomFlat() const;
   bool IsTransparent() const;
-
+  
 protected:
 
   CellBase(const std::string &type);

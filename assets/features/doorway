@@ -25,6 +25,9 @@ Def      \
   Cell   brick
   Bottom 0.75 0 0 0.75
 
+Def      -  brick
+  Bottom 0.75 0.75 0.75 0.75
+  
 Def /
   Cell   brick
   Bottom 0 0.75 0.75 0
@@ -53,7 +56,7 @@ slice 1 2
 slice 3 3
 &#&
 &/&
-&.&
+&-&
 &\&
 &#&
 

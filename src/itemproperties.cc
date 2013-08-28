@@ -182,6 +182,8 @@ ItemProperties::ParseProperty(const std::string &cmd) {
     Parse(this->unlockChance);
   } else if (cmd == "onunlockbreak") {
     this->onUnlockBreak = true;
+  } else if (cmd == "pickliquid") {
+    this->pickLiquid = true;
   } else if (cmd != "") {
     this->SetError("ignoring '" + cmd + "'");
   }

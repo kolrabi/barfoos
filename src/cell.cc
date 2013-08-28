@@ -5,6 +5,7 @@
 #include "runningstate.h"
 #include "projectile.h"
 #include "player.h"
+#include "item.h"
 
 #include "random.h"
 #include "vertex.h"
@@ -612,6 +613,25 @@ void Cell::OnStepOn(RunningState &state, Mob &mob) {
 void Cell::OnStepOff(RunningState &state, Mob &) {
   if (this->isTrigger) {
     state.TriggerOff(this->triggerTargetId);
+  }
+}
+
+void Cell::OnUseItem(RunningState &, Mob &, Item &item) {
+  std::string itemType = item.GetType();
+  
+  auto iter1 = this->info->onUseItemReplaceItem.find(itemType);
+  if (iter1 != this->info->onUseItemReplaceItem.end()) {
+    item.ReplaceWith(iter1->second);
+  }
+  
+  auto iter2 = this->info->onUseItemAddDetail.find(itemType);
+  if (iter2 != this->info->onUseItemAddDetail.end()) {
+    this->shared.detail += iter2->second;
+  }
+
+  auto iter3 = this->info->onUseItemReplace.find(itemType);
+  if (iter3 != this->info->onUseItemReplace.end()) {
+    this->world->SetCell(this->GetPosition(), Cell(iter3->second));
   }
 }
 

@@ -69,6 +69,7 @@ public:
   bool Flow(Side side);
 
   void OnUse(RunningState &state, Mob &user, bool force = false);
+  void OnUseItem(RunningState &state, Mob &user, Item &item);
   void OnStepOn(RunningState &state, Mob &mob);
   void OnStepOff(RunningState &state, Mob &mob);
 

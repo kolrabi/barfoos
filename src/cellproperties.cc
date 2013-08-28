@@ -74,6 +74,25 @@ void CellProperties::ParseProperty(const std::string &cmd) {
   else if (cmd == "onusecascade") ParseSideMask(this->onUseCascade);
   else if (cmd == "usedelay")     Parse(this->useDelay);
   else if (cmd == "usechance")    Parse(this->useChance);
+  else if (cmd == "onuseitemreplaceitem") {
+    std::string from, to;
+    Parse(from);
+    Parse(to);
+    this->onUseItemReplaceItem[from] = to;
+  }
+  else if (cmd == "onuseitemreplace") {
+    std::string from, to;
+    Parse(from);
+    Parse(to);
+    this->onUseItemReplace[from] = to;
+  }
+  else if (cmd == "onuseitemadddetail") {
+    std::string item;
+    int detail;
+    Parse(item);
+    Parse(detail);
+    this->onUseItemAddDetail[item] = detail;
+  }  
 
   else if (cmd == "replace")      Parse(this->replace);
 

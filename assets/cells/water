@@ -4,5 +4,11 @@ transparent
 liquid
 uvturb
 wave
-speed 0.5
+speed 0.75
 DoubleSided
+
+OnUseItemReplaceItem potion.empty potion.water
+OnUseItemAddDetail   potion.empty -1
+
+OnUseItemReplaceItem potion.water potion.empty
+OnUseItemAddDetail   potion.water 1

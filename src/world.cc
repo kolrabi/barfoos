@@ -187,8 +187,6 @@ World::Build() {
       nextFeature->BuildFeature(state, *this, pos, conn->dir, instance.dist, instances.size(), nullptr, featNum);
       if (!this->FinishCheckOverwrite()) continue;
 
-      Log(".");
-
       // build it
       FeatureInstance           nextInstance = nextFeature->BuildFeature(state, *this, pos, conn->dir, instance.dist, instances.size(), revConn, featNum);
       minY = std::min(minY, pos.y);
@@ -352,11 +350,14 @@ World::Build() {
     if (!entity) continue;
 
     state.AddEntity(entity);
+    
+    Vector3 pos(Vector3(a.x + 0.5, a.y, a.z + 0.5));
     if (top) {
-      entity->SetPosition(Vector3(a.x + 0.5, a.y + entity->GetAABB().extents.y+0.01, a.z + 0.5));
+      pos.y = CastRayYDown(pos) + entity->GetAABB().extents.y + 0.01;
     } else {
-      entity->SetPosition(Vector3(a.x + 0.5, a.y - entity->GetAABB().extents.y+0.99, a.z + 0.5));
+      pos.y = CastRayYUp(pos) - entity->GetAABB().extents.y - 0.01;
     }
+    entity->SetPosition(pos);
   }
 
   Log("Placing %u enemies...\n", monsterCount);

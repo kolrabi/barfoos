@@ -102,6 +102,10 @@ struct CellProperties : public Properties {
     * Default: 0, don't replace.
     */
   uint32_t detailBelowReplace;
+  
+  std::unordered_map<std::string, std::string> onUseItemReplaceItem;
+  std::unordered_map<std::string, std::string> onUseItemReplace;
+  std::unordered_map<std::string, int> onUseItemAddDetail;
 
   /** Rendering scale of this cell. Has no effect on collision detection.
     * Default: [1,1,1], don't change size.

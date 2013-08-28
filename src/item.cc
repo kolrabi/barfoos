@@ -234,6 +234,8 @@ bool Item::UseOnCell(RunningState &state, Mob &user, Cell *cell, Side) {
   float charge = this->NeedsChargeUp() ? this->chargeT : 1.0;
 
   if (this->properties->canUseCell) {
+    cell->OnUseItem(state, user, *this);
+    
     uint32_t cellLock = cell->GetLockedID();
     if (cellLock && this->properties->unlockChance > 0.0 && (this->unlockID == cellLock || this->unlockID == 0) && state.GetRandom().Chance(this->properties->unlockChance)) {
       cell->Unlock();

@@ -13,3 +13,7 @@ NoModifier
 OnConsumeResult   potion.empty
 OnConsumeEffect   potion.water
 OnConsumeVerb     drink
+
+CanUseCell
+Hand
+PickLiquid

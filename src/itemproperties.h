@@ -99,6 +99,8 @@ struct ItemProperties : public Properties {
 
   float unlockChance = 0.0;
   bool onUnlockBreak = false;
+  bool pickLiquid = false;
+  
   virtual void ParseProperty(const std::string &name) override;
 };
 

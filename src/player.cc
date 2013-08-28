@@ -604,7 +604,10 @@ Cell *Player::GetSelection(RunningState &state, const std::shared_ptr<Item> &ite
   }
 
   // check cells
-  Cell &cell = state.GetWorld().CastRayCell(pos, dir, hitDist, selectedCellSide);
+  size_t flags = CellFlags::Pickable;
+  if (item && item->GetProperties().pickLiquid) flags |= CellFlags::Liquid;
+  
+  Cell &cell = state.GetWorld().CastRayCell(pos, dir, hitDist, selectedCellSide, flags);
   if (hitDist < dist) {
     entityId = InvalidID;
     return &cell;
