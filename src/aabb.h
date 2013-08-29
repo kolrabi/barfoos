@@ -69,6 +69,15 @@ struct AABB {
     aabb.extents = max - aabb.center;
     return aabb;
   }
+
+  AABB Combine(const Vector3 &o) const {
+    Vector3 min = Min().Min(o);
+    Vector3 max = Max().Max(o);
+    AABB aabb;
+    aabb.center = (min+max) * 0.5;
+    aabb.extents = max - aabb.center;
+    return aabb;
+  }
   
   /** Generate corner vertices for the box.
     * Also generates vertices for the sides.
@@ -156,6 +165,12 @@ struct AABB {
     t = tnear;
     p = start + dir * t;
     return true;
+  }
+  
+  Vector3 GetCorner(uint8_t n) const {
+    return Vector3( center.x + (n & 1) ? extents.x : -extents.x,
+                    center.y + (n & 2) ? extents.y : -extents.y,
+                    center.z + (n & 4) ? extents.z : -extents.z );
   }
   
   operator std::string() const;

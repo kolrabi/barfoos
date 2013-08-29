@@ -2,6 +2,8 @@
 
 #include "2d.h"
 #include "vector3.h"
+#include "vector4.h"
+#include "matrix4.h"
 #include "aabb.h"
 
 #include "serializer.h"
@@ -25,6 +27,26 @@ Point::operator std::string() const {
 Vector3::operator std::string() const {
   char tmp[256];
   snprintf(tmp, sizeof(tmp), "[%f,%f,%f]", x,y,z);
+  return tmp;
+}
+
+Vector4::operator std::string() const {
+  char tmp[256];
+  snprintf(tmp, sizeof(tmp), "[%f,%f,%f,%f]", x,y,z,w);
+  return tmp;
+}
+
+Matrix4::operator std::string() const {
+  char tmp[256];
+  snprintf(tmp, sizeof(tmp), "[%2.5f,%2.5f,%2.5f,%2.5f\n"
+                             " %2.5f,%2.5f,%2.5f,%2.5f\n" 
+                             " %2.5f,%2.5f,%2.5f,%2.5f\n" 
+                             " %2.5f,%2.5f,%2.5f,%2.5f]\n",
+  
+  self(0,0), self(1,0), self(2,0), self(3,0), self(0,1), self(1,1), self(2,1), self(3,1),
+  self(0,2), self(1,2), self(2,2), self(3,2), self(0,3), self(1,3), self(2,3), self(3,3)
+  
+  );
   return tmp;
 }
 

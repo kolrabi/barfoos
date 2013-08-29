@@ -503,6 +503,8 @@ Entity::Think(RunningState &) {
 
 void
 Entity::Draw(Gfx &gfx) const {
+  if (!gfx.GetView().IsAABBVisible(this->aabb)) return;
+  
   gfx.SetLight(this->cellLight + this->GetLight());
   gfx.SetColor(IColor(255,255,255), 1.0);
   gfx.SetBlendNormal();

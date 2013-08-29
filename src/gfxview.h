@@ -16,7 +16,10 @@ public:
   void Scale(const Vector3 &p);
   void Rotate(float angle, const Vector3 &p);
 
+  Vector3 WorldToScreen(const Vector3 &p) const;
+  Vector3 WorldToScreen(const Vector3 &p, bool &visible) const;
   bool IsPointVisible(const Vector3 &p) const;
+  bool IsAABBVisible(const AABB &p) const;
  
   const Vector3 &GetRight() const { return right; }
 

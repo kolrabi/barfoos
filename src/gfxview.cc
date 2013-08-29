@@ -6,6 +6,8 @@
 #include "shader.h"
 #include "matrix4.h"
 
+#include "aabb.h"
+
 void GfxView::Look(const Vector3 &pos, const Vector3 &forward, float fovY, const Vector3 &up) {
   float aspect = (float)gfx.viewportSize.x / (float)gfx.viewportSize.y;
 
@@ -101,9 +103,32 @@ void GfxView::SetUniforms(const std::shared_ptr<Shader> &shader) const {
   }
 }
 
+Vector3 GfxView::WorldToScreen(const Vector3 &p) const {
+  Vector4 pp = this->projStack.back() * (this->viewStack.back()*Vector4(p));
+  return pp.DivW();
+}
+
+Vector3 GfxView::WorldToScreen(const Vector3 &p, bool &visible) const {
+  Vector3 p2 = (this->projStack.back() * (this->viewStack.back()*Vector4(p))).DivW();
+  visible = (p2.x > -1 && p2.x < 1 && p2.y > -1 && p2.y < 1 && p2.z > -0.001);
+  return p2;
+}
+
 bool GfxView::IsPointVisible(const Vector3 &p) const {
-  Matrix4 matProjView(this->projStack.back() * this->viewStack.back());
-  Vector3 p2 = matProjView*p;
+  Vector3 p2 = WorldToScreen(p);
   return p2.x > -1 && p2.x < 1 && p2.y > -1 && p2.y < 1 && p2.z > -0.001;
 }
 
+bool GfxView::IsAABBVisible(const AABB &aabb) const {
+  if (IsPointVisible(aabb.center)) return true;
+  
+  static const AABB unitAABB(Vector3(1.0, 1.0, 1.0));
+  AABB screenAABB;
+  for (uint8_t i=0; i<8; i++) {
+    bool visible = false;
+    Vector3 v = WorldToScreen(aabb.GetCorner(i), visible);
+    if (visible) return true;
+    screenAABB.Combine(v);
+  }
+  return screenAABB.Overlap(unitAABB);
+}

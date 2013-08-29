@@ -4,6 +4,7 @@
 #include "common.h"
 
 #include "vector3.h"
+#include "vector4.h"
 
 /*
  * OpenGL order:
@@ -63,14 +64,26 @@ struct Matrix4 {
     float w[4];
     w[0] = a(0,0) * v.x + a(0,1) * v.y + a(0,2) * v.z + a(0,3);
     w[1] = a(1,0) * v.x + a(1,1) * v.y + a(1,2) * v.z + a(1,3);
-    w[2] = a(2,0) * v.x + a(2,1) * v.y + a(2,2) * v.z + a(1,3);
-    w[3] = a(3,0) * v.x + a(3,1) * v.y + a(3,2) * v.z + a(1,3);
+    w[2] = a(2,0) * v.x + a(2,1) * v.y + a(2,2) * v.z + a(2,3);
+    w[3] = a(3,0) * v.x + a(3,1) * v.y + a(3,2) * v.z + a(3,3);
     
     if (w[3]) {
       return Vector3(w[0]/w[3], w[1]/w[3], w[2]/w[3]);
     } else {
       return Vector3(w[0], w[1], w[2]);
     }
+  }
+
+  Vector4 operator*(const Vector4 &v) const {
+    const Matrix4 &a = *this;
+    
+    float w[4];
+    w[0] = a(0,0) * v.x + a(1,0) * v.y + a(2,0) * v.z + a(3,0) * v.w;
+    w[1] = a(0,1) * v.x + a(1,1) * v.y + a(2,1) * v.z + a(3,1) * v.w;
+    w[2] = a(0,2) * v.x + a(1,2) * v.y + a(2,2) * v.z + a(3,2) * v.w;
+    w[3] = a(0,3) * v.x + a(1,3) * v.y + a(2,3) * v.z + a(3,3) * v.w;
+    
+    return Vector4(w[0], w[1], w[2], w[3]);
   }
   
   Matrix4 Mat3() const {

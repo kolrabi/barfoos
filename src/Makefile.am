@@ -7,7 +7,7 @@ CF=$(GL_CFLAGS) -Werror -Wall -Wextra -I$(top_srcdir)/src -DDATA_PATH=\"$(pkgdat
 
 if WINDOOF
 RESFILE=res.rc icon.ico
-LDWINFLAGS=-mwindows -Wl,-Map=barfoos.map
+LDWINFLAGS=#-mwindows -Wl,-Map=barfoos.map
 endif
 
 if MECKES
