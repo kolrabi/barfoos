@@ -580,7 +580,7 @@ Cell::Ray(const Vector3 &start, const Vector3 &dir, float &t, Vector3 &p) const 
     float ttt;
     Vector3 pp;
 
-    if (TriangleRay(tri, start, dir, ttt, pp)) {
+    if (Vector3::TriangleRay(tri, start, dir, ttt, pp)) {
       hit = true;
       if (ttt < tt) tt = ttt;
     }

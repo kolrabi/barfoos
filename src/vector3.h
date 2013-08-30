@@ -1,6 +1,7 @@
 #ifndef BARFOOS_VECTOR3_H
 #define BARFOOS_VECTOR3_H
 
+#include "common.h"
 #include "space.h"
 
 struct Vector3 {
@@ -110,6 +111,42 @@ struct Vector3 {
   Vector3 YZX() const { return Vector3(y,z,x); }
   Vector3 ZXY() const { return Vector3(z,x,y); }
   Vector3 ZYX() const { return Vector3(z,y,x); }
+
+  /** Raycast against a triangle.
+    * @param[in] tri The three points of the triangle.
+    * @param[in] start The ray start point.
+    * @param[in] dir The normalized ray direction.
+    * @param[out] t The time of hit if any.
+    * @param[out] p The position of hit if any.
+    * @return true if ray hit the triangle.
+    */
+  static inline bool 
+  TriangleRay(const Vector3 *tri, const Vector3 &start, const Vector3 &dir, float &t, Vector3 &p) {
+    Vector3 e1 = tri[1] - tri[0];
+    Vector3 e2 = tri[2] - tri[0];
+    
+    Vector3 h = dir.Cross(e2);
+    float a = e1.Dot(h);
+    
+    if (a < 0.00001) return false;
+    
+    float f = 1.0/a;
+    
+    Vector3 s = start-tri[0];
+    float u = f * (s.Dot(h));
+    if (u < 0.0 || u > 1.0) return false;
+    
+    Vector3 q = s.Cross(e1);
+    float v = f * (dir.Normalize().Dot(q));
+    if (v < 0.0 || v > 1.0) return false;
+    
+    float tt = f * e2.Dot(q);
+    if (tt < 0.00001) return false;
+    
+    t = tt;
+    p = start + dir * t;
+    return true;
+  }
 
   operator std::string() const;
 };

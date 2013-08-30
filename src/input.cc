@@ -1,6 +1,6 @@
-#include "input.h"
+#include "common.h"
 
-#include <algorithm>
+#include "input.h"
 
 Input::Input() :
   nextHandlerId(0),
@@ -38,8 +38,12 @@ Input::AddHandler(std::function<void(const InputEvent &)> handler) {
 void 
 Input::RemoveHandler(size_t id) {
   Log("Removing %u\n", id);
-  auto iter = std::find(this->handlers.begin(), this->handlers.end(), id);
-  //Log("%p\n", id);
-  if (iter != this->handlers.end())
-    this->handlers.erase(iter);
+  auto iter = this->handlers.begin();
+
+  while(iter != this->handlers.end()) {
+    if (iter->id == id) {
+      this->handlers.erase(iter);
+      return;
+    }
+  }
 }

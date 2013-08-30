@@ -1,10 +1,10 @@
 #ifndef BARFOOS_INVENTORY_H
 #define BARFOOS_INVENTORY_H
 
-#include "common.h"
 #include "icolor.h"
 
 #include <unordered_map>
+#include <vector>
 #include <utility>
 
 //                 x  x  x  x

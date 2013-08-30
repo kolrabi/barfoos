@@ -1,7 +1,10 @@
 #include <cstring>
 #include <cstdio>
 
+#include "common.h"
+
 #include "deserializer.h"
+
 #include "ivector3.h"
 #include "vector3.h"
 #include "icolor.h"

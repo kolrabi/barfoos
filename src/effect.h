@@ -1,10 +1,9 @@
 #ifndef BARFOOS_EFFECT_H
 #define BARFOOS_EFFECT_H
 
-#include "common.h"
-
 #include "stats.h"
 #include "properties.h"
+#include "icolor.h"
 
 enum class Beatitude : int8_t;
 

@@ -13,6 +13,7 @@
 #include "player.h"
 #include "sprite.h"
 #include "vertexbuffer.h"
+#include "matrix4.h"
 
 static InputKey MapMouseButton(int b) {
   InputKey key;
@@ -61,7 +62,6 @@ Gfx::Gfx(const Point &pos, const Point &size, bool fullscreen) :
   useFixedFunction(false),
   isInit(false),
   startTime(glfwGetTime()),
-  vb(nullptr),
   player(nullptr),
 
   screenPos(pos),
@@ -75,6 +75,7 @@ Gfx::Gfx(const Point &pos, const Point &size, bool fullscreen) :
   mouseGrab(false),
   guiActiveCount(0),
 
+  vb(nullptr),
   noiseTex(nullptr),
   cubeVerts(0),
   quadVerts(0),
@@ -391,7 +392,7 @@ void
 Gfx::SaveScreen(const std::string &name) {
   uint8_t *data = new uint8_t[screenSize.x*screenSize.y*3];
   glReadPixels(0,0,screenSize.x, screenSize.y, GL_RGB, GL_UNSIGNED_BYTE, data);
-  Image(screenSize, data, false);
+  Image(screenSize, data, false).Save(name);
   Log("%s saved\n", name.c_str());
 }
 

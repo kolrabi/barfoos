@@ -27,6 +27,10 @@ public:
   
 private:
 
+  friend class Gfx;
+
+  GfxView(Gfx &gfx);  
+  
   Gfx &gfx;
   
   std::vector<Matrix4> projStack;
@@ -36,16 +40,6 @@ private:
 
   Vector3 right;
 
-  friend class Gfx;
-  
-  GfxView(Gfx &gfx) : 
-    gfx(gfx),
-    projStack(1),
-    viewStack(1),
-    modelViewStack(1),
-    textureStack(1)
-  {}
-  
   void SetUniforms(const std::shared_ptr<Shader> &shader) const;
 };
 

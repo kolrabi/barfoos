@@ -1,8 +1,9 @@
-#include "GLee.h"
+#include "common.h"
 
 #include "shader.h"
+
+#include "fileio.h"
 #include "icolor.h"
-#include "util.h"
 #include "matrix4.h"
 
 Shader::Shader(const std::string &name) :

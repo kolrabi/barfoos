@@ -1,7 +1,6 @@
 #ifndef BARFOOS_TEXTURE_H
 #define BARFOOS_TEXTURE_H
 
-#include "common.h"
 #include "2d.h"
 #include "vector3.h"
 

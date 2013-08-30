@@ -1,9 +1,9 @@
 #ifndef BARFOOS_SERIALIZER_H
 #define BARFOOS_SERIALIZER_H
 
-#include "common.h"
-
 #include <unordered_map>
+#include <vector>
+#include <list>
 
 class Serializer {
 public:

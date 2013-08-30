@@ -1,9 +1,8 @@
 #ifndef BARFOOS_STATS_H
 #define BARFOOS_STATS_H
 
-#include "common.h"
-#include "icolor.h"
-#include "inventory.h"
+#include <vector>
+#include <unordered_map>
 
 struct EffectProperties;
 

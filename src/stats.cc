@@ -1,12 +1,13 @@
+#include "common.h"
+
 #include "stats.h"
+
 #include "item.h"
 #include "entity.h"
 #include "random.h"
 
 #include "serializer.h"
 #include "deserializer.h"
-
-#include <cstring>
 
 /** Calculate the outcome of a melee attack with an item.
  * @param attacker Entity that attacks

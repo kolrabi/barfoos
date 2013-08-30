@@ -1,7 +1,6 @@
 #ifndef BARFOOS_IMAGE_H
 #define BARFOOS_IMAGE_H
 
-#include "common.h"
 #include "2d.h"
 #include "vector3.h"
 

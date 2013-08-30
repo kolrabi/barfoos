@@ -1,11 +1,11 @@
 #ifndef BARFOOS_GUI_H
 #define BARFOOS_GUI_H
 
-#include "common.h"
 #include "2d.h"
 #include "icolor.h"
 
 #include <unordered_map>
+#include <vector>
 
 struct NinePatch {
   const Texture *texture;

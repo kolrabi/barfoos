@@ -1,10 +1,11 @@
-#include "texture.h"
-#include "image.h"
+#include "common.h"
 
-#include "util.h"
+#include "texture.h"
+
+#include "image.h"
+#include "fileio.h"
 
 #include "GLee.h"
-
 #include <sys/time.h>
 #include <unordered_map>
 

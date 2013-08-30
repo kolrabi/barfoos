@@ -1,3 +1,5 @@
+#include "common.h"
+
 #include "game.h"
 
 #include "entity.h"
@@ -20,8 +22,9 @@
 #include "deserializer.h"
 
 #include "mainmenustate.h"
+#include "matrix4.h"
 
-#include <algorithm>
+#include "fileio.h"
 
 Game::Game(const Point &screenSize) :
   isInit        (false),
@@ -207,7 +210,10 @@ void Game::SetIdentified(const std::string &name) {
 }
 
 bool Game::IsIdentified(const std::string &name) const {
-  return std::find(this->identifiedItems.begin(), this->identifiedItems.end(), name) != this->identifiedItems.end();
+  for (auto &i:this->identifiedItems) {
+    if (i == name) return true;
+  }
+  return false;
 }
 
 void

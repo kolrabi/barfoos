@@ -1,7 +1,6 @@
 #ifndef BARFOOS_MAINMENU_GUI_H
 #define BARFOOS_MAINMENU_GUI_H
 
-#include "common.h"
 #include "gui.h"
 
 class MainMenuState;

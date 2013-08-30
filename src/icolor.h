@@ -1,8 +1,6 @@
 #ifndef BARFOOS_ICOLOR_H
 #define BARFOOS_ICOLOR_H
 
-#include "common.h"
-
 struct IColor {
   int16_t r,g,b;
 
@@ -80,9 +78,6 @@ struct IColor {
                    a.g * (1.0-t) + b.g * t,
                    a.b * (1.0-t) + b.b * t );
   }
-
-  
-  operator std::string() const;
 };
 
 #endif

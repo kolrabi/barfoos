@@ -1,9 +1,8 @@
 #ifndef BARFOOS_PROPERTIES_H
 #define BARFOOS_PROPERTIES_H
 
-#include "common.h"
-
-struct IColor;
+#include <vector>
+#include <cstdio>
 
 struct Properties {
 

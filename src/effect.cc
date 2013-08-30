@@ -1,10 +1,14 @@
+#include "common.h"
+
 #include "effect.h"
+
 #include "entity.h"
 #include "world.h"
 #include "runningstate.h"
 #include "gfx.h"
 #include "texture.h"
 #include "item.h"
+#include "fileio.h"
 
 #include <unordered_map>
 

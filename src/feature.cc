@@ -1,14 +1,16 @@
 #include "common.h"
+
 #include "feature.h"
+
 #include "world.h"
 #include "cell.h"
 #include "random.h"
 #include "runningstate.h"
 #include "simplex.h"
 #include "entity.h"
+#include "fileio.h"
 
 #include <unordered_map>
-#include <algorithm>
 #include "weighted_map.h"
 
 FeatureSpawn::FeatureSpawn() :
@@ -77,6 +79,8 @@ Feature::Feature(FILE *f, const std::string &name) :
     
     for (auto &c:tokens[0]) c = ::tolower(c);
     
+    // feature properties ---------------------------------------------------------------------
+
     if (tokens[0] == "size") {
       this->size = IVector3(
         std::atoi(tokens[1].c_str()), 
@@ -86,19 +90,23 @@ Feature::Feature(FILE *f, const std::string &name) :
       cells = std::vector<Cell>(size.x * size.y * size.z);
       defaultMask = std::vector<bool>(size.x*size.y*size.z, false);
       chars = std::vector<char>(size.x * size.y * size.z);
+
     } else if (tokens[0] == "level") {
       this->minLevel = std::atoi(tokens[1].c_str());
       this->maxLevel = std::atoi(tokens[2].c_str());
       this->maxProbability = std::atof(tokens[3].c_str());
-    } else if (tokens[0] == "group") {
-      this->groups.push_back(tokens[1]);
-    } else if (tokens[0] == "deco") {
-      this->decoGroup = tokens[1];
-    } else if (tokens[0] == "above") {
-      this->minY = std::atoi(tokens[1].c_str());
-    } else if (tokens[0] == "uselastid") {
-      this->useLastId = true;
-    } else if (tokens[0] == "conn") {
+
+    } 
+
+    else if (tokens[0] == "group")       this->groups.push_back(tokens[1]);
+    else if (tokens[0] == "deco")        this->decoGroup = tokens[1];
+    else if (tokens[0] == "above")       this->minY = std::atoi(tokens[1].c_str());
+    else if (tokens[0] == "uselastid")   this->useLastId = true;
+    else if (tokens[0] == "norotate")    this->noRotate = true;
+
+    // connections ----------------------------------------------------------------------------
+
+    else if (tokens[0] == "conn") {
       IVector3 pos(std::atoi(tokens[1].c_str()), std::atoi(tokens[2].c_str()), std::atoi(tokens[3].c_str()));
       int dir = std::atoi(tokens[4].c_str());
       conns.push_back(FeatureConnection(pos, dir, conns.size()));
@@ -112,11 +120,15 @@ Feature::Feature(FILE *f, const std::string &name) :
       conns.back().nextFeatures[tokens[1]] = 1.0f;
     } else if (tokens[0] == "nextp") {
       conns.back().nextFeatures[tokens[1]] = std::atof(tokens[2].c_str());
+
+    // cell definitions -----------------------------------------------------------------------
+
     } else if (tokens[0] == "def") {
       lastDef = tokens[1][0];
       defs[lastDef] = FeatureCharDef();
       if (tokens.size() > 2) defs[lastDef].type = tokens[2];
     } else if (tokens[0] == "cell") {
+      Log("Use of deprecated 'cell' property. Use extended 'def' instead!\n");
       defs[lastDef].type = tokens[1];
     } else if (tokens[0] == "top") {
       defs[lastDef].top[0] = std::atof(tokens[1].c_str());
@@ -128,24 +140,16 @@ Feature::Feature(FILE *f, const std::string &name) :
       defs[lastDef].bot[1] = std::atof(tokens[2].c_str());
       defs[lastDef].bot[2] = std::atof(tokens[3].c_str());
       defs[lastDef].bot[3] = std::atof(tokens[4].c_str());
-    } else if (tokens[0] == "override") {
-      defs[lastDef].ignoreLock = true;
-    } else if (tokens[0] == "nolock") {
-      defs[lastDef].lockCell = false;
-    } else if (tokens[0] == "nowrite") {
-      defs[lastDef].ignoreWrite = true;
-    } else if (tokens[0] == "onlydefault") {
-      defs[lastDef].onlydefault = true;
-    } else if (tokens[0] == "brev") {
-      defs[lastDef].botRev = true;
-      defs[lastDef].revRand = false;
-    } else if (tokens[0] == "trev") {
-      defs[lastDef].topRev = true;
-      defs[lastDef].revRand = false;
-    } else if (tokens[0] == "srev") {
-      defs[lastDef].sideRev = true;
-      defs[lastDef].revRand = false;
-    } else if (tokens[0] == "topnoise") {
+    } 
+    else if (tokens[0] == "override")       defs[lastDef].ignoreLock  = true;
+    else if (tokens[0] == "nolock")         defs[lastDef].lockCell    = false;
+    else if (tokens[0] == "nowrite")        defs[lastDef].ignoreWrite = true;
+    else if (tokens[0] == "onlydefault")    defs[lastDef].onlydefault = true;
+    else if (tokens[0] == "brev")           defs[lastDef].botRev      = true;
+    else if (tokens[0] == "trev")           defs[lastDef].topRev      = true;
+    else if (tokens[0] == "srev")           defs[lastDef].sideRev     = true;
+
+    else if (tokens[0] == "topnoise") {
       defs[lastDef].topNoise = std::atof(tokens[1].c_str());
       defs[lastDef].topFreq = std::atof(tokens[2].c_str());
     } else if (tokens[0] == "bottomnoise") {
@@ -155,14 +159,9 @@ Feature::Feature(FILE *f, const std::string &name) :
       defs[lastDef].topDisplace = std::atof(tokens[1].c_str());
     } else if (tokens[0] == "bottomdisplace") {
       defs[lastDef].bottomDisplace = std::atof(tokens[1].c_str());
-    } else if (tokens[0] == "mob") {
-      FeatureSpawn spawn;
-      spawn.spawnClass = SpawnClass::MobClass;
-      spawn.probability = std::atof(tokens[1].c_str());
-      spawn.type = tokens[2];
-      spawn.attach = std::atoi(tokens[3].c_str());
-      spawn.pos = Vector3(std::atof(tokens[4].c_str()), std::atof(tokens[5].c_str()), std::atof(tokens[6].c_str()));
-      this->spawns.push_back(spawn);
+
+    // entity spawning ------------------------------------------------------------------------
+
     } else if (tokens[0] == "entity") {
       FeatureSpawn spawn;
       spawn.spawnClass = SpawnClass::EntityClass;
@@ -179,8 +178,7 @@ Feature::Feature(FILE *f, const std::string &name) :
       spawn.attach = std::atoi(tokens[3].c_str());
       spawn.pos = Vector3(std::atof(tokens[4].c_str()), std::atof(tokens[5].c_str()), std::atof(tokens[6].c_str()));
       this->spawns.push_back(spawn);
-    } else if (tokens[0] == "norotate") {
-      this->noRotate = true;
+
     } else if (tokens[0] == "slice") {
       size_t y0 = std::atof(tokens[1].c_str());
       size_t y1 = std::atof(tokens[2].c_str());
@@ -190,53 +188,20 @@ Feature::Feature(FILE *f, const std::string &name) :
         for (size_t x=0; x<size.x; x++) {
           FeatureCharDef &def = defs[line[x]];
           for (size_t y=y0; y<=y1; y++) {
-            Cell cell(def.type);
-            
-            float dispT = simplexNoise( Vector3(x,y,z) + 0.5 ) * def.topDisplace;
-            
-            float ofsT[4] = {
-              def.topNoise * simplexNoise( Vector3(x,y,z) * def.topFreq ) + dispT,
-              def.topNoise * simplexNoise( Vector3(x,y,z+1) * def.topFreq ) + dispT,
-              def.topNoise * simplexNoise( Vector3(x+1,y,z+1) * def.topFreq ) + dispT,
-              def.topNoise * simplexNoise( Vector3(x+1,y,z) * def.topFreq ) + dispT
-            };
-            
-            float dispB = simplexNoise( Vector3(x,y,z) + 0.5 ) * def.bottomDisplace;
-            
-            float ofsB[4] = {
-              def.bottomNoise * simplexNoise( Vector3(x,y,z) * def.bottomFreq ) + dispB,
-              def.bottomNoise * simplexNoise( Vector3(x,y,z+1) * def.bottomFreq ) + dispB,
-              def.bottomNoise * simplexNoise( Vector3(x+1,y,z+1) * def.bottomFreq ) + dispB,
-              def.bottomNoise * simplexNoise( Vector3(x+1,y,z) * def.bottomFreq ) + dispB
-            };
-            
-            cell.SetYOffsets(def.top[0]+ofsT[0],def.top[1]+ofsT[1],def.top[2]+ofsT[2],def.top[3]+ofsT[3]);
-            cell.SetYOffsetsBottom(def.bot[0]+ofsB[0],def.bot[1]+ofsB[1],def.bot[2]+ofsB[2],def.bot[3]+ofsB[3]);
-            cell.SetOrder(def.topRev, def.botRev);
-            cell.SetLocked(def.lockCell);
-            cell.SetIgnoreLock(def.ignoreLock);
-            cell.SetIgnoreWrite(def.ignoreWrite);
-            
-            cells[x+size.x*(y+size.y*z)] = cell;
-            
             defaultMask[x+size.x*(y+size.y*z)] = def.onlydefault;
             chars[x+size.x*(y+size.y*z)] = line[x];
           }
         }
       }
     }
+
     else if (tokens[0] != "") {
       Log("Ignoring unknown feature property: %s\n", tokens[0].c_str());
     }
   }
-
 }
 
 Feature::~Feature() {
-}
-
-const IVector3 Feature::GetSize() const {
-  return size;
 }
 
 float Feature::GetProbability(const RunningState &state, const IVector3 &pos) const {
@@ -262,17 +227,64 @@ FeatureInstance Feature::BuildFeature(RunningState &state, World &world, const I
       for (size_t x=0; x<size.x; x++) { 
         if (defaultMask[x+size.x*(y+size.y*z)] && world.IsChecking()) continue;
         if (defaultMask[x+size.x*(y+size.y*z)] && !world.IsDefault(pos+IVector3(x,y,z))) continue;
-        world.SetCell(pos+IVector3(x,y,z), cells[x+size.x*(y+size.y*z)]).SetFeatureID(id);
+        
+        char ch = chars[x+size.x*(y+size.y*z)];
+        const FeatureCharDef &def = defs.at(ch);
+
+        Cell cell(this->MakeCell(def, IVector3(x,y,z) + pos));
+        world.SetCell(pos+IVector3(x,y,z), cell).SetFeatureID(id);
       }
     }
   }
+
   if (conn) {
-    this->ReplaceChars(state, world, pos, conn->id, id);
+    this->ReplaceChars(world, pos, conn->id, id);
   }
+
+  // lock doors
+  if (id > 1)
+  size.For([&](const IVector3 &xyz) {
+    Cell &cell = world.GetCell(pos+xyz);
+    if (cell.GetInfo().lockedChance && state.GetRandom().Chance(cell.GetInfo().lockedChance)) {
+      state.LockCell(cell);
+    }
+  });
+
   return FeatureInstance(this, pos, dir, dist+1, id);
 }
 
-void Feature::ReplaceChars(RunningState &state, World &world, const IVector3 &pos, ID connId, ID featureId) const {
+Cell Feature::MakeCell(const FeatureCharDef &def, const IVector3 &pos) const {
+  Vector3 vpos = Vector3(pos);
+  Cell cell(def.type);
+      
+  float dispT = simplexNoise( vpos + 0.5 ) * def.topDisplace;
+      
+  float ofsT[4] = {
+    def.topNoise * simplexNoise( (vpos                  ) * def.topFreq ) + dispT,
+    def.topNoise * simplexNoise( (vpos + Vector3(0,0,1) ) * def.topFreq ) + dispT,
+    def.topNoise * simplexNoise( (vpos + Vector3(1,0,1) ) * def.topFreq ) + dispT,
+    def.topNoise * simplexNoise( (vpos + Vector3(1,0,0) ) * def.topFreq ) + dispT
+  };
+      
+  float dispB = simplexNoise( vpos + 0.5 ) * def.bottomDisplace;
+      
+  float ofsB[4] = {
+    def.bottomNoise * simplexNoise( (vpos                  ) * def.bottomFreq ) + dispB,
+    def.bottomNoise * simplexNoise( (vpos + Vector3(0,0,1) ) * def.bottomFreq ) + dispB,
+    def.bottomNoise * simplexNoise( (vpos + Vector3(1,0,1) ) * def.bottomFreq ) + dispB,
+    def.bottomNoise * simplexNoise( (vpos + Vector3(1,0,0) ) * def.bottomFreq ) + dispB
+  };
+      
+  cell.SetYOffsets(def.top[0]+ofsT[0],def.top[1]+ofsT[1],def.top[2]+ofsT[2],def.top[3]+ofsT[3]);
+  cell.SetYOffsetsBottom(def.bot[0]+ofsB[0],def.bot[1]+ofsB[1],def.bot[2]+ofsB[2],def.bot[3]+ofsB[3]);
+  cell.SetOrder(def.topRev, def.botRev);
+  cell.SetLocked(def.lockCell);
+  cell.SetIgnoreLock(def.ignoreLock);
+  cell.SetIgnoreWrite(def.ignoreWrite);
+  return cell;           
+}
+
+void Feature::ReplaceChars(World &world, const IVector3 &pos, ID connId, ID featureId) const {
   std::vector<char> repchars = this->chars;
   for (const FeatureReplacement &r : replacements) {
     if (r.conn == connId) {
@@ -291,31 +303,8 @@ void Feature::ReplaceChars(RunningState &state, World &world, const IVector3 &po
         
         const FeatureCharDef &def = this->defs.find(cr)->second;
         
-        Cell cell = Cell(def.type);
-        cell.SetYOffsets(def.top[0],def.top[1],def.top[2],def.top[3]);
-        cell.SetYOffsetsBottom(def.bot[0],def.bot[1],def.bot[2],def.bot[3]);
-        if (def.revRand) {
-          cell.SetOrder(state.GetRandom().Integer(2), state.GetRandom().Integer(2));
-        } else {
-          cell.SetOrder(def.topRev, def.botRev);
-        }
-        cell.SetReversedSides(def.sideRev);
-        cell.SetLocked(def.lockCell);
-        cell.SetIgnoreLock(true);
-        cell.SetIgnoreWrite(def.ignoreWrite);
+        Cell cell = this->MakeCell(def, pos + IVector3(x,y,z));
         world.SetCell(pos+IVector3(x,y,z), cell).SetFeatureID(featureId);
-      }
-    }
-  }
-  
-  if (featureId > 1)
-  for (size_t z=0; z<size.z; z++) {
-    for (size_t y=0; y<size.y; y++) {
-      for (size_t x=0; x<size.x; x++) { 
-        Cell &cell = world.GetCell(pos+IVector3(x,y,z));
-        if (cell.GetInfo().lockedChance && state.GetRandom().Chance(cell.GetInfo().lockedChance)) {
-          state.LockCell(cell);
-        }
       }
     }
   }
@@ -395,7 +384,11 @@ void FeatureConnection::Resolve() {
         iter = nextFeatures.erase(iter);
         for (auto f : allFeatures) {
           const std::vector<std::string> &groups = f.second.GetGroups();
-          if (std::find(groups.begin(), groups.end(), group) != groups.end()) {
+          auto groupIter = groups.begin();
+          while (groupIter != groups.end() && *groupIter != group) 
+            groupIter++;
+
+          if (groupIter != groups.end()) {
             if (nextFeatures.find(f.first) != nextFeatures.end()) {
               nextFeatures[f.first] *= prob;
             } else {

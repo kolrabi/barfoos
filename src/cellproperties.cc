@@ -1,12 +1,11 @@
+#include "common.h"
+
 #include "cellproperties.h"
 
-#include "util.h"
+#include "fileio.h"
 #include "gfx.h"
 
 #include "texture.h"
-
-#include <unordered_map>
-#include <cstdio>
 
 static std::unordered_map<std::string, CellProperties> cellProperties;
 

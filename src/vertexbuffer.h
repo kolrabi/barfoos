@@ -1,7 +1,7 @@
 #ifndef BARFOOS_VERTEXBUFFER_H
 #define BARFOOS_VERTEXBUFFER_H
 
-#include "common.h"
+#include <vector>
 
 class VertexBuffer final {
 public:

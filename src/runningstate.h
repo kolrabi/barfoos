@@ -1,7 +1,10 @@
 #ifndef BARFOOS_RUNNINGSTATE_H
 #define BARFOOS_RUNNINGSTATE_H
 
-#include "game.h"
+#include "gamestate.h"
+
+#include <vector>
+#include <unordered_map>
 
 class RunningState : public GameState {
 public:

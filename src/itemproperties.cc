@@ -1,13 +1,16 @@
+#include "common.h"
+
 #include "item.h"
+
 #include "entity.h"
 #include "world.h"
 #include "gfx.h"
 #include "texture.h"
 #include "text.h"
 #include "game.h"
+#include "fileio.h"
 
 #include <unordered_map>
-#include <cstdio>
 
 static std::unordered_map<std::string, ItemProperties> allItems;
 static std::unordered_map<std::string, std::vector<std::string>> allItemGroups;

@@ -2,7 +2,6 @@
 #define BARFOOS_FEATURE_H
 
 #include "common.h"
-#include "util.h"
 #include "cell.h"
 
 #include <map>
@@ -136,7 +135,8 @@ public:
   Feature(FILE *f, const std::string &name);
   ~Feature();
   
-  const IVector3 GetSize() const; 
+  const IVector3 &GetSize() const { return size; }
+
   float GetProbability(const RunningState &state, const IVector3 &pos) const;
   FeatureInstance BuildFeature(RunningState &state, World &world, const IVector3 &pos, int dir, int dist, ID id, const FeatureConnection *conn, ID prevId) const;
   void SpawnEntities(RunningState &state, const IVector3 &pos) const;
@@ -151,7 +151,7 @@ public:
   const std::string &GetDecoGroup()  const { return decoGroup;  }
 
   void ResolveConnections();
-  void ReplaceChars(RunningState &state, World &world, const IVector3 &pos, ID connId, ID featureId) const;
+  void ReplaceChars(World &world, const IVector3 &pos, ID connId, ID featureId) const;
   
   Feature Rotate();
 
@@ -181,6 +181,7 @@ protected:
   bool useLastId;
   bool noRotate;
   
+  Cell MakeCell(const FeatureCharDef &def, const IVector3 &pos) const;
   void ReplaceChars(const FeatureReplacement &r, std::vector<char> &chars) const;
   
   friend void LoadFeatures();

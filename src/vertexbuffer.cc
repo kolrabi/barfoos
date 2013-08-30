@@ -1,3 +1,5 @@
+#include "common.h"
+
 #include "GLee.h"
 #include <GLFW/glfw3.h>
 

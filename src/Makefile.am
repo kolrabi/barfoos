@@ -30,7 +30,8 @@ barfoos_SOURCES=\
   gfx.cc gfx.h gfxview.cc gfxview.h \
   vertexbuffer.cc vertexbuffer.h \
   audio.cc audio.h \
-  io.cc texture.cc \
+  fileio.cc fileio.h \
+  texture.cc texture.h \
   GLee.c GLee.h \
   game.cc game.h \
   runningstate.cc runningstate.h \

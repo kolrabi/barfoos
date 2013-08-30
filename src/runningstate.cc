@@ -1,4 +1,7 @@
+#include "common.h"
+
 #include "runningstate.h"
+
 #include "world.h"
 #include "ivector3.h"
 #include "world.h"
@@ -14,6 +17,8 @@
 
 #include "item.h"
 #include "itementity.h"
+
+#include "fileio.h"
 
 #include "serializer.h"
 #include "deserializer.h"

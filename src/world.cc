@@ -85,6 +85,7 @@ World::World(RunningState &state, Deserializer &deser) :
 World::~World() {
 }
 
+// TODO: put into separate WorldBuilder class
 void
 World::Build() {
 
@@ -193,7 +194,7 @@ World::Build() {
       maxY = std::max(maxY, nextFeature->GetSize().y + pos.y);
 
       // replace some cells after connection if wanted
-      feature->ReplaceChars(state, *this, instance.pos, conn->id, featNum);
+      feature->ReplaceChars(*this, instance.pos, conn->id, featNum);
 
       lastDir = conn->dir;
       loop    = 0;
@@ -212,8 +213,8 @@ World::Build() {
             if (connPos != nextConnPos) continue;
 
             // replace some cells after connection if wanted
-            inst.feature->ReplaceChars(state, *this, inst.pos, c.id, inst.featureID);
-            nextInstance.feature->ReplaceChars(state, *this, nextInstance.pos, nextConn.id, nextInstance.featureID);
+            inst.feature->ReplaceChars(*this, inst.pos, c.id, inst.featureID);
+            nextInstance.feature->ReplaceChars(*this, nextInstance.pos, nextConn.id, nextInstance.featureID);
           }
         }
       }
@@ -222,7 +223,6 @@ World::Build() {
       instances.push_back(nextInstance);
       instances.back().prevID = featNum;
     } while(instances.size() < featureCount);
-    Log("\n");
 
     int height = maxY - minY;
 

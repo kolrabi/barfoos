@@ -1,3 +1,5 @@
+#include "common.h"
+
 #include "util.h"
 
 #include "2d.h"
@@ -9,7 +11,6 @@
 #include "serializer.h"
 #include "deserializer.h"
 
-#include <sstream>
 #include <cstring>
 #include <cstdio>
 

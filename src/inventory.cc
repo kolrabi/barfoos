@@ -1,3 +1,5 @@
+#include "common.h"
+
 #include "inventory.h"
 
 #include "runningstate.h"

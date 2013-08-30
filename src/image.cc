@@ -1,7 +1,9 @@
-#include "simplex.h"
+#include "common.h"
 
 #include "image.h"
-#include "util.h"
+
+#include "fileio.h"
+#include "simplex.h"
 
 #include <png.h>
 

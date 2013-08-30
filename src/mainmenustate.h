@@ -1,7 +1,7 @@
 #ifndef BARFOOS_MAINMENUSTATE_H
 #define BARFOOS_MAINMENUSTATE_H
 
-#include "game.h"
+#include "gamestate.h"
 
 class MainMenuGui;
 

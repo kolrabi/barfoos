@@ -1,7 +1,6 @@
-#include <GLFW/glfw3.h>
-
 #include "game.h"
 
+#include <GLFW/glfw3.h>
 #include <png.h>
 #include <zlib.h>
 

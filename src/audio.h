@@ -1,11 +1,8 @@
 #ifndef BARFOOS_AUDIO_H
 #define BARFOOS_AUDIO_H
 
-#include "common.h"
-
-#include "vector3.h"
-
 #include <unordered_map>
+#include <vector>
 
 class Audio final {
 
@@ -20,7 +17,7 @@ public:
 
   void SetPlayer(const Player *player) { this->player = player; }
 
-  void PlaySound(const std::string &name, const Vector3 &pos = Vector3(0,0,0), float pitch = 1.0);
+  void PlaySound(const std::string &name, const Vector3 &pos, float pitch = 1.0);
 
 private:
 

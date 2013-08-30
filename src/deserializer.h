@@ -1,9 +1,9 @@
 #ifndef BARFOOS_DESERIALIZER_H
 #define BARFOOS_DESERIALIZER_H
 
-#include "common.h"
-
 #include <unordered_map>
+#include <vector>
+#include <list>
 
 class Deserializer {
 public:

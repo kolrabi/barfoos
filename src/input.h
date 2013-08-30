@@ -1,10 +1,10 @@
 #ifndef BARFOOS_INPUT_H
 #define BARFOOS_INPUT_H
 
-#include "common.h"
 #include "2d.h"
 
 #include <unordered_map>
+#include <vector>
 
 enum class InputKey : size_t {
   Invalid = 0,

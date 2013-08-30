@@ -2,6 +2,7 @@
 #define BARFOOS_WEIGHTED_MAP_H
 
 #include <unordered_map>
+#include <vector>
 
 template<class T>
 class weighted_map : public std::unordered_map<T, float> {

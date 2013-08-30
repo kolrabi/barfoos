@@ -1,14 +1,13 @@
+#include "common.h"
+
 #include "audio.h"
 
+#include "fileio.h"
 #include "game.h"
 #include "player.h"
 
 #include <AL/al.h>
 #include <AL/alc.h>
-#include <AL/alext.h>
-//#include <ogg/ogg.h>
-//#include <vorbis/codec.h>
-//#include <vorbis/vorbisenc.h>
 #include <vorbis/vorbisfile.h>
 
 Audio::Audio() :

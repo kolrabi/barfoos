@@ -1,4 +1,7 @@
+#include "common.h"
+
 #include "item.h"
+
 #include "entity.h"
 #include "world.h"
 #include "mob.h"
@@ -10,6 +13,7 @@
 #include "text.h"
 #include "itementity.h"
 #include "player.h"
+#include "inventory.h"
 
 #include "serializer.h"
 #include "deserializer.h"

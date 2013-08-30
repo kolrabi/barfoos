@@ -1,3 +1,5 @@
+#include "common.h"
+
 #include "entity.h"
 
 #include "player.h"
@@ -8,7 +10,7 @@
 
 #include "world.h"
 #include "cell.h"
-#include "util.h"
+#include "fileio.h"
 #include "random.h"
 
 #include "gfx.h"

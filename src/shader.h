@@ -1,11 +1,10 @@
 #ifndef BARFOOS_SHADER_H
 #define BARFOOS_SHADER_H
 
-#include "common.h"
-
 #include "GLee.h"
 
 #include <unordered_map>
+#include <vector>
 
 class Shader final {
 public:

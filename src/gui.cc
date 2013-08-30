@@ -1,4 +1,7 @@
+#include "common.h"
+
 #include "gui.h"
+
 #include "gfx.h"
 #include "game.h"
 #include "input.h"
@@ -46,8 +49,6 @@ Gui::Update(Game &game) {
   }
 
   Point diff( vsize - lastVSize );
-
-  if (diff.x || diff.y) Log("%d %d\n", diff.x, diff.y);
 
   if (gravE) {
     if (gravW) {

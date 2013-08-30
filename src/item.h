@@ -1,10 +1,10 @@
 #ifndef BARFOOS_ITEM_H
 #define BARFOOS_ITEM_H
 
-#include "common.h"
 #include "weighted_map.h"
-
 #include "itemproperties.h"
+
+class Inventory;
 
 enum class Beatitude : int8_t {
   Normal = 0,

@@ -8,6 +8,14 @@
 
 #include "aabb.h"
 
+GfxView::GfxView(Gfx &gfx) : 
+  gfx(gfx),
+  projStack(1),
+  viewStack(1),
+  modelViewStack(1),
+  textureStack(1)
+{}
+
 void GfxView::Look(const Vector3 &pos, const Vector3 &forward, float fovY, const Vector3 &up) {
   float aspect = (float)gfx.viewportSize.x / (float)gfx.viewportSize.y;
 

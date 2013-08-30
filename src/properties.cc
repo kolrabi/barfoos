@@ -1,3 +1,5 @@
+#include "common.h"
+
 #include "properties.h"
 
 #include "icolor.h"

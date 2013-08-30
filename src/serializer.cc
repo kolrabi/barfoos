@@ -2,7 +2,10 @@
 #include <cstdio>
 #include <algorithm>
 
+#include "common.h"
+
 #include "serializer.h"
+
 #include "ivector3.h"
 #include "vector3.h"
 #include "icolor.h"

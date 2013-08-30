@@ -1,11 +1,9 @@
 #ifndef BARFOOS_GAME_H
 #define BARFOOS_GAME_H
 
-#include "common.h"
 #include "random.h"
 #include "2d.h"
 
-#include <unordered_map>
 #include "markov.h"
 
 class GameState;
@@ -78,25 +76,6 @@ private:
 
   friend Serializer &operator << (Serializer &ser, const Game &game);
   friend Deserializer &operator >> (Deserializer &deser, Game &game);
-};
-
-class GameState {
-public:
-  GameState(Game &game) : game(game) {};
-  virtual ~GameState() {};
-
-  virtual void          Enter ()            = 0;
-  virtual void          Leave (GameState *) = 0;
-  virtual GameState *   Update()            = 0;
-  virtual void          Render(Gfx &)       const = 0;
-
-  Game &                GetGame()                       { return game; }
-  Random &              GetRandom()                     { return game.GetRandom(); }
-  virtual void          HandleEvent(const InputEvent &) {};
-
-private:
-
-  Game &game;
 };
 
 #endif

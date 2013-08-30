@@ -1,9 +1,9 @@
 #ifndef BARFOOS_CELLPROPERTIES_H
 #define BARFOOS_CELLPROPERTIES_H
 
-#include "common.h"
+#include "properties.h"
 #include "icolor.h"
-#include "ivector3.h"
+#include "vector3.h"
 
 #include <unordered_map>
 
@@ -51,8 +51,6 @@ enum CellFlags {
   /** Mobs may climb upwards when inside this cell. */
   Ladder = (1<<12)
 };
-
-#include "properties.h"
 
 /** Information about a cell shared by cells of same type. */
 struct CellProperties : public Properties {
