@@ -502,16 +502,19 @@ bool Cell::CheckSideSolid(Side side, const Vector3 &org) const {
   Cell *cell = this->neighbours[(int)side];
 
   // check for clipping movement into cell from opposite side
-  bool clipIn  = (cell->info->clipSidesIn  & (int)(1<<(-side)));
+  bool clipIn  = (cell->info->clipSidesIn  & (1 <<(-side)));
 
   // check for clipping movement out the cell
-  bool clipOut = (this->info->clipSidesOut & (1<<side));
+  bool clipOut = (this->info->clipSidesOut & (1 <<  side ));
 
   if (side == Side::Up || side == Side::Down) {
     return (clipIn || clipOut);
   }
 
-  bool heightCheck = org.y < (this->pos.y+cell->GetHeightClamp( org.x-(int)org.x + (side==Side::Left?1:0), org.z-(int)org.z) + (side==Side::Backward?1:0));
+  float x = org.x-(int)org.x + (side==Side::Left     ? 1.0 : 0.0);
+  float z = org.z-(int)org.z + (side==Side::Backward ? 1.0 : 0.0);
+
+  bool heightCheck = org.y < (this->pos.y+cell->GetHeightClamp( x, z ) );
   return (clipIn && heightCheck) || clipOut;
 }
 
