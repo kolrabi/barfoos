@@ -58,6 +58,7 @@ VertexBuffer::DrawTriangles(size_t first, size_t count) {
 #if USE_VBO
   if (this->dirty) {
     if (!this->vbo) glGenBuffers(1, &this->vbo);
+    if (!this->vbo) Log("%04x\n", glGetError());
     glBindBuffer(GL_ARRAY_BUFFER, this->vbo);
     glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex)*(this->verts.size()), &this->verts[0], GL_STATIC_DRAW);
   } else {
@@ -80,6 +81,7 @@ VertexBuffer::DrawQuads(size_t first, size_t count) {
 #if USE_VBO
   if (this->dirty) {
     if (!this->vbo) glGenBuffers(1, &this->vbo);
+    if (!this->vbo) Log("%04x\n", glGetError());
     glBindBuffer(GL_ARRAY_BUFFER, this->vbo);
     glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex)*(this->verts.size()), &this->verts[0], GL_STATIC_DRAW);
   } else {

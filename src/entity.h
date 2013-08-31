@@ -262,6 +262,7 @@ protected:
   Vector3 lastPos;
   Vector3 spawnPos;
   Vector3 forward;
+  Vector3 lastPosition;
 
   Stats baseStats;
   std::vector<Buff> activeBuffs;
