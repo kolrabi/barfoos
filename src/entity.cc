@@ -178,6 +178,8 @@ EntityProperties::ParseProperty(const std::string &cmd) {
   } else if (cmd == "ondieexplodeaddbuff") {
     Parse(this->onDieExplodeAddBuff);
 
+  } else if (cmd == "sound") {
+    Parse(this->sounds);
   } else if (cmd == "ondieparticles") {
     Parse(this->onDieParticles);
     Parse(this->onDieParticleSpeed);
@@ -195,10 +197,6 @@ EntityProperties::ParseProperty(const std::string &cmd) {
     Parse(this->cellLeave);
 
   }
-  else if (cmd == "soundattack") Parse(this->soundAttack);
-  else if (cmd == "soundengage") Parse(this->soundEngage);
-  else if (cmd == "soundhurt")   Parse(this->soundHurt);
-  else if (cmd == "sounddeath")  Parse(this->soundDeath);
   else if (cmd != "") {
     this->SetError("Ignoring '" + cmd + "'");;
   }
@@ -506,7 +504,7 @@ Entity::Think(RunningState &) {
 void
 Entity::Draw(Gfx &gfx) const {
   if (!gfx.GetView().IsAABBVisible(this->aabb)) return;
-  
+
   gfx.SetLight(this->cellLight + this->GetLight());
   gfx.SetColor(IColor(255,255,255), 1.0);
   gfx.SetBlendNormal();
@@ -588,7 +586,7 @@ Entity::Die(RunningState &state, const HealthInfo &info) {
 
   // Log("Entity::Die: from %f damage to %u\n", info.amount, this->GetId());
 
-  state.GetGame().GetAudio().PlaySound(this->properties->soundDeath, this->GetPosition());
+  this->PlaySound(state, "death");
 
   this->activeBuffs.clear();
 
@@ -693,6 +691,12 @@ Entity::Teleport(RunningState &state, const Vector3 &target) {
   for (size_t i=0; i<25; i++) {
     state.SpawnInAABB("particle.teleport", aabb, Vector3(0, state.GetRandom().Float()*0.3, 0));
   }
+}
+
+void
+Entity::PlaySound(RunningState &state, const std::string &type) {
+  if (this->properties->sounds.find(type) == this->properties->sounds.end()) return;
+  state.GetGame().GetAudio().PlaySound(this->properties->sounds.at(type), GetSmoothPosition());
 }
 
 IColor

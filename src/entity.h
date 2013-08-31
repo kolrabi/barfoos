@@ -144,11 +144,7 @@ struct EntityProperties : public Properties {
   /** Replace entity if used with an item. itemname -> new entityname */
   std::unordered_map<std::string, std::string> onUseEntityReplace;
 
-
-  std::string soundEngage   = "";
-  std::string soundAttack   = "";
-  std::string soundHurt     = "";
-  std::string soundDeath    = "";
+  std::unordered_map<std::string, std::string> sounds;
 
   virtual void ParseProperty(const std::string &name) override;
 };
@@ -214,6 +210,7 @@ public:
   const Vector3             GetSmoothEyePosition()            const { return this->GetSmoothPosition() + Vector3(0,this->properties->eyeOffset,0); }
 
   void                      Teleport(RunningState &state, const Vector3 &target);
+  void                      PlaySound(RunningState &state, const std::string &sound);
 
   void                      SetForward(const Vector3 &fwd)          { this->forward = fwd; }
   Vector3                   GetForward()                      const { return this->forward; }

@@ -111,7 +111,7 @@ Monster::Think(RunningState &state) {
 
         this->velocity.y += this->properties->attackJump;
         nextAttackT = state.GetGame().GetTime() + this->properties->attackInterval;
-        state.GetGame().GetAudio().PlaySound(this->properties->soundAttack, this->GetPosition());
+        this->PlaySound(state, "attack");
       }
 
     } else {
@@ -135,7 +135,7 @@ Monster::Think(RunningState &state) {
       if (entity->GetProperties()->name == "player" && CanSee(state, entity->GetPosition())) {
         enemy = entity;
         // Log("  Found one: %u %s\n", enemy->GetId(), enemy->GetName().c_str());
-        state.GetGame().GetAudio().PlaySound(this->properties->soundEngage, this->GetPosition());
+        this->PlaySound(state, "engage");
         break;
       }
     }

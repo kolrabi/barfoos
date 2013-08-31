@@ -100,7 +100,7 @@ struct CellProperties : public Properties {
     * Default: 0, don't replace.
     */
   uint32_t detailBelowReplace;
-  
+
   std::unordered_map<std::string, std::string> onUseItemReplaceItem;
   std::unordered_map<std::string, std::string> onUseItemReplace;
   std::unordered_map<std::string, int> onUseItemAddDetail;
@@ -130,6 +130,8 @@ struct CellProperties : public Properties {
   std::unordered_map<std::string, std::string> onFlowOntoReplaceSelf;
 
   float lockedChance;
+
+  std::unordered_map<std::string, std::string> sounds;
 
   CellProperties();
 

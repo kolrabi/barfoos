@@ -36,7 +36,6 @@ MainMenuGui::MainMenuGui(MainMenuState &state) :
   btnNewGame->SetGravity(false, false, false, false);
   btnNewGame->SetText("New Game");
   btnNewGame->SetOnActivate([&](Gui*){
-    state.GetGame().GetAudio().PlaySound("test", Vector3());
     state.NewGame();
     });
   btnNewGame->SetBackground(GuiState::Enabled,   npBtnEnabled);

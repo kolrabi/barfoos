@@ -1,4 +1,6 @@
 #include "cell.h"
+
+#include "audio.h"
 #include "util.h"
 #include "world.h"
 #include "gfx.h"
@@ -234,6 +236,7 @@ void Cell::OnUse(RunningState &state, Mob &user, bool force) {
 
   if (this->shared.lockedID) {
     state.GetPlayer().AddMessage("It is locked!");
+    PlaySound(state, "use.locked");
     return;
   }
 
@@ -246,6 +249,7 @@ void Cell::OnUse(RunningState &state, Mob &user, bool force) {
     if (info->onUseCascade & (1<<i) && this->neighbours[i]->info == info)
       this->neighbours[i]->OnUse(state, user, true);
   }
+  PlaySound(state, "use");
 }
 
 void Cell::Tick(RunningState &state) {
@@ -606,27 +610,30 @@ void Cell::OnStepOn(RunningState &state, Mob &mob) {
     targetCell.nextActivationT = state.GetGame().GetTime() + 2;
 
     mob.Teleport(state, Vector3(target));
+    PlaySound(state, "teleport");
   }
 
   if (this->isTrigger) {
     state.TriggerOn(this->triggerTargetId);
+    PlaySound(state, "trigger.on");
   }
 }
 
 void Cell::OnStepOff(RunningState &state, Mob &) {
   if (this->isTrigger) {
     state.TriggerOff(this->triggerTargetId);
+    PlaySound(state, "trigger.off");
   }
 }
 
 void Cell::OnUseItem(RunningState &, Mob &, Item &item) {
   std::string itemType = item.GetType();
-  
+
   auto iter1 = this->info->onUseItemReplaceItem.find(itemType);
   if (iter1 != this->info->onUseItemReplaceItem.end()) {
     item.ReplaceWith(iter1->second);
   }
-  
+
   auto iter2 = this->info->onUseItemAddDetail.find(itemType);
   if (iter2 != this->info->onUseItemAddDetail.end()) {
     this->shared.detail += iter2->second;
@@ -654,6 +661,13 @@ void Cell::Rotate() {
   this->shared.scale = this->shared.scale.ZYX();
   this->reversedSides = !this->reversedSides;
 }
+
+void
+Cell::PlaySound(RunningState &state, const std::string &type) {
+  if (this->info->sounds.find(type) == this->info->sounds.end()) return;
+  state.GetGame().GetAudio().PlaySound(this->info->sounds.at(type), GetAABB().center);
+}
+
 
 Serializer &operator << (Serializer &ser, const Cell &cell) {
   ser << (Triggerable&)cell;

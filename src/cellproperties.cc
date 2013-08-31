@@ -91,7 +91,7 @@ void CellProperties::ParseProperty(const std::string &cmd) {
     Parse(item);
     Parse(detail);
     this->onUseItemAddDetail[item] = detail;
-  }  
+  }
 
   else if (cmd == "replace")      Parse(this->replace);
 
@@ -100,6 +100,8 @@ void CellProperties::ParseProperty(const std::string &cmd) {
 
   else if (cmd == "scale")        Parse(this->scale);
   else if (cmd == "breakparticle")     Parse(this->breakParticle);
+
+  else if (cmd == "sound")        Parse(this->sounds);
 
   else if (cmd == "detailbelowreplace") Parse(this->detailBelowReplace);
   else if (cmd == "replacechance") Parse(this->replaceChance);

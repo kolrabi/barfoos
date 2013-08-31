@@ -158,6 +158,7 @@ Player::Update(RunningState &state) {
       std::string skill = useItem->GetProperties().useSkill;
       bool result = this->UseItem(state, useItem);
       if (result && skill != "") this->baseStats.skills[skill]++;
+      // TODO: skill level up message
     }
   } else {
     std::shared_ptr<Item> useItem = this->inventory[InventorySlot::RightHand];
@@ -167,6 +168,7 @@ Player::Update(RunningState &state) {
       std::string skill = useItem->GetProperties().useSkill;
       bool result = this->UseItem(state, useItem);
       if (result && skill != "") this->baseStats.skills[skill]++;
+      // TODO: skill level up message
     }
   }
   lastItemActiveLeft = itemActiveLeft;
@@ -180,6 +182,7 @@ Player::Update(RunningState &state) {
       std::string skill = useItem->GetProperties().useSkill;
       bool result = this->UseItem(state, useItem);
       if (result && skill != "") this->baseStats.skills[skill]++;
+      // TODO: skill level up message
     }
   } else {
     std::shared_ptr<Item> useItem = this->inventory[InventorySlot::LeftHand];
@@ -189,6 +192,7 @@ Player::Update(RunningState &state) {
       std::string skill = useItem->GetProperties().useSkill;
       bool result = this->UseItem(state, useItem);
       if (result && skill != "") this->baseStats.skills[skill]++;
+      // TODO: skill level up message
     }
   }
   lastItemActiveRight = itemActiveRight;
@@ -413,7 +417,8 @@ Player::DrawGUI(Gfx &gfx) const {
 
   std::string skills;
   for (auto &s:GetEffectiveStats().skills) {
-    skills += s.first + ": " + ToString(Stats::GetLevelForSkillExp(s.second)) + "\n";
+    skills += s.first + ": " + ToString(Stats::GetLevelForSkillExp(s.second));
+    skills += " (" + ToString(s.second) + ")\n";
   }
 
   snprintf(tmp, sizeof(tmp), u8"%s%3.1f\n\u0080 %-5u %3.3f %3.3f %3u %u", skills.c_str(), fps, this->GetGold(), this->GetPosition().x, this->GetPosition().z, (unsigned int)(this->GetPosition().x-0.5), (unsigned int)(this->GetPosition().z-0.5));

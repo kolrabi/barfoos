@@ -35,6 +35,8 @@ public:
   World *GetWorld() const;
   IVector3 GetPosition() const;
 
+  void                      PlaySound(RunningState &state, const std::string &sound);
+
   const IColor &GetLightLevel() const;
   bool SetLightLevel(const IColor &level, bool force=false);
 

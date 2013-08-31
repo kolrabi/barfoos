@@ -2,6 +2,7 @@
 #define BARFOOS_PROPERTIES_H
 
 #include <vector>
+#include <unordered_map>
 #include <cstdio>
 
 struct Properties {
@@ -32,6 +33,16 @@ struct Properties {
   void Parse(Element &e);
   void Parse(SpawnClass &s);
   void ParseSideMask(uint32_t &i);
+
+  template<class K, class V>
+  void Parse(std::unordered_map<K,V> &map) {
+    K key;
+    V value;
+
+    Parse(key);
+    Parse(value);
+    map[key] = value;
+  }
 
   Game *game;
 

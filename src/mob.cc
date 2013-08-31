@@ -129,7 +129,7 @@ Mob::Update(RunningState &state) {
     if (doesWantJump && isOnGround) {
       if (game.GetTime() - lastJumpT > 0.5) {
         tvy = velocity.y = properties->jumpSpeed;
-        state.GetGame().GetAudio().PlaySound("jump", this->GetSmoothPosition());
+        this->PlaySound(state, "jump");
         lastJumpT = game.GetTime();
       }
     }
@@ -216,7 +216,11 @@ Mob::Update(RunningState &state) {
 
   // fall damage
   if (didCollideVertical) {
+    if (velocity.y < -6) {
+      this->PlaySound(state, "land");
+    }
     if (velocity.y < -15) {
+      this->PlaySound(state, "land.hard");
       AddHealth(state, HealthInfo( (velocity.y+15)/5, HealthType::Falling));
     }
     velocity.y = 0;

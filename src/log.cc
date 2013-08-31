@@ -20,7 +20,9 @@ void Log(const char *fmt, ...) {
   
   
   FILE *f = fopen("log.txt", "a");
-  fputs(str, f);
-  fclose(f);
+  if (f) { 
+    fputs(str, f);
+    fclose(f);
+  }
   
 }

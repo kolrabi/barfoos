@@ -145,7 +145,12 @@ void Item::Update(RunningState &state) {
       this->ReplaceWith(replacement);
       return;
     } else {
-      if (this->amount > 1) this->amount--; else this->isRemovable = true;
+      if (this->amount > 1) {
+        this->amount--;
+        this->durability = this->properties->durability;
+      } else {
+        this->isRemovable = true;
+      }
     }
   }
 
@@ -178,7 +183,12 @@ bool Item::UseOnEntity(RunningState &state, Mob &user, uint32_t id) {
     if (entityLock && this->properties->unlockChance > 0.0 && (this->unlockID == entityLock || this->unlockID == 0) && state.GetRandom().Chance(this->properties->unlockChance)) {
       entity->Unlock();
       if (this->properties->onUnlockBreak) {
-        if (this->amount > 1) this->amount--; else this->isRemovable = true;
+        if (this->amount > 1) {
+          this->amount--;
+          this->durability = this->properties->durability;
+        } else {
+          this->isRemovable = true;
+        }
       }
       state.GetPlayer().AddMessage("You unlock the "+entity->GetName());
       result = true;
@@ -195,13 +205,14 @@ bool Item::UseOnEntity(RunningState &state, Mob &user, uint32_t id) {
     if (iter != entity->GetProperties()->onUseItemReplace.end()) {
       *this = Item(iter->second);
       result = true;
-    } else {
+    } else if (this->properties->damage != 0.0) {
       HealthInfo healthInfo(Stats::MeleeAttack(user, *entity, *this, state.GetRandom()));
 
       if (entity->GetProperties()->learnEvade && healthInfo.hitType == HitType::Miss && entity->GetSpawnClass() == SpawnClass::PlayerClass) {
         entity->GetBaseStats().skills["evade"]++;
+        // TODO: play item "miss.entity" sound
       } else {
-        // TODO: state.GetGame().GetAudio().PlaySound(this->properties->soundHit, this->GetPosition());
+        // TODO: play item "hit.entity" sound
       }
 
       entity->AddHealth(state, healthInfo);
@@ -239,21 +250,32 @@ bool Item::UseOnCell(RunningState &state, Mob &user, Cell *cell, Side) {
 
   if (this->properties->canUseCell) {
     cell->OnUseItem(state, user, *this);
-    
+
     uint32_t cellLock = cell->GetLockedID();
     if (cellLock && this->properties->unlockChance > 0.0 && (this->unlockID == cellLock || this->unlockID == 0) && state.GetRandom().Chance(this->properties->unlockChance)) {
       cell->Unlock();
       if (this->properties->onUnlockBreak) {
-        if (this->amount > 1) this->amount--; else this->isRemovable = true;
+        if (this->amount > 1) {
+          this->amount--;
+          this->durability = this->properties->durability;
+        } else {
+          this->isRemovable = true;
+        }
       }
+      cell->PlaySound(state, "unlock");
       state.GetPlayer().AddMessage("You unlock it.");
       return true;
     }
 
-    if (this->GetBreakBlockStrength() && state.GetRandom().Chance((this->properties->breakBlockStrength * charge) / cell->GetInfo().breakStrength)) {
-      cell->GetWorld()->BreakBlock(cell->GetPosition());
-      return true;
+    if (this->GetBreakBlockStrength()) {
+      if (state.GetRandom().Chance((this->properties->breakBlockStrength * charge) / cell->GetInfo().breakStrength)) {
+        cell->GetWorld()->BreakBlock(cell->GetPosition());
+        cell->PlaySound(state, "break");
+        return true;
+      }
     }
+    cell->PlaySound(state, "hit");
+    // TODO: play item "hit.cell" sound
 
     this->StartCooldown(state, user);
   } else {
@@ -266,6 +288,7 @@ bool Item::UseOnNothing(RunningState &state, Mob &user) {
   if (!this->CanUse(state)) return false;
   if (!this->properties->canUseNothing) return false;
 
+  // TODO: play item "use.nothing" sound
   float charge = this->NeedsChargeUp() ? this->chargeT : 1.0;
 
   if (this->properties->spawnProjectile != "") {
@@ -279,7 +302,6 @@ bool Item::UseOnNothing(RunningState &state, Mob &user) {
     this->StartCooldown(state, user);
     return true;
   } else {
-    // TODO: swoosh! state.GetGame().GetAudio().PlaySound(this->properties->soundHurt, this->GetPosition());
     this->StartCooldown(state, user, false);
   }
   return false;
