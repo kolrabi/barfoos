@@ -4,7 +4,7 @@
 #include "vertex.h"
 #include "vertexbuffer.h"
 
-#define USE_VBO 1
+#define USE_VBO 0
 
 VertexBuffer::VertexBuffer() :
   dirty(true),

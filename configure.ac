@@ -35,12 +35,14 @@ else
   AC_CHECK_LIB(GL, main)
   AC_CHECK_LIB(GLU, main)
 
-  AC_CHECK_LIB(X11,     XOpenDisplay, [AC_DEFINE(X11)])
+fi
+AC_CHECK_HEADER(pthread.h)
+AC_CHECK_LIB(pthread, main, [], AC_CHECK_LIB(pthreadGC2, main))
+
+  AC_CHECK_LIB(X11,     XOpenDisplay)
   AC_CHECK_LIB(Xxf86vm, XF86VidModeQueryExtension)
   AC_CHECK_LIB(Xrandr,  main)
   AC_CHECK_LIB(Xi,      main)
-
-fi
 
 AC_CHECK_HEADER(GLFW/glfw3.h)
 AC_CHECK_LIB(glfw3, main)
@@ -57,8 +59,6 @@ AC_CHECK_LIB(vorbisfile, main)
 AC_CHECK_LIB(z, main)
 AC_CHECK_LIB(png, main)
 
-AC_CHECK_HEADER(pthread.h)
-AC_CHECK_LIB(pthread, main, [], AC_CHECK_LIB(pthreadGC2, main))
 
 AC_CHECK_FUNCS([clock_gettime])
 AC_FUNC_MALLOC
