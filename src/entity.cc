@@ -411,7 +411,7 @@ Entity::Update(RunningState &state) {
   Game &game   = state.GetGame();
   float deltaT = game.GetDeltaT();
   float t      = game.GetTime();
-
+  PROFILE();
   if (this->dieT && state.GetGame().GetTime() > this->dieT) {
     this->Die(state, HealthInfo());
     //Log("%s expired %d %u\n", this->properties->name.c_str(), IsDead(), this->sprite.currentAnimation);
@@ -492,8 +492,10 @@ Entity::Update(RunningState &state) {
     world.SetCell(cellPos, Cell(this->properties->cellEnter));
   }
 
+  if (this->lastPosition != GetPosition())
   this->cellLight = world.GetLight(this->GetPosition());
 
+  lastPosition = GetPosition();
   this->drawAABB = game.GetInput().IsKeyActive(InputKey::DebugEntityAABB);
 }
 

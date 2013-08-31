@@ -79,6 +79,7 @@ Mob::Continue(RunningState &state, ID id) {
 void
 Mob::Update(RunningState &state) {
   Entity::Update(state);
+  PROFILE();
 
   Game &game = state.GetGame();
   float deltaT = game.GetDeltaT();
