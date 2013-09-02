@@ -92,6 +92,8 @@ private:
   float hpFlashT;
 
   std::vector<Element> elements;
+  float castStart;
+  float lastCast;
 
   // display
   std::list<Message*> messages;
@@ -112,6 +114,7 @@ private:
   void QueueElement(Element element);
   void ClearElements();
   void CastSpell(RunningState &state);
+  void StopCasting();
 };
 
 #endif

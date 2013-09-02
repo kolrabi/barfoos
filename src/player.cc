@@ -44,6 +44,9 @@ Player::Player() :
   lastHurtT         (),
   pain              (0.0),
   hpFlashT          (0.0),
+  
+  castStart         (0.0),
+  lastCast          (0.0),
 
   // display
   messages          (),
@@ -95,6 +98,9 @@ Player::Player(Deserializer &deser) : Mob("player", deser),
 
   lastHurtT         (),
   pain              (0.0),
+  
+  castStart         (0.0),
+  lastCast          (0.0),
 
   // display
   fps               (0.0),
@@ -322,7 +328,13 @@ Player::UpdateInput(
   if (input.IsKeyActive(InputKey::Forward))   move = move + fwd   * speed;
   if (input.IsKeyActive(InputKey::Backward))  move = move - fwd   * speed;
 
-  if (input.IsKeyActive(InputKey::CastSpell) && this->elements.size())    this->CastSpell(state);
+  if (this->elements.size()) {
+    if (input.IsKeyActive(InputKey::CastSpell)) {
+      this->CastSpell(state);
+    } else if (this->castStart != 0.0) {
+      this->StopCasting();
+    }
+  }
 
   if (input.IsKeyActive(InputKey::Jump) && (isOnGround || isInLiquid || isNoclip)) doesWantJump = true;
 }
@@ -636,7 +648,7 @@ bool Player::UseItem(RunningState &state, const std::shared_ptr<Item> &item) {
   ID entityID;
   Side cellSide;
   // TODO: get default range
-  Cell *cell = this->GetSelection(state, item ? 5.0 : item->GetProperties().range, item, cellSide, entityID);
+  Cell *cell = this->GetSelection(state, item ? item->GetProperties().range : 5.0, item, cellSide, entityID);
 
   if (item) {
     if (entityID != InvalidID) {
@@ -700,17 +712,35 @@ void
 Player::CastSpell(RunningState &state) {
   // find spell from queued elements
   const Spell &spell = getSpell(this->elements);
-  this->elements.clear();
+  float t = state.GetGame().GetTime();
+  
+  if (castStart != 0.0 && t - castStart > spell.maxDuration) {
+    this->StopCasting();
+    return;
+  } else if (t - lastCast < spell.castInterval) return;
+  
 
   Log("trying to cast spell %s\n", spell.name.c_str());
 
-  // TODO: remove gems
-
   if (spell.Cast(state, *this)) {
-    AddMessage("You cast the spell "+spell.displayName);
+    if (castStart == 0.0) {
+      AddMessage("You cast the spell "+spell.displayName);
+      this->baseStats.skills["magic"]++;
+      this->castStart = t;
+    }
+    this->lastCast = t;
   } else {
     AddMessage("Your spell fizzles.");
+    this->elements.clear();
   }
+}
+
+void 
+Player::StopCasting() {
+  // TODO: remove gems from inventory
+  this->elements.clear();
+  this->castStart = 0.0;
+  this->lastCast = 0.0;
 }
 
 void

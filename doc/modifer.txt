@@ -1,0 +1,35 @@
+added value  10:
+
+float f = 1.0 + 0.75*this->modifier;
+if (this->beatitude == Beatitude::Blessed) f *=  1.5;
+
+-2 cursed     f = 1.0 - 1.5    -5
+
+-2 normal     f = 1.0 - 1.5    -5
+-1 normal     f = 1.0 - 0.75    2
+ 0 normal     f = 1.0          10
+ 1 normal     f = 1.0 + 0.75   17
+ 2 normal     f = 1.0 + 1.5    25
+
+ 2 blessed    f = 1.0 + 1.5    37
+
+
+
+
+factors:      0.5     2.0
+
+blessed, cursed:
+factor = factor * factor
+
+normal:
+factor = factor ^ (modifier/4) * factor
+
+-2 cursed     2.00    1.000
+
+-2 normal     0.707   1.000
+-1 normal     1.000   1.414
+ 0 normal     0.500   2.000
+ 1 normal     0.250   2.828
+ 2 normal     0.125   4.000
+
+ 2 blessed    0.125   4.000

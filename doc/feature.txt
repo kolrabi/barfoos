@@ -1,0 +1,29 @@
+Size              X Y Z
+Level             MinLevel MaxLevel Probability
+Group             GroupName
+Above             MinYPosition
+UseLastId
+
+Conn              X Y Z Dir
+  OnConnReplace   CharFrom CharTo
+  Next            FeatureName
+  NextP           FeatureName Weight
+
+Def               Char CellName
+  Top             YOfs0 YOfs1 YOfs2 YOfs3
+  Bottom          YOfs0 YOfs1 YOfs2 YOfs3
+  TopNoise        Amplitude Frequency
+  BottomNoise     Amplitude Frequency
+  TopDisplace     Offset
+  BottomDisplace  Offset
+  Override
+  NoLock
+  NoWrite
+  OnlyDefault
+  BRev
+  TRev
+
+Entity            Probability EntityType AttachDir X Y Z
+Item              Probability EntityType AttachDir X Y Z
+
+Slice             YStart YEnd

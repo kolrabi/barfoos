@@ -4,3 +4,7 @@ incantation fire
 incantation fire
 
 oncastspawnentity projectile.bfw9k
+
+
+maxduration 5.0
+castinterval 1.0

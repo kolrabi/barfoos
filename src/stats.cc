@@ -163,7 +163,7 @@ Stats::AddExp(float exp) {
  */
 float
 Stats::GetExpForLevel(size_t lvl) {
-  return std::pow(Const::ExpLevelBase, lvl - 1);
+  return std::pow(Const::ExpLevelBase, std::sqrt(lvl - 1));
 }
 
 /** Get the level for the exp.
@@ -172,7 +172,9 @@ Stats::GetExpForLevel(size_t lvl) {
  */
 size_t
 Stats::GetLevelForExp(float exp) {
-  return std::log(exp + 1) / std::log(Const::ExpLevelBase) + 1;
+  static constexpr float ln_5_sq = std::log(Const::ExpLevelBase) * std::log(Const::ExpLevelBase);
+  float l = std::log(exp+1);
+  return (l*l + ln_5_sq) / ln_5_sq;
 }
 
 /** Get the experience points neccessary for a given level.
@@ -181,7 +183,7 @@ Stats::GetLevelForExp(float exp) {
  */
 float
 Stats::GetExpForSkillLevel(size_t lvl) {
-  return std::pow(Const::ExpLevelSkill, lvl - 1);
+  return std::pow(Const::ExpLevelSkill, std::sqrt(lvl - 1));
 }
 
 /** Get the level for the exp.
@@ -190,7 +192,9 @@ Stats::GetExpForSkillLevel(size_t lvl) {
  */
 size_t
 Stats::GetLevelForSkillExp(float exp) {
-  return std::log(exp + 1) / std::log(Const::ExpLevelSkill) + 1;
+  static constexpr float ln_5_sq = std::log(Const::ExpLevelSkill) * std::log(Const::ExpLevelSkill);
+  float l = std::log(exp+1);
+  return (l*l + ln_5_sq) / ln_5_sq;
 }
 
 /** Get a summary of the stats as a string.

@@ -40,6 +40,10 @@ Spell::ParseProperty(const std::string &cmd) {
 
   else if (cmd == "element")              Parse(this->element);
   else if (cmd == "learnchance")          Parse(this->learnChance);
+  
+  else if (cmd == "targetself")           this->targetSelf = true;
+  else if (cmd == "castinterval")         Parse(this->castInterval);
+  else if (cmd == "maxduration")          Parse(this->maxDuration);
 
   else if (cmd == "castsound")            Parse(this->castSound);
 // TODO: particle effects: aoe, line of sight
@@ -96,6 +100,8 @@ Spell::Cast(RunningState &state, Mob &user) const {
   Side selectedCellSide;
   Cell *cell = user.GetSelection(state, this->castRange, nullptr, selectedCellSide, targetId);
   Entity *target = cell ? nullptr : state.GetEntity(targetId);
+  
+  if (!target && this->targetSelf) target = &user;
 
   if (this->onCastAddBuffCaster != "") user.AddBuff(state, this->onCastAddBuffCaster);
   if (this->onCastAddBuffAOE    != "" || this->onCastDamageAOE) {

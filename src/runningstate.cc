@@ -195,7 +195,7 @@ RunningState::Update() {
   {
     PROFILE_NAMED("Entity Update");
     for (auto entity : this->entities) {
-      entity.second->Update(*this);
+      if (entity.second) entity.second->Update(*this);
     }
   }
 

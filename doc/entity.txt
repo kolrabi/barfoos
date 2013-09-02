@@ -1,0 +1,298 @@
+Name                          Name
+
+  Entity name to display.
+
+Group                         GroupName
+
+  Add this entity to an entity group. Can be used multiple times for
+  multiple groups.
+
+Level                         Min Max Probability
+
+  Entity will only spawn between levels Min and Max with highest Probability
+  in the middle. If Max is less than Min the probability is constant for all
+  levels.
+
+Class                         ClassName
+
+  Entity class to use for this entity. Possible values:
+
+    Entity        Plain dumb entity.
+    Mob           An entity that moves, obeys gravity, etc...
+    Monster       A Mob with the AI for walking around and killing players.
+    Player        A Player Mob.
+    Projectile    A Mob that dies on contact with anything.
+    Item          Special Item class. Should not be used for anything other
+                  than the item entity.
+
+Tex                           TextureName
+
+  Texture to use with this entity.
+
+EmissiveTex                   TextureName
+
+  Emissive texture to use with this entity.
+
+Glow                          R G B
+
+  Amount of light this entity emits.
+
+Extents                       X Y Z
+
+  Defines the bounding box size for this entity. Implies "Size X Y".
+
+Size                          X Y
+
+  Size of the sprite for this entity. If you use the Extents property, use
+  the Size afterwards as Extents overwrites the sprite size.
+
+SizeRand                      Variance
+
+  Adds some variance to the sprite size on entity start. Size will be
+  the size specified in Size or Extents * (1.0 + Variance * (-1..1))
+
+Vert
+
+  This entity's sprite is a vertical billboard with the Y axis fixed in the
+  world.
+
+Box
+
+  Don't draw the entity as a sprite but as a box. Textures must have same
+  structure as ones for cells with the Multi flag set. (8 subtextures, 6
+  used...)
+
+Quad
+
+  Don't draw the entity as a sprite but as a vertical quad in world space.
+
+FlipLeft
+
+  Flip the sprite horizontally depending of the movement direction and
+  viewing angle.
+
+RandomAngle
+
+  A random angle is picked on entity start and is used to rotate it around
+  the Y axis by it when rendered.
+
+DrawBox                       Texture EmissiveTexture  X Y Z  W H D
+
+  Add a box to draw when rendering the entity. Textures must have same
+  structure as ones for cells with the Multi flag set. (8 subtextures, 6
+  used...)
+
+Frames                        Integer
+
+  Number of frames in the textures. Must be one row only.
+
+Anim                          FirstFrame FrameCount FPS
+
+  Adds an animation definition.
+
+FlinchAnim                    Index
+
+  Index of the animation to play when entity was hurt.
+
+DyingAnim                     Index
+
+  Index of the animation to play when entity died.
+
+AttackAnim                    Index
+
+  Index of the animation to play when entity is attacking.
+
+Respawn
+
+  When entity dies it will be respawned.
+
+NoStep
+
+  Entity can land on/walk onto trigger cells without activating them.
+
+NoHit
+
+  Entity can't be selected by raycasting (and therefore not hit by a
+  weapon).
+
+NoItemUse
+
+  No items may be used on this entity.
+
+Solid
+
+  Entity is solid and no mob can enter its bounding box. Doesn't work for
+  mobs of any kind, as they would just move into other entities without
+  pushing them.
+
+NoCollideEntity
+
+  Entity does not collide with other entities.
+
+NoCollideCell
+
+  Entity does not collide with cells and can go through walls.
+
+NoCollideOwner
+
+  Entity does not collide with its owner. Useful for projectiles.
+
+NoFriction
+
+  Entity is not slowed down by friction.
+
+OnCollideUseCell
+
+  When entity collides with a cell, it will try to "use" it. For example
+  opening a door.
+
+Swim
+
+  When in a liquid entity will always try to move up.
+
+Bubble
+
+  When in a liquid entity will cause bubbles to appear.
+
+OpenInventory
+
+  Entity has an inventory that can be opened, like a chest.
+
+LockedChance                  Probability
+
+  Chance that this entity is locked. A key will be generated and put somewhere
+  in the level.
+
+LearnEvade
+
+  Entity improves its "evade" skill every time it successfully evades an
+  attack.
+
+Step                          Height
+
+  Largest height the entity can step up on without jumping.
+
+Jump                          Speed
+
+  Speed to add to the entity's up velocity when it wants to jump.
+
+Mass                          Mass
+
+  Amount of mass for this entity. This is used for force calculations when
+  colliding with other entities, knockback, explosion etc...
+
+Gravity                       Factor
+
+  Amount of gravity affecting the entity.
+
+Move                          Interval
+
+  Time between choosing a random walk target.
+
+Speed                         Speed
+
+  Maximum walk speed of entity
+
+Element                       ElementName
+
+Heal                          Amount
+
+  Add this much of health to entity per second.
+
+LifeTime                      Duration
+
+  Time after which the entity will automatically die.
+
+LifeTimeRand                  Variance
+
+  Variance added to lifetime on entity start.
+
+Exp                           Experience
+
+  Number of experience points to give for killing this entity.
+
+ImpactDamage                  Damage
+
+  Base damage to to when colliding with another entity. Actual amount of
+  damage depends also on mass and the current velocity.
+
+Emitter                       Type Rate  VX VY VZ  X Y Z  W H D
+
+  Add an emitter attached to the entity.
+
+MaxHealth                     HP
+
+  Maximum number of health points on spawn.
+
+STR                           Value
+
+  Add this amount of STR to the entity's base stats
+
+DEX                           Value
+
+  Add this amount of DEX to the entity's base stats
+
+AGI                           Value
+
+  Add this amount of AGI to the entity's base stats
+
+DEF                           Value
+
+  Add this amount of DEF to the entity's base stats
+
+ThinkInterval                 Interval
+
+  Time between AI ticks for this entity.
+
+Aggro                         Interval Near Far MeleeRange AttackItem
+
+  Entity is aggressive and will attack the player.
+
+  Interval is the time between attacks. Near is the distance below which
+  the player will be considered a target.
+
+  Far is the distance above which the entity loses interest in its target.
+
+  MeleeRange is the distance below which attacks will be carried out.
+
+  AttackItem is the item to use for attacks by the entity.
+
+Retaliate                     Interval Near Far MeleeRange AttackItem
+
+  Entity will fight back if attacked by the player. See Aggro.
+
+KeepDistance                  Distance
+
+  Entity will keep at least this distance to its attack target.
+
+AttackForwardStep             Speed
+
+  This will be added to the forward velocity of the entity when it attacks.
+  A positive value means the entity jumps towards its target. If it is
+  negative it will jump away from it.
+
+AttackUmp                     Speed
+
+  Add this speed to the up velocity of the entity when it attacks.
+
+EyeOffset                     Y
+
+  Height at which the eyes of the entity are. Used for visibility checks and
+  for player viewpoint.
+
+OnUseItemReplace              Item To
+
+  When using an item of type Item on this entity, replace entity with a new
+  entity of type To.
+
+OnUseEntityReplace            From To
+
+  When used on this entity, replace items of type From with items of type To.
+
+OnDieExplode                  Radius BlockBreakStrength Damage Element
+
+OnDieParticles                Count Speed Type
+
+Inventory                     Chance Type
+
+Cell                          EnterCellType LeaveCellType

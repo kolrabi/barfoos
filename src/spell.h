@@ -29,6 +29,9 @@ struct Spell : public Properties {
   Element element                 = Element::Physical;
 
   float learnChance               = 0.1;
+  bool targetSelf                 = false;
+  float castInterval              = 0.0;
+  float maxDuration               = 0.0;
 
   std::string castSound           = "";
 

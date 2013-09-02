@@ -1,0 +1,118 @@
+Feeling             Text
+
+  When effect is activated a message will be shown: "You feel " + Text.
+
+EqSTR               Amount
+
+  While effect is on an equipped item, add this amount to the owner's STR.
+
+EqDEX               Amount
+
+  While effect is on an equipped item, add this amount to the owner's DEX.
+
+EqAGI               Amount
+
+  While effect is on an equipped item, add this amount to the owner's AGI.
+
+EqDEF               Amount
+
+  While effect is on an equipped item, add this amount to the owner's DEF.
+
+EqHP                Amount
+
+  While effect is on an equipped item, add this amount to the owner's max HP.
+
+UnEqSTR               Amount
+
+  While effect is on an unequipped item, add this amount to the owner's STR.
+
+UnEqDEX               Amount
+
+  While effect is on an unequipped item, add this amount to the owner's DEX.
+
+UnEqAGI               Amount
+
+  While effect is on an unequipped item, add this amount to the owner's AGI.
+
+UnEqDEF               Amount
+
+  While effect is on an unequipped item, add this amount to the owner's DEF.
+
+UnEqHP                Amount
+
+  While effect is on an unequipped item, add this amount to the owner's max HP.
+
+Cooldown              Factor
+
+  Modify item cooldown of owner (attack speed).
+
+Range                 Factor
+
+  Modify the range of an item.
+
+WalkSpeed             Factor
+
+  Modify the walkspeed of the owner.
+
+KnockBack             Factor
+
+  Modify the knockback of an item.
+
+Durability            Factor
+
+  Modify the max durability of an item.
+
+UseDurability         Factor
+
+  Modify the durability drain per use of an item.
+
+EquipDurability       Factor
+
+  Modify the durability drain per second of an item.
+
+Duration              Time
+
+  Number of seconds a buff with this effect will last.
+
+Extend
+
+  A buff with this effect will extend its duration when used again, instead
+  of renewing.
+
+BreakBlockStrength    Factor
+
+  Modify the block breaking strength of an item.
+
+OnCombineRemoveCurse
+
+  Effect can remove curses from items.
+
+OnCombineIdentify
+
+  Effect can identify items.
+
+OnCombineAddModifier        Integer
+
+  Effect changes the modifier of an item by this amount.
+
+TODO: OnCombineAddDurability ...
+
+OnCombineBreak
+
+  Effect breaks the item it is on, when item is combined.
+
+AddHealth                   Amount
+
+  Add this amount of health per second.
+
+Name                        Name
+
+  Display name of the effect. Will be appended to item name.
+
+Group                       GroupName
+
+  Name of group this effect is in. Can be repeated for multiple groups.
+
+Light                       R G B
+
+  Effect gives off light.

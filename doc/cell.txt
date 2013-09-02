@@ -1,0 +1,187 @@
+Solid
+
+  Marks this cell type as impenetrable by mobs.
+
+UVTurb
+
+  Animates the uv coordinates of this cell type in a turbulent way.
+
+Wave
+
+  Animates the height offsets of this cell type like a liquid.
+
+Dynamic
+
+  If set, cells of this type will never be put into a static vertex buffer
+  and instead updated every frame. Implied by UVTurb, Wave and Liquid.
+
+Liquid
+
+  Makes cells of this type behave like a liquid and flow from cell to cell.
+
+NoRender
+
+  Do not render cells of this type at all.
+
+Transparent
+
+  Light may pass through cells of this type and adjacent cell faces will not
+  be hidden.
+
+DoubleSided
+
+  Draw the inside faces of cells of this type too.
+
+Pickable
+
+  Consider cells of this type to be usable by mobs. (Pickable in the sense
+  of "can be picked by ray cast")
+
+OnUseReplace
+
+  When successfully used, replace cells of this type with ones of the type
+  specified in the "Replace" property. See Replace.
+
+Multi
+
+  The texture of cells of this type must contain 8 subtextures of which 6
+  are used for the faces of the cell. From left to right these must be
+  the textures for the left, right, front, back, top and bottom faces.
+
+Ladder
+
+  Mobs inside cells of this type may float up or down freely.
+
+Tex                 TextureName
+
+  Add possible texture for this cell. One will be chosen at random.
+
+EmissiveTex         TextureName
+
+  Add possible emissive texture for this cell. The same index is used as for
+  the normal texture. If there is no emissive texture for that index, no
+  emissive texture will be used.
+
+ActiveTex           TextureName
+
+  Same as Tex but for when the cell is in an activated state.
+
+EmissiveActiveTex   TextureName
+
+  Same as EmissiveTex but for when the cell is in an activated state.
+
+Light               R G B
+
+  Light emission from this cell type. R, G and B are integers with full
+  brightness at 255. Values can exceed full brightness and are not clamped.
+
+LightScale          Factor
+
+  Scaling factor for the light parameter.
+
+LightFactor         Factor
+
+  Factor by which light passing through from other cells is multiplied.
+
+LightFade           Value
+
+  Integer that is subtracted from each RGB component of light entering the
+  cell. Values will be clamped to 0 if the would go negative.
+
+Speed               Factor
+
+  Speed modifier for mobs moving in the cell.
+
+Friction            Factor
+
+  Friction modifier for mobs walking on top of the cell.
+
+ShowSides           SideMask
+
+  A combination of sides that are to always be drawn. Can be a string
+  containing the characters lrudfb. Any other characters will be ignored.
+  Sides are encoded as follows:
+
+    l: Left
+    r: Right
+    u: Up       (top)
+    d: Down     (bottom)
+    f: Forward  (front)
+    b: Backward (back)
+
+HideSides           SideMask
+
+  A combination of sides that are to always be hidden. Overrides ShowSides.
+
+ClipSidesIn         SideMask
+
+  A combination of sides that are to stop mob movement when moving into the
+  cell. Default for solid cells is lrudfb (all sides).
+
+ClipSidesOut        SideMask
+
+  A combination of sides that are to stop mob movement when moving out of the
+  cell. Default for solid cells is lrudfb (all sides).
+
+OnUseCascade        SideMask
+
+  A combination of sides that are to be informed about a mob using the cell.
+  This can be used to implement multi cell dungeon features like doors.
+
+UseDelay            Interval
+
+  Time that has to pass after the cell has been used before it can be used
+  again.
+
+UseChance           Probability
+
+  Probabilty that a use actually succeeds. Can be used to implement jammed
+  doors and secret passages.
+
+Replace             CellType
+
+  Sets the target cell replacement type. See also OnUseReplace and
+  DetailBelowReplace.
+
+Strength            BreakStrength
+
+  Sets the resistance against breaking cells of this type with a tool or
+  in an explosion. The propability of a cell of this type to break is
+  calculated as BreakBlockStrength of the tool / BreakStrength. A negative
+  value will prevent breakage. Default is -1.
+
+LavaDamage          DamagePerSecond
+
+  Entities inside cells of this type will get this much lava damage per
+  second.
+
+Scale               X Y Z
+
+  Scale the cells of this type by this vector. This is only for rendering.
+
+BreakParticle       EntityType
+
+  Type of entity to spawn when cells of this type are broken.
+
+DetailBelowReplace  Amount
+
+  When the cells of this type are a liquid and the liquid amount goes below
+  this, they will be replaced by cells of the type specified in the Replace
+  property.
+
+ReplaceChance       Factor
+
+  Only apply DetailBelowReplace with a probability of this per cell tick.
+
+FlowOntoReplaceTarget   From To Own
+
+  I have no idea.
+
+LockedChance        Probability
+
+  Probability that cells of this type will be locked on level start. If
+  locked, a key will be generated and put somewhere else in the level.
+
+OnUseItemReplaceItem    OldItemType NewItemType
+OnUseItemAddDetail      ItemType    Amount
+OnUseItemReplace        ItemType    NewCellType
