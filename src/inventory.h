@@ -15,7 +15,7 @@
 //                 x  x  x  x
 
 /** Enum to identify inventory slots. */
-enum class InventorySlot : size_t {
+enum class InventorySlot : uint8_t {
   Helmet     =  0,
   Armor      =  1,
   Greaves    =  2,
@@ -26,11 +26,11 @@ enum class InventorySlot : size_t {
   RightRing  =  7,
   Amulet     =  8,
 
-  Reserved9  =  9,
-  Reserved10 = 10,
-  Reserved11 = 11,
-  Reserved12 = 12,
-  Reserved13 = 13,
+  GemFire    =  9,
+  GemWater   = 10,
+  GemEarth   = 11,
+  GemWind    = 12,
+  GemLife    = 13,
   Quiver     = 14,
   Purse      = 15,
 
@@ -78,12 +78,14 @@ public:
 
   IColor GetLight() const;
   uint32_t                  GetGold()                         const;
+  uint32_t                  GetGems(Element e)                const;
 
   void ModifyStats(Stats &stats) const;
 
 private:
 
   void DropItem(RunningState &state, Entity &owner, const std::shared_ptr<Item> &item);
+  void Stack(InventorySlot slot, const std::shared_ptr<Item> &item);
 
   std::unordered_map<InventorySlot, std::shared_ptr<Item>> inventory;
   std::vector<std::shared_ptr<Item>> overflow;

@@ -45,6 +45,10 @@ EffectProperties::ParseProperty(const std::string &cmd) {
     Parse(this->eqAddAgi);
   } else if (cmd == "eqdef") {
     Parse(this->eqAddDef);
+  } else if (cmd == "eqmdef") {
+    Parse(this->eqAddMDef);
+  } else if (cmd == "eqmatk") {
+    Parse(this->eqAddMDef);
   } else if (cmd == "eqhp") {
     Parse(this->eqAddHP);
 
@@ -56,6 +60,10 @@ EffectProperties::ParseProperty(const std::string &cmd) {
     Parse(this->uneqAddAgi);
   } else if (cmd == "uneqdef") {
     Parse(this->uneqAddDef);
+  } else if (cmd == "uneqmdef") {
+    Parse(this->uneqAddMDef);
+  } else if (cmd == "uneqmatk") {
+    Parse(this->uneqAddMDef);
   } else if (cmd == "uneqhp") {
     Parse(this->uneqAddHP);
 
@@ -135,6 +143,8 @@ EffectProperties::ModifyStats(Stats &stats, bool forceEquipped, int modifier, Be
     stats.agi += this->eqAddAgi * f;
     stats.dex += this->eqAddDex * f;
     stats.def += this->eqAddDef * f;
+    stats.mdef += this->eqAddMDef * f;
+    stats.matk += this->eqAddMAtk * f;
     stats.maxHealth += this->eqAddHP * f;
 
     if (beatitude == Beatitude::Normal) {
@@ -149,6 +159,8 @@ EffectProperties::ModifyStats(Stats &stats, bool forceEquipped, int modifier, Be
     stats.agi += this->uneqAddAgi * f;
     stats.dex += this->uneqAddDex * f;
     stats.def += this->uneqAddDef * f;
+    stats.mdef += this->uneqAddMDef * f;
+    stats.matk += this->uneqAddMAtk * f;
     stats.maxHealth += this->uneqAddHP * f;
   }
 }

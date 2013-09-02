@@ -3,7 +3,7 @@
 
 // ====================================================================
 
-enum Axis : int {
+enum Axis : int8_t {
   X = (1<<0),
   Y = (1<<1),
   Z = (1<<2),
@@ -11,7 +11,7 @@ enum Axis : int {
 };
 
 // ====================================================================
-
+// TOOD: this is the same as Axis, consolidate?
 enum Corner : int8_t {
   CornerX = 1,
   CornerY = 2,

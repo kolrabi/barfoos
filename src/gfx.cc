@@ -45,12 +45,21 @@ static InputKey MapKey(int k) {
     case GLFW_KEY_KP_ADD:     key = InputKey::MapZoomIn;       break;
     case GLFW_KEY_KP_SUBTRACT:key = InputKey::MapZoomOut;      break;
 
+    case '1':                 key = InputKey::ElementFire;     break;
+    case '2':                 key = InputKey::ElementWater;    break;
+    case '3':                 key = InputKey::ElementAir;      break;
+    case '4':                 key = InputKey::ElementEarth;    break;
+    case '5':                 key = InputKey::ElementLife;     break;
+    case '\\':                key = InputKey::ElementClear;    break;
+    case 'Q':                 key = InputKey::CastSpell;       break;
+
     case GLFW_KEY_F1:         key = InputKey::DebugDie;        break;
     case GLFW_KEY_F2:         key = InputKey::DebugEntityAABB; break;
     case GLFW_KEY_F3:         key = InputKey::DebugWireframe;  break;
     case GLFW_KEY_F4:         key = InputKey::DebugNoclip;     break;
     case GLFW_KEY_F5:         key = InputKey::DebugScreenshot; break;
     default:                  key = InputKey::Invalid;
+                              Log("Unknown key: %04x %c\n", k, k);
   }
   return key;
 }

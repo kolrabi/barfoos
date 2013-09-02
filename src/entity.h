@@ -112,6 +112,7 @@ struct EntityProperties : public Properties {
   float   onDieExplodeDamage = 0.0;
   Element onDieExplodeElement = Element::Physical;
   std::string onDieExplodeAddBuff = "";
+  bool    onDieExplodeMagical = false;
 
   uint32_t  onDieParticles    = 0;
   float   onDieParticleSpeed = 0.0;
@@ -122,6 +123,8 @@ struct EntityProperties : public Properties {
   int     dex               = 0;
   int     agi               = 0;
   int     def               = 0;
+  int     matk              = 0;
+  int     mdef              = 0;
 
   /** Inventory items and their absolute probability. */
   std::vector<std::pair<std::string, float>> items = std::vector<std::pair<std::string, float>>(0);
@@ -231,6 +234,7 @@ public:
   ID                        GetLockedID()                     const { return this->lockedID; }
   bool                      CanOpenInventory()                const { return this->properties->openInventory && this->lockedID == 0; }
   uint32_t                  GetGold()                         const { return this->inventory.GetGold(); };
+  uint32_t                  GetGems(Element element)          const { return this->inventory.GetGems(element); };
 
   // rendering
   virtual IColor            GetLight()                        const;

@@ -171,3 +171,7 @@ Deserializer &Deserializer::operator >> (Vector3 &v) {
 Deserializer &Deserializer::operator >> (IColor &v) {
   return self >> v.r >> v.g >> v.b;
 }
+
+Deserializer &Deserializer::operator >> (Element &v) {
+  return self >> (uint8_t&)v;
+}

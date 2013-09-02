@@ -39,15 +39,24 @@ Inventory::AddToBackpack(const std::shared_ptr<Item> &item) {
 
   //Log("AddToBackpack %s %u %s\n", item->GetDisplayName().c_str(), item->GetAmount(), item->GetType().c_str());
 
+  // handle special items
   if (item->GetType()=="gold") {
-    // gold goes to the purse
-    if (self[InventorySlot::Purse]) {
-      self[InventorySlot::Purse]->AddAmount(item->GetAmount());
-      return true;
-    } else {
-      self[InventorySlot::Purse] = item;
-    }
-
+    this->Stack(InventorySlot::Purse, item);
+    return true;
+  } else if (item->GetType()=="gem.fire") {
+    this->Stack(InventorySlot::GemFire, item);
+    return true;
+  } else if (item->GetType()=="gem.water") {
+    this->Stack(InventorySlot::GemWater, item);
+    return true;
+  } else if (item->GetType()=="gem.wind") {
+    this->Stack(InventorySlot::GemWind, item);
+    return true;
+  } else if (item->GetType()=="gem.earth") {
+    this->Stack(InventorySlot::GemEarth, item);
+    return true;
+  } else if (item->GetType()=="gem.life") {
+    this->Stack(InventorySlot::GemLife, item);
     return true;
   }
 
@@ -277,6 +286,22 @@ uint32_t
 Inventory::GetGold() const {
   if (!self[InventorySlot::Purse]) return 0;
   return self[InventorySlot::Purse]->GetAmount();
+}
+
+uint32_t
+Inventory::GetGems(Element e) const {
+  InventorySlot slot = (InventorySlot)((size_t)InventorySlot::GemFire + (size_t)e -1);
+  if (!self[slot]) return 0;
+  return self[slot]->GetAmount();
+}
+
+void
+Inventory::Stack(InventorySlot slot, const std::shared_ptr<Item> &item) {
+  if (self[slot]) {
+    self[slot]->AddAmount(item->GetAmount());
+  } else {
+    self[slot] = item;
+  }
 }
 
 Serializer &operator << (Serializer &ser, const Inventory &inventory) {

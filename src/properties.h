@@ -44,6 +44,14 @@ struct Properties {
     map[key] = value;
   }
 
+  template<class V>
+  void Parse(std::vector<V> &vect) {
+    V value;
+
+    Parse(value);
+    vect.push_back(value);
+  }
+
   Game *game;
 
   bool operator==(const Properties &that) const {

@@ -36,12 +36,16 @@ struct EffectProperties : public Properties {
   int eqAddAgi = 0; /**< Add this amount of agility when item equipped. */
   int eqAddDef = 0; /**< Add this amount of defense when item equipped. */
   int eqAddHP  = 0; /**< Add this amount of max hp when item equipped. */
+  int eqAddMDef = 0;
+  int eqAddMAtk = 0;
 
   int uneqAddStr = 0; /**< Add this amount of strength when item unequipped. */
   int uneqAddDex = 0; /**< Add this amount of dexterity when item unequipped. */
   int uneqAddAgi = 0; /**< Add this amount of agility when item unequipped. */
   int uneqAddDef = 0; /**< Add this amount of defense when item unequipped. */
   int uneqAddHP  = 0; /**< Add this amount of max hp when item unequipped. */
+  int uneqAddMDef = 0;
+  int uneqAddMAtk = 0;
 
   /** Item cooldown modifier. */
   float cooldown = 1.0;

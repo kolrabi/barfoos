@@ -3,6 +3,7 @@
 #include "runningstate.h"
 #include "item.h"
 #include "itementity.h"
+#include "spell.h"
 
 #include "world.h"
 #include "cell.h"
@@ -66,9 +67,16 @@ Player::Player() :
   this->inventory.Equip(std::make_shared<Item>(Item("torch")), InventorySlot::LeftHand);
   this->inventory.AddToBackpack(std::make_shared<Item>(Item("torch")));
 
-  this->baseStats.skills["magic"] = 0;
+  this->baseStats.skills["magic"] = 10;
 
-  gemEmptySprite.texture = loadTexture("items/texture/gem.empty");
+  this->LearnSpell("spell.test");
+
+  gemSprites[Element::Physical] = Sprite("items/texture/gem.empty");
+  gemSprites[Element::Fire]     = Sprite("items/texture/gem.fire");
+  gemSprites[Element::Earth]    = Sprite("items/texture/gem.earth");
+  gemSprites[Element::Air]      = Sprite("items/texture/gem.wind");
+  gemSprites[Element::Water]    = Sprite("items/texture/gem.water");
+  gemSprites[Element::Life]     = Sprite("items/texture/gem.life");
 }
 
 Player::Player(Deserializer &deser) : Mob("player", deser),
@@ -101,7 +109,14 @@ Player::Player(Deserializer &deser) : Mob("player", deser),
   deser >> messages >> messageY >> messageVY;
   deser >> lastHurtT;
   deser >> angles;
-  gemEmptySprite.texture = loadTexture("items/texture/gem.empty");
+  deser >> elements;
+
+  gemSprites[Element::Physical] = Sprite("items/texture/gem.empty");
+  gemSprites[Element::Fire]     = Sprite("items/texture/gem.fire");
+  gemSprites[Element::Earth]    = Sprite("items/texture/gem.earth");
+  gemSprites[Element::Air]      = Sprite("items/texture/gem.wind");
+  gemSprites[Element::Water]    = Sprite("items/texture/gem.water");
+  gemSprites[Element::Life]     = Sprite("items/texture/gem.life");
 }
 
 Player::~Player() {
@@ -136,6 +151,7 @@ Player::Update(RunningState &state) {
   Mob::Update(state);
 
   Game &game = state.GetGame();
+  float deltaT = game.GetDeltaT();
 
   this->fps = game.GetFPS();
 
@@ -146,7 +162,53 @@ Player::Update(RunningState &state) {
   this->pain -= game.GetDeltaT() * 0.1;
   if (this->pain < 0) this->pain = 0;
 
+  if (!this->isInLiquid && move.GetMag() > 1.5) {
+    bobAmplitude += deltaT*4;
+    if (bobAmplitude > 1.0) bobAmplitude = 1.0;
+  } else {
+    bobAmplitude -= deltaT*4;
+    if (bobAmplitude <= 0.0) {
+      bobAmplitude = 0.0;
+      bobPhase = 1.0;
+    }
+  }
+
+  float lastPhase = bobPhase;
+  if (bobAmplitude > 0.0) bobPhase += deltaT; // (deltaT * this->GetMoveModifier()) * move.GetMag()/5;
+  if (bobPhase > 1.0) {
+    bobPhase -= 1.0;
+
+    // TODO: get step sound from ground cell
+    if (this->groundCell) {
+      float pitch = 1.0 + state.GetRandom().Float()*0.05;
+      std::string name = "step_a";
+      switch(state.GetRandom().Integer(4)) {
+        case 0: name = "step_a"; break;
+        case 1: name = "step_b"; break;
+        case 2: name = "step_c"; break;
+        case 3: name = "step_d"; break;
+      }
+      state.GetGame().GetAudio().PlaySound(name, this->GetSmoothPosition() - (this->GetRight()*0.2), pitch);
+    }
+  } else if (bobPhase >= 0.5 && lastPhase < 0.5) {
+    // TODO: get step sound from ground cell
+    if (this->groundCell) {
+      float pitch = 1.0 + state.GetRandom().Float()*0.05;
+      std::string name = "step_a";
+      switch(state.GetRandom().Integer(4)) {
+        case 0: name = "step_a"; break;
+        case 1: name = "step_b"; break;
+        case 2: name = "step_c"; break;
+        case 3: name = "step_d"; break;
+      }
+      state.GetGame().GetAudio().PlaySound(name, this->GetSmoothPosition() + (this->GetRight()*0.2), pitch);
+    }
+  }
+
   this->UpdateInput(state);
+
+  float   speed = this->properties->maxSpeed * this->GetMoveModifier();
+  if (move.GetMag() > speed) move = move.Normalize() * speed;
 
   this->rightHand->Update(state);
   this->leftHand->Update(state);
@@ -235,7 +297,6 @@ Player::UpdateInput(
 ) {
   Game &game = state.GetGame();
   float deltaT = game.GetDeltaT();
-
   Input &input = game.GetInput();
 
   if (input.IsKeyActive(InputKey::MapZoomIn))  this->mapZoom += deltaT * 10.0;
@@ -243,15 +304,10 @@ Player::UpdateInput(
 
   if (input.IsKeyDown(InputKey::DebugDie))     this->Die(state, HealthInfo());
 
-  if (!state.IsShowingInventory()) {
-    if (input.IsKeyDown(InputKey::Use)) {
-      this->UseItem(state, nullptr);
-    }
-  }
-  isSneaking = input.IsKeyActive(InputKey::Sneak);
+  if (input.IsKeyDown(InputKey::Use) && !state.IsShowingInventory())
+    this->UseItem(state, nullptr);
 
-  if (angles.y >  89_deg) angles.y =  89_deg;
-  if (angles.y < -89_deg) angles.y = -89_deg;
+  isSneaking = input.IsKeyActive(InputKey::Sneak);
 
   this->SetForward(this->angles.EulerToVector());
 
@@ -266,52 +322,9 @@ Player::UpdateInput(
   if (input.IsKeyActive(InputKey::Forward))   move = move + fwd   * speed;
   if (input.IsKeyActive(InputKey::Backward))  move = move - fwd   * speed;
 
-  if (move.GetMag() > speed) move = move.Normalize() * speed;
+  if (input.IsKeyActive(InputKey::CastSpell) && this->elements.size())    this->CastSpell(state);
 
-  if (!this->isInLiquid && move.GetMag() > 1.5) {
-    bobAmplitude += deltaT*4;
-    if (bobAmplitude > 1.0) bobAmplitude = 1.0;
-  } else {
-    bobAmplitude -= deltaT*4;
-    if (bobAmplitude <= 0.0) {
-      bobAmplitude = 0.0;
-      bobPhase = 1.0;
-    }
-  }
-
-  float lastPhase = bobPhase;
-  if (bobAmplitude > 0.0) bobPhase += deltaT; // (deltaT * this->GetMoveModifier()) * move.GetMag()/5;
-  if (bobPhase > 1.0) {
-    bobPhase -= 1.0;
-
-    // TODO: get step sound from ground cell
-    if (this->groundCell) {
-      float pitch = 1.0 + state.GetRandom().Float()*0.05;
-      std::string name = "step_a";
-      switch(state.GetRandom().Integer(4)) {
-        case 0: name = "step_a"; break;
-        case 1: name = "step_b"; break;
-        case 2: name = "step_c"; break;
-        case 3: name = "step_d"; break;
-      }
-      state.GetGame().GetAudio().PlaySound(name, this->GetSmoothPosition() - (this->GetRight()*0.2), pitch);
-    }
-  } else if (bobPhase >= 0.5 && lastPhase < 0.5) {
-    // TODO: get step sound from ground cell
-    if (this->groundCell) {
-      float pitch = 1.0 + state.GetRandom().Float()*0.05;
-      std::string name = "step_a";
-      switch(state.GetRandom().Integer(4)) {
-        case 0: name = "step_a"; break;
-        case 1: name = "step_b"; break;
-        case 2: name = "step_c"; break;
-        case 3: name = "step_d"; break;
-      }
-      state.GetGame().GetAudio().PlaySound(name, this->GetSmoothPosition() + (this->GetRight()*0.2), pitch);
-    }
-  }
-
-  if ((isOnGround || isInLiquid || isNoclip) && input.IsKeyActive(InputKey::Jump)) doesWantJump = true;
+  if (input.IsKeyActive(InputKey::Jump) && (isOnGround || isInLiquid || isNoclip)) doesWantJump = true;
 }
 
 void Player::Draw(Gfx &gfx) const {
@@ -365,6 +378,16 @@ Player::DrawGUI(Gfx &gfx) const {
     this->leftHand->DrawIcon(gfx, itemPos - Point(36, 0));
   }
 
+  size_t maxElements = Stats::GetLevelForSkillExp(GetEffectiveStats().skills["magic"]);
+
+  for (size_t i=0; i<maxElements; i++) {
+    if (i >= this->elements.size()) {
+      gfx.DrawIcon(gemSprites.at(Element::Physical), itemPos - Point(36,0) * (maxElements - i+1));
+    } else {
+      gfx.DrawIcon(gemSprites.at(elements[i]), itemPos - Point(36,0) * (maxElements - i+1));
+    }
+  }
+
   // draw crosshair
   const Point &vsize = gfx.GetVirtualScreenSize();
   Sprite sprite;
@@ -406,8 +429,8 @@ Player::DrawGUI(Gfx &gfx) const {
 
   char tmp[1024];
   Stats stats = this->GetEffectiveStats();
-  snprintf(tmp, sizeof(tmp), "STR: %3d DEX: %3d AGI: %3d DEF: %3d MAX HP: %3d",
-    stats.str, stats.dex, stats.agi, stats.def, stats.maxHealth
+  snprintf(tmp, sizeof(tmp), "STR: %3d DEX: %3d AGI: %3d DEF: %3d MATK: %3d MDEF: %3d MAX HP: %3d",
+    stats.str, stats.dex, stats.agi, stats.def, stats.matk, stats.mdef, stats.maxHealth
   );
   RenderString(tmp, "small").Draw(gfx, 4, vsize.y-32);
 
@@ -426,7 +449,22 @@ Player::DrawGUI(Gfx &gfx) const {
     skills += " (" + ToString(s.second) + ")\n";
   }
 
-  snprintf(tmp, sizeof(tmp), u8"%s%3.1f\n\u0080 %-5u %3.3f %3.3f %3u %u", skills.c_str(), fps, this->GetGold(), this->GetPosition().x, this->GetPosition().z, (unsigned int)(this->GetPosition().x-0.5), (unsigned int)(this->GetPosition().z-0.5));
+  snprintf(tmp, sizeof(tmp), 
+    u8"%s%3.1f\n"
+    u8"\u0080 %-5u "
+    u8"\u008B %-3u "
+    u8"\u008C %-3u "
+    u8"\u008D %-3u "
+    u8"\u008E %-3u "
+    u8"\u008F %-3u ", 
+    skills.c_str(), fps, 
+    this->GetGold(),
+    this->GetGems(Element::Fire),
+    this->GetGems(Element::Water),
+    this->GetGems(Element::Air),
+    this->GetGems(Element::Earth),
+    this->GetGems(Element::Life)
+  );
   RenderString(tmp).Draw(gfx, 4, vsize.y-32-24, int(Align::VertBottom));
 }
 
@@ -436,6 +474,15 @@ Player::HandleEvent(const InputEvent &event) {
     if (event.key == InputKey::MouseLeft)  this->itemActiveLeft  = event.down;
     if (event.key == InputKey::MouseRight) this->itemActiveRight = event.down;
     if (event.key == InputKey::DebugNoclip && event.down) this->isNoclip = !this->isNoclip;
+
+    if (event.down) {
+      if (event.key == InputKey::ElementClear) this->ClearElements();
+      if (event.key == InputKey::ElementFire)  this->QueueElement(Element::Fire);
+      if (event.key == InputKey::ElementWater) this->QueueElement(Element::Water);
+      if (event.key == InputKey::ElementAir)   this->QueueElement(Element::Air);
+      if (event.key == InputKey::ElementEarth) this->QueueElement(Element::Earth);
+      if (event.key == InputKey::ElementLife)  this->QueueElement(Element::Life);      
+    }
   } else if (event.type == InputEventType::MouseDelta) {
 #if WIN32
     angles.x += event.p.x*0.005;
@@ -447,10 +494,14 @@ Player::HandleEvent(const InputEvent &event) {
     angles.x += event.p.x*0.0005;
     angles.y -= event.p.y*0.0005;
 #endif
+
+    if (angles.y >  89_deg) angles.y =  89_deg;
+    if (angles.y < -89_deg) angles.y = -89_deg;
   }
 }
 
-void Player::SetUniforms(const std::shared_ptr<Shader> &shader) const {
+void
+Player::SetUniforms(const std::shared_ptr<Shader> &shader) const {
   if (shader) {
     shader->Uniform("u_fade", IColor(std::sqrt(this->pain)*255, 0, 0));
   }
@@ -519,6 +570,7 @@ Player::AddDeathMessage(const Entity &dead, const HealthInfo &info) {
     case HealthType::Vampiric:    AddMessage(dead.GetName() + "'s blood was sucked"); break;
     case HealthType::Fire:        AddMessage(dead.GetName() + " burned "); break;
     case HealthType::Lava:        AddMessage(dead.GetName() + " tried to swim in lava"); break;
+    case HealthType::Magic:       AddMessage(dead.GetName() + " saw the light"); break;
   }
 }
 
@@ -537,6 +589,7 @@ Player::AddDeathMessage(const Entity &dead, const Entity &killer, const HealthIn
     case HealthType::Vampiric:    AddMessage(dead.GetName() + "'s blood was sucked by " + killer.GetName()); break;
     case HealthType::Fire:        AddMessage(dead.GetName() + " was set on fire by " + killer.GetName()); break;
     case HealthType::Lava:        AddMessage(dead.GetName() + " was pushed into the lava by " + killer.GetName()); break;
+    case HealthType::Magic:       AddMessage(dead.GetName() + " saw "+killer.GetName()+"'s light"); break;
   }
 }
 
@@ -579,57 +632,11 @@ Player::OnEquip(RunningState &state, const Item &item, InventorySlot slot, bool 
   }
 }
 
-
-Cell *Player::GetSelection(RunningState &state, const std::shared_ptr<Item> &item, Side &selectedCellSide, ID &entityId) {
-  Vector3 dir = this->GetForward();
-  Vector3 pos = this->GetSmoothEyePosition();
-
-  float range = item ? item->GetRange() : 5; // FIXME
-
-  AABB aabbRange;
-  aabbRange.center = pos;
-  aabbRange.extents = Vector3(range,range,range);
-
-  auto entitiesInRange = state.FindEntities(aabbRange);
-
-  float hitDist = range;
-  float dist  = range;
-  Vector3 hitPos;
-
-  entityId = InvalidID;
-
-  // check entities in range
-  for (auto id : entitiesInRange) {
-    Entity *entity = state.GetEntity(id);
-    if (!entity || entity == this) continue;
-    if (entity->IsDead()) continue;
-    if (entity->GetProperties()->nohit || (item && entity->GetProperties()->noItemUse)) continue;
-
-    if (entity->GetAABB().Ray(pos, dir, hitDist, hitPos)) {
-      if (hitDist < dist) {
-        dist = hitDist;
-        entityId = id;
-      }
-    }
-  }
-
-  // check cells
-  size_t flags = CellFlags::Pickable;
-  if (item && item->GetProperties().pickLiquid) flags |= CellFlags::Liquid;
-  
-  Cell &cell = state.GetWorld().CastRayCell(pos, dir, hitDist, selectedCellSide, flags);
-  if (hitDist < dist) {
-    entityId = InvalidID;
-    return &cell;
-  } else {
-    return nullptr;
-  }
-}
-
 bool Player::UseItem(RunningState &state, const std::shared_ptr<Item> &item) {
   ID entityID;
   Side cellSide;
-  Cell *cell = this->GetSelection(state, item, cellSide, entityID);
+  // TODO: get default range
+  Cell *cell = this->GetSelection(state, item ? 5.0 : item->GetProperties().range, item, cellSide, entityID);
 
   if (item) {
     if (entityID != InvalidID) {
@@ -670,6 +677,49 @@ Player::OnCollide(RunningState &state, Entity &other) {
 }
 
 void
+Player::QueueElement(Element element) {
+  size_t maxElements = Stats::GetLevelForSkillExp(GetEffectiveStats().skills["magic"]);
+  size_t elemCount = 1;
+  for (Element e:this->elements) if (e == element) elemCount++;
+
+  if (this->elements.size() < maxElements && elemCount <= this->GetGems(element)) {
+    this->elements.push_back(element);
+    // TODO: play sound
+  } else {
+    // TODO: play sound
+  }
+}
+
+void
+Player::ClearElements() {
+  // TODO: play sound
+  this->elements.clear();  
+}
+
+void
+Player::CastSpell(RunningState &state) {
+  // find spell from queued elements
+  const Spell &spell = getSpell(this->elements);
+  this->elements.clear();
+
+  Log("trying to cast spell %s\n", spell.name.c_str());
+
+  // TODO: remove gems
+
+  if (spell.Cast(state, *this)) {
+    AddMessage("You cast the spell "+spell.displayName);
+  } else {
+    AddMessage("Your spell fizzles.");
+  }
+}
+
+void
+Player::LearnSpell(const std::string &name) {
+  Mob::LearnSpell(name);
+  AddMessage("You learn the spell "+getSpell(name).displayName);
+}
+
+void
 Player::Serialize(Serializer &ser) const {
   Mob::Serialize(ser);
 
@@ -677,6 +727,7 @@ Player::Serialize(Serializer &ser) const {
   ser << messages << messageY << messageVY;
   ser << lastHurtT;
   ser << angles;
+  ser << elements;
 }
 
 Player::Message::Message(const std::string &txt, const std::string &font) :

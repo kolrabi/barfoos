@@ -140,7 +140,8 @@ RunningState::Update() {
     if (!this->showInventory) {
       ID entityID;
       Side cellSide;
-      this->player->GetSelection(*this, nullptr, cellSide, entityID);
+      // TODO: get range
+      this->player->GetSelection(*this, 5.0, nullptr, cellSide, entityID);
 
       if (entityID == InvalidID || !entities[entityID]->GetProperties()->openInventory) {
         GetGame().SetGui(std::shared_ptr<Gui>(new InventoryGui(*this, *player)));
@@ -468,11 +469,19 @@ Vector3 RunningState::MoveAABB(
 }
 
 void
-RunningState::Explosion(Entity &entity, const Vector3 &pos, size_t radius, float strength, float damage, Element element) {
+RunningState::Explosion(Entity &entity, const Vector3 &pos, size_t radius, float strength, float damage, Element element, bool magical) {
   AABB aabb(pos, radius);
 
   ID ownerID = entity.GetOwner();
   if (ownerID == InvalidID) ownerID = entity.GetId();
+
+  Entity *owner = this->entities[ownerID];
+  float damageFactor = 1.0;
+
+  if (owner) {
+    Stats stats = owner->GetEffectiveStats();
+    damageFactor += 0.2 * (stats.matk + Stats::GetLevelForSkillExp(stats.skills["magic"]));
+  }
 
   std::vector<ID> entIDs = this->FindEntities(aabb);
   for (ID entID : entIDs) {
@@ -480,7 +489,7 @@ RunningState::Explosion(Entity &entity, const Vector3 &pos, size_t radius, float
     Vector3 d = ent.GetPosition() - pos;
     float dmg = damage / (1.0 + d.GetSquareMag());
 
-    HealthInfo info = Stats::ExplosionAttack(ownerID, ent, dmg, element);
+    HealthInfo info = magical ? Stats::MagicAttack(ownerID, ent, dmg * damageFactor, element) : Stats::ExplosionAttack(ownerID, ent, dmg, element);
     ent.AddHealth(*this, info);
 
     try {

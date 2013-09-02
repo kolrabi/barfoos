@@ -31,6 +31,8 @@ public:
   Deserializer &operator >> (IVector3 &v);
   Deserializer &operator >> (Vector3 &v);
   Deserializer &operator >> (IColor &v);
+
+  Deserializer &operator >> (Element &v);
   
   template<class T>
   Deserializer &operator >> (std::vector<T> &v) {

@@ -13,7 +13,7 @@ namespace Const {
   static constexpr float ExpLevelSkill           = 1.7f; // 1.1^(lvl-1) exp
 };
 
-enum class HealthType : size_t {
+enum class HealthType : uint8_t {
   Unspecified = 0,
   Heal,
   Falling,
@@ -21,6 +21,8 @@ enum class HealthType : size_t {
   Melee,
   Arrow,
   Vampiric,
+
+  Magic,
 
   Fire,
   Lava
@@ -32,20 +34,24 @@ namespace std { template<> struct hash<HealthType> {
 
 static inline bool IsContinuous(HealthType t) { return t == HealthType::Fire || t == HealthType::Lava; }
 
-enum class HitType : size_t {
+enum class HitType : uint8_t {
   Miss = 0,
   Normal = 1,
   Critical = 2
 };
 
-enum class Element : size_t {
+enum class Element : uint8_t {
   Physical = 0,
   Fire,
   Water,
   Earth,
-  Air,
+  Air, // TODO: rename to Wind
   Life
 };
+
+namespace std { template<> struct hash<Element> {
+  size_t operator()(const Element &type) const { return (size_t)type; }
+}; }
 
 struct HealthInfo {
   float       amount;
@@ -103,6 +109,12 @@ struct Stats {
   /** Defense. */
   int def = 0;
 
+  /** Magical attack. */
+  int matk = 0;
+
+  /** Magical defense. */
+  int mdef = 0;
+
   /** Maximum number of hitpoints. */
   int maxHealth = 10;
 
@@ -125,6 +137,7 @@ struct Stats {
   std::string GetToolTip() const;
 
   static HealthInfo MeleeAttack(const Entity &attacker, const Entity &victim, const Item &item, Random &random);
+  static HealthInfo MagicAttack(ID attackerID, const Entity &victim, float damage, Element element);
   static HealthInfo ExplosionAttack(ID attackerID, const Entity &victim, float damage, Element element);
   static HealthInfo ProjectileAttack(const Entity &projectile, const Entity &victim, float damage);
 

@@ -156,6 +156,8 @@ EntityProperties::ParseProperty(const std::string &cmd) {
   else if (cmd == "dex")              Parse(this->dex);
   else if (cmd == "agi")              Parse(this->agi);
   else if (cmd == "def")              Parse(this->def);
+  else if (cmd == "mdef")             Parse(this->mdef);
+  else if (cmd == "matk")             Parse(this->matk);
   else if (cmd == "thinkinterval")    Parse(this->thinkInterval);
   else if (cmd == "onuseitemreplace") {
     std::pair<std::string, std::string> replace;
@@ -177,6 +179,9 @@ EntityProperties::ParseProperty(const std::string &cmd) {
 
   } else if (cmd == "ondieexplodeaddbuff") {
     Parse(this->onDieExplodeAddBuff);
+
+  } else if (cmd == "magical") {
+    this->onDieExplodeMagical = true;
 
   } else if (cmd == "sound") {
     Parse(this->sounds);
@@ -364,6 +369,8 @@ Entity::Start(RunningState &state, uint32_t id) {
   this->baseStats.dex = this->properties->dex;
   this->baseStats.agi = this->properties->agi;
   this->baseStats.def = this->properties->def;
+  this->baseStats.mdef = this->properties->mdef;
+  this->baseStats.matk = this->properties->matk;
   this->baseStats.maxHealth = this->properties->maxHealth;
   this->health = this->properties->maxHealth;
 
@@ -601,7 +608,7 @@ Entity::Die(RunningState &state, const HealthInfo &info) {
   }
 
   if (this->properties->onDieExplodeRadius) {
-    state.Explosion(*this, this->GetPosition(), this->properties->onDieExplodeRadius, this->properties->onDieExplodeStrength, this->properties->onDieExplodeDamage, this->properties->onDieExplodeElement);
+    state.Explosion(*this, this->GetPosition(), this->properties->onDieExplodeRadius, this->properties->onDieExplodeStrength, this->properties->onDieExplodeDamage, this->properties->onDieExplodeElement, this->properties->onDieExplodeMagical);
     if (this->properties->onDieExplodeAddBuff != "") {
       std::vector<ID> ents = state.FindEntities(this->GetPosition(), this->properties->onDieExplodeRadius);
       for (ID eid:ents) {

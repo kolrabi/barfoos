@@ -27,6 +27,14 @@ enum class InputKey : size_t {
 
   Escape,
 
+  ElementClear,
+  ElementFire,
+  ElementWater,
+  ElementAir,
+  ElementEarth,
+  ElementLife,
+  CastSpell,
+
   DebugWireframe,
   DebugEntityAABB,
   DebugDie,

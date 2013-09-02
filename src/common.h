@@ -31,12 +31,12 @@
 #include "profile.h"
 #include "log.h"
 
-enum        Axis          : int;
+enum        Axis          : int8_t;
 enum        Corner        : int8_t;
 enum class  Side          : int8_t;
 enum class  SpawnClass    : char;
-enum class  InventorySlot : size_t;
-enum class  Element       : size_t;
+enum class  InventorySlot : uint8_t;
+enum class  Element       : uint8_t;
 
 struct AABB;
 struct Animation;

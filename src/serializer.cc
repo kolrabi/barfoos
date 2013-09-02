@@ -177,3 +177,8 @@ Serializer &Serializer::operator << (const Vector3 &v) {
 Serializer &Serializer::operator << (const IColor &v) {
   return self << v.r << v.g << v.b;
 }
+
+Serializer &Serializer::operator << (const Element &v) {
+  return self << (uint8_t)v;
+}
+

@@ -5,6 +5,7 @@
 #include "entity.h"
 #include "item.h"
 #include "effect.h"
+#include "spell.h"
 
 #include "cell.h"
 #include "feature.h"
@@ -29,7 +30,11 @@
 Game::Game(const Point &screenSize) :
   isInit        (false),
   input         (new Input()),
+#if WIN32
+  gfx           (new Gfx(Point(1920, 32), screenSize, false)),
+#else
   gfx           (new Gfx(Point(20, 32), screenSize, false)),
+#endif
   audio         (new Audio()),
   handlerId     (this->input->AddHandler( [this](const InputEvent &event){ this->HandleEvent(event); } )),
   activeGameState(nullptr),
@@ -94,6 +99,7 @@ Game::NewGame(const std::string &seed) {
   LoadEntities();
   LoadEffects();
   LoadItems(*this);
+  LoadSpells();
 
   this->startT = this->gfx->GetTime();
 }

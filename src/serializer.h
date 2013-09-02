@@ -31,6 +31,8 @@ public:
   Serializer &operator << (const IVector3 &v);
   Serializer &operator << (const Vector3 &v);
   Serializer &operator << (const IColor &v);
+
+  Serializer &operator << (const Element &v);
   
   template<class T>
   Serializer &operator << (const std::vector<T> &v) {

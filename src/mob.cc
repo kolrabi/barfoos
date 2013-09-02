@@ -10,6 +10,7 @@
 #include "deserializer.h"
 
 #include <cmath>
+#include <algorithm>
 
 Mob::Mob(const std::string &propertyName) :
   Entity          (propertyName),
@@ -47,6 +48,7 @@ Mob::Mob(const std::string &type, Deserializer &deser) : Entity(type, deser),
   deser >> isOnGround;
   deser >> isNoclip;
   deser >> isSneaking;
+  deser >> learntSpells;
 }
 
 Mob::~Mob() {
@@ -301,6 +303,62 @@ Mob::GetMoveModifier() const {
   return mod * (1.0 + GetEffectiveStats().agi * Const::WalkSpeedFactorPerAGI);
 }
 
+Cell *
+Mob::GetSelection(RunningState &state, float range, const std::shared_ptr<Item> &item, Side &selectedCellSide, ID &entityId) {
+  Vector3 dir = this->GetForward();
+  Vector3 pos = this->GetSmoothEyePosition();
+
+  AABB aabbRange;
+  aabbRange.center = pos;
+  aabbRange.extents = Vector3(range,range,range);
+
+  auto entitiesInRange = state.FindEntities(aabbRange);
+
+  float hitDist = range;
+  float dist  = range;
+  Vector3 hitPos;
+
+  entityId = InvalidID;
+
+  // check entities in range
+  for (auto id : entitiesInRange) {
+    Entity *entity = state.GetEntity(id);
+    if (!entity || entity == this) continue;
+    if (entity->IsDead()) continue;
+    if (entity->GetProperties()->nohit || (item && entity->GetProperties()->noItemUse)) continue;
+
+    if (entity->GetAABB().Ray(pos, dir, hitDist, hitPos)) {
+      if (hitDist < dist) {
+        dist = hitDist;
+        entityId = id;
+      }
+    }
+  }
+
+  // check cells
+  size_t flags = CellFlags::Pickable;
+  if (item && item->GetProperties().pickLiquid) flags |= CellFlags::Liquid;
+  
+  Cell &cell = state.GetWorld().CastRayCell(pos, dir, hitDist, selectedCellSide, flags);
+  if (hitDist < dist) {
+    entityId = InvalidID;
+    return &cell;
+  } else {
+    return nullptr;
+  }
+}
+
+bool
+Mob::HasLearntSpell(const std::string &name) const {
+  return std::find(learntSpells.begin(), learntSpells.end(), name) != learntSpells.end();
+}
+
+void
+Mob::LearnSpell(const std::string &name) {
+  if (!HasLearntSpell(name))
+    learntSpells.push_back(name);
+}
+
 void
 Mob::Serialize(Serializer &ser) const {
   Entity::Serialize(ser);
@@ -310,4 +368,5 @@ Mob::Serialize(Serializer &ser) const {
   ser << isOnGround;
   ser << isNoclip;
   ser << isSneaking;
+  ser << learntSpells;
 }

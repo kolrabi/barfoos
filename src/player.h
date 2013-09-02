@@ -39,13 +39,13 @@ public:
   virtual void OnEquip(RunningState &, const Item &, InventorySlot, bool) override;
   virtual void OnLevelUp(RunningState &) override;
   virtual void OnBuffAdded(RunningState &, const EffectProperties &) override;
-  virtual void OnCollide(RunningState &, Entity &) override;
+  virtual void              OnCollide(RunningState &, Entity &) override;
+  virtual void              LearnSpell(const std::string &name) override;
 
   virtual std::string       GetName()                         const;
   float                     GetPain()                         const { return this->pain; }
-  Cell *                    GetSelection(RunningState &state, const std::shared_ptr<Item> &item, Side &selectedCellSide, ID &entityId);
 
-  void SetUniforms(const std::shared_ptr<Shader> &shader) const;
+  void                      SetUniforms(const std::shared_ptr<Shader> &shader) const;
 
   void                      SetAngles(const Vector3 &angles)        { this->angles = angles; }
   const Vector3 &           GetAngles()                       const { return this->angles; }
@@ -79,7 +79,8 @@ private:
   const Texture *slotTex;
   float bobPhase;
   float bobAmplitude;
-  Sprite gemEmptySprite;
+
+  std::unordered_map<Element, Sprite> gemSprites;
 
   // gameplay
   bool itemActiveLeft, itemActiveRight;
@@ -89,6 +90,8 @@ private:
   std::unordered_map<uint32_t, float> lastHurtT;
   float pain;
   float hpFlashT;
+
+  std::vector<Element> elements;
 
   // display
   std::list<Message*> messages;
@@ -104,8 +107,11 @@ private:
   bool blink;
 
   void UpdateInput(RunningState &state);
-
   bool UseItem(RunningState &state, const std::shared_ptr<Item> &item);
+
+  void QueueElement(Element element);
+  void ClearElements();
+  void CastSpell(RunningState &state);
 };
 
 #endif

@@ -24,7 +24,7 @@ Stats::MeleeAttack(const Entity &attacker, const Entity &victim, const Item &ite
   info.type     = HealthType::Melee;
   info.element  = item.GetElement();
 
-  float charge = item.NeedsChargeUp() ? item.GetCharge() : 0.0;
+  float charge = item.NeedsChargeUp() ? item.GetCharge() : 1.0;
 
   // get stats
   Stats atkStat = attacker.GetEffectiveStats();
@@ -60,6 +60,30 @@ Stats::MeleeAttack(const Entity &attacker, const Entity &victim, const Item &ite
   float expDmg = kill ? victim.GetHealth() : -info.amount;
   info.exp = (expDmg / defStat.maxHealth) * 0.5 * victim.GetProperties()->exp + kill ? victim.GetProperties()->exp : 0;
 
+  return info;
+}
+
+HealthInfo
+Stats::MagicAttack(ID attackerID, const Entity &victim, float damage, Element element) {
+  HealthInfo info;
+  info.dealerId = attackerID;
+  info.type = HealthType::Magic;
+  info.element = element;
+
+  // get stats
+  Stats defStat = victim.GetEffectiveStats();
+
+  if (damage > 0.0) {
+    info.amount = -(damage - defStat.mdef * 0.5);
+    if (info.amount > 0.0) info.amount = 0.0;
+
+    bool kill = -info.amount > victim.GetHealth();
+    float expDmg = kill ? victim.GetHealth() : -info.amount;
+    info.exp = (expDmg / defStat.maxHealth) * 0.5 * victim.GetProperties()->exp + kill ? victim.GetProperties()->exp : 0;
+  } else {
+    info.amount = -damage;
+    info.exp = 0.0;
+  }
   return info;
 }
 

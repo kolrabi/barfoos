@@ -43,6 +43,7 @@ barfoos_SOURCES=\
   stats.cc stats.h \
   \
   properties.cc properties.h \
+  spell.cc spell.h \
   \
   gui.cc gui.h \
   inventorygui.cc inventorygui.h \

@@ -30,6 +30,10 @@ public:
   virtual void              Serialize   (Serializer &ser)                             const override;
   virtual SpawnClass        GetSpawnClass()                                           const override { return SpawnClass::MobClass; }
 
+  Cell *                    GetSelection(RunningState &state, float range, const std::shared_ptr<Item> &item, Side &selectedCellSide, ID &entityId);
+  bool                      HasLearntSpell(const std::string &name) const;
+  virtual void              LearnSpell(const std::string &name);
+
 protected:
 
   Vector3               lastKnownGoodPos;
@@ -43,6 +47,8 @@ protected:
 
   bool                  isNoclip;
   bool                  isSneaking;
+
+  std::vector<std::string> learntSpells;
 
   Cell *                headCell;
   Cell *                footCell;

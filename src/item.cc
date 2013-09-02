@@ -358,12 +358,16 @@ Item::ModifyStats(Stats &stats, bool forceEquipped) const {
     stats.agi += this->properties->eqAddAgi   * f;
     stats.dex += this->properties->eqAddDex   * f;
     stats.def += this->properties->eqAddDef   * f;
+    stats.mdef += this->properties->eqAddMDef * f;
+    stats.matk += this->properties->eqAddMAtk * f;
     stats.maxHealth += this->properties->eqAddHP * f;
   } else {
     stats.str += this->properties->uneqAddStr * f;
     stats.agi += this->properties->uneqAddAgi * f;
     stats.dex += this->properties->uneqAddDex * f;
     stats.def += this->properties->uneqAddDef * f;
+    stats.mdef += this->properties->uneqAddMDef * f;
+    stats.matk += this->properties->uneqAddMAtk * f;
     stats.maxHealth += this->properties->uneqAddHP * f;
   }
   if (this->effect) this->effect->ModifyStats(stats, this->isEquipped, this->modifier, this->beatitude);

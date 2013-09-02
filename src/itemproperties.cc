@@ -97,12 +97,16 @@ ItemProperties::ParseProperty(const std::string &cmd) {
   else if (cmd == "eqdex")      Parse(this->eqAddDex);
   else if (cmd == "eqagi")      Parse(this->eqAddAgi);
   else if (cmd == "eqdef")      Parse(this->eqAddDef);
+  else if (cmd == "eqmatk")     Parse(this->eqAddMAtk);
+  else if (cmd == "eqmdef")     Parse(this->eqAddMDef);
   else if (cmd == "eqhp")       Parse(this->eqAddHP);
 
   else if (cmd == "uneqstr")    Parse(this->uneqAddStr);
   else if (cmd == "uneqdex")    Parse(this->uneqAddDex);
   else if (cmd == "uneqagi")    Parse(this->uneqAddAgi);
   else if (cmd == "uneqdef")    Parse(this->uneqAddDef);
+  else if (cmd == "uneqmatk")   Parse(this->uneqAddMAtk);
+  else if (cmd == "uneqmdef")   Parse(this->uneqAddMDef);
   else if (cmd == "uneqhp")     Parse(this->uneqAddHP);
 
   else if (cmd == "light")      Parse(this->light);
