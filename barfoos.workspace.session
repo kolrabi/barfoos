@@ -1,96 +1,36 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Session Name="/Users/kolrabi/Desktop/dev/barfoos/barfoos.workspace">
-  <int Value="14" Name="m_selectedTab"/>
+  <int Value="4" Name="m_selectedTab"/>
   <wxString Value="/Users/kolrabi/Desktop/dev/barfoos/barfoos.workspace" Name="m_workspaceName"/>
   <TabInfoArray Name="TabInfoArray">
     <TabInfo>
-      <wxString Value="/Users/kolrabi/Desktop/dev/barfoos/src/audio.h" Name="FileName"/>
-      <int Value="32" Name="FirstVisibleLine"/>
-      <int Value="44" Name="CurrentLine"/>
+      <wxString Value="/Users/kolrabi/Desktop/dev/barfoos/src/cellproperties.h" Name="FileName"/>
+      <int Value="112" Name="FirstVisibleLine"/>
+      <int Value="133" Name="CurrentLine"/>
       <wxArrayString Name="Bookmarks"/>
     </TabInfo>
     <TabInfo>
-      <wxString Value="/Users/kolrabi/Desktop/dev/barfoos/src/audio.cc" Name="FileName"/>
-      <int Value="166" Name="FirstVisibleLine"/>
-      <int Value="175" Name="CurrentLine"/>
+      <wxString Value="/Users/kolrabi/Desktop/dev/barfoos/src/cellproperties.cc" Name="FileName"/>
+      <int Value="98" Name="FirstVisibleLine"/>
+      <int Value="103" Name="CurrentLine"/>
       <wxArrayString Name="Bookmarks"/>
     </TabInfo>
     <TabInfo>
-      <wxString Value="/Users/kolrabi/Desktop/dev/barfoos/src/gfx.cc" Name="FileName"/>
-      <int Value="111" Name="FirstVisibleLine"/>
-      <int Value="125" Name="CurrentLine"/>
+      <wxString Value="/Users/kolrabi/Desktop/dev/barfoos/src/cell.cc" Name="FileName"/>
+      <int Value="44" Name="FirstVisibleLine"/>
+      <int Value="45" Name="CurrentLine"/>
       <wxArrayString Name="Bookmarks"/>
     </TabInfo>
     <TabInfo>
-      <wxString Value="/Users/kolrabi/Desktop/dev/barfoos/configure.ac" Name="FileName"/>
-      <int Value="43" Name="FirstVisibleLine"/>
-      <int Value="81" Name="CurrentLine"/>
-      <wxArrayString Name="Bookmarks"/>
-    </TabInfo>
-    <TabInfo>
-      <wxString Value="/Users/kolrabi/Desktop/dev/barfoos/src/game.h" Name="FileName"/>
-      <int Value="13" Name="FirstVisibleLine"/>
-      <int Value="48" Name="CurrentLine"/>
-      <wxArrayString Name="Bookmarks"/>
-    </TabInfo>
-    <TabInfo>
-      <wxString Value="/Users/kolrabi/Desktop/dev/barfoos/src/game.cc" Name="FileName"/>
-      <int Value="49" Name="FirstVisibleLine"/>
-      <int Value="75" Name="CurrentLine"/>
-      <wxArrayString Name="Bookmarks"/>
-    </TabInfo>
-    <TabInfo>
-      <wxString Value="/usr/include/AL/al.h" Name="FileName"/>
-      <int Value="356" Name="FirstVisibleLine"/>
-      <int Value="357" Name="CurrentLine"/>
-      <wxArrayString Name="Bookmarks"/>
-    </TabInfo>
-    <TabInfo>
-      <wxString Value="/usr/include/AL/alext.h" Name="FileName"/>
-      <int Value="173" Name="FirstVisibleLine"/>
-      <int Value="176" Name="CurrentLine"/>
-      <wxArrayString Name="Bookmarks"/>
-    </TabInfo>
-    <TabInfo>
-      <wxString Value="/Users/kolrabi/Desktop/dev/barfoos/src/entity.h" Name="FileName"/>
-      <int Value="184" Name="FirstVisibleLine"/>
-      <int Value="205" Name="CurrentLine"/>
-      <wxArrayString Name="Bookmarks"/>
-    </TabInfo>
-    <TabInfo>
-      <wxString Value="/Users/kolrabi/Desktop/dev/barfoos/src/util.h" Name="FileName"/>
+      <wxString Value="/Users/kolrabi/Desktop/dev/barfoos/src/itementity.cc" Name="FileName"/>
       <int Value="0" Name="FirstVisibleLine"/>
       <int Value="0" Name="CurrentLine"/>
       <wxArrayString Name="Bookmarks"/>
     </TabInfo>
     <TabInfo>
-      <wxString Value="/Users/kolrabi/Desktop/dev/barfoos/src/mainmenugui.cc" Name="FileName"/>
-      <int Value="19" Name="FirstVisibleLine"/>
-      <int Value="13" Name="CurrentLine"/>
-      <wxArrayString Name="Bookmarks"/>
-    </TabInfo>
-    <TabInfo>
-      <wxString Value="/Users/kolrabi/Desktop/dev/barfoos/src/player.cc" Name="FileName"/>
-      <int Value="273" Name="FirstVisibleLine"/>
-      <int Value="285" Name="CurrentLine"/>
-      <wxArrayString Name="Bookmarks"/>
-    </TabInfo>
-    <TabInfo>
-      <wxString Value="/Users/kolrabi/Desktop/dev/barfoos/src/runningstate.cc" Name="FileName"/>
-      <int Value="0" Name="FirstVisibleLine"/>
-      <int Value="11" Name="CurrentLine"/>
-      <wxArrayString Name="Bookmarks"/>
-    </TabInfo>
-    <TabInfo>
-      <wxString Value="/Users/kolrabi/Desktop/dev/barfoos/src/monster.cc" Name="FileName"/>
-      <int Value="173" Name="FirstVisibleLine"/>
-      <int Value="135" Name="CurrentLine"/>
-      <wxArrayString Name="Bookmarks"/>
-    </TabInfo>
-    <TabInfo>
-      <wxString Value="/Users/kolrabi/Desktop/dev/barfoos/src/mob.cc" Name="FileName"/>
-      <int Value="105" Name="FirstVisibleLine"/>
-      <int Value="131" Name="CurrentLine"/>
+      <wxString Value="/Users/kolrabi/Desktop/dev/barfoos/src/item.cc" Name="FileName"/>
+      <int Value="328" Name="FirstVisibleLine"/>
+      <int Value="338" Name="CurrentLine"/>
       <wxArrayString Name="Bookmarks"/>
     </TabInfo>
   </TabInfoArray>

@@ -52,6 +52,9 @@
 /* Define to 1 if you have the `winmm' library (-lwinmm). */
 /* #undef HAVE_LIBWINMM */
 
+/* Define to 1 if you have the `X11' library (-lX11). */
+/* #undef HAVE_LIBX11 */
+
 /* Define to 1 if you have the `Xi' library (-lXi). */
 /* #undef HAVE_LIBXI */
 

@@ -79,6 +79,7 @@ private:
   const Texture *slotTex;
   float bobPhase;
   float bobAmplitude;
+  Sprite gemEmptySprite;
 
   // gameplay
   bool itemActiveLeft, itemActiveRight;

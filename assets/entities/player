@@ -39,3 +39,9 @@ inventory 1.0 lockpick
 inventory 1.0 lockpick
 inventory 1.0 lockpick
 inventory 1.0 lockpick
+
+
+sound jump jump
+sound land land
+sound land.hard oof
+

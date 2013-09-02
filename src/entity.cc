@@ -492,10 +492,8 @@ Entity::Update(RunningState &state) {
     world.SetCell(cellPos, Cell(this->properties->cellEnter));
   }
 
-  if (this->lastPosition != GetPosition())
   this->cellLight = world.GetLight(this->GetPosition());
 
-  lastPosition = GetPosition();
   this->drawAABB = game.GetInput().IsKeyActive(InputKey::DebugEntityAABB);
 }
 

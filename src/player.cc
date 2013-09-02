@@ -67,6 +67,8 @@ Player::Player() :
   this->inventory.AddToBackpack(std::make_shared<Item>(Item("torch")));
 
   this->baseStats.skills["magic"] = 0;
+
+  gemEmptySprite.texture = loadTexture("items/texture/gem.empty");
 }
 
 Player::Player(Deserializer &deser) : Mob("player", deser),
@@ -99,6 +101,7 @@ Player::Player(Deserializer &deser) : Mob("player", deser),
   deser >> messages >> messageY >> messageVY;
   deser >> lastHurtT;
   deser >> angles;
+  gemEmptySprite.texture = loadTexture("items/texture/gem.empty");
 }
 
 Player::~Player() {
@@ -344,7 +347,7 @@ void
 Player::DrawGUI(Gfx &gfx) const {
   gfx.SetShader("gui");
   gfx.SetColor(IColor(255,255,255));
-
+  
   Point itemPos = gfx.AlignBottomRightScreen(Point(32,32), 4);
   gfx.SetTextureFrame(this->slotTex);
   gfx.DrawIconQuad(itemPos);
@@ -367,6 +370,8 @@ Player::DrawGUI(Gfx &gfx) const {
   Sprite sprite;
   sprite.texture = crosshairTex;
   gfx.DrawIcon(sprite, Point(vsize.x/2, vsize.y/2));
+  //gfx.DrawIcon(gemEmptySprite, Point(vsize.x/2, vsize.y/2));
+
 
   // draw messages
   float y = this->messageY + 4;
