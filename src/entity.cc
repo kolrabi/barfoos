@@ -336,7 +336,7 @@ Entity::Start(RunningState &state, uint32_t id) {
   this->nextThinkT = game.GetTime();
   this->startT = game.GetTime();
 
-  // TODO: play start sound
+  this->PlaySound(state, "start");
 
   if (this->properties->randomAngle) {
     this->renderAngle = state.GetRandom().Float01() * 360.0;
@@ -419,6 +419,12 @@ Entity::Update(RunningState &state) {
   float deltaT = game.GetDeltaT();
   float t      = game.GetTime();
   PROFILE();
+
+  // play queued sounds
+  for (auto &s:this->queuedSounds)
+    this->PlaySound(state, s);
+  this->queuedSounds.clear();
+
   if (this->dieT && state.GetGame().GetTime() > this->dieT) {
     this->Die(state, HealthInfo());
     //Log("%s expired %d %u\n", this->properties->name.c_str(), IsDead(), this->sprite.currentAnimation);
@@ -472,6 +478,7 @@ Entity::Update(RunningState &state) {
     auto it = this->activeBuffs.begin();
     while(it != this->activeBuffs.end()) {
       if (t > it->effect->duration + it->startT) {
+        state.GetGame().GetAudio().PlaySound(it->effect->removeSound, this->GetPosition());
         it = this->activeBuffs.erase(it);
       } else {
         it->effect->Update(state, *this);
@@ -656,7 +663,7 @@ Entity::AddBuff(RunningState &state, const std::string &name) {
   buff.effect = &getEffect(name);
   buff.startT = state.GetGame().GetTime();
 
-  // TODO: sound effect
+  state.GetGame().GetAudio().PlaySound(buff.effect->addSound, this->GetPosition());
 
   for (auto &b:this->activeBuffs) {
     if (b.effect == buff.effect) {
@@ -704,6 +711,11 @@ void
 Entity::PlaySound(RunningState &state, const std::string &type) {
   if (this->properties->sounds.find(type) == this->properties->sounds.end()) return;
   state.GetGame().GetAudio().PlaySound(this->properties->sounds.at(type), GetSmoothPosition());
+}
+
+void
+Entity::PlaySound(const std::string &type) {
+  this->queuedSounds.push_back(type);
 }
 
 IColor

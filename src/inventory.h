@@ -79,6 +79,7 @@ public:
   IColor GetLight() const;
   uint32_t                  GetGold()                         const;
   uint32_t                  GetGems(Element e)                const;
+  void                      RemoveGem(Element e);
 
   void ModifyStats(Stats &stats) const;
 

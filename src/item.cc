@@ -22,7 +22,7 @@ Item::Item(const std::string &type) :
   initDone(false),
   properties(&getItem(type)),
   effect(nullptr),
-  durabilityTex(loadTexture("gui/durability")),
+  durabilityTex(Texture::Get("gui/durability")),
   isRemovable(false),
   sprite(this->properties->sprite),
   cooldownFrac(0),

@@ -1,5 +1,7 @@
 #include "GLee.h"
 
+#include "common.h"
+
 #include "gfx.h"
 #include "gfxview.h"
 
@@ -8,7 +10,7 @@
 
 #include "aabb.h"
 
-GfxView::GfxView(Gfx &gfx) : 
+GfxView::GfxView(Gfx &gfx) :
   gfx(gfx),
   projStack(1),
   viewStack(1),
@@ -17,7 +19,7 @@ GfxView::GfxView(Gfx &gfx) :
 {}
 
 void GfxView::Look(const Vector3 &pos, const Vector3 &forward, float fovY, const Vector3 &up) {
-  float aspect = (float)gfx.viewportSize.x / (float)gfx.viewportSize.y;
+  float aspect = gfx.GetScreen().GetAspect();
 
   this->right = forward.Cross(up);
 
@@ -35,13 +37,11 @@ void GfxView::Look(const Vector3 &pos, const Vector3 &forward, float fovY, const
 void GfxView::GUI() {
   this->projStack.back() = Matrix4();
 
+  const Point &ssize = gfx.GetScreen().GetVirtualSize();
   this->modelViewStack.back() =
-    Matrix4::Scale(    Vector3(2.0/gfx.virtualScreenSize.x, -2.0/gfx.virtualScreenSize.y, 1)) *
-    Matrix4::Translate(Vector3( -gfx.virtualScreenSize.x/2, -gfx.virtualScreenSize.y/2,   0));
+    Matrix4::Scale(    Vector3(  2.0/ssize.x, -2.0/ssize.y, 1)) *
+    Matrix4::Translate(Vector3( -0.5*ssize.x, -0.5*ssize.y, 0));
 
-  /*if (gfx.screenSize.x > 800 && gfx.screenSize.y > 600) {
-    this->modelViewStack.back() = this->modelViewStack.back() * Matrix4::Scale(Vector3(2,2,1));
-  }*/
   this->viewStack.back() = this->modelViewStack.back();
   glDisable(GL_DEPTH_TEST);
 }
@@ -129,7 +129,7 @@ bool GfxView::IsPointVisible(const Vector3 &p) const {
 
 bool GfxView::IsAABBVisible(const AABB &aabb) const {
   if (IsPointVisible(aabb.center)) return true;
-  
+
   static const AABB unitAABB(Vector3(1.0, 1.0, 1.0));
   AABB screenAABB;
   for (uint8_t i=0; i<8; i++) {

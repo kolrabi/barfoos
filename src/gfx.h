@@ -1,10 +1,10 @@
 #ifndef BARFOOS_GFX_H
 #define BARFOOS_GFX_H
 
-#include "common.h"
-
 #include "2d.h"
 #include "icolor.h"
+
+#include "gfxscreen.h"
 
 #include <vector>
 #include <unordered_map>
@@ -16,15 +16,12 @@ public:
 
   float           GetTime                 ()                      const;
   void            Update                  (Game &game);
-  bool            Swap                    ();
   GfxView &       GetView                 ()                            { return *view; }
-  
+  GfxScreen &     GetScreen               ()                            { return this->screen; }
+
   bool            UseFixedFunction        ()                      const { return this->useFixedFunction; }
   const Texture * GetNoiseTexture         ()                      const { return noiseTex; }
   void            SetPlayer               (const Player *player);
-
-  void            IncGuiCount             ();
-  void            DecGuiCount             ();
 
   void            ClearColor              (const IColor &color)   const;
   void            ClearDepth              (float depth)           const;
@@ -50,20 +47,6 @@ public:
   void            DrawIconQuad            (const Point &pos, const Point &size = Point(32, 32));
   void            DrawStretched           (const Texture *tex, const Rect &src, const Rect &dest);
 
-  // TODO: move to separate GfxScreen class
-  void            SaveScreen              (const std::string &name);
-
-  const Point &   GetScreenSize           ()                      const { return screenSize; }
-  const Point &   GetVirtualScreenSize    ()                      const { return virtualScreenSize; }
-  const Point &   GetMousePos             ()                      const { return mousePos; }
-
-  void            Viewport                (const Rect &view);
-
-  Point           AlignBottomLeftScreen   (const Point &size, int padding = 0);
-  Point           AlignBottomRightScreen  (const Point &size, int padding = 0);
-  Point           AlignTopLeftScreen      (const Point &size, int padding = 0);
-  Point           AlignTopRightScreen     (const Point &size, int padding = 0);
-
 private:
 
   friend class GfxView;
@@ -78,29 +61,13 @@ private:
   bool            Init(Game &game);
   void            Deinit();
 
-
   // management
-  GLFWwindow *window;
+  GfxScreen screen;
   bool useFixedFunction;
   bool isInit;
   float startTime;
 
   const Player *player;
-
-  // screen: TODO: move to separate class
-  Point screenPos;
-  Point screenSize;
-  bool isFullscreen;
-  Point virtualScreenSize;
-  Point viewportSize;
-
-  // input
-  Point mousePos, lastMousePos;
-  Point mouseDelta;
-  bool mouseGrab;
-
-  // gui
-  size_t guiActiveCount;
 
   // drawing
   VertexBuffer *vb;

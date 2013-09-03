@@ -313,7 +313,7 @@ World::Build() {
   for (auto instance : instances) {
     instance.feature->SpawnEntities(state, instance.pos);
   }
-  
+
   Log("Placing %u items...\n", itemCount);
   for (size_t i=0; i<itemCount; i++) {
     std::string itemName = getRandomItem("item", state.GetLevel(), state.GetRandom());
@@ -350,7 +350,7 @@ World::Build() {
     if (!entity) continue;
 
     state.AddEntity(entity);
-    
+
     Vector3 pos(Vector3(a.x + 0.5, a.y, a.z + 0.5));
     if (top) {
       pos.y = CastRayYDown(pos) + entity->GetAABB().extents.y + 0.01;
@@ -578,12 +578,12 @@ World::Draw(Gfx &gfx) {
 
     for (size_t i : dynamicCells) {
       this->cells[i].UpdateVertices();
-      
+
       const Texture *tex = this->cells[i].GetTexture();
       if (tex) {
         if (dynVerticesNormal.find(tex) == dynVerticesNormal.end())
             dynVerticesNormal[tex] = std::vector<Vertex>();
-            
+
         std::vector<Vertex> tmp;
         this->cells[i].Draw(tmp);
         dynVerticesNormal[tex].Add(tmp);
@@ -1012,7 +1012,7 @@ World::GetLight(const IVector3 &pos) const {
 IColor
 World::GetLight(const Vector3 &pos) const {
   IVector3 ipos(pos.x - 1.0, pos.y - 1.0, pos.z - 1.0);
-  
+
   IColor c_000 = GetLight(IVector3(ipos.x,   ipos.y,   ipos.z));
   IColor c_100 = GetLight(IVector3(ipos.x+1, ipos.y,   ipos.z));
   IColor c_010 = GetLight(IVector3(ipos.x,   ipos.y,   ipos.z));
@@ -1023,17 +1023,17 @@ World::GetLight(const Vector3 &pos) const {
   IColor c_111 = GetLight(IVector3(ipos.x+1, ipos.y+1, ipos.z+1));
 
   float dx = pos.x - 0.5 - ipos.x;
-  
+
   IColor c_00  = IColor::Lerp(c_000, c_100, dx);
   IColor c_10  = IColor::Lerp(c_010, c_110, dx);
   IColor c_01  = IColor::Lerp(c_001, c_101, dx);
   IColor c_11  = IColor::Lerp(c_011, c_111, dx);
 
   float dy = pos.y - 0.5 - ipos.y;
-  
+
   IColor c_0   = IColor::Lerp(c_00,  c_10,  dy);
   IColor c_1   = IColor::Lerp(c_01,  c_11,  dy);
-  
+
   float dz = pos.z - 0.5 - ipos.z;
   return         IColor::Lerp(c_0,   c_1,   dz);
 }
@@ -1319,7 +1319,7 @@ MiniMap::Draw(
   gfx.DrawUnitQuad();
   gfx.GetView().Pop();
 
-  gfx.SetTextureFrame(loadTexture("gui/maparrow"));
+  gfx.SetTextureFrame(Texture::Get("gui/maparrow"));
   gfx.GetView().Push();
   gfx.GetView().Rotate(angle, Vector3(0,0,1));
   gfx.GetView().Scale(Vector3(-1.0/4.0, 1.0/4.0, 1));
@@ -1386,7 +1386,7 @@ MiniMap::RepaintMap() {
     }
   }
 
-  this->mapTexture = updateTexture("*minimap", Image(Point(size.x, size.z), pixels, true));
+  this->mapTexture = Texture::Create("*minimap", Image(Point(size.x, size.z), pixels, true));
 }
 
 Serializer &operator << (Serializer &ser, const MiniMap &map) {

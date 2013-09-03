@@ -20,7 +20,7 @@ struct TextFont {
   {}
 
   TextFont(const std::string &name) :
-    texture(loadTexture("gui/font."+name)),
+    texture(Texture::Get("gui/font."+name)),
     size( texture->size.x / 32, texture->size.y / 8 ),
     name(name)
   {

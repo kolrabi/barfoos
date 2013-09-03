@@ -105,7 +105,7 @@ Properties::Parse(const std::string &prefix, const Texture *&t) {
     this->SetError("unexpected end of line, expecting texture name");
     return;
   }
-  t = loadTexture(prefix+tokens[0]);
+  t = Texture::Get(prefix+tokens[0]);
   tokens.erase(tokens.begin());
 }
 
@@ -152,7 +152,7 @@ Properties::Parse(Element &e) {
   } else if (elementString == "earth") {
     e = Element::Earth;
   } else if (elementString == "air") {
-    e = Element::Air;
+    e = Element::Wind;
   } else if (elementString == "life") {
     e = Element::Life;
   } else {

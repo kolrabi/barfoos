@@ -89,6 +89,9 @@ struct EffectProperties : public Properties {
 
   IColor light;
 
+  std::string addSound = "";
+  std::string removeSound = "";
+
   virtual void ParseProperty(const std::string &name) override;
 
   void ModifyStats(Stats &stats, bool equipped, int modifier, Beatitude beatitude) const;

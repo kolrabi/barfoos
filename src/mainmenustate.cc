@@ -11,10 +11,10 @@ MainMenuState::MainMenuState(Game &game) :
   nextState(this)
 {
 }
-  
+
 MainMenuState::~MainMenuState() {
 }
-  
+
 void MainMenuState::Enter() {
   GetGame().SetGui(this->mainMenuGui);
 }
@@ -30,7 +30,7 @@ GameState *MainMenuState::Update() {
 void MainMenuState::Render(Gfx &gfx) const {
   gfx.ClearColor(IColor(30, 30, 20));
   gfx.ClearDepth(1.0);
-  gfx.Viewport(Rect());
+  gfx.GetScreen().Viewport(Rect());
   gfx.GetView().GUI();
   gfx.SetShader("gui");
 }
@@ -45,13 +45,13 @@ void MainMenuState::ExitGame() {
 void MainMenuState::NewGame() {
   RunningState *runningState = new RunningState(GetGame());
   runningState->NewGame();
-  
+
   nextState = runningState;
 }
 
 void MainMenuState::ContinueGame() {
   RunningState *runningState = new RunningState(GetGame());
   runningState->ContinueGame();
-  
+
   nextState = runningState;
 }

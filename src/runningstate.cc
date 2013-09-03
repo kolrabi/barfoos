@@ -102,7 +102,7 @@ RunningState::Render(Gfx &gfx) const {
 
   gfx.ClearColor(IColor(30, 30, 20));
   gfx.ClearDepth(1.0);
-  gfx.Viewport(Rect());
+  gfx.GetScreen().Viewport(Rect());
 
   // draw world first
   gfx.SetFog(0.05, IColor(64,64,64));
@@ -119,11 +119,11 @@ RunningState::Render(Gfx &gfx) const {
   gfx.ClearDepth(1.0);
   player->DrawWeapons(gfx);
 
-  Point vscreen = gfx.GetScreenSize();
-  gfx.Viewport(Rect(Point(vscreen.x-128, 0), Point(128, 128)));
+  Point vscreen = gfx.GetScreen().GetSize();
+  gfx.GetScreen().Viewport(Rect(Point(vscreen.x-128, 0), Point(128, 128)));
   player->MapView(gfx);
   world->GetMap().Draw(gfx, player->GetSmoothPosition(), player->GetAngles().x * Const::rad2deg);
-  gfx.Viewport(Rect());
+  gfx.GetScreen().Viewport(Rect());
 
   // next draw gui stuff
   gfx.GetView().GUI();
@@ -230,7 +230,7 @@ void RunningState::HandleEvent(const InputEvent &event) {
  */
 ID
 RunningState::AddEntity(Entity *entity) {
-  size_t entityId = GetNextEntityId();
+  ID entityId = GetNextEntityId();
   this->entities[entityId] = entity;
   entity->Start(*this, entityId);
 
@@ -271,27 +271,6 @@ RunningState::RemoveEntity(ID entityId) {
   this->entities.erase(iter);
 }
 
-
-/**
- * Find entities within an AABB.
- * The entities' AABBs have to intersesct the given AABB to be returned.
- * @param aabb AABB within which to look for entities
- * @return A vector of entities.
- */
-std::vector<ID>
-RunningState::FindEntities(const AABB &aabb) const {
-  std::vector<ID> entities;
-
-  for (auto entity : this->entities) {
-    if (!entity.second || entity.second->IsDead()) continue;
-    if (aabb.Overlap(entity.second->GetAABB())) {
-      entities.push_back(entity.first);
-    }
-  }
-
-  return entities;
-}
-
 std::vector<ID>
 RunningState::FindEntities(const Vector3 &center, float radius) const {
   std::vector<ID> entities;
@@ -306,6 +285,7 @@ RunningState::FindEntities(const Vector3 &center, float radius) const {
 
   return entities;
 }
+
 std::vector<ID>
 RunningState::FindSolidEntities(const AABB &aabb) const {
   std::vector<ID> entities;
@@ -470,8 +450,6 @@ Vector3 RunningState::MoveAABB(
 
 void
 RunningState::Explosion(Entity &entity, const Vector3 &pos, size_t radius, float strength, float damage, Element element, bool magical) {
-  AABB aabb(pos, radius);
-
   ID ownerID = entity.GetOwner();
   if (ownerID == InvalidID) ownerID = entity.GetId();
 
@@ -483,7 +461,7 @@ RunningState::Explosion(Entity &entity, const Vector3 &pos, size_t radius, float
     damageFactor += 0.2 * (stats.matk + Stats::GetLevelForSkillExp(stats.skills["magic"]));
   }
 
-  std::vector<ID> entIDs = this->FindEntities(aabb);
+  std::vector<ID> entIDs = this->FindEntities(pos, radius);
   for (ID entID : entIDs) {
     Entity &ent  = *this->entities[entID];
     Vector3 d = ent.GetPosition() - pos;

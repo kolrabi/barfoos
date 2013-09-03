@@ -308,11 +308,7 @@ Mob::GetSelection(RunningState &state, float range, const std::shared_ptr<Item> 
   Vector3 dir = this->GetForward();
   Vector3 pos = this->GetSmoothEyePosition();
 
-  AABB aabbRange;
-  aabbRange.center = pos;
-  aabbRange.extents = Vector3(range,range,range);
-
-  auto entitiesInRange = state.FindEntities(aabbRange);
+  auto entitiesInRange = state.FindEntities(pos, range);
 
   float hitDist = range;
   float dist  = range;
@@ -338,7 +334,7 @@ Mob::GetSelection(RunningState &state, float range, const std::shared_ptr<Item> 
   // check cells
   size_t flags = CellFlags::Pickable;
   if (item && item->GetProperties().pickLiquid) flags |= CellFlags::Liquid;
-  
+
   Cell &cell = state.GetWorld().CastRayCell(pos, dir, hitDist, selectedCellSide, flags);
   if (hitDist < dist) {
     entityId = InvalidID;

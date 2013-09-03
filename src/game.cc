@@ -146,7 +146,7 @@ bool Game::Frame() {
     this->lastFPST += 1.0;
   }
 
-  if (!this->gfx->Swap()) nextGameState = nullptr;
+  if (!this->gfx->GetScreen().Swap()) nextGameState = nullptr;
 
   this->gfx->ClearColor(IColor());
   this->gfx->ClearDepth(1.0);
@@ -226,12 +226,12 @@ void
 Game::SetGui(const std::shared_ptr<Gui> &gui) {
   if (this->activeGui) {
     this->activeGui->OnHide();
-    this->gfx->DecGuiCount();
+    this->gfx->GetScreen().DecGuiCount();
   }
   this->activeGui = gui;
   if (this->activeGui) {
     this->activeGui->OnShow();
-    this->gfx->IncGuiCount();
+    this->gfx->GetScreen().IncGuiCount();
   }
 }
 

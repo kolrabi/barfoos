@@ -296,6 +296,13 @@ Inventory::GetGems(Element e) const {
 }
 
 void
+Inventory::RemoveGem(Element e) {
+  InventorySlot slot = (InventorySlot)((size_t)InventorySlot::GemFire + (size_t)e -1);
+  if (!self[slot]) return;
+  self[slot]->DecAmount();
+}
+
+void
 Inventory::Stack(InventorySlot slot, const std::shared_ptr<Item> &item) {
   if (self[slot]) {
     self[slot]->AddAmount(item->GetAmount());

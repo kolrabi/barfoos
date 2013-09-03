@@ -10,7 +10,7 @@ MainMenuGui::MainMenuGui(MainMenuState &state) :
   state(state)
 {
   Gfx &gfx = state.GetGame().GetGfx();
-  Point vscreen = gfx.GetVirtualScreenSize();
+  Point vscreen = gfx.GetScreen().GetVirtualSize();
 
   Rect btnRect(Point(8,8), Point(16,16));
   NinePatch npBtnEnabled ("gui/button.enabled",  btnRect);

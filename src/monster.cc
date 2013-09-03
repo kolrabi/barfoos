@@ -123,7 +123,7 @@ Monster::Think(RunningState &state) {
   if (this->attackTarget == InvalidID && this->properties->aggressive) {
     // Log("  I don't have a target, but I am aggressive and looking for one...\n");
     // find enitites in aggroRange
-    std::vector<ID> ents = state.FindEntities(AABB(aabb.center, Vector3(this->properties->aggroRangeNear)));
+    std::vector<ID> ents = state.FindEntities(aabb.center, this->properties->aggroRangeNear);
     Entity *enemy = nullptr;
 
     for (size_t e : ents) {

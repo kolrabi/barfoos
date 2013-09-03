@@ -27,7 +27,7 @@ barfoos_LDFLAGS=$(LDWINFLAGS) $(LDMACOSXFLAGS)
 barfoos_SOURCES=\
   main.cc \
   image.cc image.h \
-  gfx.cc gfx.h gfxview.cc gfxview.h \
+  gfx.cc gfx.h gfxview.cc gfxview.h gfxscreen.cc gfxscreen.h \
   vertexbuffer.cc vertexbuffer.h \
   audio.cc audio.h \
   fileio.cc fileio.h \

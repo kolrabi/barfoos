@@ -214,6 +214,7 @@ public:
 
   void                      Teleport(RunningState &state, const Vector3 &target);
   void                      PlaySound(RunningState &state, const std::string &sound);
+  void                      PlaySound(const std::string &sound);
 
   void                      SetForward(const Vector3 &fwd)          { this->forward = fwd; }
   Vector3                   GetForward()                      const { return this->forward; }
@@ -255,6 +256,7 @@ protected:
   float nextThinkT, startT;
 
   std::unordered_map<std::string, Regular> regulars;
+  std::vector<std::string> queuedSounds;
 
   // gameplay
   float dieT;

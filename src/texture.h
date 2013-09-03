@@ -9,23 +9,25 @@ class Image;
 /** A texture. */
 struct Texture {
   Texture();
+  Texture(const std::string &name);
   Texture(Texture &&);
   ~Texture();
-  
+
   std::string name;
-  
+
   /** OpenGL Handle of the texture. */
   unsigned int handle;
-  
+
   /** Size of the texture. */
   Point size;
-};
 
-// TODO: static members of Texture
-const Texture *noiseTexture(const Point &size, const Vector3 &scale = Vector3(1,1,1), const Vector3 &offset = Vector3());
-const Texture *loadTexture(const std::string &name, const Texture * tex = nullptr);
-const Texture *updateTexture(const std::string &name, const Image &image);
-void updateTextures();
+  void Reload();
+  void SetImage(const Image &image);
+
+  static void UpdateTextures();
+  static const Texture *Get(const std::string &name);
+  static const Texture *Create(const std::string &name, const Image &image);
+};
 
 #endif
 

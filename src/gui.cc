@@ -41,7 +41,7 @@ Gui::Update(Game &game) {
     c->Update(game);
   }
 
-  const Point &vsize = game.GetGfx().GetVirtualScreenSize();
+  const Point &vsize = game.GetGfx().GetScreen().GetVirtualSize();
 
   if (this->updateGravity) {
     lastVSize = vsize;
@@ -207,7 +207,7 @@ static void ninePatchStretch(const Texture *tex, const Rect &src, const Rect &de
 }
 
 NinePatch::NinePatch(const std::string &name, const Rect &innerRect) {
-  texture = loadTexture(name);
+  texture = Texture::Get(name);
 
   srcRects[0].pos = Point(0,                                  0);
   srcRects[1].pos = Point(innerRect.pos.x,                    0);
@@ -235,7 +235,7 @@ NinePatch::NinePatch(const std::string &name, const Rect &innerRect) {
 }
 
 NinePatch::NinePatch(const std::string &name) {
-  texture = loadTexture(name);
+  texture = Texture::Get(name);
 
   Rect innerRect(texture->size/4, texture->size/2);
 

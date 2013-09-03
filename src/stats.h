@@ -9,8 +9,8 @@ struct EffectProperties;
 namespace Const {
   static constexpr float WalkSpeedFactorPerAGI   = 0.2f; // double walk speed every 5 agi points
   static constexpr float AttackSpeedFactorPerAGI = 0.2f; // double speed every 5 agi points
-  static constexpr float ExpLevelBase            = 5.0f; // 
-  static constexpr float ExpLevelSkill           = 3.0f; // 
+  static constexpr float ExpLevelBase            = 5.0f; //
+  static constexpr float ExpLevelSkill           = 3.0f; //
 };
 
 enum class HealthType : uint8_t {
@@ -45,7 +45,7 @@ enum class Element : uint8_t {
   Fire,
   Water,
   Earth,
-  Air, // TODO: rename to Wind
+  Wind,
   Life
 };
 

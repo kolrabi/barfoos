@@ -534,8 +534,8 @@ void Cell::SetWorld(World *world, const IVector3 &pos) {
       this->SetEmissiveTexture(info->emissiveTextures[idx]);
   }
 
-  if (this->info->activeTexture != "") this->activeTexture = loadTexture("cells/texture/"+this->info->activeTexture);
-  if (this->info->emissiveActiveTexture != "") this->emissiveActiveTexture = loadTexture("cells/texture/"+this->info->emissiveActiveTexture);
+  if (this->info->activeTexture != "") this->activeTexture = Texture::Get("cells/texture/"+this->info->activeTexture);
+  if (this->info->emissiveActiveTexture != "") this->emissiveActiveTexture = Texture::Get("cells/texture/"+this->info->emissiveActiveTexture);
 
   this->pos = pos;
   for (size_t i=0; i<6; i++) {
@@ -704,7 +704,7 @@ Deserializer &operator >> (Deserializer &deser, Cell &cell) {
 
   std::string textureName;
   deser >> textureName;
-  if (textureName != "") cell.texture = loadTexture(textureName);
+  if (textureName != "") cell.texture = Texture::Get(textureName);
 
   deser >> cell.uscale;
   deser >> cell.lastT >> cell.tickPhase >> cell.lastUseT;

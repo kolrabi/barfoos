@@ -27,8 +27,8 @@ Player::Player() :
   Mob("player"),
 
   // rendering
-  crosshairTex      (loadTexture("gui/crosshair")),
-  slotTex           (loadTexture("gui/slot")),
+  crosshairTex      (Texture::Get("gui/crosshair")),
+  slotTex           (Texture::Get("gui/slot")),
 
   bobPhase          (0.0),
   bobAmplitude      (0.0),
@@ -44,7 +44,7 @@ Player::Player() :
   lastHurtT         (),
   pain              (0.0),
   hpFlashT          (0.0),
-  
+
   castStart         (0.0),
   lastCast          (0.0),
 
@@ -77,15 +77,15 @@ Player::Player() :
   gemSprites[Element::Physical] = Sprite("items/texture/gem.empty");
   gemSprites[Element::Fire]     = Sprite("items/texture/gem.fire");
   gemSprites[Element::Earth]    = Sprite("items/texture/gem.earth");
-  gemSprites[Element::Air]      = Sprite("items/texture/gem.wind");
+  gemSprites[Element::Wind]      = Sprite("items/texture/gem.wind");
   gemSprites[Element::Water]    = Sprite("items/texture/gem.water");
   gemSprites[Element::Life]     = Sprite("items/texture/gem.life");
 }
 
 Player::Player(Deserializer &deser) : Mob("player", deser),
   // rendering
-  crosshairTex      (loadTexture("gui/crosshair")),
-  slotTex           (loadTexture("gui/slot")),
+  crosshairTex      (Texture::Get("gui/crosshair")),
+  slotTex           (Texture::Get("gui/slot")),
 
   bobPhase          (0.0),
   bobAmplitude      (0.0),
@@ -98,7 +98,7 @@ Player::Player(Deserializer &deser) : Mob("player", deser),
 
   lastHurtT         (),
   pain              (0.0),
-  
+
   castStart         (0.0),
   lastCast          (0.0),
 
@@ -120,7 +120,7 @@ Player::Player(Deserializer &deser) : Mob("player", deser),
   gemSprites[Element::Physical] = Sprite("items/texture/gem.empty");
   gemSprites[Element::Fire]     = Sprite("items/texture/gem.fire");
   gemSprites[Element::Earth]    = Sprite("items/texture/gem.earth");
-  gemSprites[Element::Air]      = Sprite("items/texture/gem.wind");
+  gemSprites[Element::Wind]      = Sprite("items/texture/gem.wind");
   gemSprites[Element::Water]    = Sprite("items/texture/gem.water");
   gemSprites[Element::Life]     = Sprite("items/texture/gem.life");
 }
@@ -372,8 +372,8 @@ void
 Player::DrawGUI(Gfx &gfx) const {
   gfx.SetShader("gui");
   gfx.SetColor(IColor(255,255,255));
-  
-  Point itemPos = gfx.AlignBottomRightScreen(Point(32,32), 4);
+
+  Point itemPos = gfx.GetScreen().AlignBottomRightScreen(Point(32,32), 4);
   gfx.SetTextureFrame(this->slotTex);
   gfx.DrawIconQuad(itemPos);
   gfx.DrawIconQuad(itemPos - Point(36,0));
@@ -401,7 +401,7 @@ Player::DrawGUI(Gfx &gfx) const {
   }
 
   // draw crosshair
-  const Point &vsize = gfx.GetVirtualScreenSize();
+  const Point &vsize = gfx.GetScreen().GetVirtualSize();
   Sprite sprite;
   sprite.texture = crosshairTex;
   gfx.DrawIcon(sprite, Point(vsize.x/2, vsize.y/2));
@@ -461,19 +461,19 @@ Player::DrawGUI(Gfx &gfx) const {
     skills += " (" + ToString(s.second) + ")\n";
   }
 
-  snprintf(tmp, sizeof(tmp), 
+  snprintf(tmp, sizeof(tmp),
     u8"%s%3.1f\n"
     u8"\u0080 %-5u "
     u8"\u008B %-3u "
     u8"\u008C %-3u "
     u8"\u008D %-3u "
     u8"\u008E %-3u "
-    u8"\u008F %-3u ", 
-    skills.c_str(), fps, 
+    u8"\u008F %-3u ",
+    skills.c_str(), fps,
     this->GetGold(),
     this->GetGems(Element::Fire),
     this->GetGems(Element::Water),
-    this->GetGems(Element::Air),
+    this->GetGems(Element::Wind),
     this->GetGems(Element::Earth),
     this->GetGems(Element::Life)
   );
@@ -491,9 +491,9 @@ Player::HandleEvent(const InputEvent &event) {
       if (event.key == InputKey::ElementClear) this->ClearElements();
       if (event.key == InputKey::ElementFire)  this->QueueElement(Element::Fire);
       if (event.key == InputKey::ElementWater) this->QueueElement(Element::Water);
-      if (event.key == InputKey::ElementAir)   this->QueueElement(Element::Air);
+      if (event.key == InputKey::ElementAir)   this->QueueElement(Element::Wind);
       if (event.key == InputKey::ElementEarth) this->QueueElement(Element::Earth);
-      if (event.key == InputKey::ElementLife)  this->QueueElement(Element::Life);      
+      if (event.key == InputKey::ElementLife)  this->QueueElement(Element::Life);
     }
   } else if (event.type == InputEventType::MouseDelta) {
 #if WIN32
@@ -564,8 +564,8 @@ void
 Player::AddMessage(const std::string &text, const std::string &font) {
   Message *msg = new Message(text, font);
   if (this->messages.size() && this->messages.back()->messageTime > 1.8 && this->messages.back()->text->GetFontName() == font) {
-    (*this->messages.back()->text) = this->messages.back()->text->GetText() + " " + text; 
-  } else {  
+    (*this->messages.back()->text) = this->messages.back()->text->GetText() + " " + text;
+  } else {
     this->messages.push_back(msg);
   }
 }
@@ -700,16 +700,16 @@ Player::QueueElement(Element element) {
 
   if (this->elements.size() < maxElements && elemCount <= this->GetGems(element)) {
     this->elements.push_back(element);
-    // TODO: play sound
+    this->PlaySound("gem."+ToString(this->elements.size()));
   } else {
-    // TODO: play sound
+    this->PlaySound("gem.full");
   }
 }
 
 void
 Player::ClearElements() {
-  // TODO: play sound
-  this->elements.clear();  
+  this->PlaySound("gem.clear");
+  this->elements.clear();
 }
 
 void
@@ -717,12 +717,12 @@ Player::CastSpell(RunningState &state) {
   // find spell from queued elements
   const Spell &spell = getSpell(this->elements);
   float t = state.GetGame().GetTime();
-  
+
   if (castStart != 0.0 && t - castStart > spell.maxDuration) {
     this->StopCasting();
     return;
   } else if (t - lastCast < spell.castInterval) return;
-  
+
 
   Log("trying to cast spell %s\n", spell.name.c_str());
 
@@ -739,9 +739,10 @@ Player::CastSpell(RunningState &state) {
   }
 }
 
-void 
+void
 Player::StopCasting() {
-  // TODO: remove gems from inventory
+  for (Element e:this->elements)
+    this->inventory.RemoveGem(e);
   this->elements.clear();
   this->castStart = 0.0;
   this->lastCast = 0.0;

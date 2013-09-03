@@ -306,6 +306,18 @@
     <File Name="src/itemproperties.cc"/>
     <File Name="src/audio.cc"/>
     <File Name="src/audio.h"/>
+    <File Name="src/fileio.cc"/>
+    <File Name="src/image.cc"/>
+    <File Name="src/spell.cc"/>
+    <File Name="src/vertexbuffer.cc"/>
+    <File Name="src/fileio.h"/>
+    <File Name="src/gamestate.h"/>
+    <File Name="src/image.h"/>
+    <File Name="src/spell.h"/>
+    <File Name="src/vector4.h"/>
+    <File Name="src/vertexbuffer.h"/>
+    <File Name="src/gfxscreen.cc"/>
+    <File Name="src/gfxscreen.h"/>
   </VirtualDirectory>
   <Settings Type="Dynamic Library">
     <GlobalSettings>
