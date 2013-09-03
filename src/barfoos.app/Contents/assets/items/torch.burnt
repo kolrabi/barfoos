@@ -1,0 +1,20 @@
+Tex               torch
+
+Frames            4
+Anim              0 1 0
+
+Hand
+
+Damage            1
+
+Replacement       torch.burnt
+
+Cooldown          0.4
+
+NoModifier
+NoBeatitude
+
+UnidentifiedName "burnt torch"
+IdentifiedName   "burnt torch"
+
+Stack

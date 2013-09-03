@@ -1,0 +1,9 @@
+tex lava
+dynamic
+transparent
+liquid
+uvturb
+wave
+light 300 200 100
+speed 0.2
+LavaDamage 2

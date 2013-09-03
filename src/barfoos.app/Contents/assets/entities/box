@@ -1,0 +1,23 @@
+Class       entity
+Name        chest
+
+Tex         chest
+Box
+
+Extents     0.5 0.4 0.4
+Solid
+
+Step        0
+Mass        0
+Move        0
+Speed       0
+Health      5
+
+OpenInventory
+LockedChance 0.3
+
+inventory 0.5 torch
+inventory 0.5 torch
+inventory 0.1 torch
+inventory 0.4 sword
+

@@ -1,0 +1,72 @@
+Size     3  5  5
+Level    0 -1 20.0
+
+group    doorway
+
+UseLastId
+
+Conn     1  1  2   -1
+  Next   $hallway
+  Next   $stairs
+  Next   $room
+
+Conn     1  1  2    1
+  Next   $hallway
+  Next   $stairs
+  Next   $room
+
+Def      #
+  Cell   brick
+
+Def      .
+  Cell   air
+
+Def      \
+  Cell   brick
+  Bottom 0.75 0 0 0.75
+
+Def      -  brick
+  Bottom 0.75 0.75 0.75 0.75
+  
+Def /
+  Cell   brick
+  Bottom 0 0.75 0.75 0
+  srev
+
+Def &
+  Cell   brick
+  NoLock
+  OnlyDefault
+  
+
+Slice    0 0
+&#&
+&#&
+&#&
+&#&
+&#&
+
+slice 1 2
+&#&
+&.&
+&.&
+&.&
+&#&
+
+slice 3 3
+&#&
+&/&
+&-&
+&\&
+&#&
+
+Entity 0.5 "torch" -3  1 2 1
+Entity 0.5 "torch"  3  1 2 3
+
+slice 4 4
+&#&
+&#&
+&#&
+&#&
+&#&
+

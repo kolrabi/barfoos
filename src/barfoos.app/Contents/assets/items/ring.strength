@@ -1,0 +1,17 @@
+Group             item
+Group             ring
+Level             0 -1 0.2
+
+UnidentifiedName  "ring made of iron"
+IdentifiedName    "ring"
+
+Tex               ring.iron
+Frames            1
+
+Effect            1.0 item.strength
+
+Ring
+
+NoModifier
+# NoBeatitude
+

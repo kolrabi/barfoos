@@ -1,0 +1,23 @@
+tex           gate
+
+Dynamic
+Transparent
+DoubleSided
+Pickable
+OnUseReplace
+Multi
+
+HideSides     lrud.b
+ShowSides     ....f.
+Scale         1.0 1.0 0.99
+
+ClipSidesIn   ....f.
+ClipSidesOut  ....f.
+
+OnUseCascade  ..ud..
+UseDelay      0.2
+
+Replace       door.right.closed
+
+Sound         use door.close
+Sound         use.locked door.locked

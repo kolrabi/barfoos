@@ -1,0 +1,632 @@
+GLFW initialized
+Initializing game
+Initializing GFX
+Generated noise texture '*[256,256][32.000000,32.000000,32.000000][0.000000,0.000000,0.000000]' as 1.
+Loading image gui/font.default
+Loading image gui/button.enabled
+Loading image gui/button.disabled
+Loading image gui/button.hover
+Loading image gui/button.active
+Loading image gui/font.big
+Game object initialized 0x7fa745001800, new game
+entering mainloop
+Texture gui/font.big updated since 0...
+Loading image gui/font.big
+Texture gui/button.active updated since 0...
+Loading image gui/button.active
+Texture gui/button.hover updated since 0...
+Loading image gui/button.hover
+Texture gui/button.disabled updated since 0...
+Loading image gui/button.disabled
+Texture gui/button.enabled updated since 0...
+Loading image gui/button.enabled
+Texture gui/font.default updated since 0...
+Loading image gui/font.default
++RunningState() 0x7fa74488ea70 0x7fa745001878 0x7fa745001800 0x7fa745001800
+Loading cell properties for type 'air'
+Loading cell properties for type 'bars'
+Loading image cells/texture/bars
+Loading cell properties for type 'bedrock'
+Loading image cells/texture/bedrock
+Loading cell properties for type 'brick'
+Loading image cells/texture/brickstep
+Loading image cells/texture/brickstep_crack
+Loading image cells/texture/brickstep_mossy
+Loading cell properties for type 'brick.secret'
+Loading cell properties for type 'carpet.red'
+Loading image cells/texture/carpet.red
+Loading cell properties for type 'default'
+Loading image cells/texture/dirt
+Loading cell properties for type 'dirt'
+Loading cell properties for type 'door.right.closed'
+Loading image cells/texture/gate
+Loading cell properties for type 'door.right.open'
+Loading cell properties for type 'frozenlava'
+Loading image cells/texture/rock
+Loading cell properties for type 'gate'
+Loading cell properties for type 'ice'
+Loading image cells/texture/water
+Loading cell properties for type 'ladder.right'
+Loading image cells/texture/ladder
+Loading cell properties for type 'lava'
+Loading image cells/texture/lava
+Loading cell properties for type 'pillar'
+Loading cell properties for type 'rock'
+Loading cell properties for type 'shooter'
+Loading image cells/texture/shooter
+Loading cell properties for type 'step'
+Loading image cells/texture/step
+Loading cell properties for type 'teleport'
+Loading image cells/texture/teleport.off
+Loading cell properties for type 'torch'
+Loading cell properties for type 'torch2'
+Loading cell properties for type 'torch3'
+Loading cell properties for type 'water'
+Loading cell properties for type 'wood'
+Loading image cells/texture/planks
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Ignoring unknown feature property: mob
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Feature 'start'
+Feature 'mote'
+Feature 'living_quarters.0'
+Feature 'hallway_small'
+Feature 'hallway_lava'
+Feature 'hallway.ladder.down'
+Feature 'hallway'
+Feature 'stairs_short'
+Feature 'hallway.ladder.up'
+Feature 'doorway_wood'
+Feature 'doorway'
+Feature 'door'
+Feature 'bridge'
+Feature 'alcove'
+Loading image entities/texture/chest
+Loading image entities/texture/grass
+Loading image entities/texture/hanging_moss.small
+Loading image entities/texture/particle.bfw9k
+Line 21: Ignoring 'noclip'
+Loading image entities/texture/particle.bubble
+Loading image entities/texture/particle.rock
+Loading image entities/texture/particle.teleport
+Line 22: Ignoring 'noclip'
+Loading image entities/texture/projectile.bfw9k
+Loading image entities/texture/slime
+Loading image entities/texture/spider
+Loading image entities/texture/torch
+Loading image entities/texture/wizard
+Loading image entities/texture/wizard.emissive
+Line 6: ignoring 'eqadddex'
+Loading image items/texture/leather
+Loading image items/texture/fist
+Loading image items/texture/gem.earth
+Loading image items/texture/gem.fire
+Loading image items/texture/gem.life
+Loading image items/texture/gem.water
+Loading image items/texture/gem.wind
+Loading image items/texture/gold
+Loading image items/texture/key
+Loading image items/texture/lockpick
+Loading image items/texture/potion.empty
+Loading image items/texture/potion.red
+Loading image items/texture/potion.yellow
+Loading image items/texture/potion.green
+Loading image items/texture/potion.purple
+Loading image items/texture/potion.clear
+Loading image items/texture/ring.silver
+Loading image items/texture/ring.gold
+Loading image items/texture/ring.ruby
+Loading image items/texture/ring.iron
+Loading image items/texture/scroll
+Loading image items/texture/sword2
+Loading image items/texture/torch
+Loading image items/texture/wand.black
+Loading image items/texture/wand.empty
+0x7fa74488ea70 0x7fa745001800 0x7fa745001878
+Creating ground...
+Filling ground...
+Building features...
+Loading image gui/durability
+Made a nice world with 551 features and height 37 :) ...
+Carving caves...
+Placing 8 teleports...
+Loading image cells/texture/teleport.on
+Placing 18 traps...
+Spawning feature entities...
+Placing 163 items...
+Placing some decoration (528 of them)...
+Placing 0 enemies...
+Wiping the floor...
+Updating all cells...
+updated 274344 neighbours
+Done!
+Loading image gui/crosshair
+Loading image gui/slot
+Loading image items/texture/gem.empty
+Loading image gui/font.small
+23124 cell vertex updates
+Loading image gui/maparrow
+updated 85189 neighbours
+spawning projectile
+adding velocity
+spawning projectile
+adding velocity
+spawning projectile
+adding velocity
+Loading sound land
+Read 20112 / 20112 bytes from sound land
+Format is: 1 channels, 48000 hz
+Loading sound oof
+Read 63862 / 63862 bytes from sound oof
+Format is: 1 channels, 44100 hz
+Loading sound step_d
+Read 17528 / 17528 bytes from sound step_d
+Format is: 1 channels, 44100 hz
+Loading sound step_a
+Read 58520 / 58520 bytes from sound step_a
+Format is: 1 channels, 44100 hz
+Loading sound step_b
+Read 48058 / 48058 bytes from sound step_b
+Format is: 1 channels, 44100 hz
+Loading sound door.close
+Read 63944 / 63944 bytes from sound door.close
+Format is: 1 channels, 48000 hz
+updated 58 neighbours
+Loading sound step_c
+Read 44386 / 44386 bytes from sound step_c
+Format is: 1 channels, 44100 hz
+Loading image gui/button
+Loading image gui/slot.amulet
+Loading image gui/slot.helmet
+Loading image gui/slot.ring
+Loading image gui/slot.armor
+Loading image gui/slot.hand
+Loading image gui/slot.pants
+Loading image gui/slot.boots
+InventoryGui::HandleEvent putting item scroll of YUCH BIE D XAREPRGAYAYENOVELAR 1 in slot 29
+Combined to good Iron Sword of strength
+InventoryGui::HandleEvent putting item scroll of YUCH BIE D XAREPRGAYAYENOVELAR 1 in slot 5
+Combined to good Iron Sword
+Loading sound jump
+Read 67598 / 67598 bytes from sound jump
+Format is: 1 channels, 48000 hz
+InventoryGui::HandleEvent putting item good Iron Sword of strength 1 in slot 4
+Putting existing item in the backpack
+InventoryGui::HandleEvent putting item life gem 1 in slot 29
+Putting existing item in the backpack
+InventoryGui::HandleEvent putting item golden ring 1 in slot 7
+InventoryGui::HandleEvent putting item ruby ring 1 in slot 6
+InventoryGui::HandleEvent putting item lockpick × 7 7 in slot 25
+InventoryGui::HandleEvent putting item wind gem 1 in slot 28
+Shutting down
+Saving...
+/Users/kolrabi/.barfoos/game
+ser vector<bool>: 258 bits 33 bytes
+ser vector<bool>: 262144 bits 32769 bytes
+/Users/kolrabi/.barfoos/level.0
+-RunningState()
+Removing 0
+No profiling information available.
+GLFW initialized
+Initializing game
+Initializing GFX
+Generated noise texture '*[256,256][32.000000,32.000000,32.000000][0.000000,0.000000,0.000000]' as 1.
+Loading image gui/font.default
+Loading image gui/button.enabled
+Loading image gui/button.disabled
+Loading image gui/button.hover
+Loading image gui/button.active
+Loading image gui/font.big
+Game object initialized 0x7feb6c004a00, new game
+entering mainloop
+Texture gui/font.big updated since 0...
+Loading image gui/font.big
+Texture gui/button.active updated since 0...
+Loading image gui/button.active
+Texture gui/button.hover updated since 0...
+Loading image gui/button.hover
+Texture gui/button.disabled updated since 0...
+Loading image gui/button.disabled
+Texture gui/button.enabled updated since 0...
+Loading image gui/button.enabled
+Texture gui/font.default updated since 0...
+Loading image gui/font.default
++RunningState() 0x7feb6b470240 0x7feb6c004a78 0x7feb6c004a00 0x7feb6c004a00
+Loading cell properties for type 'air'
+Loading cell properties for type 'bars'
+Loading image cells/texture/bars
+Loading cell properties for type 'bedrock'
+Loading image cells/texture/bedrock
+Loading cell properties for type 'brick'
+Loading image cells/texture/brickstep
+Loading image cells/texture/brickstep_crack
+Loading image cells/texture/brickstep_mossy
+Loading cell properties for type 'brick.secret'
+Loading cell properties for type 'carpet.red'
+Loading image cells/texture/carpet.red
+Loading cell properties for type 'default'
+Loading image cells/texture/dirt
+Loading cell properties for type 'dirt'
+Loading cell properties for type 'door.right.closed'
+Loading image cells/texture/gate
+Loading cell properties for type 'door.right.open'
+Loading cell properties for type 'frozenlava'
+Loading image cells/texture/rock
+Loading cell properties for type 'gate'
+Loading cell properties for type 'ice'
+Loading image cells/texture/water
+Loading cell properties for type 'ladder.right'
+Loading image cells/texture/ladder
+Loading cell properties for type 'lava'
+Loading image cells/texture/lava
+Loading cell properties for type 'pillar'
+Loading cell properties for type 'rock'
+Loading cell properties for type 'shooter'
+Loading image cells/texture/shooter
+Loading cell properties for type 'step'
+Loading image cells/texture/step
+Loading cell properties for type 'teleport'
+Loading image cells/texture/teleport.off
+Loading cell properties for type 'torch'
+Loading cell properties for type 'torch2'
+Loading cell properties for type 'torch3'
+Loading cell properties for type 'water'
+Loading cell properties for type 'wood'
+Loading image cells/texture/planks
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Ignoring unknown feature property: mob
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Feature 'start'
+Feature 'mote'
+Feature 'living_quarters.0'
+Feature 'hallway_small'
+Feature 'hallway_lava'
+Feature 'hallway.ladder.down'
+Feature 'hallway'
+Feature 'stairs_short'
+Feature 'hallway.ladder.up'
+Feature 'doorway_wood'
+Feature 'doorway'
+Feature 'door'
+Feature 'bridge'
+Feature 'alcove'
+Loading image entities/texture/chest
+Loading image entities/texture/grass
+Loading image entities/texture/hanging_moss.small
+Loading image entities/texture/particle.bfw9k
+Line 21: Ignoring 'noclip'
+Loading image entities/texture/particle.bubble
+Loading image entities/texture/particle.rock
+Loading image entities/texture/particle.teleport
+Line 22: Ignoring 'noclip'
+Loading image entities/texture/projectile.bfw9k
+Loading image entities/texture/slime
+Loading image entities/texture/spider
+Loading image entities/texture/torch
+Loading image entities/texture/wizard
+Loading image entities/texture/wizard.emissive
+Line 6: ignoring 'eqadddex'
+Loading image items/texture/leather
+Loading image items/texture/fist
+Loading image items/texture/gem.earth
+Loading image items/texture/gem.fire
+Loading image items/texture/gem.life
+Loading image items/texture/gem.water
+Loading image items/texture/gem.wind
+Loading image items/texture/gold
+Loading image items/texture/key
+Loading image items/texture/lockpick
+Loading image items/texture/potion.empty
+Loading image items/texture/potion.red
+Loading image items/texture/potion.yellow
+Loading image items/texture/potion.green
+Loading image items/texture/potion.purple
+Loading image items/texture/potion.clear
+Loading image items/texture/ring.silver
+Loading image items/texture/ring.gold
+Loading image items/texture/ring.ruby
+Loading image items/texture/ring.iron
+Loading image items/texture/scroll
+Loading image items/texture/sword2
+Loading image items/texture/torch
+Loading image items/texture/wand.black
+Loading image items/texture/wand.empty
+0x7feb6b470240 0x7feb6c004a00 0x7feb6c004a78
+Creating ground...
+Filling ground...
+Building features...
+Loading image gui/durability
+Made a nice world with 676 features and height 33 :) ...
+Carving caves...
+Placing 5 teleports...
+Loading image cells/texture/teleport.on
+Placing 14 traps...
+Spawning feature entities...
+Placing 177 items...
+Placing some decoration (673 of them)...
+Placing 95 enemies...
+1269 is solid: 0
+1270 is solid: 0
+1271 is solid: 0
+1272 is solid: 0
+1273 is solid: 0
+1274 is solid: 0
+1275 is solid: 0
+1276 is solid: 0
+1277 is solid: 0
+1278 is solid: 0
+1279 is solid: 0
+1280 is solid: 0
+1281 is solid: 0
+1282 is solid: 0
+1283 is solid: 0
+1284 is solid: 0
+1285 is solid: 0
+1286 is solid: 0
+1287 is solid: 0
+1288 is solid: 0
+1289 is solid: 0
+1290 is solid: 0
+1291 is solid: 0
+1292 is solid: 0
+1293 is solid: 0
+1294 is solid: 0
+1295 is solid: 0
+1296 is solid: 0
+1297 is solid: 0
+1298 is solid: 0
+1299 is solid: 0
+1300 is solid: 0
+1301 is solid: 0
+1302 is solid: 0
+1303 is solid: 0
+1304 is solid: 0
+1305 is solid: 0
+1306 is solid: 0
+1307 is solid: 0
+1308 is solid: 0
+1309 is solid: 0
+1310 is solid: 0
+1311 is solid: 0
+1312 is solid: 0
+1313 is solid: 0
+1314 is solid: 0
+1315 is solid: 0
+1316 is solid: 0
+1317 is solid: 0
+1318 is solid: 0
+1319 is solid: 0
+1320 is solid: 0
+1321 is solid: 0
+1322 is solid: 0
+1323 is solid: 0
+1324 is solid: 0
+1325 is solid: 0
+1326 is solid: 0
+1327 is solid: 0
+1328 is solid: 0
+1329 is solid: 0
+1330 is solid: 0
+1331 is solid: 0
+1332 is solid: 0
+1333 is solid: 0
+1334 is solid: 0
+1335 is solid: 0
+1336 is solid: 0
+1337 is solid: 0
+1338 is solid: 0
+1339 is solid: 0
+1340 is solid: 0
+1341 is solid: 0
+1342 is solid: 0
+1343 is solid: 0
+1344 is solid: 0
+1345 is solid: 0
+1346 is solid: 0
+1347 is solid: 0
+1348 is solid: 0
+1349 is solid: 0
+1350 is solid: 0
+1351 is solid: 0
+1352 is solid: 0
+1353 is solid: 0
+1354 is solid: 0
+1355 is solid: 0
+1356 is solid: 0
+1357 is solid: 0
+1358 is solid: 0
+1359 is solid: 0
+1360 is solid: 0
+1361 is solid: 0
+1362 is solid: 0
+1363 is solid: 0
+Wiping the floor...
+Updating all cells...
+updated 278330 neighbours
+Done!
+Loading image gui/crosshair
+Loading image gui/slot
+Loading image items/texture/gem.empty
+Loading image gui/font.small
+25535 cell vertex updates
+Loading image gui/maparrow
+updated 94555 neighbours
+Loading sound land
+Read 20112 / 20112 bytes from sound land
+Format is: 1 channels, 48000 hz
+Loading sound oof
+Read 63862 / 63862 bytes from sound oof
+Format is: 1 channels, 44100 hz
+spawning projectile
+adding velocity
+spawning projectile
+adding velocity
+updated 24 neighbours
+spawning projectile
+adding velocity
+spawning projectile
+adding velocity
+spawning projectile
+adding velocity
+spawning projectile
+adding velocity
+Loading sound step_c
+Read 44386 / 44386 bytes from sound step_c
+Format is: 1 channels, 44100 hz
+Loading sound step_a
+Read 58520 / 58520 bytes from sound step_a
+Format is: 1 channels, 44100 hz
+Loading image gui/button
+Loading image gui/slot.amulet
+Loading image gui/slot.helmet
+Loading image gui/slot.ring
+Loading image gui/slot.armor
+Loading image gui/slot.hand
+Loading image gui/slot.pants
+Loading image gui/slot.boots
+InventoryGui::HandleEvent putting item key 1 in slot 4
+Putting existing item in the backpack
+spawning projectile
+adding velocity
+Loading sound door.close
+Read 63944 / 63944 bytes from sound door.close
+Format is: 1 channels, 48000 hz
+updated 52 neighbours
+Loading sound step_d
+Read 17528 / 17528 bytes from sound step_d
+Format is: 1 channels, 44100 hz
+Loading sound step_b
+Read 48058 / 48058 bytes from sound step_b
+Format is: 1 channels, 44100 hz
+spawning projectile
+adding velocity
+spawning projectile
+adding velocity
+Loading sound jump
+Read 67598 / 67598 bytes from sound jump
+Format is: 1 channels, 48000 hz
+Shutting down
+Saving...
+/Users/kolrabi/.barfoos/game
+ser vector<bool>: 665 bits 84 bytes
+ser vector<bool>: 262144 bits 32769 bytes
+/Users/kolrabi/.barfoos/level.0
+-RunningState()
+Removing 0
+No profiling information available.

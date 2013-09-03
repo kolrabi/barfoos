@@ -1,0 +1,27 @@
+Group             item
+Level             0 -1 0.2
+tex sword2
+frames 1
+
+Damage        1
+Durability    250
+Usedurability 1
+
+cooldown 0.3
+light 64 64 64
+
+hand
+
+UnidentifiedName "Sword"
+IdentifiedName   "Iron Sword"
+
+# OnUseSpawnProjectile projectile.test
+# CanUseNothing
+CanUseEntity
+CanUseCell
+UseSkill sword
+
+Effect  0.9 ""
+Effect  0.1 "$item"
+
+BreakBlockStrength 0.1

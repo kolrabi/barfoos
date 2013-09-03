@@ -1,0 +1,30 @@
+Class       Mob
+
+EmissiveTex particle.teleport
+frames 2
+
+anim 0 2 67
+dyinganim 0
+
+Name ""
+
+step 0
+mass 1
+move 0
+speed 0
+health 0
+
+extents 0.1 0.1 0.1
+size 0.2 0.2
+sizerand 0.5
+nohit
+nocollideentity
+noclip
+
+lifetime 2.0
+lifetimerand 0.5
+
+gravity 0.0
+
+Glow 0 0 128
+

@@ -1,0 +1,15 @@
+Tex               gold
+frames 4
+anim 0 4 10
+anim 0 4 10
+
+#Size              0.5 0.5
+
+UnidentifiedName  "gold"
+IdentifiedName    "gold"
+
+NoBeatitude
+NoModifier
+
+Stack
+

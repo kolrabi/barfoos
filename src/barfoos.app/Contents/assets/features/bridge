@@ -1,0 +1,96 @@
+size 7 7 7
+group hallway
+level 0 -1 10
+
+conn 0 2 3 -1
+next doorway
+next alcove
+
+conn 6 2 3 1
+next doorway
+next alcove
+
+conn 3 6 3 2
+
+def . 
+cell air
+
+def #
+cell brick
+nolock
+
+def % 
+cell step
+bottom 0.5 0.5 0.5 0.5
+
+def &
+cell brick
+onlydefault
+nolock
+
+def a 
+cell step
+bottom 0 1 1 1
+
+def b
+cell step
+bottom 1 1 1 0
+brev
+
+def c 
+cell step
+bottom 1 0 1 1
+brev
+
+def d
+cell step
+bottom 1 1 0 1
+
+def L
+cell lava
+
+slice 0 0
+&&&&&&&
+&#LLL#&
+&#LLL#&
+&#LLL#&
+&#LLL#&
+&#LLL#&
+&&&&&&&
+
+slice 1 1
+&&&&&&&
+&#...#&
+&#...#&
+&#%%%#&
+&#...#&
+&#...#&
+&&&&&&&
+
+slice 2 4
+&&&&&&&
+&.....&
+&.....&
+&.....&
+&.....&
+&.....&
+&&&&&&&
+
+slice 5 5
+&&&&&&&
+&a...b&
+&.....&
+&.....&
+&.....&
+&c...d&
+&&&&&&&
+
+slice 6 6
+&&&&&&&
+&#####&
+&#####&
+&##%##&
+&#####&
+&#####&
+&&&&&&&
+

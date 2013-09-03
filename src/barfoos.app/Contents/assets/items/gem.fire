@@ -1,0 +1,13 @@
+Tex               gem.fire
+Group             elemental_gem
+Group             item
+
+Size              0.5 0.5
+
+UnidentifiedName  "fire gem"
+IdentifiedName    "fire gem"
+
+NoBeatitude
+NoModifier
+
+Stack

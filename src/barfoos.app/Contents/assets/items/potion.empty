@@ -1,0 +1,16 @@
+Group             item
+Tex               potion.empty
+
+Size              0.5 0.5
+
+UnidentifiedName  "Bottle of Air"
+IdentifiedName    "Bottle of Air"
+
+NoBeatitude
+NoModifier
+
+Stack
+
+CanUseCell
+Hand
+PickLiquid

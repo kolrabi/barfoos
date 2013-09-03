@@ -1,0 +1,15 @@
+tex           ladder
+
+Transparent
+DoubleSided
+Pickable
+
+HideSides     l.udfb
+ShowSides     .r....
+Scale         0.99 1.0 0.9375
+
+ClipSidesIn   .r....
+ClipSidesOut  .r....
+
+Ladder
+Speed         0.0015

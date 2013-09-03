@@ -1,0 +1,47 @@
+Class       player
+
+EyeOffset   0.7
+Step        0.6
+Mass      100.0
+Speed       5.0
+
+Health     10.0
+Heal        0.1
+
+Extents     0.2 0.8 0.2
+
+Respawn
+
+Inventory   1.0 scroll.identify
+Inventory   1.0 scroll.identify
+Inventory   1.0 scroll.identify
+Inventory   1.0 scroll.identify
+Inventory   1.0 scroll.identify
+Inventory   1.0 scroll.identify
+Inventory   1.0 $ring
+Inventory   1.0 $ring
+Inventory   1.0 $ring
+Inventory   1.0 $ring
+Inventory   1.0 $ring
+
+str 1
+agi 1
+dex 1
+def 10
+
+Bubble
+
+
+inventory 1.0 lockpick
+inventory 1.0 lockpick
+inventory 1.0 lockpick
+inventory 1.0 lockpick
+inventory 1.0 lockpick
+inventory 1.0 lockpick
+inventory 1.0 lockpick
+
+
+sound jump jump
+sound land land
+sound land.hard oof
+

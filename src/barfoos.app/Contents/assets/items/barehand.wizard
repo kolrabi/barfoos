@@ -1,0 +1,16 @@
+# do 0.5 base damage per hit
+Damage      0
+
+# never expire
+Durability  0
+
+# 1 hit/second
+Cooldown    1.0
+
+OnUseSpawnProjectile projectile.bfw9k
+CanUseNothing
+
+Knockback 100
+
+# OnHitAddBuff buff.poison 0.2
+

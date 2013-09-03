@@ -1,0 +1,797 @@
+==17351== Memcheck, a memory error detector
+==17351== Copyright (C) 2002-2012, and GNU GPL'd, by Julian Seward et al.
+==17351== Using Valgrind-3.8.1 and LibVEX; rerun with -h for copyright info
+==17351== Command: ./barfoos
+==17351== 
+--17351-- run: /usr/bin/dsymutil "./barfoos"
+ GLFW - An OpenGL framework Version 3.0.2
+   Copyright (c) 2002-2006 Marcus Geelnard
+   Copyright (c) 2006-2010 Camilla Berglund
+
+ GLee (OpenGL Easy Extension library) Version 5.2
+   Copyright (c)2006  Ben Woodhouse  All rights reserved.
+
+ zlib version 1.2.8
+   Copyright (C) 1995-2012 Jean-loup Gailly and Mark Adler
+
+libpng version 1.5.17 - June 27, 2013
+Copyright (c) 1998-2013 Glenn Randers-Pehrson
+Copyright (c) 1996-1997 Andreas Dilger
+Copyright (c) 1995-1996 Guy Eric Schalnat, Group 42, Inc.
+GLFW initialized
+Initializing game
+Initializing GFX
+==17351== Conditional jump or move depends on uninitialised value(s)
+==17351==    at 0xA82AD75: gleUpdateViewScissorDataIndexed (in /System/Library/Frameworks/OpenGL.framework/Versions/A/Resources/GLEngine.bundle/GLEngine)
+==17351==    by 0xA6CF9FC: gleUpdateViewScissorData (in /System/Library/Frameworks/OpenGL.framework/Versions/A/Resources/GLEngine.bundle/GLEngine)
+==17351==    by 0xA6CDC9D: gleUpdateState (in /System/Library/Frameworks/OpenGL.framework/Versions/A/Resources/GLEngine.bundle/GLEngine)
+==17351==    by 0xA6CABB8: gleInitializeContext (in /System/Library/Frameworks/OpenGL.framework/Versions/A/Resources/GLEngine.bundle/GLEngine)
+==17351==    by 0xA6C966B: gliCreateContextWithShared (in /System/Library/Frameworks/OpenGL.framework/Versions/A/Resources/GLEngine.bundle/GLEngine)
+==17351==    by 0x12A88: CGLCreateContext (in /System/Library/Frameworks/OpenGL.framework/Versions/A/OpenGL)
+==17351==    by 0xE51C59: -[NSOpenGLContext initWithFormat:shareContext:] (in /System/Library/Frameworks/AppKit.framework/Versions/C/AppKit)
+==17351==    by 0x1000DD609: _glfwCreateContext (in ./barfoos)
+==17351==    by 0x1000DC217: _glfwPlatformCreateWindow (in ./barfoos)
+==17351==    by 0x1000D55B6: glfwCreateWindow (in ./barfoos)
+==17351==    by 0x1000033B0: Gfx::Init(Game&) (gfx.cc:142)
+==17351==    by 0x200000077F: ???
+==17351== 
+==17351== Conditional jump or move depends on uninitialised value(s)
+==17351==    at 0xA82AD75: gleUpdateViewScissorDataIndexed (in /System/Library/Frameworks/OpenGL.framework/Versions/A/Resources/GLEngine.bundle/GLEngine)
+==17351==    by 0xA6CF9FC: gleUpdateViewScissorData (in /System/Library/Frameworks/OpenGL.framework/Versions/A/Resources/GLEngine.bundle/GLEngine)
+==17351==    by 0xA7F85F6: gleUpdatePluginConfig (in /System/Library/Frameworks/OpenGL.framework/Versions/A/Resources/GLEngine.bundle/GLEngine)
+==17351==    by 0xA6D9AF2: gliAttachDrawableWithOptions (in /System/Library/Frameworks/OpenGL.framework/Versions/A/Resources/GLEngine.bundle/GLEngine)
+==17351==    by 0x134D0: CGLGetVirtualScreen (in /System/Library/Frameworks/OpenGL.framework/Versions/A/OpenGL)
+==17351==    by 0x14972: CGLGetPBuffer (in /System/Library/Frameworks/OpenGL.framework/Versions/A/OpenGL)
+==17351==    by 0x15420: CGLSetSurface (in /System/Library/Frameworks/OpenGL.framework/Versions/A/OpenGL)
+==17351==    by 0x10FEBE7: -[NSOpenGLContext setView:] (in /System/Library/Frameworks/AppKit.framework/Versions/C/AppKit)
+==17351==    by 0x1000DC25A: _glfwPlatformCreateWindow (in ./barfoos)
+==17351==    by 0x1000D55B6: glfwCreateWindow (in ./barfoos)
+==17351==    by 0x1000033B0: Gfx::Init(Game&) (gfx.cc:142)
+==17351==    by 0x200000077F: ???
+==17351== 
+==17351== Conditional jump or move depends on uninitialised value(s)
+==17351==    at 0xA82AD75: gleUpdateViewScissorDataIndexed (in /System/Library/Frameworks/OpenGL.framework/Versions/A/Resources/GLEngine.bundle/GLEngine)
+==17351==    by 0xA6CF9FC: gleUpdateViewScissorData (in /System/Library/Frameworks/OpenGL.framework/Versions/A/Resources/GLEngine.bundle/GLEngine)
+==17351==    by 0xA846C9D: gliUpdateDispatchState (in /System/Library/Frameworks/OpenGL.framework/Versions/A/Resources/GLEngine.bundle/GLEngine)
+==17351==    by 0xA6D9B58: gliAttachDrawableWithOptions (in /System/Library/Frameworks/OpenGL.framework/Versions/A/Resources/GLEngine.bundle/GLEngine)
+==17351==    by 0x134D0: CGLGetVirtualScreen (in /System/Library/Frameworks/OpenGL.framework/Versions/A/OpenGL)
+==17351==    by 0x14972: CGLGetPBuffer (in /System/Library/Frameworks/OpenGL.framework/Versions/A/OpenGL)
+==17351==    by 0x15420: CGLSetSurface (in /System/Library/Frameworks/OpenGL.framework/Versions/A/OpenGL)
+==17351==    by 0x10FEBE7: -[NSOpenGLContext setView:] (in /System/Library/Frameworks/AppKit.framework/Versions/C/AppKit)
+==17351==    by 0x1000DC25A: _glfwPlatformCreateWindow (in ./barfoos)
+==17351==    by 0x1000D55B6: glfwCreateWindow (in ./barfoos)
+==17351==    by 0x1000033B0: Gfx::Init(Game&) (gfx.cc:142)
+==17351==    by 0x200000077F: ???
+==17351== 
+==17351== Conditional jump or move depends on uninitialised value(s)
+==17351==    at 0xA846CED: gliUpdateDispatchState (in /System/Library/Frameworks/OpenGL.framework/Versions/A/Resources/GLEngine.bundle/GLEngine)
+==17351==    by 0xA6D9B58: gliAttachDrawableWithOptions (in /System/Library/Frameworks/OpenGL.framework/Versions/A/Resources/GLEngine.bundle/GLEngine)
+==17351==    by 0x134D0: CGLGetVirtualScreen (in /System/Library/Frameworks/OpenGL.framework/Versions/A/OpenGL)
+==17351==    by 0x14972: CGLGetPBuffer (in /System/Library/Frameworks/OpenGL.framework/Versions/A/OpenGL)
+==17351==    by 0x15420: CGLSetSurface (in /System/Library/Frameworks/OpenGL.framework/Versions/A/OpenGL)
+==17351==    by 0x10FEBE7: -[NSOpenGLContext setView:] (in /System/Library/Frameworks/AppKit.framework/Versions/C/AppKit)
+==17351==    by 0x1000DC25A: _glfwPlatformCreateWindow (in ./barfoos)
+==17351==    by 0x1000D55B6: glfwCreateWindow (in ./barfoos)
+==17351==    by 0x1000033B0: Gfx::Init(Game&) (gfx.cc:142)
+==17351==    by 0x200000077F: ???
+==17351==    by 0x100573E2F: ???
+==17351==    by 0x10013AD57: ??? (in ./barfoos)
+==17351== 
+==17351== Conditional jump or move depends on uninitialised value(s)
+==17351==    at 0xAB2C63F: GHAL3D::CGen6ClearProcessor::SetupVertex(GHAL3D::CSurfaceState*, SRectangle<float> const&, GHAL3D::SColor const&, float) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAB2BC36: GHAL3D::CGen6ClearProcessor::InitializeClearContext(GHAL3D::HANDLE_TYPE, SRectangle<float> const&, GHAL3D::SColor const&, float) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAB2A21D: GHAL3D::CGen6ClearProcessor::ClearRenderTarget(GHAL3D::HANDLE_TYPE, SRectangle<float> const&, GHAL3D::SColor const&, float, unsigned int) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAA6A7C9: glrClear (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xA6E259A: glClear_Exec (in /System/Library/Frameworks/OpenGL.framework/Versions/A/Resources/GLEngine.bundle/GLEngine)
+==17351==    by 0x1000D5678: glfwCreateWindow (in ./barfoos)
+==17351==    by 0x1000033B0: Gfx::Init(Game&) (gfx.cc:142)
+==17351==    by 0x200000077F: ???
+==17351==    by 0x100573E2F: ???
+==17351==    by 0x10013AD57: ??? (in ./barfoos)
+==17351==    by 0x238003A9E: ???
+==17351==    by 0x13: ???
+==17351== 
+==17351== Conditional jump or move depends on uninitialised value(s)
+==17351==    at 0xAB2CCAF: GHAL3D::CGen6ClearProcessor::SetupVertex(GHAL3D::CSurfaceState*, SRectangle<float> const&, GHAL3D::SColor const&, float) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAB2BC36: GHAL3D::CGen6ClearProcessor::InitializeClearContext(GHAL3D::HANDLE_TYPE, SRectangle<float> const&, GHAL3D::SColor const&, float) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAB2A21D: GHAL3D::CGen6ClearProcessor::ClearRenderTarget(GHAL3D::HANDLE_TYPE, SRectangle<float> const&, GHAL3D::SColor const&, float, unsigned int) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAA6A7C9: glrClear (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xA6E259A: glClear_Exec (in /System/Library/Frameworks/OpenGL.framework/Versions/A/Resources/GLEngine.bundle/GLEngine)
+==17351==    by 0x1000D5678: glfwCreateWindow (in ./barfoos)
+==17351==    by 0x1000033B0: Gfx::Init(Game&) (gfx.cc:142)
+==17351==    by 0x200000077F: ???
+==17351==    by 0x100573E2F: ???
+==17351==    by 0x10013AD57: ??? (in ./barfoos)
+==17351==    by 0x238003A9E: ???
+==17351==    by 0x13: ???
+==17351== 
+==17351== Conditional jump or move depends on uninitialised value(s)
+==17351==    at 0xAB2CD83: GHAL3D::CGen6ClearProcessor::SetupVertex(GHAL3D::CSurfaceState*, SRectangle<float> const&, GHAL3D::SColor const&, float) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAB2BC36: GHAL3D::CGen6ClearProcessor::InitializeClearContext(GHAL3D::HANDLE_TYPE, SRectangle<float> const&, GHAL3D::SColor const&, float) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAB2A21D: GHAL3D::CGen6ClearProcessor::ClearRenderTarget(GHAL3D::HANDLE_TYPE, SRectangle<float> const&, GHAL3D::SColor const&, float, unsigned int) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAA6A7C9: glrClear (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xA6E259A: glClear_Exec (in /System/Library/Frameworks/OpenGL.framework/Versions/A/Resources/GLEngine.bundle/GLEngine)
+==17351==    by 0x1000D5678: glfwCreateWindow (in ./barfoos)
+==17351==    by 0x1000033B0: Gfx::Init(Game&) (gfx.cc:142)
+==17351==    by 0x200000077F: ???
+==17351==    by 0x100573E2F: ???
+==17351==    by 0x10013AD57: ??? (in ./barfoos)
+==17351==    by 0x238003A9E: ???
+==17351==    by 0x13: ???
+==17351== 
+==17351== Conditional jump or move depends on uninitialised value(s)
+==17351==    at 0xA82AD75: gleUpdateViewScissorDataIndexed (in /System/Library/Frameworks/OpenGL.framework/Versions/A/Resources/GLEngine.bundle/GLEngine)
+==17351==    by 0xA6CF9FC: gleUpdateViewScissorData (in /System/Library/Frameworks/OpenGL.framework/Versions/A/Resources/GLEngine.bundle/GLEngine)
+==17351==    by 0xA6EB583: gleSetEnable_SCISSOR_TEST (in /System/Library/Frameworks/OpenGL.framework/Versions/A/Resources/GLEngine.bundle/GLEngine)
+==17351==    by 0x100003495: Gfx::Init(Game&) (gfx.cc:274)
+==17351==    by 0x200000077F: ???
+==17351==    by 0x100573E2F: ???
+==17351==    by 0x10013AD57: ??? (in ./barfoos)
+==17351==    by 0x238003A9E: ???
+==17351==    by 0x13: ???
+==17351==    by 0x4: ???
+==17351== 
+Point::operator std::string()
+Vector3::operator std::string()
+Vector3::operator std::string()
+Generated noise texture '*[256,256][32.000000,32.000000,32.000000][0.000000,0.000000,0.000000]' as 1.
+==17351== Conditional jump or move depends on uninitialised value(s)
+==17351==    at 0xA6EA576: glTexCoordPointer_Exec (in /System/Library/Frameworks/OpenGL.framework/Versions/A/Resources/GLEngine.bundle/GLEngine)
+==17351==    by 0xA762797: glInterleavedArrays_Exec (in /System/Library/Frameworks/OpenGL.framework/Versions/A/Resources/GLEngine.bundle/GLEngine)
+==17351==    by 0x100002495: Gfx::BindVertexPointer(Vertex const*) (gfx.cc:514)
+==17351==    by 0x100574C9F: ???
+==17351==    by 0x100574C9F: ???
+==17351==    by 0x100573E2F: ???
+==17351==    by 0x100003573: Gfx::Init(Game&) (gfx.cc:294)
+==17351==    by 0x100000000FF: ???
+==17351==    by 0x100573E2F: ???
+==17351==    by 0x4200000041FFFFFF: ???
+==17351==    by 0x241FFFFFF: ???
+==17351== 
+==17351== Conditional jump or move depends on uninitialised value(s)
+==17351==    at 0xA6E9E03: glColorPointer_Exec (in /System/Library/Frameworks/OpenGL.framework/Versions/A/Resources/GLEngine.bundle/GLEngine)
+==17351==    by 0xA7627D6: glInterleavedArrays_Exec (in /System/Library/Frameworks/OpenGL.framework/Versions/A/Resources/GLEngine.bundle/GLEngine)
+==17351==    by 0x100002495: Gfx::BindVertexPointer(Vertex const*) (gfx.cc:514)
+==17351==    by 0x100574C9F: ???
+==17351==    by 0x100574C9F: ???
+==17351==    by 0x100573E2F: ???
+==17351==    by 0x100003573: Gfx::Init(Game&) (gfx.cc:294)
+==17351==    by 0x100000000FF: ???
+==17351==    by 0x100573E2F: ???
+==17351==    by 0x4200000041FFFFFF: ???
+==17351==    by 0x241FFFFFF: ???
+==17351== 
+==17351== Conditional jump or move depends on uninitialised value(s)
+==17351==    at 0xA6F38D3: glNormalPointer_Exec (in /System/Library/Frameworks/OpenGL.framework/Versions/A/Resources/GLEngine.bundle/GLEngine)
+==17351==    by 0xA762814: glInterleavedArrays_Exec (in /System/Library/Frameworks/OpenGL.framework/Versions/A/Resources/GLEngine.bundle/GLEngine)
+==17351==    by 0x100002495: Gfx::BindVertexPointer(Vertex const*) (gfx.cc:514)
+==17351==    by 0x100574C9F: ???
+==17351==    by 0x100574C9F: ???
+==17351==    by 0x100573E2F: ???
+==17351==    by 0x100003573: Gfx::Init(Game&) (gfx.cc:294)
+==17351==    by 0x100000000FF: ???
+==17351==    by 0x100573E2F: ???
+==17351==    by 0x4200000041FFFFFF: ???
+==17351==    by 0x241FFFFFF: ???
+==17351== 
+==17351== Conditional jump or move depends on uninitialised value(s)
+==17351==    at 0xA6EA195: glVertexPointer_Exec (in /System/Library/Frameworks/OpenGL.framework/Versions/A/Resources/GLEngine.bundle/GLEngine)
+==17351==    by 0x100002495: Gfx::BindVertexPointer(Vertex const*) (gfx.cc:514)
+==17351==    by 0x100574C9F: ???
+==17351==    by 0x100574C9F: ???
+==17351==    by 0x100573E2F: ???
+==17351==    by 0x100003573: Gfx::Init(Game&) (gfx.cc:294)
+==17351==    by 0x100000000FF: ???
+==17351==    by 0x100573E2F: ???
+==17351==    by 0x4200000041FFFFFF: ???
+==17351==    by 0x241FFFFFF: ???
+==17351== 
+Loading texture gui/font.default as 2
+Loading texture gui/button.enabled as 3
+Loading texture gui/button.disabled as 4
+Loading texture gui/button.hover as 5
+Loading texture gui/button.active as 6
+Loading texture gui/font.big as 7
+Game object initialized 0x100573e30, new game
+entering mainloop
+==17351== Conditional jump or move depends on uninitialised value(s)
+==17351==    at 0xACA0BC8: iSTD::CHashTable<GHAL3D::SGen4CSALUValueNumberingHashKey, unsigned int, GHAL3D::CAllocator>::Get(GHAL3D::SGen4CSALUValueNumberingHashKey const&, unsigned int&) const (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAABC071: GHAL3D::CGen4LIRValueNumberingHashTable::Get(GHAL3D::SGen4LIRValueNumberingHashKey const*, unsigned int&) const (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAC1101B: GHAL3D::CGen4LIRBasicBlock::ValueNumbering(unsigned int, GHAL3D::CGen4LIRValueNumberingHashTable*, iSTD::CHashTable<unsigned int, unsigned int, GHAL3D::CAllocator>*, GHAL3D::CGen4LIRInstructionList*, bool, GHAL3D::CGen4SSAMappingTable*, iSTD::CBitSet<GHAL3D::CAllocator>&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAC2D189: GHAL3D::CGen4LIRControlFlowGraph::ValueNumbering(unsigned int, GHAL3D::CGen4LIRInstructionList*, GHAL3D::CGen4SSAMappingTable*, iSTD::CBitSet<GHAL3D::CAllocator>&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAC351B0: GHAL3D::CGen4KernelFunctionList::VirtualRegistersToRegisters(GHAL3D::CGen4EURegisterAllocator*, bool, GHAL3D::CGen4ShaderDecomposer*, GHAL3D::CGen4ShaderSymbolTable*, S3DKernelHardwareCapabilities const&, unsigned int, unsigned int, unsigned int, bool&, unsigned int&, unsigned int&, unsigned int&, GHAL3D::SHADER_TYPE) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAB649C6: GHAL3D::CGen6PixelShaderKernelProgram::Compile(GHAL3D::SKernelCompilerControls const&, bool, unsigned int, unsigned int, unsigned int, bool&, unsigned int&, unsigned int&, unsigned int&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAB64C56: GHAL3D::CGen6PixelShaderKernelProgram::Compile8(bool) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAB65424: GHAL3D::CGen6PixelShaderKernelProgram::Build() (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAB63345: GHAL3D::CGen6PixelShaderKernelProgram::Create(void const*, PLATFORM_STR, S3DKernelHardwareCapabilities const&, GHAL3D::CPixelShader const*, GHAL3D::SGen6PixelShaderKernelProgramCacheKey const*, GHAL3D::CGen6PixelShaderKernelProgram*&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAD13B9C: GHAL3D::CGen6PixelShaderKernelProgramCacheData::Initialize() (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAD13D3D: GHAL3D::CGen6PixelShaderKernelProgramCacheData::Create(GHAL3D::CStateProcessorCache*, GHAL3D::SGen6PixelShaderKernelProgramCacheKey const&, GHAL3D::CGen6PixelShaderKernelProgramCacheData*&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAD2C5CF: GHAL3D::CStateCache<GHAL3D::SGen6PixelShaderKernelProgramCacheKey, GHAL3D::CGen6PixelShaderKernelProgramCacheData>::AllocateData(GHAL3D::SGen6PixelShaderKernelProgramCacheKey const&, GHAL3D::HANDLE_TYPE&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351== 
+==17351== Use of uninitialised value of size 8
+==17351==    at 0xACA0BCC: iSTD::CHashTable<GHAL3D::SGen4CSALUValueNumberingHashKey, unsigned int, GHAL3D::CAllocator>::Get(GHAL3D::SGen4CSALUValueNumberingHashKey const&, unsigned int&) const (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAABC071: GHAL3D::CGen4LIRValueNumberingHashTable::Get(GHAL3D::SGen4LIRValueNumberingHashKey const*, unsigned int&) const (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAC1101B: GHAL3D::CGen4LIRBasicBlock::ValueNumbering(unsigned int, GHAL3D::CGen4LIRValueNumberingHashTable*, iSTD::CHashTable<unsigned int, unsigned int, GHAL3D::CAllocator>*, GHAL3D::CGen4LIRInstructionList*, bool, GHAL3D::CGen4SSAMappingTable*, iSTD::CBitSet<GHAL3D::CAllocator>&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAC2D189: GHAL3D::CGen4LIRControlFlowGraph::ValueNumbering(unsigned int, GHAL3D::CGen4LIRInstructionList*, GHAL3D::CGen4SSAMappingTable*, iSTD::CBitSet<GHAL3D::CAllocator>&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAC351B0: GHAL3D::CGen4KernelFunctionList::VirtualRegistersToRegisters(GHAL3D::CGen4EURegisterAllocator*, bool, GHAL3D::CGen4ShaderDecomposer*, GHAL3D::CGen4ShaderSymbolTable*, S3DKernelHardwareCapabilities const&, unsigned int, unsigned int, unsigned int, bool&, unsigned int&, unsigned int&, unsigned int&, GHAL3D::SHADER_TYPE) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAB649C6: GHAL3D::CGen6PixelShaderKernelProgram::Compile(GHAL3D::SKernelCompilerControls const&, bool, unsigned int, unsigned int, unsigned int, bool&, unsigned int&, unsigned int&, unsigned int&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAB64C56: GHAL3D::CGen6PixelShaderKernelProgram::Compile8(bool) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAB65424: GHAL3D::CGen6PixelShaderKernelProgram::Build() (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAB63345: GHAL3D::CGen6PixelShaderKernelProgram::Create(void const*, PLATFORM_STR, S3DKernelHardwareCapabilities const&, GHAL3D::CPixelShader const*, GHAL3D::SGen6PixelShaderKernelProgramCacheKey const*, GHAL3D::CGen6PixelShaderKernelProgram*&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAD13B9C: GHAL3D::CGen6PixelShaderKernelProgramCacheData::Initialize() (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAD13D3D: GHAL3D::CGen6PixelShaderKernelProgramCacheData::Create(GHAL3D::CStateProcessorCache*, GHAL3D::SGen6PixelShaderKernelProgramCacheKey const&, GHAL3D::CGen6PixelShaderKernelProgramCacheData*&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAD2C5CF: GHAL3D::CStateCache<GHAL3D::SGen6PixelShaderKernelProgramCacheKey, GHAL3D::CGen6PixelShaderKernelProgramCacheData>::AllocateData(GHAL3D::SGen6PixelShaderKernelProgramCacheKey const&, GHAL3D::HANDLE_TYPE&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351== 
+==17351== Conditional jump or move depends on uninitialised value(s)
+==17351==    at 0xAABD152: iSTD::CHashTable<GHAL3D::SGen4CSALUValueNumberingHashKey, unsigned int, GHAL3D::CAllocator>::Add(iSTD::CHashTable<GHAL3D::SGen4CSALUValueNumberingHashKey, unsigned int, GHAL3D::CAllocator>::CHashKey const&, unsigned int const&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAABC624: GHAL3D::CGen4LIRValueNumberingHashTable::Add(GHAL3D::SGen4LIRValueNumberingHashKey*, unsigned int) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAC11557: GHAL3D::CGen4LIRBasicBlock::ValueNumbering(unsigned int, GHAL3D::CGen4LIRValueNumberingHashTable*, iSTD::CHashTable<unsigned int, unsigned int, GHAL3D::CAllocator>*, GHAL3D::CGen4LIRInstructionList*, bool, GHAL3D::CGen4SSAMappingTable*, iSTD::CBitSet<GHAL3D::CAllocator>&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAC2D189: GHAL3D::CGen4LIRControlFlowGraph::ValueNumbering(unsigned int, GHAL3D::CGen4LIRInstructionList*, GHAL3D::CGen4SSAMappingTable*, iSTD::CBitSet<GHAL3D::CAllocator>&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAC351B0: GHAL3D::CGen4KernelFunctionList::VirtualRegistersToRegisters(GHAL3D::CGen4EURegisterAllocator*, bool, GHAL3D::CGen4ShaderDecomposer*, GHAL3D::CGen4ShaderSymbolTable*, S3DKernelHardwareCapabilities const&, unsigned int, unsigned int, unsigned int, bool&, unsigned int&, unsigned int&, unsigned int&, GHAL3D::SHADER_TYPE) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAB649C6: GHAL3D::CGen6PixelShaderKernelProgram::Compile(GHAL3D::SKernelCompilerControls const&, bool, unsigned int, unsigned int, unsigned int, bool&, unsigned int&, unsigned int&, unsigned int&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAB64C56: GHAL3D::CGen6PixelShaderKernelProgram::Compile8(bool) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAB65424: GHAL3D::CGen6PixelShaderKernelProgram::Build() (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAB63345: GHAL3D::CGen6PixelShaderKernelProgram::Create(void const*, PLATFORM_STR, S3DKernelHardwareCapabilities const&, GHAL3D::CPixelShader const*, GHAL3D::SGen6PixelShaderKernelProgramCacheKey const*, GHAL3D::CGen6PixelShaderKernelProgram*&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAD13B9C: GHAL3D::CGen6PixelShaderKernelProgramCacheData::Initialize() (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAD13D3D: GHAL3D::CGen6PixelShaderKernelProgramCacheData::Create(GHAL3D::CStateProcessorCache*, GHAL3D::SGen6PixelShaderKernelProgramCacheKey const&, GHAL3D::CGen6PixelShaderKernelProgramCacheData*&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAD2C5CF: GHAL3D::CStateCache<GHAL3D::SGen6PixelShaderKernelProgramCacheKey, GHAL3D::CGen6PixelShaderKernelProgramCacheData>::AllocateData(GHAL3D::SGen6PixelShaderKernelProgramCacheKey const&, GHAL3D::HANDLE_TYPE&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351== 
+==17351== Use of uninitialised value of size 8
+==17351==    at 0xAABD157: iSTD::CHashTable<GHAL3D::SGen4CSALUValueNumberingHashKey, unsigned int, GHAL3D::CAllocator>::Add(iSTD::CHashTable<GHAL3D::SGen4CSALUValueNumberingHashKey, unsigned int, GHAL3D::CAllocator>::CHashKey const&, unsigned int const&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAABC624: GHAL3D::CGen4LIRValueNumberingHashTable::Add(GHAL3D::SGen4LIRValueNumberingHashKey*, unsigned int) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAC11557: GHAL3D::CGen4LIRBasicBlock::ValueNumbering(unsigned int, GHAL3D::CGen4LIRValueNumberingHashTable*, iSTD::CHashTable<unsigned int, unsigned int, GHAL3D::CAllocator>*, GHAL3D::CGen4LIRInstructionList*, bool, GHAL3D::CGen4SSAMappingTable*, iSTD::CBitSet<GHAL3D::CAllocator>&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAC2D189: GHAL3D::CGen4LIRControlFlowGraph::ValueNumbering(unsigned int, GHAL3D::CGen4LIRInstructionList*, GHAL3D::CGen4SSAMappingTable*, iSTD::CBitSet<GHAL3D::CAllocator>&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAC351B0: GHAL3D::CGen4KernelFunctionList::VirtualRegistersToRegisters(GHAL3D::CGen4EURegisterAllocator*, bool, GHAL3D::CGen4ShaderDecomposer*, GHAL3D::CGen4ShaderSymbolTable*, S3DKernelHardwareCapabilities const&, unsigned int, unsigned int, unsigned int, bool&, unsigned int&, unsigned int&, unsigned int&, GHAL3D::SHADER_TYPE) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAB649C6: GHAL3D::CGen6PixelShaderKernelProgram::Compile(GHAL3D::SKernelCompilerControls const&, bool, unsigned int, unsigned int, unsigned int, bool&, unsigned int&, unsigned int&, unsigned int&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAB64C56: GHAL3D::CGen6PixelShaderKernelProgram::Compile8(bool) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAB65424: GHAL3D::CGen6PixelShaderKernelProgram::Build() (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAB63345: GHAL3D::CGen6PixelShaderKernelProgram::Create(void const*, PLATFORM_STR, S3DKernelHardwareCapabilities const&, GHAL3D::CPixelShader const*, GHAL3D::SGen6PixelShaderKernelProgramCacheKey const*, GHAL3D::CGen6PixelShaderKernelProgram*&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAD13B9C: GHAL3D::CGen6PixelShaderKernelProgramCacheData::Initialize() (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAD13D3D: GHAL3D::CGen6PixelShaderKernelProgramCacheData::Create(GHAL3D::CStateProcessorCache*, GHAL3D::SGen6PixelShaderKernelProgramCacheKey const&, GHAL3D::CGen6PixelShaderKernelProgramCacheData*&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAD2C5CF: GHAL3D::CStateCache<GHAL3D::SGen6PixelShaderKernelProgramCacheKey, GHAL3D::CGen6PixelShaderKernelProgramCacheData>::AllocateData(GHAL3D::SGen6PixelShaderKernelProgramCacheKey const&, GHAL3D::HANDLE_TYPE&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351== 
+==17351== Conditional jump or move depends on uninitialised value(s)
+==17351==    at 0xAABD1FC: iSTD::CHashTable<GHAL3D::SGen4CSALUValueNumberingHashKey, unsigned int, GHAL3D::CAllocator>::Add(iSTD::CHashTable<GHAL3D::SGen4CSALUValueNumberingHashKey, unsigned int, GHAL3D::CAllocator>::CHashKey const&, unsigned int const&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAABC624: GHAL3D::CGen4LIRValueNumberingHashTable::Add(GHAL3D::SGen4LIRValueNumberingHashKey*, unsigned int) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAC11557: GHAL3D::CGen4LIRBasicBlock::ValueNumbering(unsigned int, GHAL3D::CGen4LIRValueNumberingHashTable*, iSTD::CHashTable<unsigned int, unsigned int, GHAL3D::CAllocator>*, GHAL3D::CGen4LIRInstructionList*, bool, GHAL3D::CGen4SSAMappingTable*, iSTD::CBitSet<GHAL3D::CAllocator>&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAC2D189: GHAL3D::CGen4LIRControlFlowGraph::ValueNumbering(unsigned int, GHAL3D::CGen4LIRInstructionList*, GHAL3D::CGen4SSAMappingTable*, iSTD::CBitSet<GHAL3D::CAllocator>&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAC351B0: GHAL3D::CGen4KernelFunctionList::VirtualRegistersToRegisters(GHAL3D::CGen4EURegisterAllocator*, bool, GHAL3D::CGen4ShaderDecomposer*, GHAL3D::CGen4ShaderSymbolTable*, S3DKernelHardwareCapabilities const&, unsigned int, unsigned int, unsigned int, bool&, unsigned int&, unsigned int&, unsigned int&, GHAL3D::SHADER_TYPE) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAB649C6: GHAL3D::CGen6PixelShaderKernelProgram::Compile(GHAL3D::SKernelCompilerControls const&, bool, unsigned int, unsigned int, unsigned int, bool&, unsigned int&, unsigned int&, unsigned int&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAB64C56: GHAL3D::CGen6PixelShaderKernelProgram::Compile8(bool) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAB65424: GHAL3D::CGen6PixelShaderKernelProgram::Build() (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAB63345: GHAL3D::CGen6PixelShaderKernelProgram::Create(void const*, PLATFORM_STR, S3DKernelHardwareCapabilities const&, GHAL3D::CPixelShader const*, GHAL3D::SGen6PixelShaderKernelProgramCacheKey const*, GHAL3D::CGen6PixelShaderKernelProgram*&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAD13B9C: GHAL3D::CGen6PixelShaderKernelProgramCacheData::Initialize() (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAD13D3D: GHAL3D::CGen6PixelShaderKernelProgramCacheData::Create(GHAL3D::CStateProcessorCache*, GHAL3D::SGen6PixelShaderKernelProgramCacheKey const&, GHAL3D::CGen6PixelShaderKernelProgramCacheData*&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAD2C5CF: GHAL3D::CStateCache<GHAL3D::SGen6PixelShaderKernelProgramCacheKey, GHAL3D::CGen6PixelShaderKernelProgramCacheData>::AllocateData(GHAL3D::SGen6PixelShaderKernelProgramCacheKey const&, GHAL3D::HANDLE_TYPE&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351== 
+==17351== Conditional jump or move depends on uninitialised value(s)
+==17351==    at 0xAABD21F: iSTD::CHashTable<GHAL3D::SGen4CSALUValueNumberingHashKey, unsigned int, GHAL3D::CAllocator>::Add(iSTD::CHashTable<GHAL3D::SGen4CSALUValueNumberingHashKey, unsigned int, GHAL3D::CAllocator>::CHashKey const&, unsigned int const&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAABC624: GHAL3D::CGen4LIRValueNumberingHashTable::Add(GHAL3D::SGen4LIRValueNumberingHashKey*, unsigned int) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAC11557: GHAL3D::CGen4LIRBasicBlock::ValueNumbering(unsigned int, GHAL3D::CGen4LIRValueNumberingHashTable*, iSTD::CHashTable<unsigned int, unsigned int, GHAL3D::CAllocator>*, GHAL3D::CGen4LIRInstructionList*, bool, GHAL3D::CGen4SSAMappingTable*, iSTD::CBitSet<GHAL3D::CAllocator>&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAC2D189: GHAL3D::CGen4LIRControlFlowGraph::ValueNumbering(unsigned int, GHAL3D::CGen4LIRInstructionList*, GHAL3D::CGen4SSAMappingTable*, iSTD::CBitSet<GHAL3D::CAllocator>&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAC351B0: GHAL3D::CGen4KernelFunctionList::VirtualRegistersToRegisters(GHAL3D::CGen4EURegisterAllocator*, bool, GHAL3D::CGen4ShaderDecomposer*, GHAL3D::CGen4ShaderSymbolTable*, S3DKernelHardwareCapabilities const&, unsigned int, unsigned int, unsigned int, bool&, unsigned int&, unsigned int&, unsigned int&, GHAL3D::SHADER_TYPE) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAB649C6: GHAL3D::CGen6PixelShaderKernelProgram::Compile(GHAL3D::SKernelCompilerControls const&, bool, unsigned int, unsigned int, unsigned int, bool&, unsigned int&, unsigned int&, unsigned int&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAB64C56: GHAL3D::CGen6PixelShaderKernelProgram::Compile8(bool) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAB65424: GHAL3D::CGen6PixelShaderKernelProgram::Build() (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAB63345: GHAL3D::CGen6PixelShaderKernelProgram::Create(void const*, PLATFORM_STR, S3DKernelHardwareCapabilities const&, GHAL3D::CPixelShader const*, GHAL3D::SGen6PixelShaderKernelProgramCacheKey const*, GHAL3D::CGen6PixelShaderKernelProgram*&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAD13B9C: GHAL3D::CGen6PixelShaderKernelProgramCacheData::Initialize() (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAD13D3D: GHAL3D::CGen6PixelShaderKernelProgramCacheData::Create(GHAL3D::CStateProcessorCache*, GHAL3D::SGen6PixelShaderKernelProgramCacheKey const&, GHAL3D::CGen6PixelShaderKernelProgramCacheData*&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAD2C5CF: GHAL3D::CStateCache<GHAL3D::SGen6PixelShaderKernelProgramCacheKey, GHAL3D::CGen6PixelShaderKernelProgramCacheData>::AllocateData(GHAL3D::SGen6PixelShaderKernelProgramCacheKey const&, GHAL3D::HANDLE_TYPE&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351== 
+==17351== Use of uninitialised value of size 8
+==17351==    at 0xAABD228: iSTD::CHashTable<GHAL3D::SGen4CSALUValueNumberingHashKey, unsigned int, GHAL3D::CAllocator>::Add(iSTD::CHashTable<GHAL3D::SGen4CSALUValueNumberingHashKey, unsigned int, GHAL3D::CAllocator>::CHashKey const&, unsigned int const&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAABC624: GHAL3D::CGen4LIRValueNumberingHashTable::Add(GHAL3D::SGen4LIRValueNumberingHashKey*, unsigned int) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAC11557: GHAL3D::CGen4LIRBasicBlock::ValueNumbering(unsigned int, GHAL3D::CGen4LIRValueNumberingHashTable*, iSTD::CHashTable<unsigned int, unsigned int, GHAL3D::CAllocator>*, GHAL3D::CGen4LIRInstructionList*, bool, GHAL3D::CGen4SSAMappingTable*, iSTD::CBitSet<GHAL3D::CAllocator>&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAC2D189: GHAL3D::CGen4LIRControlFlowGraph::ValueNumbering(unsigned int, GHAL3D::CGen4LIRInstructionList*, GHAL3D::CGen4SSAMappingTable*, iSTD::CBitSet<GHAL3D::CAllocator>&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAC351B0: GHAL3D::CGen4KernelFunctionList::VirtualRegistersToRegisters(GHAL3D::CGen4EURegisterAllocator*, bool, GHAL3D::CGen4ShaderDecomposer*, GHAL3D::CGen4ShaderSymbolTable*, S3DKernelHardwareCapabilities const&, unsigned int, unsigned int, unsigned int, bool&, unsigned int&, unsigned int&, unsigned int&, GHAL3D::SHADER_TYPE) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAB649C6: GHAL3D::CGen6PixelShaderKernelProgram::Compile(GHAL3D::SKernelCompilerControls const&, bool, unsigned int, unsigned int, unsigned int, bool&, unsigned int&, unsigned int&, unsigned int&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAB64C56: GHAL3D::CGen6PixelShaderKernelProgram::Compile8(bool) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAB65424: GHAL3D::CGen6PixelShaderKernelProgram::Build() (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAB63345: GHAL3D::CGen6PixelShaderKernelProgram::Create(void const*, PLATFORM_STR, S3DKernelHardwareCapabilities const&, GHAL3D::CPixelShader const*, GHAL3D::SGen6PixelShaderKernelProgramCacheKey const*, GHAL3D::CGen6PixelShaderKernelProgram*&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAD13B9C: GHAL3D::CGen6PixelShaderKernelProgramCacheData::Initialize() (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAD13D3D: GHAL3D::CGen6PixelShaderKernelProgramCacheData::Create(GHAL3D::CStateProcessorCache*, GHAL3D::SGen6PixelShaderKernelProgramCacheKey const&, GHAL3D::CGen6PixelShaderKernelProgramCacheData*&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAD2C5CF: GHAL3D::CStateCache<GHAL3D::SGen6PixelShaderKernelProgramCacheKey, GHAL3D::CGen6PixelShaderKernelProgramCacheData>::AllocateData(GHAL3D::SGen6PixelShaderKernelProgramCacheKey const&, GHAL3D::HANDLE_TYPE&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351== 
+==17351== Conditional jump or move depends on uninitialised value(s)
+==17351==    at 0xACA0C0E: iSTD::CHashTable<GHAL3D::SGen4CSALUValueNumberingHashKey, unsigned int, GHAL3D::CAllocator>::Get(GHAL3D::SGen4CSALUValueNumberingHashKey const&, unsigned int&) const (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAABC071: GHAL3D::CGen4LIRValueNumberingHashTable::Get(GHAL3D::SGen4LIRValueNumberingHashKey const*, unsigned int&) const (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAC1101B: GHAL3D::CGen4LIRBasicBlock::ValueNumbering(unsigned int, GHAL3D::CGen4LIRValueNumberingHashTable*, iSTD::CHashTable<unsigned int, unsigned int, GHAL3D::CAllocator>*, GHAL3D::CGen4LIRInstructionList*, bool, GHAL3D::CGen4SSAMappingTable*, iSTD::CBitSet<GHAL3D::CAllocator>&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAC2D189: GHAL3D::CGen4LIRControlFlowGraph::ValueNumbering(unsigned int, GHAL3D::CGen4LIRInstructionList*, GHAL3D::CGen4SSAMappingTable*, iSTD::CBitSet<GHAL3D::CAllocator>&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAC351B0: GHAL3D::CGen4KernelFunctionList::VirtualRegistersToRegisters(GHAL3D::CGen4EURegisterAllocator*, bool, GHAL3D::CGen4ShaderDecomposer*, GHAL3D::CGen4ShaderSymbolTable*, S3DKernelHardwareCapabilities const&, unsigned int, unsigned int, unsigned int, bool&, unsigned int&, unsigned int&, unsigned int&, GHAL3D::SHADER_TYPE) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAB649C6: GHAL3D::CGen6PixelShaderKernelProgram::Compile(GHAL3D::SKernelCompilerControls const&, bool, unsigned int, unsigned int, unsigned int, bool&, unsigned int&, unsigned int&, unsigned int&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAB64C56: GHAL3D::CGen6PixelShaderKernelProgram::Compile8(bool) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAB65424: GHAL3D::CGen6PixelShaderKernelProgram::Build() (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAB63345: GHAL3D::CGen6PixelShaderKernelProgram::Create(void const*, PLATFORM_STR, S3DKernelHardwareCapabilities const&, GHAL3D::CPixelShader const*, GHAL3D::SGen6PixelShaderKernelProgramCacheKey const*, GHAL3D::CGen6PixelShaderKernelProgram*&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAD13B9C: GHAL3D::CGen6PixelShaderKernelProgramCacheData::Initialize() (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAD13D3D: GHAL3D::CGen6PixelShaderKernelProgramCacheData::Create(GHAL3D::CStateProcessorCache*, GHAL3D::SGen6PixelShaderKernelProgramCacheKey const&, GHAL3D::CGen6PixelShaderKernelProgramCacheData*&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAD2C5CF: GHAL3D::CStateCache<GHAL3D::SGen6PixelShaderKernelProgramCacheKey, GHAL3D::CGen6PixelShaderKernelProgramCacheData>::AllocateData(GHAL3D::SGen6PixelShaderKernelProgramCacheKey const&, GHAL3D::HANDLE_TYPE&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351== 
+==17351== Conditional jump or move depends on uninitialised value(s)
+==17351==    at 0xACA0CC8: iSTD::CHashTable<GHAL3D::SGen4CSComparisonValueNumberingHashKey, unsigned int, GHAL3D::CAllocator>::Get(GHAL3D::SGen4CSComparisonValueNumberingHashKey const&, unsigned int&) const (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAABC08B: GHAL3D::CGen4LIRValueNumberingHashTable::Get(GHAL3D::SGen4LIRValueNumberingHashKey const*, unsigned int&) const (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAC1101B: GHAL3D::CGen4LIRBasicBlock::ValueNumbering(unsigned int, GHAL3D::CGen4LIRValueNumberingHashTable*, iSTD::CHashTable<unsigned int, unsigned int, GHAL3D::CAllocator>*, GHAL3D::CGen4LIRInstructionList*, bool, GHAL3D::CGen4SSAMappingTable*, iSTD::CBitSet<GHAL3D::CAllocator>&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAC2D189: GHAL3D::CGen4LIRControlFlowGraph::ValueNumbering(unsigned int, GHAL3D::CGen4LIRInstructionList*, GHAL3D::CGen4SSAMappingTable*, iSTD::CBitSet<GHAL3D::CAllocator>&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAC351B0: GHAL3D::CGen4KernelFunctionList::VirtualRegistersToRegisters(GHAL3D::CGen4EURegisterAllocator*, bool, GHAL3D::CGen4ShaderDecomposer*, GHAL3D::CGen4ShaderSymbolTable*, S3DKernelHardwareCapabilities const&, unsigned int, unsigned int, unsigned int, bool&, unsigned int&, unsigned int&, unsigned int&, GHAL3D::SHADER_TYPE) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAB649C6: GHAL3D::CGen6PixelShaderKernelProgram::Compile(GHAL3D::SKernelCompilerControls const&, bool, unsigned int, unsigned int, unsigned int, bool&, unsigned int&, unsigned int&, unsigned int&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAB64C56: GHAL3D::CGen6PixelShaderKernelProgram::Compile8(bool) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAB65424: GHAL3D::CGen6PixelShaderKernelProgram::Build() (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAB63345: GHAL3D::CGen6PixelShaderKernelProgram::Create(void const*, PLATFORM_STR, S3DKernelHardwareCapabilities const&, GHAL3D::CPixelShader const*, GHAL3D::SGen6PixelShaderKernelProgramCacheKey const*, GHAL3D::CGen6PixelShaderKernelProgram*&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAD13B9C: GHAL3D::CGen6PixelShaderKernelProgramCacheData::Initialize() (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAD13D3D: GHAL3D::CGen6PixelShaderKernelProgramCacheData::Create(GHAL3D::CStateProcessorCache*, GHAL3D::SGen6PixelShaderKernelProgramCacheKey const&, GHAL3D::CGen6PixelShaderKernelProgramCacheData*&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAD2C5CF: GHAL3D::CStateCache<GHAL3D::SGen6PixelShaderKernelProgramCacheKey, GHAL3D::CGen6PixelShaderKernelProgramCacheData>::AllocateData(GHAL3D::SGen6PixelShaderKernelProgramCacheKey const&, GHAL3D::HANDLE_TYPE&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351== 
+==17351== Use of uninitialised value of size 8
+==17351==    at 0xACA0CCC: iSTD::CHashTable<GHAL3D::SGen4CSComparisonValueNumberingHashKey, unsigned int, GHAL3D::CAllocator>::Get(GHAL3D::SGen4CSComparisonValueNumberingHashKey const&, unsigned int&) const (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAABC08B: GHAL3D::CGen4LIRValueNumberingHashTable::Get(GHAL3D::SGen4LIRValueNumberingHashKey const*, unsigned int&) const (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAC1101B: GHAL3D::CGen4LIRBasicBlock::ValueNumbering(unsigned int, GHAL3D::CGen4LIRValueNumberingHashTable*, iSTD::CHashTable<unsigned int, unsigned int, GHAL3D::CAllocator>*, GHAL3D::CGen4LIRInstructionList*, bool, GHAL3D::CGen4SSAMappingTable*, iSTD::CBitSet<GHAL3D::CAllocator>&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAC2D189: GHAL3D::CGen4LIRControlFlowGraph::ValueNumbering(unsigned int, GHAL3D::CGen4LIRInstructionList*, GHAL3D::CGen4SSAMappingTable*, iSTD::CBitSet<GHAL3D::CAllocator>&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAC351B0: GHAL3D::CGen4KernelFunctionList::VirtualRegistersToRegisters(GHAL3D::CGen4EURegisterAllocator*, bool, GHAL3D::CGen4ShaderDecomposer*, GHAL3D::CGen4ShaderSymbolTable*, S3DKernelHardwareCapabilities const&, unsigned int, unsigned int, unsigned int, bool&, unsigned int&, unsigned int&, unsigned int&, GHAL3D::SHADER_TYPE) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAB649C6: GHAL3D::CGen6PixelShaderKernelProgram::Compile(GHAL3D::SKernelCompilerControls const&, bool, unsigned int, unsigned int, unsigned int, bool&, unsigned int&, unsigned int&, unsigned int&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAB64C56: GHAL3D::CGen6PixelShaderKernelProgram::Compile8(bool) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAB65424: GHAL3D::CGen6PixelShaderKernelProgram::Build() (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAB63345: GHAL3D::CGen6PixelShaderKernelProgram::Create(void const*, PLATFORM_STR, S3DKernelHardwareCapabilities const&, GHAL3D::CPixelShader const*, GHAL3D::SGen6PixelShaderKernelProgramCacheKey const*, GHAL3D::CGen6PixelShaderKernelProgram*&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAD13B9C: GHAL3D::CGen6PixelShaderKernelProgramCacheData::Initialize() (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAD13D3D: GHAL3D::CGen6PixelShaderKernelProgramCacheData::Create(GHAL3D::CStateProcessorCache*, GHAL3D::SGen6PixelShaderKernelProgramCacheKey const&, GHAL3D::CGen6PixelShaderKernelProgramCacheData*&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAD2C5CF: GHAL3D::CStateCache<GHAL3D::SGen6PixelShaderKernelProgramCacheKey, GHAL3D::CGen6PixelShaderKernelProgramCacheData>::AllocateData(GHAL3D::SGen6PixelShaderKernelProgramCacheKey const&, GHAL3D::HANDLE_TYPE&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351== 
+==17351== Conditional jump or move depends on uninitialised value(s)
+==17351==    at 0xAAFC4A0: iSTD::CHashTable<GHAL3D::SGen4CSComparisonValueNumberingHashKey, unsigned int, GHAL3D::CAllocator>::Add(iSTD::CHashTable<GHAL3D::SGen4CSComparisonValueNumberingHashKey, unsigned int, GHAL3D::CAllocator>::CHashKey const&, unsigned int const&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAABC6B4: GHAL3D::CGen4LIRValueNumberingHashTable::Add(GHAL3D::SGen4LIRValueNumberingHashKey*, unsigned int) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAC11557: GHAL3D::CGen4LIRBasicBlock::ValueNumbering(unsigned int, GHAL3D::CGen4LIRValueNumberingHashTable*, iSTD::CHashTable<unsigned int, unsigned int, GHAL3D::CAllocator>*, GHAL3D::CGen4LIRInstructionList*, bool, GHAL3D::CGen4SSAMappingTable*, iSTD::CBitSet<GHAL3D::CAllocator>&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAC2D189: GHAL3D::CGen4LIRControlFlowGraph::ValueNumbering(unsigned int, GHAL3D::CGen4LIRInstructionList*, GHAL3D::CGen4SSAMappingTable*, iSTD::CBitSet<GHAL3D::CAllocator>&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAC351B0: GHAL3D::CGen4KernelFunctionList::VirtualRegistersToRegisters(GHAL3D::CGen4EURegisterAllocator*, bool, GHAL3D::CGen4ShaderDecomposer*, GHAL3D::CGen4ShaderSymbolTable*, S3DKernelHardwareCapabilities const&, unsigned int, unsigned int, unsigned int, bool&, unsigned int&, unsigned int&, unsigned int&, GHAL3D::SHADER_TYPE) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAB649C6: GHAL3D::CGen6PixelShaderKernelProgram::Compile(GHAL3D::SKernelCompilerControls const&, bool, unsigned int, unsigned int, unsigned int, bool&, unsigned int&, unsigned int&, unsigned int&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAB64C56: GHAL3D::CGen6PixelShaderKernelProgram::Compile8(bool) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAB65424: GHAL3D::CGen6PixelShaderKernelProgram::Build() (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAB63345: GHAL3D::CGen6PixelShaderKernelProgram::Create(void const*, PLATFORM_STR, S3DKernelHardwareCapabilities const&, GHAL3D::CPixelShader const*, GHAL3D::SGen6PixelShaderKernelProgramCacheKey const*, GHAL3D::CGen6PixelShaderKernelProgram*&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAD13B9C: GHAL3D::CGen6PixelShaderKernelProgramCacheData::Initialize() (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAD13D3D: GHAL3D::CGen6PixelShaderKernelProgramCacheData::Create(GHAL3D::CStateProcessorCache*, GHAL3D::SGen6PixelShaderKernelProgramCacheKey const&, GHAL3D::CGen6PixelShaderKernelProgramCacheData*&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAD2C5CF: GHAL3D::CStateCache<GHAL3D::SGen6PixelShaderKernelProgramCacheKey, GHAL3D::CGen6PixelShaderKernelProgramCacheData>::AllocateData(GHAL3D::SGen6PixelShaderKernelProgramCacheKey const&, GHAL3D::HANDLE_TYPE&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351== 
+==17351== Use of uninitialised value of size 8
+==17351==    at 0xAAFC4A5: iSTD::CHashTable<GHAL3D::SGen4CSComparisonValueNumberingHashKey, unsigned int, GHAL3D::CAllocator>::Add(iSTD::CHashTable<GHAL3D::SGen4CSComparisonValueNumberingHashKey, unsigned int, GHAL3D::CAllocator>::CHashKey const&, unsigned int const&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAABC6B4: GHAL3D::CGen4LIRValueNumberingHashTable::Add(GHAL3D::SGen4LIRValueNumberingHashKey*, unsigned int) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAC11557: GHAL3D::CGen4LIRBasicBlock::ValueNumbering(unsigned int, GHAL3D::CGen4LIRValueNumberingHashTable*, iSTD::CHashTable<unsigned int, unsigned int, GHAL3D::CAllocator>*, GHAL3D::CGen4LIRInstructionList*, bool, GHAL3D::CGen4SSAMappingTable*, iSTD::CBitSet<GHAL3D::CAllocator>&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAC2D189: GHAL3D::CGen4LIRControlFlowGraph::ValueNumbering(unsigned int, GHAL3D::CGen4LIRInstructionList*, GHAL3D::CGen4SSAMappingTable*, iSTD::CBitSet<GHAL3D::CAllocator>&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAC351B0: GHAL3D::CGen4KernelFunctionList::VirtualRegistersToRegisters(GHAL3D::CGen4EURegisterAllocator*, bool, GHAL3D::CGen4ShaderDecomposer*, GHAL3D::CGen4ShaderSymbolTable*, S3DKernelHardwareCapabilities const&, unsigned int, unsigned int, unsigned int, bool&, unsigned int&, unsigned int&, unsigned int&, GHAL3D::SHADER_TYPE) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAB649C6: GHAL3D::CGen6PixelShaderKernelProgram::Compile(GHAL3D::SKernelCompilerControls const&, bool, unsigned int, unsigned int, unsigned int, bool&, unsigned int&, unsigned int&, unsigned int&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAB64C56: GHAL3D::CGen6PixelShaderKernelProgram::Compile8(bool) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAB65424: GHAL3D::CGen6PixelShaderKernelProgram::Build() (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAB63345: GHAL3D::CGen6PixelShaderKernelProgram::Create(void const*, PLATFORM_STR, S3DKernelHardwareCapabilities const&, GHAL3D::CPixelShader const*, GHAL3D::SGen6PixelShaderKernelProgramCacheKey const*, GHAL3D::CGen6PixelShaderKernelProgram*&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAD13B9C: GHAL3D::CGen6PixelShaderKernelProgramCacheData::Initialize() (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAD13D3D: GHAL3D::CGen6PixelShaderKernelProgramCacheData::Create(GHAL3D::CStateProcessorCache*, GHAL3D::SGen6PixelShaderKernelProgramCacheKey const&, GHAL3D::CGen6PixelShaderKernelProgramCacheData*&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAD2C5CF: GHAL3D::CStateCache<GHAL3D::SGen6PixelShaderKernelProgramCacheKey, GHAL3D::CGen6PixelShaderKernelProgramCacheData>::AllocateData(GHAL3D::SGen6PixelShaderKernelProgramCacheKey const&, GHAL3D::HANDLE_TYPE&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351== 
+==17351== Conditional jump or move depends on uninitialised value(s)
+==17351==    at 0xAAFC54A: iSTD::CHashTable<GHAL3D::SGen4CSComparisonValueNumberingHashKey, unsigned int, GHAL3D::CAllocator>::Add(iSTD::CHashTable<GHAL3D::SGen4CSComparisonValueNumberingHashKey, unsigned int, GHAL3D::CAllocator>::CHashKey const&, unsigned int const&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAABC6B4: GHAL3D::CGen4LIRValueNumberingHashTable::Add(GHAL3D::SGen4LIRValueNumberingHashKey*, unsigned int) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAC11557: GHAL3D::CGen4LIRBasicBlock::ValueNumbering(unsigned int, GHAL3D::CGen4LIRValueNumberingHashTable*, iSTD::CHashTable<unsigned int, unsigned int, GHAL3D::CAllocator>*, GHAL3D::CGen4LIRInstructionList*, bool, GHAL3D::CGen4SSAMappingTable*, iSTD::CBitSet<GHAL3D::CAllocator>&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAC2D189: GHAL3D::CGen4LIRControlFlowGraph::ValueNumbering(unsigned int, GHAL3D::CGen4LIRInstructionList*, GHAL3D::CGen4SSAMappingTable*, iSTD::CBitSet<GHAL3D::CAllocator>&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAC351B0: GHAL3D::CGen4KernelFunctionList::VirtualRegistersToRegisters(GHAL3D::CGen4EURegisterAllocator*, bool, GHAL3D::CGen4ShaderDecomposer*, GHAL3D::CGen4ShaderSymbolTable*, S3DKernelHardwareCapabilities const&, unsigned int, unsigned int, unsigned int, bool&, unsigned int&, unsigned int&, unsigned int&, GHAL3D::SHADER_TYPE) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAB649C6: GHAL3D::CGen6PixelShaderKernelProgram::Compile(GHAL3D::SKernelCompilerControls const&, bool, unsigned int, unsigned int, unsigned int, bool&, unsigned int&, unsigned int&, unsigned int&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAB64C56: GHAL3D::CGen6PixelShaderKernelProgram::Compile8(bool) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAB65424: GHAL3D::CGen6PixelShaderKernelProgram::Build() (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAB63345: GHAL3D::CGen6PixelShaderKernelProgram::Create(void const*, PLATFORM_STR, S3DKernelHardwareCapabilities const&, GHAL3D::CPixelShader const*, GHAL3D::SGen6PixelShaderKernelProgramCacheKey const*, GHAL3D::CGen6PixelShaderKernelProgram*&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAD13B9C: GHAL3D::CGen6PixelShaderKernelProgramCacheData::Initialize() (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAD13D3D: GHAL3D::CGen6PixelShaderKernelProgramCacheData::Create(GHAL3D::CStateProcessorCache*, GHAL3D::SGen6PixelShaderKernelProgramCacheKey const&, GHAL3D::CGen6PixelShaderKernelProgramCacheData*&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAD2C5CF: GHAL3D::CStateCache<GHAL3D::SGen6PixelShaderKernelProgramCacheKey, GHAL3D::CGen6PixelShaderKernelProgramCacheData>::AllocateData(GHAL3D::SGen6PixelShaderKernelProgramCacheKey const&, GHAL3D::HANDLE_TYPE&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351== 
+==17351== Conditional jump or move depends on uninitialised value(s)
+==17351==    at 0xAAFC56D: iSTD::CHashTable<GHAL3D::SGen4CSComparisonValueNumberingHashKey, unsigned int, GHAL3D::CAllocator>::Add(iSTD::CHashTable<GHAL3D::SGen4CSComparisonValueNumberingHashKey, unsigned int, GHAL3D::CAllocator>::CHashKey const&, unsigned int const&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAABC6B4: GHAL3D::CGen4LIRValueNumberingHashTable::Add(GHAL3D::SGen4LIRValueNumberingHashKey*, unsigned int) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAC11557: GHAL3D::CGen4LIRBasicBlock::ValueNumbering(unsigned int, GHAL3D::CGen4LIRValueNumberingHashTable*, iSTD::CHashTable<unsigned int, unsigned int, GHAL3D::CAllocator>*, GHAL3D::CGen4LIRInstructionList*, bool, GHAL3D::CGen4SSAMappingTable*, iSTD::CBitSet<GHAL3D::CAllocator>&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAC2D189: GHAL3D::CGen4LIRControlFlowGraph::ValueNumbering(unsigned int, GHAL3D::CGen4LIRInstructionList*, GHAL3D::CGen4SSAMappingTable*, iSTD::CBitSet<GHAL3D::CAllocator>&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAC351B0: GHAL3D::CGen4KernelFunctionList::VirtualRegistersToRegisters(GHAL3D::CGen4EURegisterAllocator*, bool, GHAL3D::CGen4ShaderDecomposer*, GHAL3D::CGen4ShaderSymbolTable*, S3DKernelHardwareCapabilities const&, unsigned int, unsigned int, unsigned int, bool&, unsigned int&, unsigned int&, unsigned int&, GHAL3D::SHADER_TYPE) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAB649C6: GHAL3D::CGen6PixelShaderKernelProgram::Compile(GHAL3D::SKernelCompilerControls const&, bool, unsigned int, unsigned int, unsigned int, bool&, unsigned int&, unsigned int&, unsigned int&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAB64C56: GHAL3D::CGen6PixelShaderKernelProgram::Compile8(bool) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAB65424: GHAL3D::CGen6PixelShaderKernelProgram::Build() (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAB63345: GHAL3D::CGen6PixelShaderKernelProgram::Create(void const*, PLATFORM_STR, S3DKernelHardwareCapabilities const&, GHAL3D::CPixelShader const*, GHAL3D::SGen6PixelShaderKernelProgramCacheKey const*, GHAL3D::CGen6PixelShaderKernelProgram*&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAD13B9C: GHAL3D::CGen6PixelShaderKernelProgramCacheData::Initialize() (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAD13D3D: GHAL3D::CGen6PixelShaderKernelProgramCacheData::Create(GHAL3D::CStateProcessorCache*, GHAL3D::SGen6PixelShaderKernelProgramCacheKey const&, GHAL3D::CGen6PixelShaderKernelProgramCacheData*&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAD2C5CF: GHAL3D::CStateCache<GHAL3D::SGen6PixelShaderKernelProgramCacheKey, GHAL3D::CGen6PixelShaderKernelProgramCacheData>::AllocateData(GHAL3D::SGen6PixelShaderKernelProgramCacheKey const&, GHAL3D::HANDLE_TYPE&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351== 
+==17351== Use of uninitialised value of size 8
+==17351==    at 0xAAFC576: iSTD::CHashTable<GHAL3D::SGen4CSComparisonValueNumberingHashKey, unsigned int, GHAL3D::CAllocator>::Add(iSTD::CHashTable<GHAL3D::SGen4CSComparisonValueNumberingHashKey, unsigned int, GHAL3D::CAllocator>::CHashKey const&, unsigned int const&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAABC6B4: GHAL3D::CGen4LIRValueNumberingHashTable::Add(GHAL3D::SGen4LIRValueNumberingHashKey*, unsigned int) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAC11557: GHAL3D::CGen4LIRBasicBlock::ValueNumbering(unsigned int, GHAL3D::CGen4LIRValueNumberingHashTable*, iSTD::CHashTable<unsigned int, unsigned int, GHAL3D::CAllocator>*, GHAL3D::CGen4LIRInstructionList*, bool, GHAL3D::CGen4SSAMappingTable*, iSTD::CBitSet<GHAL3D::CAllocator>&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAC2D189: GHAL3D::CGen4LIRControlFlowGraph::ValueNumbering(unsigned int, GHAL3D::CGen4LIRInstructionList*, GHAL3D::CGen4SSAMappingTable*, iSTD::CBitSet<GHAL3D::CAllocator>&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAC351B0: GHAL3D::CGen4KernelFunctionList::VirtualRegistersToRegisters(GHAL3D::CGen4EURegisterAllocator*, bool, GHAL3D::CGen4ShaderDecomposer*, GHAL3D::CGen4ShaderSymbolTable*, S3DKernelHardwareCapabilities const&, unsigned int, unsigned int, unsigned int, bool&, unsigned int&, unsigned int&, unsigned int&, GHAL3D::SHADER_TYPE) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAB649C6: GHAL3D::CGen6PixelShaderKernelProgram::Compile(GHAL3D::SKernelCompilerControls const&, bool, unsigned int, unsigned int, unsigned int, bool&, unsigned int&, unsigned int&, unsigned int&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAB64C56: GHAL3D::CGen6PixelShaderKernelProgram::Compile8(bool) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAB65424: GHAL3D::CGen6PixelShaderKernelProgram::Build() (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAB63345: GHAL3D::CGen6PixelShaderKernelProgram::Create(void const*, PLATFORM_STR, S3DKernelHardwareCapabilities const&, GHAL3D::CPixelShader const*, GHAL3D::SGen6PixelShaderKernelProgramCacheKey const*, GHAL3D::CGen6PixelShaderKernelProgram*&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAD13B9C: GHAL3D::CGen6PixelShaderKernelProgramCacheData::Initialize() (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAD13D3D: GHAL3D::CGen6PixelShaderKernelProgramCacheData::Create(GHAL3D::CStateProcessorCache*, GHAL3D::SGen6PixelShaderKernelProgramCacheKey const&, GHAL3D::CGen6PixelShaderKernelProgramCacheData*&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAD2C5CF: GHAL3D::CStateCache<GHAL3D::SGen6PixelShaderKernelProgramCacheKey, GHAL3D::CGen6PixelShaderKernelProgramCacheData>::AllocateData(GHAL3D::SGen6PixelShaderKernelProgramCacheKey const&, GHAL3D::HANDLE_TYPE&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351== 
+==17351== Conditional jump or move depends on uninitialised value(s)
+==17351==    at 0xAC9DBE6: iSTD::CHashTable<GHAL3D::SGen4CSALUValueNumberingHashKey, unsigned int, GHAL3D::CAllocator>::Remove(iSTD::CHashTable<GHAL3D::SGen4CSALUValueNumberingHashKey, unsigned int, GHAL3D::CAllocator>::CHashKey const&, unsigned int&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAABD7D4: GHAL3D::CGen4LIRValueNumberingHashTable::Remove(GHAL3D::SGen4LIRValueNumberingHashKey*) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAAE0D20: GHAL3D::CGen4LIRValueNumberingHashTable::RemoveByValueNumber(unsigned int) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAC11630: GHAL3D::CGen4LIRBasicBlock::ValueNumbering(unsigned int, GHAL3D::CGen4LIRValueNumberingHashTable*, iSTD::CHashTable<unsigned int, unsigned int, GHAL3D::CAllocator>*, GHAL3D::CGen4LIRInstructionList*, bool, GHAL3D::CGen4SSAMappingTable*, iSTD::CBitSet<GHAL3D::CAllocator>&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAC2D189: GHAL3D::CGen4LIRControlFlowGraph::ValueNumbering(unsigned int, GHAL3D::CGen4LIRInstructionList*, GHAL3D::CGen4SSAMappingTable*, iSTD::CBitSet<GHAL3D::CAllocator>&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAC351B0: GHAL3D::CGen4KernelFunctionList::VirtualRegistersToRegisters(GHAL3D::CGen4EURegisterAllocator*, bool, GHAL3D::CGen4ShaderDecomposer*, GHAL3D::CGen4ShaderSymbolTable*, S3DKernelHardwareCapabilities const&, unsigned int, unsigned int, unsigned int, bool&, unsigned int&, unsigned int&, unsigned int&, GHAL3D::SHADER_TYPE) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAB649C6: GHAL3D::CGen6PixelShaderKernelProgram::Compile(GHAL3D::SKernelCompilerControls const&, bool, unsigned int, unsigned int, unsigned int, bool&, unsigned int&, unsigned int&, unsigned int&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAB64C56: GHAL3D::CGen6PixelShaderKernelProgram::Compile8(bool) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAB65424: GHAL3D::CGen6PixelShaderKernelProgram::Build() (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAB63345: GHAL3D::CGen6PixelShaderKernelProgram::Create(void const*, PLATFORM_STR, S3DKernelHardwareCapabilities const&, GHAL3D::CPixelShader const*, GHAL3D::SGen6PixelShaderKernelProgramCacheKey const*, GHAL3D::CGen6PixelShaderKernelProgram*&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAD13B9C: GHAL3D::CGen6PixelShaderKernelProgramCacheData::Initialize() (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAD13D3D: GHAL3D::CGen6PixelShaderKernelProgramCacheData::Create(GHAL3D::CStateProcessorCache*, GHAL3D::SGen6PixelShaderKernelProgramCacheKey const&, GHAL3D::CGen6PixelShaderKernelProgramCacheData*&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351== 
+==17351== Use of uninitialised value of size 8
+==17351==    at 0xAC9DBF2: iSTD::CHashTable<GHAL3D::SGen4CSALUValueNumberingHashKey, unsigned int, GHAL3D::CAllocator>::Remove(iSTD::CHashTable<GHAL3D::SGen4CSALUValueNumberingHashKey, unsigned int, GHAL3D::CAllocator>::CHashKey const&, unsigned int&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAABD7D4: GHAL3D::CGen4LIRValueNumberingHashTable::Remove(GHAL3D::SGen4LIRValueNumberingHashKey*) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAAE0D20: GHAL3D::CGen4LIRValueNumberingHashTable::RemoveByValueNumber(unsigned int) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAC11630: GHAL3D::CGen4LIRBasicBlock::ValueNumbering(unsigned int, GHAL3D::CGen4LIRValueNumberingHashTable*, iSTD::CHashTable<unsigned int, unsigned int, GHAL3D::CAllocator>*, GHAL3D::CGen4LIRInstructionList*, bool, GHAL3D::CGen4SSAMappingTable*, iSTD::CBitSet<GHAL3D::CAllocator>&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAC2D189: GHAL3D::CGen4LIRControlFlowGraph::ValueNumbering(unsigned int, GHAL3D::CGen4LIRInstructionList*, GHAL3D::CGen4SSAMappingTable*, iSTD::CBitSet<GHAL3D::CAllocator>&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAC351B0: GHAL3D::CGen4KernelFunctionList::VirtualRegistersToRegisters(GHAL3D::CGen4EURegisterAllocator*, bool, GHAL3D::CGen4ShaderDecomposer*, GHAL3D::CGen4ShaderSymbolTable*, S3DKernelHardwareCapabilities const&, unsigned int, unsigned int, unsigned int, bool&, unsigned int&, unsigned int&, unsigned int&, GHAL3D::SHADER_TYPE) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAB649C6: GHAL3D::CGen6PixelShaderKernelProgram::Compile(GHAL3D::SKernelCompilerControls const&, bool, unsigned int, unsigned int, unsigned int, bool&, unsigned int&, unsigned int&, unsigned int&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAB64C56: GHAL3D::CGen6PixelShaderKernelProgram::Compile8(bool) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAB65424: GHAL3D::CGen6PixelShaderKernelProgram::Build() (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAB63345: GHAL3D::CGen6PixelShaderKernelProgram::Create(void const*, PLATFORM_STR, S3DKernelHardwareCapabilities const&, GHAL3D::CPixelShader const*, GHAL3D::SGen6PixelShaderKernelProgramCacheKey const*, GHAL3D::CGen6PixelShaderKernelProgram*&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAD13B9C: GHAL3D::CGen6PixelShaderKernelProgramCacheData::Initialize() (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAD13D3D: GHAL3D::CGen6PixelShaderKernelProgramCacheData::Create(GHAL3D::CStateProcessorCache*, GHAL3D::SGen6PixelShaderKernelProgramCacheKey const&, GHAL3D::CGen6PixelShaderKernelProgramCacheData*&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351== 
+==17351== Conditional jump or move depends on uninitialised value(s)
+==17351==    at 0xAC9DD42: iSTD::CHashTable<GHAL3D::SGen4CSALUValueNumberingHashKey, unsigned int, GHAL3D::CAllocator>::Remove(iSTD::CHashTable<GHAL3D::SGen4CSALUValueNumberingHashKey, unsigned int, GHAL3D::CAllocator>::CHashKey const&, unsigned int&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAABD7D4: GHAL3D::CGen4LIRValueNumberingHashTable::Remove(GHAL3D::SGen4LIRValueNumberingHashKey*) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAAE0D20: GHAL3D::CGen4LIRValueNumberingHashTable::RemoveByValueNumber(unsigned int) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAC11630: GHAL3D::CGen4LIRBasicBlock::ValueNumbering(unsigned int, GHAL3D::CGen4LIRValueNumberingHashTable*, iSTD::CHashTable<unsigned int, unsigned int, GHAL3D::CAllocator>*, GHAL3D::CGen4LIRInstructionList*, bool, GHAL3D::CGen4SSAMappingTable*, iSTD::CBitSet<GHAL3D::CAllocator>&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAC2D189: GHAL3D::CGen4LIRControlFlowGraph::ValueNumbering(unsigned int, GHAL3D::CGen4LIRInstructionList*, GHAL3D::CGen4SSAMappingTable*, iSTD::CBitSet<GHAL3D::CAllocator>&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAC351B0: GHAL3D::CGen4KernelFunctionList::VirtualRegistersToRegisters(GHAL3D::CGen4EURegisterAllocator*, bool, GHAL3D::CGen4ShaderDecomposer*, GHAL3D::CGen4ShaderSymbolTable*, S3DKernelHardwareCapabilities const&, unsigned int, unsigned int, unsigned int, bool&, unsigned int&, unsigned int&, unsigned int&, GHAL3D::SHADER_TYPE) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAB649C6: GHAL3D::CGen6PixelShaderKernelProgram::Compile(GHAL3D::SKernelCompilerControls const&, bool, unsigned int, unsigned int, unsigned int, bool&, unsigned int&, unsigned int&, unsigned int&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAB64C56: GHAL3D::CGen6PixelShaderKernelProgram::Compile8(bool) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAB65424: GHAL3D::CGen6PixelShaderKernelProgram::Build() (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAB63345: GHAL3D::CGen6PixelShaderKernelProgram::Create(void const*, PLATFORM_STR, S3DKernelHardwareCapabilities const&, GHAL3D::CPixelShader const*, GHAL3D::SGen6PixelShaderKernelProgramCacheKey const*, GHAL3D::CGen6PixelShaderKernelProgram*&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAD13B9C: GHAL3D::CGen6PixelShaderKernelProgramCacheData::Initialize() (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAD13D3D: GHAL3D::CGen6PixelShaderKernelProgramCacheData::Create(GHAL3D::CStateProcessorCache*, GHAL3D::SGen6PixelShaderKernelProgramCacheKey const&, GHAL3D::CGen6PixelShaderKernelProgramCacheData*&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351== 
+==17351== Conditional jump or move depends on uninitialised value(s)
+==17351==    at 0x382EEE0: bcmp (in /usr/lib/system/libsystem_c.dylib)
+==17351==    by 0xAC9DD4F: iSTD::CHashTable<GHAL3D::SGen4CSALUValueNumberingHashKey, unsigned int, GHAL3D::CAllocator>::Remove(iSTD::CHashTable<GHAL3D::SGen4CSALUValueNumberingHashKey, unsigned int, GHAL3D::CAllocator>::CHashKey const&, unsigned int&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAABD7D4: GHAL3D::CGen4LIRValueNumberingHashTable::Remove(GHAL3D::SGen4LIRValueNumberingHashKey*) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAAE0D20: GHAL3D::CGen4LIRValueNumberingHashTable::RemoveByValueNumber(unsigned int) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAC11630: GHAL3D::CGen4LIRBasicBlock::ValueNumbering(unsigned int, GHAL3D::CGen4LIRValueNumberingHashTable*, iSTD::CHashTable<unsigned int, unsigned int, GHAL3D::CAllocator>*, GHAL3D::CGen4LIRInstructionList*, bool, GHAL3D::CGen4SSAMappingTable*, iSTD::CBitSet<GHAL3D::CAllocator>&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAC2D189: GHAL3D::CGen4LIRControlFlowGraph::ValueNumbering(unsigned int, GHAL3D::CGen4LIRInstructionList*, GHAL3D::CGen4SSAMappingTable*, iSTD::CBitSet<GHAL3D::CAllocator>&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAC351B0: GHAL3D::CGen4KernelFunctionList::VirtualRegistersToRegisters(GHAL3D::CGen4EURegisterAllocator*, bool, GHAL3D::CGen4ShaderDecomposer*, GHAL3D::CGen4ShaderSymbolTable*, S3DKernelHardwareCapabilities const&, unsigned int, unsigned int, unsigned int, bool&, unsigned int&, unsigned int&, unsigned int&, GHAL3D::SHADER_TYPE) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAB649C6: GHAL3D::CGen6PixelShaderKernelProgram::Compile(GHAL3D::SKernelCompilerControls const&, bool, unsigned int, unsigned int, unsigned int, bool&, unsigned int&, unsigned int&, unsigned int&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAB64C56: GHAL3D::CGen6PixelShaderKernelProgram::Compile8(bool) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAB65424: GHAL3D::CGen6PixelShaderKernelProgram::Build() (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAB63345: GHAL3D::CGen6PixelShaderKernelProgram::Create(void const*, PLATFORM_STR, S3DKernelHardwareCapabilities const&, GHAL3D::CPixelShader const*, GHAL3D::SGen6PixelShaderKernelProgramCacheKey const*, GHAL3D::CGen6PixelShaderKernelProgram*&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAD13B9C: GHAL3D::CGen6PixelShaderKernelProgramCacheData::Initialize() (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351== 
+==17351== Conditional jump or move depends on uninitialised value(s)
+==17351==    at 0xAC9DD52: iSTD::CHashTable<GHAL3D::SGen4CSALUValueNumberingHashKey, unsigned int, GHAL3D::CAllocator>::Remove(iSTD::CHashTable<GHAL3D::SGen4CSALUValueNumberingHashKey, unsigned int, GHAL3D::CAllocator>::CHashKey const&, unsigned int&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAABD7D4: GHAL3D::CGen4LIRValueNumberingHashTable::Remove(GHAL3D::SGen4LIRValueNumberingHashKey*) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAAE0D20: GHAL3D::CGen4LIRValueNumberingHashTable::RemoveByValueNumber(unsigned int) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAC11630: GHAL3D::CGen4LIRBasicBlock::ValueNumbering(unsigned int, GHAL3D::CGen4LIRValueNumberingHashTable*, iSTD::CHashTable<unsigned int, unsigned int, GHAL3D::CAllocator>*, GHAL3D::CGen4LIRInstructionList*, bool, GHAL3D::CGen4SSAMappingTable*, iSTD::CBitSet<GHAL3D::CAllocator>&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAC2D189: GHAL3D::CGen4LIRControlFlowGraph::ValueNumbering(unsigned int, GHAL3D::CGen4LIRInstructionList*, GHAL3D::CGen4SSAMappingTable*, iSTD::CBitSet<GHAL3D::CAllocator>&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAC351B0: GHAL3D::CGen4KernelFunctionList::VirtualRegistersToRegisters(GHAL3D::CGen4EURegisterAllocator*, bool, GHAL3D::CGen4ShaderDecomposer*, GHAL3D::CGen4ShaderSymbolTable*, S3DKernelHardwareCapabilities const&, unsigned int, unsigned int, unsigned int, bool&, unsigned int&, unsigned int&, unsigned int&, GHAL3D::SHADER_TYPE) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAB649C6: GHAL3D::CGen6PixelShaderKernelProgram::Compile(GHAL3D::SKernelCompilerControls const&, bool, unsigned int, unsigned int, unsigned int, bool&, unsigned int&, unsigned int&, unsigned int&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAB64C56: GHAL3D::CGen6PixelShaderKernelProgram::Compile8(bool) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAB65424: GHAL3D::CGen6PixelShaderKernelProgram::Build() (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAB63345: GHAL3D::CGen6PixelShaderKernelProgram::Create(void const*, PLATFORM_STR, S3DKernelHardwareCapabilities const&, GHAL3D::CPixelShader const*, GHAL3D::SGen6PixelShaderKernelProgramCacheKey const*, GHAL3D::CGen6PixelShaderKernelProgram*&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAD13B9C: GHAL3D::CGen6PixelShaderKernelProgramCacheData::Initialize() (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAD13D3D: GHAL3D::CGen6PixelShaderKernelProgramCacheData::Create(GHAL3D::CStateProcessorCache*, GHAL3D::SGen6PixelShaderKernelProgramCacheKey const&, GHAL3D::CGen6PixelShaderKernelProgramCacheData*&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351== 
+==17351== Conditional jump or move depends on uninitialised value(s)
+==17351==    at 0xAC9DE56: iSTD::CHashTable<GHAL3D::SGen4CSComparisonValueNumberingHashKey, unsigned int, GHAL3D::CAllocator>::Remove(iSTD::CHashTable<GHAL3D::SGen4CSComparisonValueNumberingHashKey, unsigned int, GHAL3D::CAllocator>::CHashKey const&, unsigned int&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAABD864: GHAL3D::CGen4LIRValueNumberingHashTable::Remove(GHAL3D::SGen4LIRValueNumberingHashKey*) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAAE0D20: GHAL3D::CGen4LIRValueNumberingHashTable::RemoveByValueNumber(unsigned int) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAC11630: GHAL3D::CGen4LIRBasicBlock::ValueNumbering(unsigned int, GHAL3D::CGen4LIRValueNumberingHashTable*, iSTD::CHashTable<unsigned int, unsigned int, GHAL3D::CAllocator>*, GHAL3D::CGen4LIRInstructionList*, bool, GHAL3D::CGen4SSAMappingTable*, iSTD::CBitSet<GHAL3D::CAllocator>&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAC2D189: GHAL3D::CGen4LIRControlFlowGraph::ValueNumbering(unsigned int, GHAL3D::CGen4LIRInstructionList*, GHAL3D::CGen4SSAMappingTable*, iSTD::CBitSet<GHAL3D::CAllocator>&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAC351B0: GHAL3D::CGen4KernelFunctionList::VirtualRegistersToRegisters(GHAL3D::CGen4EURegisterAllocator*, bool, GHAL3D::CGen4ShaderDecomposer*, GHAL3D::CGen4ShaderSymbolTable*, S3DKernelHardwareCapabilities const&, unsigned int, unsigned int, unsigned int, bool&, unsigned int&, unsigned int&, unsigned int&, GHAL3D::SHADER_TYPE) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAB649C6: GHAL3D::CGen6PixelShaderKernelProgram::Compile(GHAL3D::SKernelCompilerControls const&, bool, unsigned int, unsigned int, unsigned int, bool&, unsigned int&, unsigned int&, unsigned int&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAB64C56: GHAL3D::CGen6PixelShaderKernelProgram::Compile8(bool) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAB65424: GHAL3D::CGen6PixelShaderKernelProgram::Build() (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAB63345: GHAL3D::CGen6PixelShaderKernelProgram::Create(void const*, PLATFORM_STR, S3DKernelHardwareCapabilities const&, GHAL3D::CPixelShader const*, GHAL3D::SGen6PixelShaderKernelProgramCacheKey const*, GHAL3D::CGen6PixelShaderKernelProgram*&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAD13B9C: GHAL3D::CGen6PixelShaderKernelProgramCacheData::Initialize() (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAD13D3D: GHAL3D::CGen6PixelShaderKernelProgramCacheData::Create(GHAL3D::CStateProcessorCache*, GHAL3D::SGen6PixelShaderKernelProgramCacheKey const&, GHAL3D::CGen6PixelShaderKernelProgramCacheData*&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351== 
+==17351== Use of uninitialised value of size 8
+==17351==    at 0xAC9DE62: iSTD::CHashTable<GHAL3D::SGen4CSComparisonValueNumberingHashKey, unsigned int, GHAL3D::CAllocator>::Remove(iSTD::CHashTable<GHAL3D::SGen4CSComparisonValueNumberingHashKey, unsigned int, GHAL3D::CAllocator>::CHashKey const&, unsigned int&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAABD864: GHAL3D::CGen4LIRValueNumberingHashTable::Remove(GHAL3D::SGen4LIRValueNumberingHashKey*) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAAE0D20: GHAL3D::CGen4LIRValueNumberingHashTable::RemoveByValueNumber(unsigned int) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAC11630: GHAL3D::CGen4LIRBasicBlock::ValueNumbering(unsigned int, GHAL3D::CGen4LIRValueNumberingHashTable*, iSTD::CHashTable<unsigned int, unsigned int, GHAL3D::CAllocator>*, GHAL3D::CGen4LIRInstructionList*, bool, GHAL3D::CGen4SSAMappingTable*, iSTD::CBitSet<GHAL3D::CAllocator>&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAC2D189: GHAL3D::CGen4LIRControlFlowGraph::ValueNumbering(unsigned int, GHAL3D::CGen4LIRInstructionList*, GHAL3D::CGen4SSAMappingTable*, iSTD::CBitSet<GHAL3D::CAllocator>&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAC351B0: GHAL3D::CGen4KernelFunctionList::VirtualRegistersToRegisters(GHAL3D::CGen4EURegisterAllocator*, bool, GHAL3D::CGen4ShaderDecomposer*, GHAL3D::CGen4ShaderSymbolTable*, S3DKernelHardwareCapabilities const&, unsigned int, unsigned int, unsigned int, bool&, unsigned int&, unsigned int&, unsigned int&, GHAL3D::SHADER_TYPE) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAB649C6: GHAL3D::CGen6PixelShaderKernelProgram::Compile(GHAL3D::SKernelCompilerControls const&, bool, unsigned int, unsigned int, unsigned int, bool&, unsigned int&, unsigned int&, unsigned int&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAB64C56: GHAL3D::CGen6PixelShaderKernelProgram::Compile8(bool) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAB65424: GHAL3D::CGen6PixelShaderKernelProgram::Build() (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAB63345: GHAL3D::CGen6PixelShaderKernelProgram::Create(void const*, PLATFORM_STR, S3DKernelHardwareCapabilities const&, GHAL3D::CPixelShader const*, GHAL3D::SGen6PixelShaderKernelProgramCacheKey const*, GHAL3D::CGen6PixelShaderKernelProgram*&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAD13B9C: GHAL3D::CGen6PixelShaderKernelProgramCacheData::Initialize() (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAD13D3D: GHAL3D::CGen6PixelShaderKernelProgramCacheData::Create(GHAL3D::CStateProcessorCache*, GHAL3D::SGen6PixelShaderKernelProgramCacheKey const&, GHAL3D::CGen6PixelShaderKernelProgramCacheData*&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351== 
+==17351== Conditional jump or move depends on uninitialised value(s)
+==17351==    at 0xAC9DBE6: iSTD::CHashTable<GHAL3D::SGen4CSALUValueNumberingHashKey, unsigned int, GHAL3D::CAllocator>::Remove(iSTD::CHashTable<GHAL3D::SGen4CSALUValueNumberingHashKey, unsigned int, GHAL3D::CAllocator>::CHashKey const&, unsigned int&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAABD7D4: GHAL3D::CGen4LIRValueNumberingHashTable::Remove(GHAL3D::SGen4LIRValueNumberingHashKey*) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAA96322: GHAL3D::CGen4LIRValueNumberingHashTable::DeleteScope() (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAC2D25B: GHAL3D::CGen4LIRControlFlowGraph::ValueNumbering(unsigned int, GHAL3D::CGen4LIRInstructionList*, GHAL3D::CGen4SSAMappingTable*, iSTD::CBitSet<GHAL3D::CAllocator>&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAC351B0: GHAL3D::CGen4KernelFunctionList::VirtualRegistersToRegisters(GHAL3D::CGen4EURegisterAllocator*, bool, GHAL3D::CGen4ShaderDecomposer*, GHAL3D::CGen4ShaderSymbolTable*, S3DKernelHardwareCapabilities const&, unsigned int, unsigned int, unsigned int, bool&, unsigned int&, unsigned int&, unsigned int&, GHAL3D::SHADER_TYPE) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAB649C6: GHAL3D::CGen6PixelShaderKernelProgram::Compile(GHAL3D::SKernelCompilerControls const&, bool, unsigned int, unsigned int, unsigned int, bool&, unsigned int&, unsigned int&, unsigned int&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAB64C56: GHAL3D::CGen6PixelShaderKernelProgram::Compile8(bool) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAB65424: GHAL3D::CGen6PixelShaderKernelProgram::Build() (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAB63345: GHAL3D::CGen6PixelShaderKernelProgram::Create(void const*, PLATFORM_STR, S3DKernelHardwareCapabilities const&, GHAL3D::CPixelShader const*, GHAL3D::SGen6PixelShaderKernelProgramCacheKey const*, GHAL3D::CGen6PixelShaderKernelProgram*&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAD13B9C: GHAL3D::CGen6PixelShaderKernelProgramCacheData::Initialize() (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAD13D3D: GHAL3D::CGen6PixelShaderKernelProgramCacheData::Create(GHAL3D::CStateProcessorCache*, GHAL3D::SGen6PixelShaderKernelProgramCacheKey const&, GHAL3D::CGen6PixelShaderKernelProgramCacheData*&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAD2C5CF: GHAL3D::CStateCache<GHAL3D::SGen6PixelShaderKernelProgramCacheKey, GHAL3D::CGen6PixelShaderKernelProgramCacheData>::AllocateData(GHAL3D::SGen6PixelShaderKernelProgramCacheKey const&, GHAL3D::HANDLE_TYPE&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351== 
+==17351== Use of uninitialised value of size 8
+==17351==    at 0xAC9DBF2: iSTD::CHashTable<GHAL3D::SGen4CSALUValueNumberingHashKey, unsigned int, GHAL3D::CAllocator>::Remove(iSTD::CHashTable<GHAL3D::SGen4CSALUValueNumberingHashKey, unsigned int, GHAL3D::CAllocator>::CHashKey const&, unsigned int&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAABD7D4: GHAL3D::CGen4LIRValueNumberingHashTable::Remove(GHAL3D::SGen4LIRValueNumberingHashKey*) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAA96322: GHAL3D::CGen4LIRValueNumberingHashTable::DeleteScope() (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAC2D25B: GHAL3D::CGen4LIRControlFlowGraph::ValueNumbering(unsigned int, GHAL3D::CGen4LIRInstructionList*, GHAL3D::CGen4SSAMappingTable*, iSTD::CBitSet<GHAL3D::CAllocator>&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAC351B0: GHAL3D::CGen4KernelFunctionList::VirtualRegistersToRegisters(GHAL3D::CGen4EURegisterAllocator*, bool, GHAL3D::CGen4ShaderDecomposer*, GHAL3D::CGen4ShaderSymbolTable*, S3DKernelHardwareCapabilities const&, unsigned int, unsigned int, unsigned int, bool&, unsigned int&, unsigned int&, unsigned int&, GHAL3D::SHADER_TYPE) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAB649C6: GHAL3D::CGen6PixelShaderKernelProgram::Compile(GHAL3D::SKernelCompilerControls const&, bool, unsigned int, unsigned int, unsigned int, bool&, unsigned int&, unsigned int&, unsigned int&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAB64C56: GHAL3D::CGen6PixelShaderKernelProgram::Compile8(bool) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAB65424: GHAL3D::CGen6PixelShaderKernelProgram::Build() (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAB63345: GHAL3D::CGen6PixelShaderKernelProgram::Create(void const*, PLATFORM_STR, S3DKernelHardwareCapabilities const&, GHAL3D::CPixelShader const*, GHAL3D::SGen6PixelShaderKernelProgramCacheKey const*, GHAL3D::CGen6PixelShaderKernelProgram*&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAD13B9C: GHAL3D::CGen6PixelShaderKernelProgramCacheData::Initialize() (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAD13D3D: GHAL3D::CGen6PixelShaderKernelProgramCacheData::Create(GHAL3D::CStateProcessorCache*, GHAL3D::SGen6PixelShaderKernelProgramCacheKey const&, GHAL3D::CGen6PixelShaderKernelProgramCacheData*&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAD2C5CF: GHAL3D::CStateCache<GHAL3D::SGen6PixelShaderKernelProgramCacheKey, GHAL3D::CGen6PixelShaderKernelProgramCacheData>::AllocateData(GHAL3D::SGen6PixelShaderKernelProgramCacheKey const&, GHAL3D::HANDLE_TYPE&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351== 
+==17351== Conditional jump or move depends on uninitialised value(s)
+==17351==    at 0xAC9DD42: iSTD::CHashTable<GHAL3D::SGen4CSALUValueNumberingHashKey, unsigned int, GHAL3D::CAllocator>::Remove(iSTD::CHashTable<GHAL3D::SGen4CSALUValueNumberingHashKey, unsigned int, GHAL3D::CAllocator>::CHashKey const&, unsigned int&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAABD7D4: GHAL3D::CGen4LIRValueNumberingHashTable::Remove(GHAL3D::SGen4LIRValueNumberingHashKey*) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAA96322: GHAL3D::CGen4LIRValueNumberingHashTable::DeleteScope() (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAC2D25B: GHAL3D::CGen4LIRControlFlowGraph::ValueNumbering(unsigned int, GHAL3D::CGen4LIRInstructionList*, GHAL3D::CGen4SSAMappingTable*, iSTD::CBitSet<GHAL3D::CAllocator>&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAC351B0: GHAL3D::CGen4KernelFunctionList::VirtualRegistersToRegisters(GHAL3D::CGen4EURegisterAllocator*, bool, GHAL3D::CGen4ShaderDecomposer*, GHAL3D::CGen4ShaderSymbolTable*, S3DKernelHardwareCapabilities const&, unsigned int, unsigned int, unsigned int, bool&, unsigned int&, unsigned int&, unsigned int&, GHAL3D::SHADER_TYPE) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAB649C6: GHAL3D::CGen6PixelShaderKernelProgram::Compile(GHAL3D::SKernelCompilerControls const&, bool, unsigned int, unsigned int, unsigned int, bool&, unsigned int&, unsigned int&, unsigned int&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAB64C56: GHAL3D::CGen6PixelShaderKernelProgram::Compile8(bool) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAB65424: GHAL3D::CGen6PixelShaderKernelProgram::Build() (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAB63345: GHAL3D::CGen6PixelShaderKernelProgram::Create(void const*, PLATFORM_STR, S3DKernelHardwareCapabilities const&, GHAL3D::CPixelShader const*, GHAL3D::SGen6PixelShaderKernelProgramCacheKey const*, GHAL3D::CGen6PixelShaderKernelProgram*&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAD13B9C: GHAL3D::CGen6PixelShaderKernelProgramCacheData::Initialize() (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAD13D3D: GHAL3D::CGen6PixelShaderKernelProgramCacheData::Create(GHAL3D::CStateProcessorCache*, GHAL3D::SGen6PixelShaderKernelProgramCacheKey const&, GHAL3D::CGen6PixelShaderKernelProgramCacheData*&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAD2C5CF: GHAL3D::CStateCache<GHAL3D::SGen6PixelShaderKernelProgramCacheKey, GHAL3D::CGen6PixelShaderKernelProgramCacheData>::AllocateData(GHAL3D::SGen6PixelShaderKernelProgramCacheKey const&, GHAL3D::HANDLE_TYPE&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351== 
+==17351== Conditional jump or move depends on uninitialised value(s)
+==17351==    at 0x382EEE0: bcmp (in /usr/lib/system/libsystem_c.dylib)
+==17351==    by 0xAC9DD4F: iSTD::CHashTable<GHAL3D::SGen4CSALUValueNumberingHashKey, unsigned int, GHAL3D::CAllocator>::Remove(iSTD::CHashTable<GHAL3D::SGen4CSALUValueNumberingHashKey, unsigned int, GHAL3D::CAllocator>::CHashKey const&, unsigned int&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAABD7D4: GHAL3D::CGen4LIRValueNumberingHashTable::Remove(GHAL3D::SGen4LIRValueNumberingHashKey*) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAA96322: GHAL3D::CGen4LIRValueNumberingHashTable::DeleteScope() (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAC2D25B: GHAL3D::CGen4LIRControlFlowGraph::ValueNumbering(unsigned int, GHAL3D::CGen4LIRInstructionList*, GHAL3D::CGen4SSAMappingTable*, iSTD::CBitSet<GHAL3D::CAllocator>&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAC351B0: GHAL3D::CGen4KernelFunctionList::VirtualRegistersToRegisters(GHAL3D::CGen4EURegisterAllocator*, bool, GHAL3D::CGen4ShaderDecomposer*, GHAL3D::CGen4ShaderSymbolTable*, S3DKernelHardwareCapabilities const&, unsigned int, unsigned int, unsigned int, bool&, unsigned int&, unsigned int&, unsigned int&, GHAL3D::SHADER_TYPE) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAB649C6: GHAL3D::CGen6PixelShaderKernelProgram::Compile(GHAL3D::SKernelCompilerControls const&, bool, unsigned int, unsigned int, unsigned int, bool&, unsigned int&, unsigned int&, unsigned int&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAB64C56: GHAL3D::CGen6PixelShaderKernelProgram::Compile8(bool) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAB65424: GHAL3D::CGen6PixelShaderKernelProgram::Build() (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAB63345: GHAL3D::CGen6PixelShaderKernelProgram::Create(void const*, PLATFORM_STR, S3DKernelHardwareCapabilities const&, GHAL3D::CPixelShader const*, GHAL3D::SGen6PixelShaderKernelProgramCacheKey const*, GHAL3D::CGen6PixelShaderKernelProgram*&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAD13B9C: GHAL3D::CGen6PixelShaderKernelProgramCacheData::Initialize() (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAD13D3D: GHAL3D::CGen6PixelShaderKernelProgramCacheData::Create(GHAL3D::CStateProcessorCache*, GHAL3D::SGen6PixelShaderKernelProgramCacheKey const&, GHAL3D::CGen6PixelShaderKernelProgramCacheData*&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351== 
+==17351== Conditional jump or move depends on uninitialised value(s)
+==17351==    at 0xAC9DD52: iSTD::CHashTable<GHAL3D::SGen4CSALUValueNumberingHashKey, unsigned int, GHAL3D::CAllocator>::Remove(iSTD::CHashTable<GHAL3D::SGen4CSALUValueNumberingHashKey, unsigned int, GHAL3D::CAllocator>::CHashKey const&, unsigned int&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAABD7D4: GHAL3D::CGen4LIRValueNumberingHashTable::Remove(GHAL3D::SGen4LIRValueNumberingHashKey*) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAA96322: GHAL3D::CGen4LIRValueNumberingHashTable::DeleteScope() (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAC2D25B: GHAL3D::CGen4LIRControlFlowGraph::ValueNumbering(unsigned int, GHAL3D::CGen4LIRInstructionList*, GHAL3D::CGen4SSAMappingTable*, iSTD::CBitSet<GHAL3D::CAllocator>&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAC351B0: GHAL3D::CGen4KernelFunctionList::VirtualRegistersToRegisters(GHAL3D::CGen4EURegisterAllocator*, bool, GHAL3D::CGen4ShaderDecomposer*, GHAL3D::CGen4ShaderSymbolTable*, S3DKernelHardwareCapabilities const&, unsigned int, unsigned int, unsigned int, bool&, unsigned int&, unsigned int&, unsigned int&, GHAL3D::SHADER_TYPE) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAB649C6: GHAL3D::CGen6PixelShaderKernelProgram::Compile(GHAL3D::SKernelCompilerControls const&, bool, unsigned int, unsigned int, unsigned int, bool&, unsigned int&, unsigned int&, unsigned int&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAB64C56: GHAL3D::CGen6PixelShaderKernelProgram::Compile8(bool) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAB65424: GHAL3D::CGen6PixelShaderKernelProgram::Build() (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAB63345: GHAL3D::CGen6PixelShaderKernelProgram::Create(void const*, PLATFORM_STR, S3DKernelHardwareCapabilities const&, GHAL3D::CPixelShader const*, GHAL3D::SGen6PixelShaderKernelProgramCacheKey const*, GHAL3D::CGen6PixelShaderKernelProgram*&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAD13B9C: GHAL3D::CGen6PixelShaderKernelProgramCacheData::Initialize() (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAD13D3D: GHAL3D::CGen6PixelShaderKernelProgramCacheData::Create(GHAL3D::CStateProcessorCache*, GHAL3D::SGen6PixelShaderKernelProgramCacheKey const&, GHAL3D::CGen6PixelShaderKernelProgramCacheData*&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAD2C5CF: GHAL3D::CStateCache<GHAL3D::SGen6PixelShaderKernelProgramCacheKey, GHAL3D::CGen6PixelShaderKernelProgramCacheData>::AllocateData(GHAL3D::SGen6PixelShaderKernelProgramCacheKey const&, GHAL3D::HANDLE_TYPE&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351== 
+==17351== Conditional jump or move depends on uninitialised value(s)
+==17351==    at 0xAC9DCC8: iSTD::CHashTable<GHAL3D::SGen4CSALUValueNumberingHashKey, unsigned int, GHAL3D::CAllocator>::Remove(iSTD::CHashTable<GHAL3D::SGen4CSALUValueNumberingHashKey, unsigned int, GHAL3D::CAllocator>::CHashKey const&, unsigned int&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAABD7D4: GHAL3D::CGen4LIRValueNumberingHashTable::Remove(GHAL3D::SGen4LIRValueNumberingHashKey*) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAA96322: GHAL3D::CGen4LIRValueNumberingHashTable::DeleteScope() (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAC2D25B: GHAL3D::CGen4LIRControlFlowGraph::ValueNumbering(unsigned int, GHAL3D::CGen4LIRInstructionList*, GHAL3D::CGen4SSAMappingTable*, iSTD::CBitSet<GHAL3D::CAllocator>&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAC351B0: GHAL3D::CGen4KernelFunctionList::VirtualRegistersToRegisters(GHAL3D::CGen4EURegisterAllocator*, bool, GHAL3D::CGen4ShaderDecomposer*, GHAL3D::CGen4ShaderSymbolTable*, S3DKernelHardwareCapabilities const&, unsigned int, unsigned int, unsigned int, bool&, unsigned int&, unsigned int&, unsigned int&, GHAL3D::SHADER_TYPE) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAB649C6: GHAL3D::CGen6PixelShaderKernelProgram::Compile(GHAL3D::SKernelCompilerControls const&, bool, unsigned int, unsigned int, unsigned int, bool&, unsigned int&, unsigned int&, unsigned int&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAB64C56: GHAL3D::CGen6PixelShaderKernelProgram::Compile8(bool) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAB65424: GHAL3D::CGen6PixelShaderKernelProgram::Build() (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAB63345: GHAL3D::CGen6PixelShaderKernelProgram::Create(void const*, PLATFORM_STR, S3DKernelHardwareCapabilities const&, GHAL3D::CPixelShader const*, GHAL3D::SGen6PixelShaderKernelProgramCacheKey const*, GHAL3D::CGen6PixelShaderKernelProgram*&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAD13B9C: GHAL3D::CGen6PixelShaderKernelProgramCacheData::Initialize() (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAD13D3D: GHAL3D::CGen6PixelShaderKernelProgramCacheData::Create(GHAL3D::CStateProcessorCache*, GHAL3D::SGen6PixelShaderKernelProgramCacheKey const&, GHAL3D::CGen6PixelShaderKernelProgramCacheData*&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAD2C5CF: GHAL3D::CStateCache<GHAL3D::SGen6PixelShaderKernelProgramCacheKey, GHAL3D::CGen6PixelShaderKernelProgramCacheData>::AllocateData(GHAL3D::SGen6PixelShaderKernelProgramCacheKey const&, GHAL3D::HANDLE_TYPE&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351== 
+==17351== Conditional jump or move depends on uninitialised value(s)
+==17351==    at 0xAC9DCEB: iSTD::CHashTable<GHAL3D::SGen4CSALUValueNumberingHashKey, unsigned int, GHAL3D::CAllocator>::Remove(iSTD::CHashTable<GHAL3D::SGen4CSALUValueNumberingHashKey, unsigned int, GHAL3D::CAllocator>::CHashKey const&, unsigned int&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAABD7D4: GHAL3D::CGen4LIRValueNumberingHashTable::Remove(GHAL3D::SGen4LIRValueNumberingHashKey*) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAA96322: GHAL3D::CGen4LIRValueNumberingHashTable::DeleteScope() (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAC2D25B: GHAL3D::CGen4LIRControlFlowGraph::ValueNumbering(unsigned int, GHAL3D::CGen4LIRInstructionList*, GHAL3D::CGen4SSAMappingTable*, iSTD::CBitSet<GHAL3D::CAllocator>&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAC351B0: GHAL3D::CGen4KernelFunctionList::VirtualRegistersToRegisters(GHAL3D::CGen4EURegisterAllocator*, bool, GHAL3D::CGen4ShaderDecomposer*, GHAL3D::CGen4ShaderSymbolTable*, S3DKernelHardwareCapabilities const&, unsigned int, unsigned int, unsigned int, bool&, unsigned int&, unsigned int&, unsigned int&, GHAL3D::SHADER_TYPE) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAB649C6: GHAL3D::CGen6PixelShaderKernelProgram::Compile(GHAL3D::SKernelCompilerControls const&, bool, unsigned int, unsigned int, unsigned int, bool&, unsigned int&, unsigned int&, unsigned int&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAB64C56: GHAL3D::CGen6PixelShaderKernelProgram::Compile8(bool) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAB65424: GHAL3D::CGen6PixelShaderKernelProgram::Build() (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAB63345: GHAL3D::CGen6PixelShaderKernelProgram::Create(void const*, PLATFORM_STR, S3DKernelHardwareCapabilities const&, GHAL3D::CPixelShader const*, GHAL3D::SGen6PixelShaderKernelProgramCacheKey const*, GHAL3D::CGen6PixelShaderKernelProgram*&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAD13B9C: GHAL3D::CGen6PixelShaderKernelProgramCacheData::Initialize() (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAD13D3D: GHAL3D::CGen6PixelShaderKernelProgramCacheData::Create(GHAL3D::CStateProcessorCache*, GHAL3D::SGen6PixelShaderKernelProgramCacheKey const&, GHAL3D::CGen6PixelShaderKernelProgramCacheData*&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAD2C5CF: GHAL3D::CStateCache<GHAL3D::SGen6PixelShaderKernelProgramCacheKey, GHAL3D::CGen6PixelShaderKernelProgramCacheData>::AllocateData(GHAL3D::SGen6PixelShaderKernelProgramCacheKey const&, GHAL3D::HANDLE_TYPE&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351== 
+==17351== Use of uninitialised value of size 8
+==17351==    at 0xAC9DCF1: iSTD::CHashTable<GHAL3D::SGen4CSALUValueNumberingHashKey, unsigned int, GHAL3D::CAllocator>::Remove(iSTD::CHashTable<GHAL3D::SGen4CSALUValueNumberingHashKey, unsigned int, GHAL3D::CAllocator>::CHashKey const&, unsigned int&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAABD7D4: GHAL3D::CGen4LIRValueNumberingHashTable::Remove(GHAL3D::SGen4LIRValueNumberingHashKey*) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAA96322: GHAL3D::CGen4LIRValueNumberingHashTable::DeleteScope() (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAC2D25B: GHAL3D::CGen4LIRControlFlowGraph::ValueNumbering(unsigned int, GHAL3D::CGen4LIRInstructionList*, GHAL3D::CGen4SSAMappingTable*, iSTD::CBitSet<GHAL3D::CAllocator>&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAC351B0: GHAL3D::CGen4KernelFunctionList::VirtualRegistersToRegisters(GHAL3D::CGen4EURegisterAllocator*, bool, GHAL3D::CGen4ShaderDecomposer*, GHAL3D::CGen4ShaderSymbolTable*, S3DKernelHardwareCapabilities const&, unsigned int, unsigned int, unsigned int, bool&, unsigned int&, unsigned int&, unsigned int&, GHAL3D::SHADER_TYPE) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAB649C6: GHAL3D::CGen6PixelShaderKernelProgram::Compile(GHAL3D::SKernelCompilerControls const&, bool, unsigned int, unsigned int, unsigned int, bool&, unsigned int&, unsigned int&, unsigned int&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAB64C56: GHAL3D::CGen6PixelShaderKernelProgram::Compile8(bool) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAB65424: GHAL3D::CGen6PixelShaderKernelProgram::Build() (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAB63345: GHAL3D::CGen6PixelShaderKernelProgram::Create(void const*, PLATFORM_STR, S3DKernelHardwareCapabilities const&, GHAL3D::CPixelShader const*, GHAL3D::SGen6PixelShaderKernelProgramCacheKey const*, GHAL3D::CGen6PixelShaderKernelProgram*&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAD13B9C: GHAL3D::CGen6PixelShaderKernelProgramCacheData::Initialize() (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAD13D3D: GHAL3D::CGen6PixelShaderKernelProgramCacheData::Create(GHAL3D::CStateProcessorCache*, GHAL3D::SGen6PixelShaderKernelProgramCacheKey const&, GHAL3D::CGen6PixelShaderKernelProgramCacheData*&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAD2C5CF: GHAL3D::CStateCache<GHAL3D::SGen6PixelShaderKernelProgramCacheKey, GHAL3D::CGen6PixelShaderKernelProgramCacheData>::AllocateData(GHAL3D::SGen6PixelShaderKernelProgramCacheKey const&, GHAL3D::HANDLE_TYPE&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351== 
+==17351== Conditional jump or move depends on uninitialised value(s)
+==17351==    at 0xAC9DCC8: iSTD::CHashTable<GHAL3D::SGen4CSALUValueNumberingHashKey, unsigned int, GHAL3D::CAllocator>::Remove(iSTD::CHashTable<GHAL3D::SGen4CSALUValueNumberingHashKey, unsigned int, GHAL3D::CAllocator>::CHashKey const&, unsigned int&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAABD7D4: GHAL3D::CGen4LIRValueNumberingHashTable::Remove(GHAL3D::SGen4LIRValueNumberingHashKey*) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAAE0D20: GHAL3D::CGen4LIRValueNumberingHashTable::RemoveByValueNumber(unsigned int) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAC11630: GHAL3D::CGen4LIRBasicBlock::ValueNumbering(unsigned int, GHAL3D::CGen4LIRValueNumberingHashTable*, iSTD::CHashTable<unsigned int, unsigned int, GHAL3D::CAllocator>*, GHAL3D::CGen4LIRInstructionList*, bool, GHAL3D::CGen4SSAMappingTable*, iSTD::CBitSet<GHAL3D::CAllocator>&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAC2D189: GHAL3D::CGen4LIRControlFlowGraph::ValueNumbering(unsigned int, GHAL3D::CGen4LIRInstructionList*, GHAL3D::CGen4SSAMappingTable*, iSTD::CBitSet<GHAL3D::CAllocator>&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAC351B0: GHAL3D::CGen4KernelFunctionList::VirtualRegistersToRegisters(GHAL3D::CGen4EURegisterAllocator*, bool, GHAL3D::CGen4ShaderDecomposer*, GHAL3D::CGen4ShaderSymbolTable*, S3DKernelHardwareCapabilities const&, unsigned int, unsigned int, unsigned int, bool&, unsigned int&, unsigned int&, unsigned int&, GHAL3D::SHADER_TYPE) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAB649C6: GHAL3D::CGen6PixelShaderKernelProgram::Compile(GHAL3D::SKernelCompilerControls const&, bool, unsigned int, unsigned int, unsigned int, bool&, unsigned int&, unsigned int&, unsigned int&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAB64F69: GHAL3D::CGen6PixelShaderKernelProgram::Compile16(bool, bool) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAB65434: GHAL3D::CGen6PixelShaderKernelProgram::Build() (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAB63345: GHAL3D::CGen6PixelShaderKernelProgram::Create(void const*, PLATFORM_STR, S3DKernelHardwareCapabilities const&, GHAL3D::CPixelShader const*, GHAL3D::SGen6PixelShaderKernelProgramCacheKey const*, GHAL3D::CGen6PixelShaderKernelProgram*&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAD13B9C: GHAL3D::CGen6PixelShaderKernelProgramCacheData::Initialize() (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAD13D3D: GHAL3D::CGen6PixelShaderKernelProgramCacheData::Create(GHAL3D::CStateProcessorCache*, GHAL3D::SGen6PixelShaderKernelProgramCacheKey const&, GHAL3D::CGen6PixelShaderKernelProgramCacheData*&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351== 
+==17351== Conditional jump or move depends on uninitialised value(s)
+==17351==    at 0xAC9DCEB: iSTD::CHashTable<GHAL3D::SGen4CSALUValueNumberingHashKey, unsigned int, GHAL3D::CAllocator>::Remove(iSTD::CHashTable<GHAL3D::SGen4CSALUValueNumberingHashKey, unsigned int, GHAL3D::CAllocator>::CHashKey const&, unsigned int&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAABD7D4: GHAL3D::CGen4LIRValueNumberingHashTable::Remove(GHAL3D::SGen4LIRValueNumberingHashKey*) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAAE0D20: GHAL3D::CGen4LIRValueNumberingHashTable::RemoveByValueNumber(unsigned int) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAC11630: GHAL3D::CGen4LIRBasicBlock::ValueNumbering(unsigned int, GHAL3D::CGen4LIRValueNumberingHashTable*, iSTD::CHashTable<unsigned int, unsigned int, GHAL3D::CAllocator>*, GHAL3D::CGen4LIRInstructionList*, bool, GHAL3D::CGen4SSAMappingTable*, iSTD::CBitSet<GHAL3D::CAllocator>&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAC2D189: GHAL3D::CGen4LIRControlFlowGraph::ValueNumbering(unsigned int, GHAL3D::CGen4LIRInstructionList*, GHAL3D::CGen4SSAMappingTable*, iSTD::CBitSet<GHAL3D::CAllocator>&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAC351B0: GHAL3D::CGen4KernelFunctionList::VirtualRegistersToRegisters(GHAL3D::CGen4EURegisterAllocator*, bool, GHAL3D::CGen4ShaderDecomposer*, GHAL3D::CGen4ShaderSymbolTable*, S3DKernelHardwareCapabilities const&, unsigned int, unsigned int, unsigned int, bool&, unsigned int&, unsigned int&, unsigned int&, GHAL3D::SHADER_TYPE) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAB649C6: GHAL3D::CGen6PixelShaderKernelProgram::Compile(GHAL3D::SKernelCompilerControls const&, bool, unsigned int, unsigned int, unsigned int, bool&, unsigned int&, unsigned int&, unsigned int&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAB64F69: GHAL3D::CGen6PixelShaderKernelProgram::Compile16(bool, bool) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAB65434: GHAL3D::CGen6PixelShaderKernelProgram::Build() (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAB63345: GHAL3D::CGen6PixelShaderKernelProgram::Create(void const*, PLATFORM_STR, S3DKernelHardwareCapabilities const&, GHAL3D::CPixelShader const*, GHAL3D::SGen6PixelShaderKernelProgramCacheKey const*, GHAL3D::CGen6PixelShaderKernelProgram*&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAD13B9C: GHAL3D::CGen6PixelShaderKernelProgramCacheData::Initialize() (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAD13D3D: GHAL3D::CGen6PixelShaderKernelProgramCacheData::Create(GHAL3D::CStateProcessorCache*, GHAL3D::SGen6PixelShaderKernelProgramCacheKey const&, GHAL3D::CGen6PixelShaderKernelProgramCacheData*&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351== 
+==17351== Use of uninitialised value of size 8
+==17351==    at 0xAC9DCF1: iSTD::CHashTable<GHAL3D::SGen4CSALUValueNumberingHashKey, unsigned int, GHAL3D::CAllocator>::Remove(iSTD::CHashTable<GHAL3D::SGen4CSALUValueNumberingHashKey, unsigned int, GHAL3D::CAllocator>::CHashKey const&, unsigned int&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAABD7D4: GHAL3D::CGen4LIRValueNumberingHashTable::Remove(GHAL3D::SGen4LIRValueNumberingHashKey*) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAAE0D20: GHAL3D::CGen4LIRValueNumberingHashTable::RemoveByValueNumber(unsigned int) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAC11630: GHAL3D::CGen4LIRBasicBlock::ValueNumbering(unsigned int, GHAL3D::CGen4LIRValueNumberingHashTable*, iSTD::CHashTable<unsigned int, unsigned int, GHAL3D::CAllocator>*, GHAL3D::CGen4LIRInstructionList*, bool, GHAL3D::CGen4SSAMappingTable*, iSTD::CBitSet<GHAL3D::CAllocator>&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAC2D189: GHAL3D::CGen4LIRControlFlowGraph::ValueNumbering(unsigned int, GHAL3D::CGen4LIRInstructionList*, GHAL3D::CGen4SSAMappingTable*, iSTD::CBitSet<GHAL3D::CAllocator>&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAC351B0: GHAL3D::CGen4KernelFunctionList::VirtualRegistersToRegisters(GHAL3D::CGen4EURegisterAllocator*, bool, GHAL3D::CGen4ShaderDecomposer*, GHAL3D::CGen4ShaderSymbolTable*, S3DKernelHardwareCapabilities const&, unsigned int, unsigned int, unsigned int, bool&, unsigned int&, unsigned int&, unsigned int&, GHAL3D::SHADER_TYPE) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAB649C6: GHAL3D::CGen6PixelShaderKernelProgram::Compile(GHAL3D::SKernelCompilerControls const&, bool, unsigned int, unsigned int, unsigned int, bool&, unsigned int&, unsigned int&, unsigned int&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAB64F69: GHAL3D::CGen6PixelShaderKernelProgram::Compile16(bool, bool) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAB65434: GHAL3D::CGen6PixelShaderKernelProgram::Build() (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAB63345: GHAL3D::CGen6PixelShaderKernelProgram::Create(void const*, PLATFORM_STR, S3DKernelHardwareCapabilities const&, GHAL3D::CPixelShader const*, GHAL3D::SGen6PixelShaderKernelProgramCacheKey const*, GHAL3D::CGen6PixelShaderKernelProgram*&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAD13B9C: GHAL3D::CGen6PixelShaderKernelProgramCacheData::Initialize() (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351==    by 0xAD13D3D: GHAL3D::CGen6PixelShaderKernelProgramCacheData::Create(GHAL3D::CStateProcessorCache*, GHAL3D::SGen6PixelShaderKernelProgramCacheKey const&, GHAL3D::CGen6PixelShaderKernelProgramCacheData*&) (in /System/Library/Extensions/AppleIntelHD3000GraphicsGLDriver.bundle/Contents/MacOS/AppleIntelHD3000GraphicsGLDriver)
+==17351== 
+Checking for updated textures...
++RunningState() 0x10196c470 0x100573ea0 0x100573e30 0x100573e30
+Loading cell properties for type 'air'
+Loading cell properties for type 'bedrock'
+Loading texture cells/texture/bedrock as 8
+Loading cell properties for type 'brick'
+Loading texture cells/texture/brickstep as 9
+Loading texture cells/texture/brickstep_crack as 10
+Loading cell properties for type 'brick.secret'
+Loading cell properties for type 'carpet.red'
+Loading texture cells/texture/carpet.red as 11
+Loading cell properties for type 'default'
+Loading texture cells/texture/dirt as 12
+Loading cell properties for type 'dirt'
+Loading cell properties for type 'door.right.closed'
+Loading texture cells/texture/gate as 13
+Loading cell properties for type 'door.right.open'
+Loading cell properties for type 'frozenlava'
+Loading texture cells/texture/rock as 14
+Loading cell properties for type 'gate'
+Loading cell properties for type 'ice'
+Loading texture cells/texture/water as 15
+Loading cell properties for type 'ladder.right'
+Loading texture cells/texture/ladder as 16
+Loading cell properties for type 'lava'
+Loading texture cells/texture/lava as 17
+Loading cell properties for type 'pillar'
+Loading cell properties for type 'rock'
+Loading cell properties for type 'shooter'
+Loading texture cells/texture/shooter as 18
+Loading cell properties for type 'step'
+Loading texture cells/texture/step as 19
+Loading cell properties for type 'teleport'
+Loading texture cells/texture/teleport.off as 20
+Loading cell properties for type 'torch'
+Loading cell properties for type 'torch2'
+Loading cell properties for type 'torch3'
+Loading cell properties for type 'water'
+Loading cell properties for type 'wood'
+Loading texture cells/texture/planks as 21
+Feature 'start'
+Feature 'mote'
+Feature 'living_quarters.0'
+Feature 'hallway_small'
+Feature 'hallway_lava'
+Feature 'hallway.ladder.down'
+Feature 'hallway'
+Feature 'stairs_short'
+Feature 'hallway.ladder.up'
+Feature 'doorway_wood'
+Feature 'doorway'
+Feature 'door'
+Feature 'bridge'
+Feature 'alcove'
+Loading texture entities/texture/chest as 22
+Loading texture entities/texture/particle.bfw9k as 23
+Loading texture entities/texture/particle.bubble as 24
+Loading texture entities/texture/particle.rock as 25
+Loading texture entities/texture/particle.teleport as 26
+Loading texture entities/texture/projectile.bfw9k as 27
+Loading texture entities/texture/slime as 28
+Loading texture entities/texture/spider as 29
+Loading texture entities/texture/torch as 30
+Loading texture items/texture/leather as 31
+Loading texture items/texture/sword as 32
+Loading texture items/texture/gold as 33
+Loading texture items/texture/ring.gold as 34
+Line 14: ignoring 'name'
+Loading texture items/texture/ring.silver as 35
+Line 14: ignoring 'name'
+Loading texture items/texture/potion.empty as 36
+Loading texture items/texture/potion.red as 37
+Loading texture items/texture/potion.oil as 38
+Could not open asset file 'items/texture/potion.oil.png'
+Loading texture items/texture/potion.green as 39
+Loading texture items/texture/potion.blue as 40
+Loading texture items/texture/scroll as 41
+Loading texture items/texture/sword2 as 42
+Loading texture items/texture/torch as 43
+Line 14: ignoring 'nomodified'
+Loading texture items/texture/wand.black as 44
+Loading texture items/texture/wand.empty as 45
+0x10196c470 0x100573e30 0x100573ea0
+Built world with 418 features. Level 0.
+Loading texture gui/durability as 46
+Loading texture gui/crosshair as 47
+Loading texture gui/slot as 48
++RunningState() 0x1003f3ea0 0x100573ea0 0x100573e30 0x100573e30
+Loading cell properties for type 'air'
+Loading cell properties for type 'bedrock'
+Loading cell properties for type 'brick'
+Loading cell properties for type 'brick.secret'
+Loading cell properties for type 'carpet.red'
+Loading cell properties for type 'default'
+Loading cell properties for type 'dirt'
+Loading cell properties for type 'door.right.closed'
+Loading cell properties for type 'door.right.open'
+Loading cell properties for type 'frozenlava'
+Loading cell properties for type 'gate'
+Loading cell properties for type 'ice'
+Loading cell properties for type 'ladder.right'
+Loading cell properties for type 'lava'
+Loading cell properties for type 'pillar'
+Loading cell properties for type 'rock'
+Loading cell properties for type 'shooter'
+Loading cell properties for type 'step'
+Loading cell properties for type 'teleport'
+Loading cell properties for type 'torch'
+Loading cell properties for type 'torch2'
+Loading cell properties for type 'torch3'
+Loading cell properties for type 'water'
+Loading cell properties for type 'wood'
+Feature 'start'
+Feature 'mote'
+Feature 'living_quarters.0'
+Feature 'hallway_small'
+Feature 'hallway_lava'
+Feature 'hallway.ladder.down'
+Feature 'hallway'
+Feature 'stairs_short'
+Feature 'hallway.ladder.up'
+Feature 'doorway_wood'
+--17351:0:schedule VG_(sema_down): read returned -4
+==17351== 
+==17351== HEAP SUMMARY:
+==17351==     in use at exit: 133,962,718 bytes in 289,869 blocks
+==17351==   total heap usage: 1,719,157 allocs, 1,429,288 frees, 2,273,439,898 bytes allocated
+==17351== 
+==17351== LEAK SUMMARY:
+==17351==    definitely lost: 85 bytes in 4 blocks
+==17351==    indirectly lost: 0 bytes in 0 blocks
+==17351==      possibly lost: 92,828 bytes in 684 blocks
+==17351==    still reachable: 133,869,805 bytes in 289,181 blocks
+==17351==         suppressed: 0 bytes in 0 blocks
+==17351== Rerun with --leak-check=full to see details of leaked memory
+==17351== 
+==17351== For counts of detected and suppressed errors, rerun with: -v
+==17351== Use --track-origins=yes to see where uninitialised values come from
+==17351== ERROR SUMMARY: 1023 errors from 45 contexts (suppressed: 205 from 7)

@@ -563,7 +563,11 @@ Player::AddHealth(RunningState &state, const HealthInfo &info) {
 void
 Player::AddMessage(const std::string &text, const std::string &font) {
   Message *msg = new Message(text, font);
-  this->messages.push_back(msg);
+  if (this->messages.size() && this->messages.back()->messageTime > 1.8 && this->messages.back()->text->GetFontName() == font) {
+    (*this->messages.back()->text) = this->messages.back()->text->GetText() + " " + text; 
+  } else {  
+    this->messages.push_back(msg);
+  }
 }
 
 void
