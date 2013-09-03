@@ -57,7 +57,7 @@ public:
   const std::string &GetType()          const { return this->properties->name; }
   Stats GetDisplayStats()               const;
   uint32_t GetAmount()                  const { return this->amount; }
-  void DecAmount()                            { if (this->amount > 1) this->amount --; }
+  void DecAmount()                            { if (this->amount > 1) this->amount --; else this->isRemovable = true; }
   void IncAmount()                            { this->amount ++; }
   void AddAmount(int amt);
   void SetAmount(int amt)                     { this->amount = amt; }

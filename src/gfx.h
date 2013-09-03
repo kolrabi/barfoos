@@ -43,6 +43,7 @@ public:
   void            DrawUnitQuad            ();
   void            DrawAABB                (const AABB &aabb);
   void            DrawSprite              (const Sprite &sprite, const Vector3 &pos, bool flip = false, bool billboard = true, float angleV=0.0);
+  void            DrawSprite              (const Sprite &sprite, const Vector3 &pos, const Vector3 &axis);
   void            DrawIcon                (const Sprite &sprite, const Point &pos, const Point &size = Point(32, 32));
   void            DrawIconQuad            (const Point &pos, const Point &size = Point(32, 32));
   void            DrawStretched           (const Texture *tex, const Rect &src, const Rect &dest);

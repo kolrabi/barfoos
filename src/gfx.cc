@@ -37,7 +37,7 @@ Gfx::Gfx(const Point &pos, const Point &size, bool fullscreen) :
   activeTextureStage(0),
   activeVertexPointer(nullptr),
 
-  fogLin(0.05),
+  fogLin(0.1),
   fogColor(64, 64, 64),
 
   lightPositions(MaxLights),
@@ -241,10 +241,10 @@ Gfx::SetTextureFrame(const Texture *texture, size_t stage, size_t currentFrame, 
 
   if (!texture) return;
 
-  this->view->textureStack.back() = Matrix4();
+  this->view->textureMatrix = Matrix4();
 
   if (frameCount > 1) {
-    this->view->textureStack.back() =
+    this->view->textureMatrix =
       Matrix4::Scale(Vector3(1.0/frameCount, 1, 1)) *
       Matrix4::Translate(Vector3(currentFrame, 0, 0));
   }
@@ -354,6 +354,42 @@ void Gfx::DrawSprite(const Sprite &sprite, const Vector3 &pos, bool flip, bool b
     this->view->Translate(Vector3(sprite.offsetX, sprite.offsetY, 0));
   }
   this->view->Rotate(angleV, Vector3(0,1,0));
+  this->view->Scale(Vector3(sprite.width/2, sprite.height/2, 1));
+
+  SetBackfaceCulling(false);
+  if (sprite.texture) {
+    if (this->useFixedFunction) {
+      glEnable(GL_LIGHTING);
+      float e[] = {
+        this->light.r / 255.0f, this->light.g / 255.0f, this->light.b / 255.0f, 1.0f
+      };
+      glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, e);
+    }
+    this->SetTextureFrame(sprite.texture, 0, sprite.currentFrame, sprite.totalFrames);
+    this->DrawUnitQuad();
+    if (this->useFixedFunction) {
+      glDisable(GL_LIGHTING);
+    }
+  }
+  if (sprite.emissiveTexture) {
+    this->SetTextureFrame(sprite.emissiveTexture, 0, sprite.currentFrame, sprite.totalFrames);
+    this->SetBlendAdd();
+    this->SetColor(IColor(255,255,255));
+    this->SetLight(IColor(255,255,255));
+    this->DrawUnitQuad();
+    this->SetBlendNormal();
+  }
+  SetBackfaceCulling(true);
+
+  this->view->Pop();
+}
+
+void Gfx::DrawSprite(const Sprite &sprite, const Vector3 &pos, const Vector3 &axis) {
+  this->view->Push();
+  this->view->Translate(pos);
+
+  this->view->AlignY(axis);
+  this->view->Translate(Vector3(sprite.offsetX, sprite.offsetY, 0));
   this->view->Scale(Vector3(sprite.width/2, sprite.height/2, 1));
 
   SetBackfaceCulling(false);

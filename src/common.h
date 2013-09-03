@@ -88,7 +88,7 @@ constexpr float operator"" _deg(unsigned long long f) { return (float)f / 180 * 
 typedef uint32_t ID;
 constexpr ID InvalidID = (ID)0xFFFFFFFF;
 
-template<class T> 
+template<class T>
 std::string ToString(const T &v) {
   std::stringstream str;
   str << v;

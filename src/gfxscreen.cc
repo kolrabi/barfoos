@@ -61,7 +61,14 @@ GfxScreen::GfxScreen(Gfx &gfx, const Point &pos, const Point &size, bool fullscr
   gfx(gfx),
   screenPos(pos),
   screenSize(size),
-  isFullscreen(fullscreen)
+  isFullscreen(fullscreen),
+  virtualScreenSize(size),
+  viewportSize(size),
+  guiActiveCount(0),
+  mousePos(0,0),
+  lastMousePos(0,0),
+  mouseDelta(0,0),
+  mouseGrab(false)
 {}
 
 bool
@@ -313,7 +320,7 @@ GfxScreen::AlignTopLeftScreen(const Point &size, int padding) {
 Point
 GfxScreen::AlignTopRightScreen(const Point &size, int padding) {
   return Point(
-    this->virtualScreenSize.x - (padding - size.x/2),
+    this->virtualScreenSize.x - (padding + size.x/2),
                                 (padding + size.y/2)
   );
 }
