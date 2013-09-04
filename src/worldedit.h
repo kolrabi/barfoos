@@ -15,7 +15,7 @@ public:
   ~WorldEdit();
 
   WorldEdit &operator=(const WorldEdit &) = delete;
-  
+
   WorldEdit &SetBrush(const Cell &brush);
   WorldEdit &ApplyBrush(const IVector3 &pos);
 
@@ -28,7 +28,7 @@ public:
   WorldEdit &WallYZ(const IVector3 &pos, size_t height, size_t depth);
 
   WorldEdit &FilledBox(const IVector3 &pos, const IVector3 &size);
-  
+
   WorldEdit &Explosion(const IVector3 &pos, const IVector3 &size, float strength, Random &random);
   WorldEdit &Ellipsoid(const IVector3 &pos, const IVector3 &size);
 

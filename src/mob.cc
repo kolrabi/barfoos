@@ -164,19 +164,21 @@ Mob::Update(RunningState &state) {
     uint8_t axesForward = 0, axesDown = 0;
 
     // when moving down and pushing use step height
-    Vector3 step(0, move.GetMag()!=0 ? this->properties->stepHeight : 0, 0);
+    Vector3 step(0, (move.GetMag()!=0 && !isSneaking) ? this->properties->stepHeight : 0, 0);
 
     // move up, forward, down
     aabb.center = world.MoveAABB(aabb, aabb.center + step);
-    aabb.center = world.MoveAABB(aabb, aabb.center + velocity.Horiz()*deltaT, axesForward, &cell, &side);
+    aabb.center = world.MoveAABB(aabb, aabb.center + velocity.Horiz()*deltaT, axesForward, &cell, &side, isSneaking && isOnGround);
     aabb.center = world.MoveAABB(aabb, aabb.center - step*1.25 + velocity.Vert()*deltaT, axesDown, cell ? nullptr : &cell, &side);
 
     axesTotal |= axesForward | axesDown;
 
     bool didHitFloor = axesDown & Axis::Y;
 
+    isOnGround = didHitFloor;
+
     org.y = aabb.center.y;
-    aabb.center = world.MoveAABB(aabb, org, axesDown);
+    aabb.center = world.MoveAABB(aabb, org, axesDown, nullptr, nullptr, isSneaking && isOnGround);
     axesTotal |= axesDown;
 
     if (!didHitFloor) aabb.center = aabb.center + step*0.25;

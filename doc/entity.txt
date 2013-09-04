@@ -71,6 +71,8 @@ FlipLeft
   Flip the sprite horizontally depending of the movement direction and
   viewing angle.
 
+AlignYForward
+
 RandomAngle
 
   A random angle is picked on entity start and is used to rotate it around

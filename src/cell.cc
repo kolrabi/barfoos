@@ -500,13 +500,20 @@ bool Cell::HasSolidSides() const {
          this->neighbours[(int)Side::Backward]->IsSolid();
 }
 
-bool Cell::CheckSideSolid(Side side, const Vector3 &org) const {
+bool Cell::CheckSideSolid(Side side, const Vector3 &org, bool sneak) const {
   if (!this->world) return true;
 
-  Cell *cell = this->neighbours[(int)side];
+  const Cell &cell = self[side];
+
+  if (sneak) {
+    if (side != Side::Up && side != Side::Down) {
+      if (self[Side::Down].IsSolid() && !cell[Side::Down].IsSolid())
+        return true;
+    }
+  }
 
   // check for clipping movement into cell from opposite side
-  bool clipIn  = (cell->info->clipSidesIn  & (1 <<(-side)));
+  bool clipIn  = (cell.info->clipSidesIn  & (1 <<(-side)));
 
   // check for clipping movement out the cell
   bool clipOut = (this->info->clipSidesOut & (1 <<  side ));
@@ -518,7 +525,7 @@ bool Cell::CheckSideSolid(Side side, const Vector3 &org) const {
   float x = org.x-(int)org.x + (side==Side::Left     ? 1.0 : 0.0);
   float z = org.z-(int)org.z + (side==Side::Backward ? 1.0 : 0.0);
 
-  bool heightCheck = org.y < (this->pos.y+cell->GetHeightClamp( x, z ) );
+  bool heightCheck = org.y < (this->pos.y+cell.GetHeightClamp( x, z ) );
   return (clipIn && heightCheck) || clipOut;
 }
 

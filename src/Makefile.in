@@ -58,12 +58,13 @@ am__barfoos_SOURCES_DIST = main.cc image.cc image.h gfx.cc gfx.h \
 	itementity.cc itementity.h projectile.cc projectile.h \
 	trigger.cc trigger.h cell.cc cell.h cellproperties.cc \
 	cellproperties.h cellrender.cc feature.cc feature.h world.cc \
-	world.h worldedit.cc worldedit.h item.cc item.h \
-	itemproperties.cc itemproperties.h inventory.cc inventory.h \
-	effect.cc effect.h common.h ivector3.h space.h vector3.h \
-	random.h util.cc util.h aabb.h 2d.h serializer.cc serializer.h \
-	deserializer.cc deserializer.h input.cc input.h profile.cc \
-	profile.h log.cc log.h res.rc icon.ico
+	world.h worldedit.cc worldedit.h worldbuilder.cc \
+	worldbuilder.h item.cc item.h itemproperties.cc \
+	itemproperties.h inventory.cc inventory.h effect.cc effect.h \
+	common.h ivector3.h space.h vector3.h random.h util.cc util.h \
+	aabb.h 2d.h serializer.cc serializer.h deserializer.cc \
+	deserializer.h input.cc input.h profile.cc profile.h log.cc \
+	log.h res.rc icon.ico
 @WINDOOF_TRUE@am__objects_1 = res.$(OBJEXT)
 am_barfoos_OBJECTS = barfoos-main.$(OBJEXT) barfoos-image.$(OBJEXT) \
 	barfoos-gfx.$(OBJEXT) barfoos-gfxview.$(OBJEXT) \
@@ -82,12 +83,13 @@ am_barfoos_OBJECTS = barfoos-main.$(OBJEXT) barfoos-image.$(OBJEXT) \
 	barfoos-trigger.$(OBJEXT) barfoos-cell.$(OBJEXT) \
 	barfoos-cellproperties.$(OBJEXT) barfoos-cellrender.$(OBJEXT) \
 	barfoos-feature.$(OBJEXT) barfoos-world.$(OBJEXT) \
-	barfoos-worldedit.$(OBJEXT) barfoos-item.$(OBJEXT) \
-	barfoos-itemproperties.$(OBJEXT) barfoos-inventory.$(OBJEXT) \
-	barfoos-effect.$(OBJEXT) barfoos-util.$(OBJEXT) \
-	barfoos-serializer.$(OBJEXT) barfoos-deserializer.$(OBJEXT) \
-	barfoos-input.$(OBJEXT) barfoos-profile.$(OBJEXT) \
-	barfoos-log.$(OBJEXT) $(am__objects_1)
+	barfoos-worldedit.$(OBJEXT) barfoos-worldbuilder.$(OBJEXT) \
+	barfoos-item.$(OBJEXT) barfoos-itemproperties.$(OBJEXT) \
+	barfoos-inventory.$(OBJEXT) barfoos-effect.$(OBJEXT) \
+	barfoos-util.$(OBJEXT) barfoos-serializer.$(OBJEXT) \
+	barfoos-deserializer.$(OBJEXT) barfoos-input.$(OBJEXT) \
+	barfoos-profile.$(OBJEXT) barfoos-log.$(OBJEXT) \
+	$(am__objects_1)
 barfoos_OBJECTS = $(am_barfoos_OBJECTS)
 barfoos_DEPENDENCIES =
 barfoos_LINK = $(CXXLD) $(barfoos_CXXFLAGS) $(CXXFLAGS) \
@@ -253,6 +255,7 @@ barfoos_SOURCES = \
   feature.cc feature.h \
   world.cc world.h \
   worldedit.cc worldedit.h \
+  worldbuilder.cc worldbuilder.h \
   \
   item.cc item.h \
   itemproperties.cc itemproperties.h \
@@ -416,6 +419,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/barfoos-util.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/barfoos-vertexbuffer.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/barfoos-world.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/barfoos-worldbuilder.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/barfoos-worldedit.Po@am__quote@
 
 .c.o:
@@ -935,6 +939,20 @@ barfoos-worldedit.obj: worldedit.cc
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='worldedit.cc' object='barfoos-worldedit.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -c -o barfoos-worldedit.obj `if test -f 'worldedit.cc'; then $(CYGPATH_W) 'worldedit.cc'; else $(CYGPATH_W) '$(srcdir)/worldedit.cc'; fi`
+
+barfoos-worldbuilder.o: worldbuilder.cc
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -MT barfoos-worldbuilder.o -MD -MP -MF $(DEPDIR)/barfoos-worldbuilder.Tpo -c -o barfoos-worldbuilder.o `test -f 'worldbuilder.cc' || echo '$(srcdir)/'`worldbuilder.cc
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/barfoos-worldbuilder.Tpo $(DEPDIR)/barfoos-worldbuilder.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='worldbuilder.cc' object='barfoos-worldbuilder.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -c -o barfoos-worldbuilder.o `test -f 'worldbuilder.cc' || echo '$(srcdir)/'`worldbuilder.cc
+
+barfoos-worldbuilder.obj: worldbuilder.cc
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -MT barfoos-worldbuilder.obj -MD -MP -MF $(DEPDIR)/barfoos-worldbuilder.Tpo -c -o barfoos-worldbuilder.obj `if test -f 'worldbuilder.cc'; then $(CYGPATH_W) 'worldbuilder.cc'; else $(CYGPATH_W) '$(srcdir)/worldbuilder.cc'; fi`
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/barfoos-worldbuilder.Tpo $(DEPDIR)/barfoos-worldbuilder.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='worldbuilder.cc' object='barfoos-worldbuilder.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -c -o barfoos-worldbuilder.obj `if test -f 'worldbuilder.cc'; then $(CYGPATH_W) 'worldbuilder.cc'; else $(CYGPATH_W) '$(srcdir)/worldbuilder.cc'; fi`
 
 barfoos-item.o: item.cc
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -MT barfoos-item.o -MD -MP -MF $(DEPDIR)/barfoos-item.Tpo -c -o barfoos-item.o `test -f 'item.cc' || echo '$(srcdir)/'`item.cc

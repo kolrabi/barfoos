@@ -58,7 +58,7 @@ public:
   bool IsSeen(size_t checkNeighbours = 0) const;
 
   bool HasSolidSides() const;
-  bool CheckSideSolid(Side side, const Vector3 &org) const;
+  bool CheckSideSolid(Side side, const Vector3 &org, bool sneak = false) const;
 
   AABB GetAABB() const;
 

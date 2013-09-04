@@ -70,6 +70,7 @@ EntityProperties::ParseProperty(const std::string &cmd) {
   else if (cmd == "respawn")          this->respawn         = true;
   else if (cmd == "nostep")           this->noStep          = true;
   else if (cmd == "vert")             this->sprite.vertical = true;
+  else if (cmd == "alignyforward")    this->alignYForward   = true;
 
   else if (cmd == "box")              this->isBox           = true;
   else if (cmd == "nohit")            this->nohit           = true;
@@ -554,7 +555,11 @@ Entity::Draw(Gfx &gfx) const {
     }
     gfx.GetView().Pop();
   } else {
-    gfx.DrawSprite(this->sprite, this->aabb.center, this->properties->flipLeft && gfx.GetView().GetRight().Dot(GetForward())<0, !this->properties->isQuad, this->renderAngle);
+    if (this->properties->alignYForward) {
+      gfx.DrawSprite(this->sprite, this->aabb.center, this->GetForward());
+    } else {
+      gfx.DrawSprite(this->sprite, this->aabb.center, this->properties->flipLeft && gfx.GetView().GetRight().Dot(GetForward())<0, !this->properties->isQuad, this->renderAngle);
+    }
   }
 
   if (this->drawAABB) {

@@ -318,6 +318,8 @@
     <File Name="src/vertexbuffer.h"/>
     <File Name="src/gfxscreen.cc"/>
     <File Name="src/gfxscreen.h"/>
+    <File Name="src/worldbuilder.cc"/>
+    <File Name="src/worldbuilder.h"/>
   </VirtualDirectory>
   <Settings Type="Dynamic Library">
     <GlobalSettings>

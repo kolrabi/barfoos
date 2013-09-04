@@ -1,7 +1,8 @@
-added value  10:
 
 float f = 1.0 + 0.75*this->modifier;
 if (this->beatitude == Beatitude::Blessed) f *=  1.5;
+
+added value  10:
 
 -2 cursed     f = 1.0 - 1.5    -5
 
@@ -12,6 +13,18 @@ if (this->beatitude == Beatitude::Blessed) f *=  1.5;
  2 normal     f = 1.0 + 1.5    25
 
  2 blessed    f = 1.0 + 1.5    37
+
+added value  2:
+
+-2 cursed     f = 1.0 - 1.5    -1
+
+-2 normal     f = 1.0 - 1.5    -1
+-1 normal     f = 1.0 - 0.75   -0.5
+ 0 normal     f = 1.0           2
+ 1 normal     f = 1.0 + 0.75    3.5
+ 2 normal     f = 1.0 + 1.5     5
+
+ 2 blessed    f = 1.0 + 1.5     7.5
 
 
 

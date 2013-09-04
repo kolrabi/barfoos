@@ -104,6 +104,7 @@ struct EntityProperties : public Properties {
   float   impactDamage      = 0.0;
   bool    randomAngle       = false;
   bool    isQuad            = false;
+  bool    alignYForward     = false;
 
   Element element           = Element::Physical;
 

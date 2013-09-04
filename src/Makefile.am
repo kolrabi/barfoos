@@ -63,6 +63,7 @@ barfoos_SOURCES=\
   feature.cc feature.h \
   world.cc world.h \
   worldedit.cc worldedit.h \
+  worldbuilder.cc worldbuilder.h \
   \
   item.cc item.h \
   itemproperties.cc itemproperties.h \

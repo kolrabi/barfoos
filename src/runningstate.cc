@@ -3,6 +3,7 @@
 #include "runningstate.h"
 
 #include "world.h"
+#include "worldbuilder.h"
 #include "ivector3.h"
 #include "world.h"
 #include "player.h"
@@ -67,7 +68,25 @@ RunningState::NewGame() {
 
   delete this->world;
   this->world = new World(*this, IVector3(64, 64, 64));
-  this->world->Build();
+
+  Random &random = GetRandom();
+
+  Theme theme;
+  theme.featureCount  = random.Integer(400)+400;             // 400 - 800
+  theme.useLastChance = 0.1 + random.Float01()*0.8;          // 0.1 - 0.9
+  theme.useLastDirChance = 0.6;
+  theme.caveLengthMin = random.Integer(20);
+  theme.caveLengthMax = theme.caveLengthMin + random.Integer(100);
+  theme.caveRepeat    = random.Integer(20)+10;
+
+  theme.teleportCount = random.Integer(10)+2;
+  theme.trapCount = random.Integer(10)+10;
+  theme.decoCount = 500+random.Integer(200);
+  theme.itemCount = 100+random.Integer(120);
+  theme.monsterCount = 50+random.Integer(100);
+
+  WorldBuilder builder(*this->world);
+  builder.Build(*this, theme);
 
   Entity *player = Entity::Create("player");
   if (player) {

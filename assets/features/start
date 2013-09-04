@@ -55,6 +55,8 @@ Entity          1.0 torch   -2    7   2   7
 
 Entity          1.0 box     -2    4   2   6
 
+Entity          1.0 arrow   0     5   5   5
+
 Slice           3   3
 #########
 #.......#

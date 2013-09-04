@@ -43,9 +43,8 @@ public:
 
   World &operator=(const World &) = delete;
 
-  void Build();
-
   const IVector3 &GetSize()   const { return size; }
+  size_t    GetCellCount() const { return this->cellCount; }
   RunningState &  GetState()  const { return state; }
   MiniMap &       GetMap()          { return minimap; }
 
@@ -58,8 +57,8 @@ public:
   IColor GetLight(const IVector3 &pos) const;
   IColor GetLight(const Vector3 &pos) const;
 
-  bool CastRayX(const Vector3 &org, float dir) const;
-  bool CastRayZ(const Vector3 &org, float dir) const;
+  bool CastRayX(const Vector3 &org, float dir, bool sneak = false) const;
+  bool CastRayZ(const Vector3 &org, float dir, bool sneak = false) const;
   float CastRayYUp(const Vector3 &org) const;
   float CastRayYDown(const Vector3 &org) const;
 
@@ -67,8 +66,8 @@ public:
   bool IsPointSolid(const Vector3 &org) const;
   bool IsAABBSolid(const AABB &aabb) const;
 
-  Vector3 MoveAABB(const AABB &aabb, const Vector3 &target);
-  Vector3 MoveAABB(const AABB &aabb, const Vector3 &target, uint8_t &axis, Cell **cell = nullptr, Side *side = nullptr);
+  Vector3 MoveAABB(const AABB &aabb, const Vector3 &target, bool sneak = false);
+  Vector3 MoveAABB(const AABB &aabb, const Vector3 &target, uint8_t &axis, Cell **cell = nullptr, Side *side = nullptr, bool sneak = false);
 
   void BeginCheckOverwrite() { checkOverwrite = true; checkOverwriteOK = true; }
   bool FinishCheckOverwrite() { checkOverwrite = false; return checkOverwriteOK;}
@@ -77,6 +76,8 @@ public:
   void Dump();
 
   bool IsDefault(const IVector3 &pos) const;
+  void ClearDefaults();
+  void CopyCellsFrom(const std::vector<Cell> &cells);
 
   void BreakBlock(const IVector3 &pos);
 
@@ -95,6 +96,10 @@ public:
 
   void                  MarkForUpdateNeighbours (const Cell *cell);
   void                  UpdateCell              (const IVector3 &pos);
+
+  size_t                GetCellIndex            (const IVector3 &pos) const { return pos.x+size.x*(pos.y+size.y*pos.z); }
+  IVector3              GetCellPos              (size_t i)            const { return IVector3( i%size.x, (i/size.x)%size.y, (i/(size.x*size.y))%size.z); }
+  bool                  IsValidCellPosition     (const IVector3 &pos) const { return pos.x < size.x  && pos.y < size.y && pos.z < size.z;  }
 
 private:
 
@@ -128,12 +133,6 @@ private:
 
   void UpdateCell(size_t i);
   void MarkForUpdateNeighbours(size_t i);
-
-  size_t GetCellIndex(const IVector3 &pos) const { return pos.x+size.x*(pos.y+size.y*pos.z); }
-  IVector3 GetCellPos(size_t i) const { return IVector3( i%size.x, (i/size.x)%size.y, (i/(size.x*size.y))%size.z); }
-  bool IsValidCellPosition(const IVector3 &pos) const {
-    return pos.x < size.x  && pos.y < size.y && pos.z < size.z;
-  }
 
   friend Serializer &operator << (Serializer &ser, const World &world);
 };

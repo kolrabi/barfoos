@@ -85,329 +85,6 @@ World::World(RunningState &state, Deserializer &deser) :
 World::~World() {
 }
 
-// TODO: put into separate WorldBuilder class
-void
-World::Build() {
-
-  // build features -------------------------------------------
-
-  // some basic parameters for this world
-  Log("%p %p %p\n", &state, &state.GetGame(), &state.GetRandom());
-  Random &random = state.GetRandom();
-  IVector3 r(random.Integer(), random.Integer(), random.Integer());
-  size_t featureCount  = random.Integer(400)+400;             // 400 - 800
-  float  useLastChance = 0.1 + random.Float01()*0.8;          // 0.1 - 0.9
-  float  useLastDirChance = 0.6;
-  size_t caveLengthMin = random.Integer(20);
-  size_t caveLengthMax = caveLengthMin + random.Integer(100);
-  size_t caveRepeat    = random.Integer(20)+10;
-
-  size_t teleportCount = random.Integer(10)+2;
-  size_t trapCount = random.Integer(10)+10;
-  size_t decoCount = 500+random.Integer(200);
-  size_t itemCount = 100+random.Integer(120);
-  size_t monsterCount = 50+random.Integer(100);
-
-  std::vector<FeatureInstance> instances;
-
-  Log("Creating ground...\n");
-  std::vector<Cell> defaultCells(this->cellCount);
-  for (size_t i=0; i<this->cellCount; i++) {
-    IVector3 pos = GetCellPos(i);
-    if (pos.x < 2 || pos.y < 2 || pos.z < 2 || pos.x >= size.x-2 || pos.y >= size.y-2 || pos.z >= size.z-2) {
-      defaultCells[i] = Cell("bedrock");
-      defaultCells[i].SetLocked(true);
-      defaultCells[i].SetIgnoreWrite(true);
-    } else {
-      defaultCells[i] = Cell("rock");
-      /*
-      IVector3 ppp(pos+r);
-      ppp.x %= 256;
-      ppp.y %= 256;
-      ppp.z %= 256;
-      Vector3 vpos(ppp);
-      float f = (simplexNoise(vpos*0.07) * simplexNoise(vpos*(-0.06)) * simplexNoise(vpos*(-0.13)));
-      if (f > 0.75) {
-        defaultCells[i] = Cell("brick");
-      } else if (f > 0.5) {
-        defaultCells[i] = Cell("rock");
-      } else {
-        defaultCells[i] = Cell("dirt");
-      }*/
-    }
-  }
-  bool done = false;
-  for (size_t tries=0; tries < 20 && !done; tries++) {
-
-    Log("Filling ground...\n");
-    this->cells = defaultCells;
-    for (size_t i=0; i<this->cellCount; i++) {
-      this->cells[i].SetWorld(this, GetCellPos(i));
-    }
-
-    this->defaultMask = std::vector<bool>(this->cellCount, true);
-
-    instances.clear();
-    instances.push_back(getFeature("start")->BuildFeature(state, *this, IVector3(32-4, 32-8,32-4), 0, 0, 0, nullptr, 0));
-    instances.back().prevID = InvalidID;
-
-    int loop = 0;
-    int lastDir = 0;
-    uint32_t minY = size.y;
-    uint32_t maxY = 0;
-
-    Log("Building features...\n");
-    do {
-      loop++;
-      if (loop > 100000) break;
-
-      // select a feature from which to go
-      bool                      useLast     = random.Chance(useLastChance);
-      bool                      useLastDir  = lastDir != 0 && useLast && random.Chance(useLastDirChance);
-      ID                        featNum     = useLast ? instances.size()-1 : random.Integer(instances.size());
-      const FeatureInstance &   instance    = instances[featNum];
-
-      // select a random connection from the current feature
-      const Feature *           feature     = instance.feature;
-      const FeatureConnection * conn        = useLastDir ? feature->GetRandomConnection(lastDir, state) : feature->GetRandomConnection(state);
-      if (!conn) continue;
-
-      // select next feature
-      const Feature *           nextFeature = conn->GetRandomFeature(state, instance.pos);
-      if (!nextFeature) continue;
-
-      // make sure both features can connect
-      const FeatureConnection * revConn     = nextFeature->GetRandomConnection(-conn->dir, state);
-      if (!revConn) continue;
-
-      // snap both connection points together
-      IVector3                  pos         = instance.pos + conn->pos - revConn->pos;
-
-      // check if feature can be built
-      this->BeginCheckOverwrite();
-      nextFeature->BuildFeature(state, *this, pos, conn->dir, instance.dist, instances.size(), nullptr, featNum);
-      if (!this->FinishCheckOverwrite()) continue;
-
-      // build it
-      FeatureInstance           nextInstance = nextFeature->BuildFeature(state, *this, pos, conn->dir, instance.dist, instances.size(), revConn, featNum);
-      minY = std::min(minY, pos.y);
-      maxY = std::max(maxY, nextFeature->GetSize().y + pos.y);
-
-      // replace some cells after connection if wanted
-      feature->ReplaceChars(*this, instance.pos, conn->id, featNum);
-
-      lastDir = conn->dir;
-      loop    = 0;
-
-      // check if we accidentally connected properly to anything else
-      for (auto &nextConn : nextInstance.feature->GetConnections()) {
-        IVector3 nextConnPos = nextInstance.pos + nextConn.pos;
-
-        for (auto &inst : instances) {
-          for (const FeatureConnection &c : inst.feature->GetConnections()) {
-            // match direction
-            if (c.dir != -nextConn.dir) continue;
-
-            // match position
-            IVector3 connPos = inst.pos + c.pos;
-            if (connPos != nextConnPos) continue;
-
-            // replace some cells after connection if wanted
-            inst.feature->ReplaceChars(*this, inst.pos, c.id, inst.featureID);
-            nextInstance.feature->ReplaceChars(*this, nextInstance.pos, nextConn.id, nextInstance.featureID);
-          }
-        }
-      }
-
-      // done :)
-      instances.push_back(nextInstance);
-      instances.back().prevID = featNum;
-    } while(instances.size() < featureCount);
-
-    int height = maxY - minY;
-
-    // want at least 150 features and at least 16 cells high
-    if (instances.size() < 150 || height < 16) {
-      done = false;
-      Log("Discarding boring world with %u features and height %d :( ...\n", instances.size(), height);
-    } else {
-      done = true;
-      Log("Made a nice world with %u features and height %d :) ...\n", instances.size(), height);
-    }
-  }
-
-  WorldEdit e(this);
-
-  Log("Carving caves...\n");
-
-  // create caves
-  e.SetBrush(Cell("air"));
-  size_t caveCount     = instances.size()>10 ? random.Integer(instances.size()/10) : 0;
-
-  for (size_t i = 0; i<caveCount; i++) {
-    size_t featNum = random.Integer(instances.size());
-    const FeatureInstance &instance = instances[featNum];
-    IVector3 size = instance.feature->GetSize();
-
-    for (size_t k=0; k<caveRepeat; k++) {
-      IVector3 cavePos(instance.pos + IVector3(random.Integer(size.x), random.Integer(size.y), random.Integer(size.z)));
-      size_t caveLength = caveLengthMin + random.Integer(caveLengthMax-caveLengthMin);
-      bool lastSolid = false;
-
-      for (size_t j=0; j<caveLength; j++) {
-        Side nextSide = (Side)(random.Integer(6));
-        bool solid = this->GetCell(cavePos).GetInfo().flags & CellFlags::Solid;
-        if (solid && !lastSolid) {
-          e.ApplyBrush(cavePos);
-        }
-        lastSolid = solid;
-        cavePos = cavePos[nextSide];
-      }
-    }
-  }
-
-
-  Log("Placing %u teleports...\n", teleportCount);
-  for (size_t i=0; i<teleportCount; i++) {
-    IVector3 a = GetRandomTeleportTarget(random);
-    IVector3 b = GetRandomTeleportTarget(random);
-    while (a == b) b = GetRandomTeleportTarget(random);
-
-    SetCell(a, Cell("teleport")).SetTeleportTarget(b);
-    SetCell(b, Cell("teleport")).SetTeleportTarget(a);
-  }
-
-  Log("Placing %u traps...\n", trapCount);
-  for (size_t i=0; i<trapCount; i++) {
-
-    IVector3 a = GetRandomTeleportTarget(random);
-
-    Cell *aboveCell = &GetCell(a)[Side::Up][Side::Up];
-    Side side = (Side)random.Integer(6);
-    while (side == Side::Down) side = (Side)random.Integer(6);
-
-    size_t distance = 0;
-    while(!aboveCell->IsSolid()) {
-      aboveCell = &((*aboveCell)[side]);
-      distance ++;
-    }
-
-    if (distance > 5) { i--; continue; }
-
-    Cell &trigger = GetCell(a);
-    Cell &spawner = SetCell(aboveCell->GetPosition(), Cell("shooter"));
-
-    const std::vector<std::string> &traps = GetEntitiesInGroup("trap");
-    if (traps.empty()) {
-      spawner.SetSpawnOnActive("projectile.bfw9k", -side, 0.0);
-    } else {
-      spawner.SetSpawnOnActive(traps[state.GetRandom().Integer(traps.size())], -side, 0.0);
-    }
-
-    ID id = state.GetNextTriggerId();
-    spawner.SetTrigger(id, false);
-    trigger.SetTriggerTarget(id);
-  }
-
-  Log("Spawning feature entities...\n");
-  for (auto instance : instances) {
-    instance.feature->SpawnEntities(state, instance.pos);
-  }
-
-  Log("Placing %u items...\n", itemCount);
-  for (size_t i=0; i<itemCount; i++) {
-    std::string itemName = getRandomItem("item", state.GetLevel(), state.GetRandom());
-    ItemEntity *entity = new ItemEntity(itemName);
-    if (!entity) continue;
-
-    IVector3 a = GetRandomTeleportTarget(random, entity->GetAABB().extents);
-    entity->SetPosition(Vector3(a.x + 0.5, a.y + entity->GetAABB().extents.y+0.01, a.z + 0.5));
-    state.AddEntity(entity);
-  }
-
-  Log("Placing some decoration (%u of them)...\n", decoCount);
-  for (size_t i=0; i<decoCount; i++) {
-    bool top = random.Coin();
-    IVector3 a;
-    if (top) {
-      a = GetRandomTeleportTarget(random)[Side::Up];
-    } else {
-      a = GetRandomCeiling(random)[Side::Down];
-    }
-    Cell &cell = GetCell(a);
-    ID decoID = cell.GetFeatureID();
-    if (decoID == InvalidID) continue;
-
-    std::string decoGroup = "deco." + instances[decoID].feature->GetDecoGroup() + ".";
-    decoGroup += top?"top":"bottom";
-
-    const std::vector<std::string> &decoEnts = GetEntitiesInGroup(decoGroup);
-    if (decoEnts.empty()) continue;
-
-    std::string decoName = decoEnts[random.Integer(decoEnts.size())];
-
-    Entity *entity = Entity::Create(decoName);
-    if (!entity) continue;
-
-    state.AddEntity(entity);
-
-    Vector3 pos(Vector3(a.x + 0.5, a.y, a.z + 0.5));
-    if (top) {
-      pos.y = CastRayYDown(pos) + entity->GetAABB().extents.y + 0.01;
-    } else {
-      pos.y = CastRayYUp(pos) - entity->GetAABB().extents.y - 0.01;
-    }
-    entity->SetPosition(pos);
-  }
-
-  Log("Placing %u enemies...\n", monsterCount);
-  weighted_map<std::string> monsters;
-  for (auto &m:GetEntitiesInGroup("monster")) {
-    monsters[m] = GetEntityProbability(m, state.GetLevel());
-  }
-  for (size_t i=0; i<monsterCount; i++) {
-    std::string monster = monsters.select(random.Float01());
-    Entity *entity = Entity::Create(monster);
-    if (!entity) continue;
-
-    IVector3 a = GetRandomTeleportTarget(random, entity->GetAABB().extents);
-
-    state.AddEntity(entity);
-    entity->SetPosition(Vector3(a.x + 0.5, a.y + entity->GetAABB().extents.y+1.01, a.z + 0.5));
-    Log("%u is solid: %d\n", entity->GetId(), IsAABBSolid(entity->GetAABB()));
-  }
-
-  // remove spilt liquids
-  Log("Wiping the floor...\n");
-  bool foundLiquid = true;
-  while(foundLiquid) {
-    foundLiquid = false;
-    for (size_t i=0; i<this->cellCount; i++) {
-      if (!this->cells[i].IsLiquid()) continue;
-
-      if (this->cells[i][Side::Down].GetType() == "air" ||
-          this->cells[i][Side::Right].GetType() == "air" ||
-          this->cells[i][Side::Left].GetType() == "air" ||
-          this->cells[i][Side::Forward].GetType() == "air" ||
-          this->cells[i][Side::Backward].GetType() == "air") {
-        foundLiquid = true;
-        this->SetCell(GetCellPos(i), Cell("air"));
-      }
-    }
-  }
-
-  // update all cells
-  Log("Updating all cells...\n");
-  for (size_t i=0; i<this->cellCount; i++) {
-    this->MarkForUpdateNeighbours(i);
-  }
-
-  Update(state);
-  Update(state);
-
-  Log("Done!\n");
-}
-
 Cell &
 World::SetCell(const IVector3 &pos, const Cell &cell, bool ignoreLock) {
   if (checkOverwrite) {
@@ -678,7 +355,7 @@ World::Update(
  *         of the cell).
  */
 bool
-World::CastRayX(const Vector3 &org, float dir) const {
+World::CastRayX(const Vector3 &org, float dir, bool sneak) const {
   bool movingRight = dir > 0;
   size_t x = org.x - (movingRight?0.01f:-0.01f); // start cell x
   size_t y = org.y; // start cell y
@@ -688,7 +365,7 @@ World::CastRayX(const Vector3 &org, float dir) const {
   size_t x2 = (org.x+dir + 2*(movingRight?0.01f:-0.01f));
   if (x2 == x) return false; // not crossing cell borders
 
-  return this->GetCell(IVector3(x,y,z)).CheckSideSolid(movingRight ? Side::Right : Side::Left, org);
+  return this->GetCell(IVector3(x,y,z)).CheckSideSolid(movingRight ? Side::Right : Side::Left, org, sneak);
 }
 
 /**
@@ -700,7 +377,7 @@ World::CastRayX(const Vector3 &org, float dir) const {
  *         of the cell).
  */
 bool
-World::CastRayZ(const Vector3 &org, float dir) const {
+World::CastRayZ(const Vector3 &org, float dir, bool sneak) const {
   bool movingForward = dir > 0;
   size_t x = org.x; // start cell x
   size_t y = org.y; // start cell y
@@ -709,7 +386,7 @@ World::CastRayZ(const Vector3 &org, float dir) const {
   size_t z2 = (org.z + dir + 2*(movingForward ? 0.01f : -0.01f));
   if (z2 == z) return false; // not crossing cell borders
 
-  return this->GetCell(IVector3(x,y,z)).CheckSideSolid(movingForward?Side::Forward:Side::Backward, org);
+  return this->GetCell(IVector3(x,y,z)).CheckSideSolid(movingForward?Side::Forward:Side::Backward, org, sneak);
 }
 
 /**
@@ -841,7 +518,8 @@ Vector3 World::MoveAABB(
   const Vector3 &targ,
   uint8_t &axis,
   Cell **cell,
-  Side *side
+  Side *side,
+  bool sneak
 ) {
   // initialize axis to no collisions
   axis = 0;
@@ -868,7 +546,7 @@ Vector3 World::MoveAABB(
     Vector3 d = (target-center).Horiz();
 
     if (d.GetMag() > 1.0) {
-      d = d.Normalize()*1.0;
+      d = d.Normalize();
       keepGoing = true;
     }
 
@@ -876,7 +554,7 @@ Vector3 World::MoveAABB(
     Vector3 ddx(d.x + (d.x>0?0.01:-0.01), 0, 0);
 
     for (const Vector3 &v : verts) {
-      if (CastRayX(center + v, d.x) || IsPointSolid(center + v + ddx)) {
+      if (CastRayX(center + v, d.x, sneak)/* || IsPointSolid(center + v + ddx)*/) {
         float newX = d.x;
         if (d.x > 0) {
           newX = ((int)center.x + 1) - aabb.extents.x - 0.01f;
@@ -894,6 +572,7 @@ Vector3 World::MoveAABB(
           if (side) *side = d.x > 0 ? Side::Left : Side::Right;
           storeCell = false;
         }
+        break;
       }
     }
 
@@ -904,7 +583,7 @@ Vector3 World::MoveAABB(
     Vector3 ddz(0, 0, d.z + (d.z>0?0.01:-0.01));
 
     for (const Vector3 &v : verts) {
-      if (CastRayZ(center + v, d.z) || IsPointSolid(center + v + ddz)) {
+      if (CastRayZ(center + v, d.z, sneak) || IsPointSolid(center + v + ddz)) {
         float newZ = d.z;
         if (d.z > 0) {
           newZ = ((int)center.z + 1) - aabb.extents.z - 0.01f;
@@ -922,6 +601,7 @@ Vector3 World::MoveAABB(
           if (side) *side = d.z > 0 ? Side::Backward : Side::Forward;
           storeCell = false;
         }
+        break;
       }
     }
 
@@ -998,10 +678,11 @@ Vector3 World::MoveAABB(
 Vector3
 World::MoveAABB(
   const AABB &aabb,
-  const Vector3 &target
+  const Vector3 &target,
+  bool sneak
 ) {
   uint8_t axis;
-  return this->MoveAABB(aabb, target, axis);
+  return this->MoveAABB(aabb, target, axis, nullptr, nullptr, sneak);
 }
 
 IColor
@@ -1142,6 +823,20 @@ bool
 World::IsDefault(const IVector3 &pos) const {
   if (!IsValidCellPosition(pos)) return true;
   return defaultMask[GetCellIndex(pos)];
+}
+
+void
+World::ClearDefaults() {
+  this->defaultMask = std::vector<bool>(this->cellCount, true);
+}
+
+void
+World::CopyCellsFrom(const std::vector<Cell> &cells) {
+  this->cells = cells;
+  for (size_t i=0; i<this->cellCount; i++) {
+    this->cells[i].SetWorld(this, GetCellPos(i));
+  }
+  this->ClearDefaults();
 }
 
 void
