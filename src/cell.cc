@@ -19,6 +19,9 @@
 
 // -------------------------------------------------------------------------
 
+/** C'tor.
+  * @param type Cell type.
+  */
 CellBase::CellBase(const std::string &type) :
   Triggerable(),
   info(&GetCellProperties(type)),
@@ -42,7 +45,12 @@ CellBase::CellBase(const std::string &type) :
   this->colorDirty = false;
 }
 
-void CellBase::Lock(uint32_t id) {
+
+/** Lock a cell (for use with a key).
+  * @param id Lock/key ID.
+  */
+void
+CellBase::Lock(uint32_t id) {
   if (this->shared.lockedID == id) return;
 
   this->shared.lockedID = id;
@@ -53,7 +61,11 @@ void CellBase::Lock(uint32_t id) {
   }
 }
 
-void CellBase::Unlock() {
+/** Unlock a cell (with a key).
+  * Also unlocks neighbours on sides marked onUseCascade.
+  */
+void
+CellBase::Unlock() {
   if (this->shared.lockedID == 0) return;
 
   this->shared.lockedID = 0;
@@ -66,6 +78,9 @@ void CellBase::Unlock() {
 
 // -------------------------------------------------------------------------
 
+/** C'tor.
+  * @param type Cell type.
+  */
 CellRender::CellRender(const std::string &type) :
   CellBase(type),
   visibility(0),
@@ -81,6 +96,9 @@ CellRender::CellRender(const std::string &type) :
 
 // -------------------------------------------------------------------------
 
+/** C'tor.
+  * @param type Cell type.
+  */
 Cell::Cell(const std::string &type) :
   CellRender(type),
   tickPhase(0),
@@ -92,6 +110,9 @@ Cell::Cell(const std::string &type) :
   this->SetYOffsetsBottom(0,0,0,0);
 }
 
+/** Copy c'tor.
+  * @param that Cell from which to copy.
+  */
 Cell::Cell(const Cell &that) :
   CellRender(that.info->type),
 
@@ -104,9 +125,12 @@ Cell::Cell(const Cell &that) :
   shared = that.shared;
 }
 
+/** Assignment operator.
+  * @param that Cell from which to copy.
+  * @return The cell to which it was assigned.
+  */
 Cell &
-Cell::operator =(const Cell &that)
-{
+Cell::operator =(const Cell &that) {
   this->shared = that.shared;
 
   // unique information
@@ -131,47 +155,13 @@ Cell::operator =(const Cell &that)
   return self;
 }
 
+/** D'tor. */
 Cell::~Cell() {
 }
 
-void
-CellRender::Draw(std::vector<Vertex> &verts) const {
-  if (info->flags & CellFlags::DoNotRender || visibility == 0) return;
-
-  for (const Vertex &v : this->verts) {
-    verts.push_back(v);
-  }
-}
-
-void
-CellRender::DrawEmissive(std::vector<Vertex> &verts) const {
-  if (info->flags & CellFlags::DoNotRender || visibility == 0) return;
-
-  for (const Vertex &v : this->verts) {
-    Vertex vv = v;
-    vv.rgb[0] = vv.rgb[1] = vv.rgb[2] = vv.rgb[3] = 1.0;
-    verts.push_back(vv);
-  }
-}
-
-void
-CellRender::DrawHighlight(std::vector<Vertex> &verts) const {
-  if (info->flags & CellFlags::DoNotRender || visibility == 0) return;
-
-  for (const Vertex &v : this->verts) {
-    Vertex vv(v);
-    vv.xyz[0] = vv.xyz[0] + 0.01 * vv.n[0];
-    vv.xyz[1] = vv.xyz[1] + 0.01 * vv.n[1];
-    vv.xyz[2] = vv.xyz[2] + 0.01 * vv.n[2];
-    vv.uv[0] /= uscale;
-    vv.rgb[0] = 1.0;
-    vv.rgb[1] = 1.0;
-    vv.rgb[2] = 1.0;
-    vv.rgb[3] = 1.0;
-    verts.push_back(vv);
-  }
-}
-
+/** Update this cell.
+  * @param state The running game state.
+  */
 void
 Cell::Update(
   RunningState &state
@@ -179,56 +169,58 @@ Cell::Update(
   if (!world) return;
 
   float deltaT = state.GetGame().GetDeltaT();
-  this->lastT = state.GetGame().GetTime();
+  this->lastT  = state.GetGame().GetTime();
 
-  this->shared.smoothDetail = this->shared.smoothDetail + (this->shared.detail - this->shared.smoothDetail) * deltaT * 2;
+  // Spawn entities if activated
+  if (this->spawnOnActiveMob != "" && this->IsTriggered() && this->lastT > this->nextActivationT) {
+    // spawn in adjacent cell
+    Entity *entity = state.GetEntity(state.SpawnInAABB(spawnOnActiveMob, self[spawnOnActiveSide].GetAABB()));
 
-  if (spawnOnActiveMob != "" && IsTriggered()) {
-    if (this->lastT > this->nextActivationT) {
-      Vector3 v(spawnOnActiveSide);
-      Log("spawning projectile\n");
-      Entity *entity = state.GetEntity(state.SpawnInAABB(spawnOnActiveMob, self[spawnOnActiveSide].GetAABB()));
-      Projectile *proj = dynamic_cast<Projectile*>(entity);
-      if (proj) {
-        Log("adding velocity\n");
-        proj->SetVelocity(v * proj->GetProperties()->maxSpeed);
-      }
+    // if it is a projectile, set velocity
+    Projectile *proj = dynamic_cast<Projectile*>(entity);
+    if (proj) proj->SetVelocity(Vector3(this->spawnOnActiveSide) * proj->GetProperties()->maxSpeed);
 
-      this->nextActivationT = this->lastT + spawnOnActiveRate;
-      if (spawnOnActiveRate == 0.0) {
-        this->TriggerOff();
-      }
-    }
-  }
-
-  // if this cell lost all its liquid replace by air
-  if (this->IsLiquid() && this->shared.smoothDetail < 0.1) {
-    this->world->SetCell(this->pos, Cell("air"));
-    // "this" is now the new air cell
-  }
-
-  if (this->IsLiquid()) {
-    float h = this->shared.smoothDetail/16.0;
-
-    if (self[Side::Up].info == info && self[Side::Down].info == info) {
-      // liquid and top and bottom cells are the same as this one
-      this->SetYOffsets(1,1,1,1);
-      this->SetYOffsetsBottom(0,0,0,0);
-    } else if (self[Side::Up].info == info && self[Side::Down].info != info) {
-      // liquid and liquid above and nothing liquid below
-      this->SetYOffsets(1,1,1,1);
-      this->SetYOffsetsBottom(1-h,1-h,1-h,1-h);
+    if (spawnOnActiveRate == 0.0) {
+      // spawn only once
+      this->TriggerOff();
     } else {
-      // no liquid above
-      this->SetYOffsetsBottom(0,0,0,0);
-      this->SetYOffsets(h,h,h,h);
+      // spawn again a bit later
+      this->nextActivationT = this->lastT + this->spawnOnActiveRate;
     }
   }
 
-  //world->MarkForUpdateNeighbours(this);
+  // update liquids
+  if (this->IsLiquid()) {
+    this->shared.smoothDetail = this->shared.smoothDetail + (this->shared.detail - this->shared.smoothDetail) * deltaT * 2;
+
+    if (this->shared.smoothDetail < 0.1) {
+      // this cell lost all its liquid, replace by air
+      this->world->SetCell(this->pos, Cell("air"));
+
+      // "this" is now the new air cell
+    } else {
+      // update heights
+      float h = this->shared.smoothDetail/16.0;
+
+      if (self[Side::Up].info == info && self[Side::Down].info == info) {
+        // liquid and top and bottom cells are the same as this one
+        this->SetYOffsets(1,1,1,1);
+        this->SetYOffsetsBottom(0,0,0,0);
+      } else if (self[Side::Up].info == info && self[Side::Down].info != info) {
+        // liquid and liquid above and nothing liquid below
+        this->SetYOffsets(1,1,1,1);
+        this->SetYOffsetsBottom(1-h,1-h,1-h,1-h);
+      } else {
+        // no liquid above
+        this->SetYOffsetsBottom(0,0,0,0);
+        this->SetYOffsets(h,h,h,h);
+      }
+    } 
+  }
 }
 
-void Cell::OnUse(RunningState &state, Mob &user, bool force) {
+void
+Cell::OnUse(RunningState &state, Mob &user, bool force) {
   if (state.GetGame().GetTime() - this->lastUseT < this->info->useDelay) return;
   if (!force && !state.GetRandom().Chance(this->info->useChance)) return;
 
@@ -341,6 +333,10 @@ Cell::UpdateNeighbours(
 
   size_t oldvis = this->visibility;
   this->visibility = 0;
+
+  if (std::abs(this->shared.smoothDetail - this->shared.detail) > 0.1) {
+    this->visibility |= (int)Side::Left | (int)Side::Right | (int)Side::Forward | (int)Side::Backward;
+  }
 
   // check if vertically out of box
   bool oversize = YOfs(0)  > 1.0 || YOfs(1)  > 1.0 || YOfs(2)  > 1.0 || YOfs(3)  > 1.0 ||
@@ -492,14 +488,6 @@ Cell::SetYOffsetsBottom(float a, float b, float c, float d) {
   return *this;
 }
 
-bool Cell::HasSolidSides() const {
-  if (this->neighbours[0] == nullptr) return true;
-  return this->neighbours[(int)Side::Left]->IsSolid() &&
-         this->neighbours[(int)Side::Right]->IsSolid() &&
-         this->neighbours[(int)Side::Forward]->IsSolid() &&
-         this->neighbours[(int)Side::Backward]->IsSolid();
-}
-
 bool Cell::CheckSideSolid(Side side, const Vector3 &org, bool sneak) const {
   if (!this->world) return true;
 
@@ -643,7 +631,11 @@ void Cell::OnUseItem(RunningState &, Mob &, Item &item) {
 
   auto iter2 = this->info->onUseItemAddDetail.find(itemType);
   if (iter2 != this->info->onUseItemAddDetail.end()) {
-    this->shared.detail += iter2->second;
+    if (iter2->second < 0 && (int)(this->shared.detail) < -iter2->second) {
+      this->shared.detail = 0;
+    } else {
+      this->shared.detail += iter2->second;
+    }
   }
 
   auto iter3 = this->info->onUseItemReplace.find(itemType);

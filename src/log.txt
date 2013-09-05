@@ -23624,3 +23624,5265 @@ Read 58520 / 58520 bytes from sound step_a
 Format is: 1 channels, 44100 hz
 spawning projectile
 adding velocity
+ GLFW - An OpenGL framework Version 3.0.2
+   Copyright (c) 2002-2006 Marcus Geelnard
+   Copyright (c) 2006-2010 Camilla Berglund
+
+ GLee (OpenGL Easy Extension library) Version 5.2
+   Copyright (c)2006  Ben Woodhouse  All rights reserved.
+
+ zlib version 1.2.8
+   Copyright (C) 1995-2012 Jean-loup Gailly and Mark Adler
+
+libpng version 1.7.0beta17 - August 22, 2013
+Copyright (c) 1998-2013 Glenn Randers-Pehrson
+Copyright (c) 1996-1997 Andreas Dilger
+Copyright (c) 1995-1996 Guy Eric Schalnat, Group 42, Inc.
+GLFW initialized
+Initializing game
+Initializing GFX
+Trying to open audio device 'OpenAL Soft'...
+Creating audio context...
+Loading image gui/font.default
+Loading image gui/button.enabled
+Loading image gui/button.disabled
+Loading image gui/button.hover
+Loading image gui/button.active
+Loading image gui/font.big
+Game object initialized 00000000002ec090, new game
+entering mainloop
+Texture gui/font.big updated since 0...
+Loading image gui/font.big
+Texture gui/button.hover updated since 0...
+Loading image gui/button.hover
+Texture gui/button.disabled updated since 0...
+Loading image gui/button.disabled
+Texture gui/button.active updated since 0...
+Loading image gui/button.active
+Texture gui/button.enabled updated since 0...
+Loading image gui/button.enabled
+Texture gui/font.default updated since 0...
+Loading image gui/font.default
++RunningState() 0000000000347580 00000000002ec108 00000000002ec090 00000000002ec090
+Loading cell properties for type 'air'
+Loading cell properties for type 'brick'
+Loading image cells/texture/brickstep
+Loading image cells/texture/brickstep_crack
+Loading image cells/texture/brickstep_mossy
+Loading cell properties for type 'bedrock'
+Loading image cells/texture/bedrock
+Loading cell properties for type 'torch'
+Loading cell properties for type 'carpet.red'
+Loading image cells/texture/carpet.red
+Loading cell properties for type 'default'
+Loading image cells/texture/dirt
+Loading cell properties for type 'dirt'
+Loading cell properties for type 'frozenlava'
+Loading image cells/texture/rock
+Loading cell properties for type 'gate'
+Loading image cells/texture/gate
+Loading cell properties for type 'lava'
+Loading image cells/texture/lava
+Loading cell properties for type 'pillar'
+Loading cell properties for type 'rock'
+Loading cell properties for type 'step'
+Loading image cells/texture/step
+Loading cell properties for type 'brick.secret'
+Loading cell properties for type 'torch2'
+Loading cell properties for type 'torch3'
+Loading cell properties for type 'water'
+Loading image cells/texture/water
+Loading cell properties for type 'wood'
+Loading image cells/texture/planks
+Loading cell properties for type 'ice'
+Loading cell properties for type 'teleport'
+Loading image cells/texture/teleport.off
+Loading cell properties for type 'door.right.closed'
+Loading cell properties for type 'door.right.open'
+Loading cell properties for type 'ladder.right'
+Loading image cells/texture/ladder
+Loading cell properties for type 'shooter'
+Loading image cells/texture/shooter
+Loading cell properties for type 'bars'
+Loading image cells/texture/bars
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Ignoring unknown feature property: mob
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Feature 'start'
+Feature 'bridge'
+Feature 'door'
+Feature 'alcove'
+Feature 'hallway_small'
+Feature 'doorway'
+Feature 'hallway'
+Feature 'hallway.ladder.down'
+Feature 'stairs_short'
+Feature 'doorway_wood'
+Feature 'hallway.ladder.up'
+Feature 'hallway_lava'
+Feature 'living_quarters.0'
+Feature 'mote'
+Loading image entities/texture/chest
+Loading image entities/texture/slime
+Loading image entities/texture/particle.rock
+Loading image entities/texture/torch
+Loading image entities/texture/spider
+Loading image entities/texture/particle.bfw9k
+Line 21: Ignoring 'noclip'
+Loading image entities/texture/particle.bubble
+Loading image entities/texture/particle.teleport
+Line 22: Ignoring 'noclip'
+Loading image entities/texture/wizard
+Loading image entities/texture/wizard.emissive
+Loading image entities/texture/grass
+Loading image entities/texture/hanging_moss.small
+Loading image entities/texture/arrow
+Loading image entities/texture/projectile.bfw9k
+Line 6: ignoring 'eqadddex'
+Loading image items/texture/sword2
+Loading image items/texture/torch
+Loading image items/texture/leather
+Loading image items/texture/fist
+Loading image items/texture/scroll
+Loading image items/texture/gold
+Loading image items/texture/key
+Loading image items/texture/potion.green
+Loading image items/texture/potion.clear
+Loading image items/texture/wand.black
+Loading image items/texture/wand.empty
+Loading image items/texture/potion.red
+Loading image items/texture/potion.empty
+Loading image items/texture/potion.yellow
+Loading image items/texture/lockpick
+Loading image items/texture/gem.earth
+Loading image items/texture/gem.fire
+Loading image items/texture/gem.life
+Loading image items/texture/gem.water
+Loading image items/texture/gem.wind
+Loading image items/texture/ring.gold
+Loading image items/texture/ring.iron
+Loading image items/texture/ring.ruby
+Loading image items/texture/ring.silver
+Loading image items/texture/potion.purple
+loading spell spell.test
+Creating ground...
+Filling ground...
+Building features...
+Loading image gui/durability
+Made a nice world with 574 features and height 29 :) ...
+Carving caves...
+Placing 4 teleports...
+Loading image cells/texture/teleport.on
+Placing 18 traps...
+Spawning feature entities...
+Placing 167 items...
+Placing some decoration (623 of them)...
+Placing 147 enemies...
+Wiping the floor...
+Updating all cells...
+updated 276031 neighbours
+Done!
+Loading image gui/crosshair
+Loading image gui/slot
+Loading image gui/font.small
+Loading image items/texture/gem.empty
+21811 cell vertex updates
+Loading image gui/maparrow
+updated 78197 neighbours
+Loading sound land
+Read 20112 / 20112 bytes from sound land
+Format is: 1 channels, 48000 hz
+Loading sound oof
+Read 63862 / 63862 bytes from sound oof
+Format is: 1 channels, 44100 hz
+Loading sound step_a
+Read 58520 / 58520 bytes from sound step_a
+Format is: 1 channels, 44100 hz
+Loading sound step_c
+Read 44386 / 44386 bytes from sound step_c
+Format is: 1 channels, 44100 hz
+Loading sound step_d
+Read 17528 / 17528 bytes from sound step_d
+Format is: 1 channels, 44100 hz
+Loading sound step_b
+Read 48058 / 48058 bytes from sound step_b
+Format is: 1 channels, 44100 hz
+Loading image gui/button
+Loading image gui/slot.amulet
+Loading image gui/slot.helmet
+Loading image gui/slot.ring
+Loading image gui/slot.armor
+Loading image gui/slot.hand
+Loading image gui/slot.pants
+Loading image gui/slot.boots
+InventoryGui::HandleEvent putting item Bottle of Air 1 in slot 4
+Putting existing item in the backpack
+updated 13 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 15 neighbours
+updated 4 neighbours
+updated 4 neighbours
+updated 5 neighbours
+updated 4 neighbours
+updated 3 neighbours
+updated 4 neighbours
+updated 4 neighbours
+updated 4 neighbours
+updated 4 neighbours
+updated 4 neighbours
+updated 4 neighbours
+updated 4 neighbours
+updated 4 neighbours
+updated 4 neighbours
+updated 4 neighbours
+updated 4 neighbours
+updated 4 neighbours
+updated 4 neighbours
+updated 4 neighbours
+updated 4 neighbours
+updated 4 neighbours
+updated 4 neighbours
+updated 4 neighbours
+updated 4 neighbours
+updated 4 neighbours
+updated 4 neighbours
+updated 4 neighbours
+updated 4 neighbours
+updated 4 neighbours
+updated 4 neighbours
+updated 5 neighbours
+updated 4 neighbours
+updated 3 neighbours
+updated 5 neighbours
+updated 4 neighbours
+updated 4 neighbours
+updated 4 neighbours
+updated 4 neighbours
+updated 3 neighbours
+updated 4 neighbours
+updated 4 neighbours
+updated 4 neighbours
+updated 5 neighbours
+updated 4 neighbours
+updated 4 neighbours
+updated 4 neighbours
+updated 3 neighbours
+updated 4 neighbours
+updated 4 neighbours
+updated 4 neighbours
+updated 5 neighbours
+ GLFW - An OpenGL framework Version 3.0.2
+   Copyright (c) 2002-2006 Marcus Geelnard
+   Copyright (c) 2006-2010 Camilla Berglund
+
+ GLee (OpenGL Easy Extension library) Version 5.2
+   Copyright (c)2006  Ben Woodhouse  All rights reserved.
+
+ zlib version 1.2.8
+   Copyright (C) 1995-2012 Jean-loup Gailly and Mark Adler
+
+libpng version 1.7.0beta17 - August 22, 2013
+Copyright (c) 1998-2013 Glenn Randers-Pehrson
+Copyright (c) 1996-1997 Andreas Dilger
+Copyright (c) 1995-1996 Guy Eric Schalnat, Group 42, Inc.
+GLFW initialized
+Initializing game
+Initializing GFX
+Trying to open audio device 'OpenAL Soft'...
+Creating audio context...
+Loading image gui/font.default
+Loading image gui/button.enabled
+Loading image gui/button.disabled
+Loading image gui/button.hover
+Loading image gui/button.active
+Loading image gui/font.big
+Game object initialized 0000000001ddc090, new game
+entering mainloop
+Texture gui/font.big updated since 0...
+Loading image gui/font.big
+Texture gui/button.hover updated since 0...
+Loading image gui/button.hover
+Texture gui/button.disabled updated since 0...
+Loading image gui/button.disabled
+Texture gui/button.active updated since 0...
+Loading image gui/button.active
+Texture gui/button.enabled updated since 0...
+Loading image gui/button.enabled
+Texture gui/font.default updated since 0...
+Loading image gui/font.default
++RunningState() 0000000001e37580 0000000001ddc108 0000000001ddc090 0000000001ddc090
+Loading cell properties for type 'air'
+Loading cell properties for type 'brick'
+Loading image cells/texture/brickstep
+Loading image cells/texture/brickstep_crack
+Loading image cells/texture/brickstep_mossy
+Loading cell properties for type 'bedrock'
+Loading image cells/texture/bedrock
+Loading cell properties for type 'torch'
+Loading cell properties for type 'carpet.red'
+Loading image cells/texture/carpet.red
+Loading cell properties for type 'default'
+Loading image cells/texture/dirt
+Loading cell properties for type 'dirt'
+Loading cell properties for type 'frozenlava'
+Loading image cells/texture/rock
+Loading cell properties for type 'gate'
+Loading image cells/texture/gate
+Loading cell properties for type 'lava'
+Loading image cells/texture/lava
+Loading cell properties for type 'pillar'
+Loading cell properties for type 'rock'
+Loading cell properties for type 'step'
+Loading image cells/texture/step
+Loading cell properties for type 'brick.secret'
+Loading cell properties for type 'torch2'
+Loading cell properties for type 'torch3'
+Loading cell properties for type 'wood'
+Loading image cells/texture/planks
+Loading cell properties for type 'ice'
+Loading image cells/texture/water
+Loading cell properties for type 'teleport'
+Loading image cells/texture/teleport.off
+Loading cell properties for type 'door.right.closed'
+Loading cell properties for type 'door.right.open'
+Loading cell properties for type 'ladder.right'
+Loading image cells/texture/ladder
+Loading cell properties for type 'shooter'
+Loading image cells/texture/shooter
+Loading cell properties for type 'bars'
+Loading image cells/texture/bars
+Loading cell properties for type 'water'
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Ignoring unknown feature property: mob
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Feature 'start'
+Feature 'bridge'
+Feature 'door'
+Feature 'alcove'
+Feature 'hallway_small'
+Feature 'doorway'
+Feature 'hallway'
+Feature 'hallway.ladder.down'
+Feature 'stairs_short'
+Feature 'doorway_wood'
+Feature 'hallway.ladder.up'
+Feature 'hallway_lava'
+Feature 'living_quarters.0'
+Feature 'mote'
+Loading image entities/texture/chest
+Loading image entities/texture/slime
+Loading image entities/texture/particle.rock
+Loading image entities/texture/torch
+Loading image entities/texture/spider
+Loading image entities/texture/particle.bfw9k
+Line 21: Ignoring 'noclip'
+Loading image entities/texture/particle.bubble
+Loading image entities/texture/particle.teleport
+Line 22: Ignoring 'noclip'
+Loading image entities/texture/wizard
+Loading image entities/texture/wizard.emissive
+Loading image entities/texture/grass
+Loading image entities/texture/hanging_moss.small
+Loading image entities/texture/arrow
+Loading image entities/texture/projectile.bfw9k
+Line 6: ignoring 'eqadddex'
+Loading image items/texture/sword2
+Loading image items/texture/torch
+Loading image items/texture/leather
+Loading image items/texture/fist
+Loading image items/texture/scroll
+Loading image items/texture/gold
+Loading image items/texture/key
+Loading image items/texture/potion.green
+Loading image items/texture/potion.clear
+Loading image items/texture/wand.black
+Loading image items/texture/wand.empty
+Loading image items/texture/potion.red
+Loading image items/texture/potion.empty
+Loading image items/texture/potion.yellow
+Loading image items/texture/lockpick
+Loading image items/texture/gem.earth
+Loading image items/texture/gem.fire
+Loading image items/texture/gem.life
+Loading image items/texture/gem.water
+Loading image items/texture/gem.wind
+Loading image items/texture/ring.gold
+Loading image items/texture/ring.iron
+Loading image items/texture/ring.ruby
+Loading image items/texture/ring.silver
+Loading image items/texture/potion.purple
+loading spell spell.test
+Creating ground...
+Filling ground...
+Building features...
+Loading image gui/durability
+Made a nice world with 490 features and height 31 :) ...
+Carving caves...
+Placing 4 teleports...
+Loading image cells/texture/teleport.on
+Placing 17 traps...
+Spawning feature entities...
+Placing 196 items...
+Placing some decoration (655 of them)...
+Placing 133 enemies...
+Wiping the floor...
+Updating all cells...
+updated 275148 neighbours
+Done!
+Loading image gui/crosshair
+Loading image gui/slot
+Loading image gui/font.small
+Loading image items/texture/gem.empty
+22002 cell vertex updates
+Loading image gui/maparrow
+updated 75958 neighbours
+Loading image gui/button
+Loading image gui/slot.amulet
+Loading image gui/slot.helmet
+Loading image gui/slot.ring
+Loading image gui/slot.armor
+Loading image gui/slot.hand
+Loading image gui/slot.pants
+Loading image gui/slot.boots
+InventoryGui::HandleEvent putting item Bottle of Air 1 in slot 4
+Putting existing item in the backpack
+updated 15 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 4 neighbours
+updated 7 neighbours
+updated 4 neighbours
+updated 4 neighbours
+updated 4 neighbours
+updated 5 neighbours
+updated 4 neighbours
+updated 4 neighbours
+updated 18 neighbours
+updated 5 neighbours
+updated 6 neighbours
+updated 13 neighbours
+updated 7 neighbours
+updated 5 neighbours
+updated 7 neighbours
+updated 6 neighbours
+updated 6 neighbours
+updated 8 neighbours
+updated 8 neighbours
+updated 6 neighbours
+updated 7 neighbours
+updated 6 neighbours
+updated 6 neighbours
+updated 11 neighbours
+updated 6 neighbours
+updated 7 neighbours
+updated 7 neighbours
+updated 8 neighbours
+updated 7 neighbours
+updated 5 neighbours
+updated 7 neighbours
+updated 6 neighbours
+updated 7 neighbours
+updated 5 neighbours
+updated 6 neighbours
+updated 8 neighbours
+updated 6 neighbours
+updated 6 neighbours
+updated 8 neighbours
+updated 6 neighbours
+updated 8 neighbours
+updated 8 neighbours
+updated 9 neighbours
+updated 10 neighbours
+updated 8 neighbours
+updated 14 neighbours
+updated 13 neighbours
+updated 8 neighbours
+updated 9 neighbours
+updated 24 neighbours
+updated 10 neighbours
+updated 9 neighbours
+updated 6 neighbours
+updated 7 neighbours
+updated 10 neighbours
+updated 9 neighbours
+updated 6 neighbours
+updated 6 neighbours
+updated 11 neighbours
+updated 7 neighbours
+updated 6 neighbours
+updated 4 neighbours
+updated 6 neighbours
+updated 4 neighbours
+updated 5 neighbours
+updated 6 neighbours
+updated 18 neighbours
+updated 8 neighbours
+updated 6 neighbours
+updated 7 neighbours
+updated 7 neighbours
+updated 5 neighbours
+updated 8 neighbours
+updated 7 neighbours
+updated 7 neighbours
+updated 9 neighbours
+updated 15 neighbours
+updated 8 neighbours
+updated 13 neighbours
+updated 9 neighbours
+updated 9 neighbours
+updated 8 neighbours
+updated 11 neighbours
+updated 24 neighbours
+updated 11 neighbours
+updated 11 neighbours
+updated 13 neighbours
+updated 9 neighbours
+updated 12 neighbours
+updated 8 neighbours
+updated 11 neighbours
+updated 11 neighbours
+updated 15 neighbours
+updated 14 neighbours
+updated 13 neighbours
+updated 16 neighbours
+updated 15 neighbours
+updated 16 neighbours
+updated 16 neighbours
+updated 13 neighbours
+updated 23 neighbours
+updated 13 neighbours
+updated 11 neighbours
+updated 13 neighbours
+updated 11 neighbours
+updated 10 neighbours
+updated 12 neighbours
+updated 9 neighbours
+updated 12 neighbours
+updated 14 neighbours
+updated 13 neighbours
+updated 13 neighbours
+updated 13 neighbours
+updated 10 neighbours
+updated 14 neighbours
+updated 14 neighbours
+updated 12 neighbours
+updated 11 neighbours
+updated 14 neighbours
+updated 16 neighbours
+updated 15 neighbours
+updated 11 neighbours
+updated 17 neighbours
+updated 16 neighbours
+updated 17 neighbours
+updated 15 neighbours
+updated 11 neighbours
+updated 16 neighbours
+updated 14 neighbours
+updated 15 neighbours
+updated 11 neighbours
+updated 12 neighbours
+updated 13 neighbours
+updated 17 neighbours
+updated 17 neighbours
+updated 16 neighbours
+updated 12 neighbours
+updated 12 neighbours
+updated 13 neighbours
+updated 14 neighbours
+updated 14 neighbours
+updated 12 neighbours
+updated 17 neighbours
+updated 12 neighbours
+updated 12 neighbours
+updated 17 neighbours
+updated 17 neighbours
+updated 14 neighbours
+updated 14 neighbours
+updated 8 neighbours
+updated 8 neighbours
+updated 8 neighbours
+updated 8 neighbours
+updated 8 neighbours
+updated 8 neighbours
+updated 9 neighbours
+updated 10 neighbours
+updated 11 neighbours
+updated 8 neighbours
+updated 9 neighbours
+updated 12 neighbours
+updated 8 neighbours
+updated 13 neighbours
+updated 8 neighbours
+updated 7 neighbours
+updated 4 neighbours
+updated 5 neighbours
+updated 10 neighbours
+updated 4 neighbours
+updated 5 neighbours
+updated 4 neighbours
+updated 4 neighbours
+updated 5 neighbours
+updated 4 neighbours
+updated 5 neighbours
+updated 4 neighbours
+updated 4 neighbours
+updated 4 neighbours
+updated 6 neighbours
+updated 4 neighbours
+updated 8 neighbours
+updated 5 neighbours
+updated 4 neighbours
+updated 17 neighbours
+updated 7 neighbours
+updated 6 neighbours
+updated 7 neighbours
+updated 6 neighbours
+updated 6 neighbours
+updated 7 neighbours
+updated 5 neighbours
+updated 7 neighbours
+updated 6 neighbours
+updated 7 neighbours
+updated 10 neighbours
+updated 6 neighbours
+updated 9 neighbours
+updated 6 neighbours
+updated 6 neighbours
+updated 6 neighbours
+updated 6 neighbours
+updated 7 neighbours
+updated 7 neighbours
+updated 6 neighbours
+ GLFW - An OpenGL framework Version 3.0.2
+   Copyright (c) 2002-2006 Marcus Geelnard
+   Copyright (c) 2006-2010 Camilla Berglund
+
+ GLee (OpenGL Easy Extension library) Version 5.2
+   Copyright (c)2006  Ben Woodhouse  All rights reserved.
+
+ zlib version 1.2.8
+   Copyright (C) 1995-2012 Jean-loup Gailly and Mark Adler
+
+libpng version 1.7.0beta17 - August 22, 2013
+Copyright (c) 1998-2013 Glenn Randers-Pehrson
+Copyright (c) 1996-1997 Andreas Dilger
+Copyright (c) 1995-1996 Guy Eric Schalnat, Group 42, Inc.
+GLFW initialized
+Initializing game
+Initializing GFX
+Trying to open audio device 'OpenAL Soft'...
+Creating audio context...
+Loading image gui/font.default
+Loading image gui/button.enabled
+Loading image gui/button.disabled
+Loading image gui/button.hover
+Loading image gui/button.active
+Loading image gui/font.big
+Game object initialized 0000000001fac090, new game
+entering mainloop
+Texture gui/font.big updated since 0...
+Loading image gui/font.big
+Texture gui/button.hover updated since 0...
+Loading image gui/button.hover
+Texture gui/button.disabled updated since 0...
+Loading image gui/button.disabled
+Texture gui/button.active updated since 0...
+Loading image gui/button.active
+Texture gui/button.enabled updated since 0...
+Loading image gui/button.enabled
+Texture gui/font.default updated since 0...
+Loading image gui/font.default
++RunningState() 0000000000317580 0000000001fac108 0000000001fac090 0000000001fac090
+Loading cell properties for type 'air'
+Loading cell properties for type 'brick'
+Loading image cells/texture/brickstep
+Loading image cells/texture/brickstep_crack
+Loading image cells/texture/brickstep_mossy
+Loading cell properties for type 'bedrock'
+Loading image cells/texture/bedrock
+Loading cell properties for type 'torch'
+Loading cell properties for type 'carpet.red'
+Loading image cells/texture/carpet.red
+Loading cell properties for type 'default'
+Loading image cells/texture/dirt
+Loading cell properties for type 'dirt'
+Loading cell properties for type 'frozenlava'
+Loading image cells/texture/rock
+Loading cell properties for type 'gate'
+Loading image cells/texture/gate
+Loading cell properties for type 'lava'
+Loading image cells/texture/lava
+Loading cell properties for type 'pillar'
+Loading cell properties for type 'rock'
+Loading cell properties for type 'step'
+Loading image cells/texture/step
+Loading cell properties for type 'brick.secret'
+Loading cell properties for type 'torch2'
+Loading cell properties for type 'torch3'
+Loading cell properties for type 'wood'
+Loading image cells/texture/planks
+Loading cell properties for type 'ice'
+Loading image cells/texture/water
+Loading cell properties for type 'teleport'
+Loading image cells/texture/teleport.off
+Loading cell properties for type 'door.right.closed'
+Loading cell properties for type 'door.right.open'
+Loading cell properties for type 'ladder.right'
+Loading image cells/texture/ladder
+Loading cell properties for type 'shooter'
+Loading image cells/texture/shooter
+Loading cell properties for type 'bars'
+Loading image cells/texture/bars
+Loading cell properties for type 'water'
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Ignoring unknown feature property: mob
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Feature 'start'
+Feature 'bridge'
+Feature 'door'
+Feature 'alcove'
+Feature 'hallway_small'
+Feature 'doorway'
+Feature 'hallway'
+Feature 'hallway.ladder.down'
+Feature 'stairs_short'
+Feature 'doorway_wood'
+Feature 'hallway.ladder.up'
+Feature 'hallway_lava'
+Feature 'living_quarters.0'
+Feature 'mote'
+Loading image entities/texture/chest
+Loading image entities/texture/slime
+Loading image entities/texture/particle.rock
+Loading image entities/texture/torch
+Loading image entities/texture/spider
+Loading image entities/texture/particle.bfw9k
+Line 21: Ignoring 'noclip'
+Loading image entities/texture/particle.bubble
+Loading image entities/texture/particle.teleport
+Line 22: Ignoring 'noclip'
+Loading image entities/texture/wizard
+Loading image entities/texture/wizard.emissive
+Loading image entities/texture/grass
+Loading image entities/texture/hanging_moss.small
+Loading image entities/texture/arrow
+Loading image entities/texture/projectile.bfw9k
+Line 6: ignoring 'eqadddex'
+Loading image items/texture/sword2
+Loading image items/texture/torch
+Loading image items/texture/leather
+Loading image items/texture/fist
+Loading image items/texture/scroll
+Loading image items/texture/gold
+Loading image items/texture/key
+Loading image items/texture/potion.green
+Loading image items/texture/potion.clear
+Loading image items/texture/wand.black
+Loading image items/texture/wand.empty
+Loading image items/texture/potion.red
+Loading image items/texture/potion.empty
+Loading image items/texture/potion.yellow
+Loading image items/texture/lockpick
+Loading image items/texture/gem.earth
+Loading image items/texture/gem.fire
+Loading image items/texture/gem.life
+Loading image items/texture/gem.water
+Loading image items/texture/gem.wind
+Loading image items/texture/ring.gold
+Loading image items/texture/ring.iron
+Loading image items/texture/ring.ruby
+Loading image items/texture/ring.silver
+Loading image items/texture/potion.purple
+loading spell spell.test
+Creating ground...
+Filling ground...
+Building features...
+Loading image gui/durability
+Made a nice world with 723 features and height 44 :) ...
+Carving caves...
+Placing 8 teleports...
+Loading image cells/texture/teleport.on
+Placing 12 traps...
+Spawning feature entities...
+Placing 183 items...
+Placing some decoration (606 of them)...
+Placing 65 enemies...
+Wiping the floor...
+Updating all cells...
+updated 276566 neighbours
+Done!
+Loading image gui/crosshair
+Loading image gui/slot
+Loading image gui/font.small
+Loading image items/texture/gem.empty
++RunningState() 0000000000317b20 0000000001fac108 0000000001fac090 0000000001fac090
+Loading cell properties for type 'air'
+Loading cell properties for type 'brick'
+Loading cell properties for type 'bedrock'
+Loading cell properties for type 'torch'
+Loading cell properties for type 'carpet.red'
+Loading cell properties for type 'default'
+Loading cell properties for type 'dirt'
+Loading cell properties for type 'frozenlava'
+Loading cell properties for type 'gate'
+Loading cell properties for type 'lava'
+Loading cell properties for type 'pillar'
+Loading cell properties for type 'rock'
+Loading cell properties for type 'step'
+Loading cell properties for type 'brick.secret'
+Loading cell properties for type 'torch2'
+Loading cell properties for type 'torch3'
+Loading cell properties for type 'wood'
+Loading cell properties for type 'ice'
+Loading cell properties for type 'teleport'
+Loading cell properties for type 'door.right.closed'
+Loading cell properties for type 'door.right.open'
+Loading cell properties for type 'ladder.right'
+Loading cell properties for type 'shooter'
+Loading cell properties for type 'bars'
+Loading cell properties for type 'water'
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Ignoring unknown feature property: mob
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Feature 'start'
+Feature 'bridge'
+Feature 'door'
+Feature 'alcove'
+Feature 'hallway_small'
+Feature 'doorway'
+Feature 'hallway'
+Feature 'hallway.ladder.down'
+Feature 'stairs_short'
+Feature 'doorway_wood'
+Feature 'hallway.ladder.up'
+Feature 'hallway_lava'
+Feature 'living_quarters.0'
+Feature 'mote'
+Line 21: Ignoring 'noclip'
+Line 22: Ignoring 'noclip'
+Line 6: ignoring 'eqadddex'
+loading spell spell.test
+Creating ground...
+Filling ground...
+Building features...
+Made a nice world with 536 features and height 30 :) ...
+Carving caves...
+Placing 2 teleports...
+Placing 15 traps...
+Spawning feature entities...
+Placing 116 items...
+Placing some decoration (502 of them)...
+Placing 76 enemies...
+Wiping the floor...
+Updating all cells...
+updated 272448 neighbours
+Done!
+22101 cell vertex updates
+Loading image gui/maparrow
+updated 76414 neighbours
+Loading image gui/button
+Loading image gui/slot.amulet
+Loading image gui/slot.helmet
+Loading image gui/slot.ring
+Loading image gui/slot.armor
+Loading image gui/slot.hand
+Loading image gui/slot.pants
+Loading image gui/slot.boots
+InventoryGui::HandleEvent putting item Bottle of Air 1 in slot 4
+Putting existing item in the backpack
+updated 16 neighbours
+updated 15 neighbours
+updated 17 neighbours
+updated 16 neighbours
+updated 11 neighbours
+updated 11 neighbours
+updated 13 neighbours
+updated 10 neighbours
+updated 11 neighbours
+updated 10 neighbours
+updated 10 neighbours
+updated 16 neighbours
+updated 14 neighbours
+updated 14 neighbours
+updated 15 neighbours
+updated 14 neighbours
+updated 15 neighbours
+updated 17 neighbours
+updated 16 neighbours
+updated 13 neighbours
+updated 16 neighbours
+updated 13 neighbours
+updated 15 neighbours
+updated 13 neighbours
+updated 12 neighbours
+updated 14 neighbours
+updated 15 neighbours
+updated 14 neighbours
+updated 13 neighbours
+updated 13 neighbours
+updated 29 neighbours
+updated 19 neighbours
+updated 18 neighbours
+updated 13 neighbours
+updated 15 neighbours
+updated 15 neighbours
+updated 12 neighbours
+updated 15 neighbours
+updated 18 neighbours
+updated 20 neighbours
+updated 16 neighbours
+updated 14 neighbours
+updated 16 neighbours
+updated 19 neighbours
+updated 18 neighbours
+updated 19 neighbours
+updated 21 neighbours
+updated 21 neighbours
+updated 16 neighbours
+updated 21 neighbours
+updated 46 neighbours
+updated 89 neighbours
+updated 22 neighbours
+updated 21 neighbours
+updated 23 neighbours
+updated 21 neighbours
+updated 41 neighbours
+updated 38 neighbours
+updated 22 neighbours
+updated 18 neighbours
+updated 18 neighbours
+updated 18 neighbours
+updated 15 neighbours
+updated 18 neighbours
+updated 15 neighbours
+updated 19 neighbours
+updated 16 neighbours
+updated 51 neighbours
+updated 32 neighbours
+updated 113 neighbours
+updated 69 neighbours
+updated 21 neighbours
+updated 55 neighbours
+updated 38 neighbours
+updated 16 neighbours
+updated 15 neighbours
+updated 12 neighbours
+updated 13 neighbours
+updated 11 neighbours
+updated 13 neighbours
+updated 14 neighbours
+updated 19 neighbours
+updated 19 neighbours
+updated 40 neighbours
+updated 49 neighbours
+updated 29 neighbours
+updated 71 neighbours
+updated 429 neighbours
+updated 42 neighbours
+updated 24 neighbours
+updated 22 neighbours
+updated 223 neighbours
+updated 28 neighbours
+updated 23 neighbours
+updated 21 neighbours
+updated 37 neighbours
+updated 18 neighbours
+updated 43 neighbours
+updated 17 neighbours
+updated 15 neighbours
+updated 19 neighbours
+updated 13 neighbours
+updated 18 neighbours
+updated 192 neighbours
+updated 14 neighbours
+updated 18 neighbours
+updated 19 neighbours
+updated 19 neighbours
+updated 19 neighbours
+updated 21 neighbours
+updated 23 neighbours
+updated 29 neighbours
+updated 19 neighbours
+updated 24 neighbours
+updated 23 neighbours
+updated 23 neighbours
+updated 24 neighbours
+updated 26 neighbours
+updated 23 neighbours
+updated 21 neighbours
+updated 24 neighbours
+updated 25 neighbours
+updated 23 neighbours
+updated 24 neighbours
+updated 23 neighbours
+updated 23 neighbours
+updated 20 neighbours
+updated 23 neighbours
+updated 19 neighbours
+updated 21 neighbours
+updated 24 neighbours
+updated 18 neighbours
+updated 20 neighbours
+updated 15 neighbours
+updated 17 neighbours
+updated 18 neighbours
+updated 16 neighbours
+updated 20 neighbours
+updated 38 neighbours
+updated 24 neighbours
+updated 39 neighbours
+updated 246 neighbours
+updated 18 neighbours
+updated 17 neighbours
+updated 16 neighbours
+updated 47 neighbours
+updated 19 neighbours
+updated 15 neighbours
+updated 19 neighbours
+updated 16 neighbours
+updated 16 neighbours
+updated 17 neighbours
+updated 34 neighbours
+updated 31 neighbours
+updated 31 neighbours
+updated 13 neighbours
+updated 11 neighbours
+updated 11 neighbours
+updated 29 neighbours
+updated 11 neighbours
+updated 34 neighbours
+updated 19 neighbours
+updated 12 neighbours
+updated 12 neighbours
+updated 11 neighbours
+updated 11 neighbours
+updated 16 neighbours
+updated 13 neighbours
+updated 13 neighbours
+updated 12 neighbours
+updated 12 neighbours
+updated 12 neighbours
+updated 11 neighbours
+updated 23 neighbours
+updated 13 neighbours
+updated 12 neighbours
+updated 14 neighbours
+updated 17 neighbours
+updated 17 neighbours
+updated 14 neighbours
+updated 16 neighbours
+updated 16 neighbours
+updated 12 neighbours
+updated 11 neighbours
+updated 8 neighbours
+updated 10 neighbours
+updated 9 neighbours
+updated 11 neighbours
+updated 11 neighbours
+updated 10 neighbours
+updated 11 neighbours
+updated 10 neighbours
+updated 10 neighbours
+updated 12 neighbours
+updated 10 neighbours
+updated 12 neighbours
+updated 9 neighbours
+updated 9 neighbours
+updated 9 neighbours
+updated 11 neighbours
+updated 10 neighbours
+updated 10 neighbours
+updated 10 neighbours
+updated 15 neighbours
+updated 10 neighbours
+updated 8 neighbours
+updated 8 neighbours
+updated 41 neighbours
+updated 41 neighbours
+updated 10 neighbours
+updated 36 neighbours
+updated 14 neighbours
+updated 28 neighbours
+updated 16 neighbours
+updated 15 neighbours
+updated 13 neighbours
+updated 18 neighbours
+updated 37 neighbours
+updated 14 neighbours
+updated 13 neighbours
+updated 13 neighbours
+updated 11 neighbours
+updated 13 neighbours
+updated 23 neighbours
+updated 17 neighbours
+updated 59 neighbours
+updated 12 neighbours
+updated 10 neighbours
+updated 9 neighbours
+updated 31 neighbours
+updated 8 neighbours
+updated 13 neighbours
+updated 12 neighbours
+updated 11 neighbours
+updated 12 neighbours
+updated 12 neighbours
+updated 14 neighbours
+updated 8 neighbours
+updated 13 neighbours
+updated 13 neighbours
+updated 9 neighbours
+updated 7 neighbours
+updated 7 neighbours
+updated 6 neighbours
+updated 6 neighbours
+updated 6 neighbours
+updated 6 neighbours
+updated 7 neighbours
+updated 8 neighbours
+updated 5 neighbours
+updated 9 neighbours
+updated 5 neighbours
+updated 6 neighbours
+updated 7 neighbours
+updated 6 neighbours
+updated 7 neighbours
+updated 6 neighbours
+updated 6 neighbours
+updated 8 neighbours
+updated 5 neighbours
+updated 7 neighbours
+updated 6 neighbours
+updated 8 neighbours
+updated 5 neighbours
+updated 6 neighbours
+updated 7 neighbours
+updated 6 neighbours
+updated 6 neighbours
+updated 6 neighbours
+updated 6 neighbours
+updated 7 neighbours
+updated 7 neighbours
+updated 6 neighbours
+updated 6 neighbours
+updated 11 neighbours
+updated 7 neighbours
+updated 9 neighbours
+updated 6 neighbours
+updated 10 neighbours
+updated 7 neighbours
+updated 6 neighbours
+updated 6 neighbours
+updated 6 neighbours
+updated 8 neighbours
+updated 5 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 2 neighbours
+updated 27 neighbours
+updated 4 neighbours
+updated 4 neighbours
+updated 6 neighbours
+updated 4 neighbours
+updated 4 neighbours
+updated 5 neighbours
+updated 6 neighbours
+updated 4 neighbours
+updated 5 neighbours
+updated 4 neighbours
+updated 5 neighbours
+updated 4 neighbours
+updated 4 neighbours
+updated 8 neighbours
+updated 8 neighbours
+updated 10 neighbours
+updated 13 neighbours
+updated 11 neighbours
+updated 10 neighbours
+updated 15 neighbours
+updated 16 neighbours
+updated 16 neighbours
+updated 13 neighbours
+updated 15 neighbours
+updated 20 neighbours
+updated 14 neighbours
+updated 18 neighbours
+updated 16 neighbours
+updated 19 neighbours
+updated 19 neighbours
+updated 19 neighbours
+updated 18 neighbours
+updated 18 neighbours
+updated 15 neighbours
+updated 17 neighbours
+updated 15 neighbours
+updated 14 neighbours
+updated 18 neighbours
+updated 20 neighbours
+updated 17 neighbours
+updated 17 neighbours
+updated 13 neighbours
+updated 14 neighbours
+updated 17 neighbours
+updated 18 neighbours
+updated 16 neighbours
+updated 18 neighbours
+updated 15 neighbours
+updated 23 neighbours
+updated 12 neighbours
+updated 38 neighbours
+updated 15 neighbours
+updated 17 neighbours
+updated 18 neighbours
+updated 14 neighbours
+updated 16 neighbours
+updated 17 neighbours
+updated 16 neighbours
+updated 15 neighbours
+updated 17 neighbours
+updated 17 neighbours
+updated 17 neighbours
+updated 16 neighbours
+updated 14 neighbours
+updated 17 neighbours
+updated 14 neighbours
+updated 13 neighbours
+updated 14 neighbours
+updated 14 neighbours
+updated 17 neighbours
+updated 17 neighbours
+updated 17 neighbours
+updated 16 neighbours
+updated 16 neighbours
+updated 19 neighbours
+updated 16 neighbours
+updated 17 neighbours
+updated 17 neighbours
+updated 14 neighbours
+updated 16 neighbours
+updated 20 neighbours
+updated 18 neighbours
+updated 15 neighbours
+updated 10 neighbours
+updated 10 neighbours
+updated 11 neighbours
+updated 15 neighbours
+updated 11 neighbours
+updated 12 neighbours
+updated 14 neighbours
+updated 13 neighbours
+updated 13 neighbours
+updated 21 neighbours
+updated 13 neighbours
+updated 16 neighbours
+updated 17 neighbours
+updated 16 neighbours
+updated 13 neighbours
+updated 10 neighbours
+updated 11 neighbours
+updated 16 neighbours
+updated 13 neighbours
+updated 12 neighbours
+updated 12 neighbours
+updated 15 neighbours
+updated 9 neighbours
+updated 13 neighbours
+updated 12 neighbours
+updated 13 neighbours
+updated 12 neighbours
+updated 11 neighbours
+updated 14 neighbours
+updated 14 neighbours
+updated 13 neighbours
+updated 13 neighbours
+updated 13 neighbours
+updated 11 neighbours
+Shutting down
+Saving...
+j:/\AppData\Local/.barfoos/game
+ser vector<bool>: 517 bits 65 bytes
+ser vector<bool>: 262144 bits 32769 bytes
+j:/\AppData\Local/.barfoos/level.0
+-RunningState()
+Removing 0
+Deinitializing audio...
+Clearing out audio sources...
+Destroying audio buffers...
+Destroying audio context...
+Closing audio device...
+   game.cc  108 bool Game::Frame()                         / 
+    world.cc  311 void World::Update(RunningState&)        / 
+    world.cc  339 Tick                                              4 c,          3 t,          0 t/c
+
+   game.cc  108 bool Game::Frame()                         / 
+     game.cc  174 void Game::Update(float, float)          / 
+  runningstate.cc  155 virtual GameState* RunningState::Update() / 
+  runningstate.cc  215 Entity Update                            / 
+   entity.cc  422 virtual void Entity::Update(RunningState&)    8587527 c,   17988691 t,          2 t/c
+
+   game.cc  108 bool Game::Frame()                         / 
+     game.cc  174 void Game::Update(float, float)          / 
+  runningstate.cc  155 virtual GameState* RunningState::Update() / 
+  runningstate.cc  215 Entity Update                            / 
+      mob.cc   84 virtual void Mob::Update(RunningState&)     1980250 c,   19423241 t,          9 t/c
+
+   game.cc  108 bool Game::Frame()                         / 
+     game.cc  174 void Game::Update(float, float)          / 
+  runningstate.cc  155 virtual GameState* RunningState::Update() / 
+  runningstate.cc  223 Remove Entities                                8681 c,     192364 t,         22 t/c
+
+   game.cc  108 bool Game::Frame()                         / 
+     game.cc  174 void Game::Update(float, float)          / 
+  runningstate.cc  155 virtual GameState* RunningState::Update() / 
+    world.cc  311 void World::Update(RunningState&)        / 
+    world.cc  339 Tick                                           8681 c,     292919 t,         33 t/c
+
+   game.cc  108 bool Game::Frame()                         / 
+     game.cc  174 void Game::Update(float, float)          / 
+  runningstate.cc  155 virtual GameState* RunningState::Update() / 
+  runningstate.cc  189 Entity Collision                               8681 c,     701171 t,         80 t/c
+
+   game.cc  108 bool Game::Frame()                         / 
+     game.cc  159 void Game::Render() const                / 
+  runningstate.cc  110 virtual void RunningState::Render(Gfx&) const / 
+    world.cc  998 void MiniMap::Draw(Gfx&, const Vector3&, float)       8616 c,     789778 t,         91 t/c
+
+   game.cc  108 bool Game::Frame()                         / 
+     game.cc  159 void Game::Render() const                / 
+  runningstate.cc  110 virtual void RunningState::Render(Gfx&) const / 
+    world.cc  149 void World::Draw(Gfx&)                   / 
+    world.cc  235 Static Draw                                    8616 c,    6722910 t,        780 t/c
+
+   game.cc  108 bool Game::Frame()                         / 
+     game.cc  174 void Game::Update(float, float)          / 
+  runningstate.cc  155 virtual GameState* RunningState::Update() / 
+    world.cc  311 void World::Update(RunningState&)              8681 c,   20300242 t,       2338 t/c
+
+   game.cc  108 bool Game::Frame()                         / 
+     game.cc  159 void Game::Render() const                / 
+  runningstate.cc  110 virtual void RunningState::Render(Gfx&) const / 
+    world.cc  149 void World::Draw(Gfx&)                   / 
+    world.cc  250 Dynamic Draw                                   8616 c,   20980809 t,       2435 t/c
+
+   game.cc  108 bool Game::Frame()                         / 
+     game.cc  174 void Game::Update(float, float)               33812 c,  181524369 t,       5368 t/c
+
+   game.cc  108 bool Game::Frame()                         / 
+     game.cc  159 void Game::Render() const                / 
+  runningstate.cc  110 virtual void RunningState::Render(Gfx&) const / 
+    world.cc  149 void World::Draw(Gfx&)                         8616 c,   53879207 t,       6253 t/c
+
+   game.cc  108 bool Game::Frame()                         / 
+     game.cc  159 void Game::Render() const                     33734 c,  213855826 t,       6339 t/c
+
+   game.cc  108 bool Game::Frame()                              33734 c,  462536079 t,      13711 t/c
+
+   game.cc  108 bool Game::Frame()                         / 
+     game.cc  174 void Game::Update(float, float)          / 
+  runningstate.cc  155 virtual GameState* RunningState::Update() / 
+  runningstate.cc  215 Entity Update                                  8681 c,  159269264 t,      18346 t/c
+
+   game.cc  108 bool Game::Frame()                         / 
+     game.cc  174 void Game::Update(float, float)          / 
+  runningstate.cc  155 virtual GameState* RunningState::Update()       8681 c,  181309319 t,      20885 t/c
+
+   game.cc  108 bool Game::Frame()                         / 
+     game.cc  159 void Game::Render() const                / 
+  runningstate.cc  110 virtual void RunningState::Render(Gfx&) const       8616 c,  201587922 t,      23396 t/c
+
+   game.cc  108 bool Game::Frame()                         / 
+     game.cc  159 void Game::Render() const                / 
+  runningstate.cc  110 virtual void RunningState::Render(Gfx&) const / 
+    world.cc  149 void World::Draw(Gfx&)                   / 
+    world.cc  152 Vertex Update                                   532 c,   25548657 t,      48023 t/c
+
+   game.cc  108 bool Game::Frame()                         / 
+    world.cc  311 void World::Update(RunningState&)                 4 c,     565965 t,     141491 t/c
+
+runningstate.cc  595 void RunningState::Save()                           1 c,     660308 t,     660308 t/c
+
+
+ GLFW - An OpenGL framework Version 3.0.2
+   Copyright (c) 2002-2006 Marcus Geelnard
+   Copyright (c) 2006-2010 Camilla Berglund
+
+ GLee (OpenGL Easy Extension library) Version 5.2
+   Copyright (c)2006  Ben Woodhouse  All rights reserved.
+
+ zlib version 1.2.8
+   Copyright (C) 1995-2012 Jean-loup Gailly and Mark Adler
+
+libpng version 1.7.0beta17 - August 22, 2013
+Copyright (c) 1998-2013 Glenn Randers-Pehrson
+Copyright (c) 1996-1997 Andreas Dilger
+Copyright (c) 1995-1996 Guy Eric Schalnat, Group 42, Inc.
+GLFW initialized
+Initializing game
+Initializing GFX
+Trying to open audio device 'OpenAL Soft'...
+Creating audio context...
+Loading image gui/font.default
+Loading image gui/button.enabled
+Loading image gui/button.disabled
+Loading image gui/button.hover
+Loading image gui/button.active
+Loading image gui/font.big
+Game object initialized 0000000001e4c090, new game
+entering mainloop
+Texture gui/font.big updated since 0...
+Loading image gui/font.big
+Texture gui/button.hover updated since 0...
+Loading image gui/button.hover
+Texture gui/button.disabled updated since 0...
+Loading image gui/button.disabled
+Texture gui/button.active updated since 0...
+Loading image gui/button.active
+Texture gui/button.enabled updated since 0...
+Loading image gui/button.enabled
+Texture gui/font.default updated since 0...
+Loading image gui/font.default
++RunningState() 0000000001d57580 0000000001e4c108 0000000001e4c090 0000000001e4c090
+Loading cell properties for type 'air'
+Loading cell properties for type 'brick'
+Loading image cells/texture/brickstep
+Loading image cells/texture/brickstep_crack
+Loading image cells/texture/brickstep_mossy
+Loading cell properties for type 'bedrock'
+Loading image cells/texture/bedrock
+Loading cell properties for type 'torch'
+Loading cell properties for type 'carpet.red'
+Loading image cells/texture/carpet.red
+Loading cell properties for type 'default'
+Loading image cells/texture/dirt
+Loading cell properties for type 'dirt'
+Loading cell properties for type 'frozenlava'
+Loading image cells/texture/rock
+Loading cell properties for type 'gate'
+Loading image cells/texture/gate
+Loading cell properties for type 'lava'
+Loading image cells/texture/lava
+Loading cell properties for type 'pillar'
+Loading cell properties for type 'rock'
+Loading cell properties for type 'step'
+Loading image cells/texture/step
+Loading cell properties for type 'brick.secret'
+Loading cell properties for type 'torch2'
+Loading cell properties for type 'torch3'
+Loading cell properties for type 'wood'
+Loading image cells/texture/planks
+Loading cell properties for type 'ice'
+Loading image cells/texture/water
+Loading cell properties for type 'teleport'
+Loading image cells/texture/teleport.off
+Loading cell properties for type 'door.right.closed'
+Loading cell properties for type 'door.right.open'
+Loading cell properties for type 'ladder.right'
+Loading image cells/texture/ladder
+Loading cell properties for type 'shooter'
+Loading image cells/texture/shooter
+Loading cell properties for type 'bars'
+Loading image cells/texture/bars
+Loading cell properties for type 'water'
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Ignoring unknown feature property: mob
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Feature 'start'
+Feature 'bridge'
+Feature 'door'
+Feature 'alcove'
+Feature 'hallway_small'
+Feature 'doorway'
+Feature 'hallway'
+Feature 'hallway.ladder.down'
+Feature 'stairs_short'
+Feature 'doorway_wood'
+Feature 'hallway.ladder.up'
+Feature 'hallway_lava'
+Feature 'living_quarters.0'
+Feature 'mote'
+Loading image entities/texture/chest
+Loading image entities/texture/slime
+Loading image entities/texture/particle.rock
+Loading image entities/texture/torch
+Loading image entities/texture/spider
+Loading image entities/texture/particle.bfw9k
+Line 21: Ignoring 'noclip'
+Loading image entities/texture/particle.bubble
+Loading image entities/texture/particle.teleport
+Line 22: Ignoring 'noclip'
+Loading image entities/texture/wizard
+Loading image entities/texture/wizard.emissive
+Loading image entities/texture/grass
+Loading image entities/texture/hanging_moss.small
+Loading image entities/texture/arrow
+Loading image entities/texture/projectile.bfw9k
+Line 6: ignoring 'eqadddex'
+Loading image items/texture/sword2
+Loading image items/texture/torch
+Loading image items/texture/leather
+Loading image items/texture/fist
+Loading image items/texture/scroll
+Loading image items/texture/gold
+Loading image items/texture/key
+Loading image items/texture/potion.green
+Loading image items/texture/potion.clear
+Loading image items/texture/wand.black
+Loading image items/texture/wand.empty
+Loading image items/texture/potion.red
+Loading image items/texture/potion.empty
+Loading image items/texture/potion.yellow
+Loading image items/texture/lockpick
+Loading image items/texture/gem.earth
+Loading image items/texture/gem.fire
+Loading image items/texture/gem.life
+Loading image items/texture/gem.water
+Loading image items/texture/gem.wind
+Loading image items/texture/ring.gold
+Loading image items/texture/ring.iron
+Loading image items/texture/ring.ruby
+Loading image items/texture/ring.silver
+Loading image items/texture/potion.purple
+loading spell spell.test
+Creating ground...
+Filling ground...
+Building features...
+Loading image gui/durability
+Made a nice world with 540 features and height 36 :) ...
+Carving caves...
+Placing 2 teleports...
+Loading image cells/texture/teleport.on
+Placing 14 traps...
+Spawning feature entities...
+Placing 200 items...
+Placing some decoration (531 of them)...
+Placing 77 enemies...
+Wiping the floor...
+Updating all cells...
+updated 269243 neighbours
+Done!
+Loading image gui/crosshair
+Loading image gui/slot
+Loading image gui/font.small
+Loading image items/texture/gem.empty
+19451 cell vertex updates
+Loading image gui/maparrow
+updated 71726 neighbours
+Loading sound land
+Read 20112 / 20112 bytes from sound land
+Format is: 1 channels, 48000 hz
+Loading sound oof
+Read 63862 / 63862 bytes from sound oof
+Format is: 1 channels, 44100 hz
+Loading sound step_a
+Read 58520 / 58520 bytes from sound step_a
+Format is: 1 channels, 44100 hz
+Loading sound step_b
+Read 48058 / 48058 bytes from sound step_b
+Format is: 1 channels, 44100 hz
+Loading sound step_d
+Read 17528 / 17528 bytes from sound step_d
+Format is: 1 channels, 44100 hz
+Loading sound step_c
+Read 44386 / 44386 bytes from sound step_c
+Format is: 1 channels, 44100 hz
+Loading image gui/button
+Loading image gui/slot.amulet
+Loading image gui/slot.helmet
+Loading image gui/slot.ring
+Loading image gui/slot.armor
+Loading image gui/slot.hand
+Loading image gui/slot.pants
+Loading image gui/slot.boots
+InventoryGui::HandleEvent putting item Bottle of Air 1 in slot 4
+Putting existing item in the backpack
+updated 28 neighbours
+updated 39 neighbours
+updated 21 neighbours
+updated 16 neighbours
+updated 14 neighbours
+updated 15 neighbours
+updated 16 neighbours
+updated 15 neighbours
+updated 11 neighbours
+updated 10 neighbours
+updated 12 neighbours
+updated 13 neighbours
+updated 12 neighbours
+updated 13 neighbours
+updated 14 neighbours
+updated 14 neighbours
+updated 16 neighbours
+updated 11 neighbours
+updated 12 neighbours
+updated 13 neighbours
+updated 13 neighbours
+updated 11 neighbours
+updated 13 neighbours
+updated 14 neighbours
+updated 18 neighbours
+updated 15 neighbours
+updated 17 neighbours
+updated 14 neighbours
+updated 13 neighbours
+updated 14 neighbours
+updated 13 neighbours
+updated 16 neighbours
+updated 16 neighbours
+updated 15 neighbours
+updated 14 neighbours
+updated 13 neighbours
+updated 11 neighbours
+updated 16 neighbours
+updated 14 neighbours
+updated 13 neighbours
+updated 12 neighbours
+updated 10 neighbours
+updated 13 neighbours
+updated 10 neighbours
+updated 14 neighbours
+updated 15 neighbours
+updated 15 neighbours
+updated 16 neighbours
+updated 15 neighbours
+updated 18 neighbours
+updated 15 neighbours
+updated 15 neighbours
+updated 15 neighbours
+updated 15 neighbours
+updated 14 neighbours
+updated 17 neighbours
+updated 15 neighbours
+updated 12 neighbours
+updated 14 neighbours
+updated 16 neighbours
+updated 17 neighbours
+updated 15 neighbours
+updated 15 neighbours
+updated 13 neighbours
+updated 16 neighbours
+updated 15 neighbours
+updated 15 neighbours
+updated 38 neighbours
+updated 30 neighbours
+updated 23 neighbours
+updated 15 neighbours
+updated 15 neighbours
+updated 18 neighbours
+updated 20 neighbours
+updated 22 neighbours
+updated 22 neighbours
+updated 24 neighbours
+updated 22 neighbours
+updated 23 neighbours
+updated 20 neighbours
+updated 22 neighbours
+updated 21 neighbours
+updated 24 neighbours
+updated 20 neighbours
+updated 19 neighbours
+updated 20 neighbours
+updated 16 neighbours
+updated 15 neighbours
+updated 17 neighbours
+updated 17 neighbours
+updated 14 neighbours
+updated 15 neighbours
+updated 14 neighbours
+updated 35 neighbours
+updated 31 neighbours
+updated 33 neighbours
+updated 34 neighbours
+updated 34 neighbours
+updated 23 neighbours
+updated 24 neighbours
+updated 22 neighbours
+updated 20 neighbours
+updated 18 neighbours
+updated 15 neighbours
+updated 17 neighbours
+updated 19 neighbours
+updated 17 neighbours
+updated 18 neighbours
+updated 19 neighbours
+updated 22 neighbours
+updated 22 neighbours
+updated 28 neighbours
+updated 26 neighbours
+updated 27 neighbours
+updated 26 neighbours
+updated 26 neighbours
+updated 24 neighbours
+updated 28 neighbours
+updated 28 neighbours
+updated 33 neighbours
+updated 30 neighbours
+updated 36 neighbours
+updated 34 neighbours
+updated 40 neighbours
+updated 35 neighbours
+updated 36 neighbours
+updated 29 neighbours
+updated 30 neighbours
+updated 34 neighbours
+updated 34 neighbours
+updated 36 neighbours
+updated 27 neighbours
+updated 28 neighbours
+updated 21 neighbours
+updated 29 neighbours
+updated 25 neighbours
+updated 23 neighbours
+updated 25 neighbours
+updated 21 neighbours
+updated 21 neighbours
+updated 27 neighbours
+updated 27 neighbours
+updated 24 neighbours
+updated 27 neighbours
+updated 28 neighbours
+updated 24 neighbours
+updated 20 neighbours
+updated 27 neighbours
+updated 27 neighbours
+updated 26 neighbours
+updated 30 neighbours
+updated 22 neighbours
+updated 26 neighbours
+updated 22 neighbours
+updated 22 neighbours
+updated 18 neighbours
+updated 23 neighbours
+updated 22 neighbours
+updated 23 neighbours
+updated 28 neighbours
+updated 39 neighbours
+updated 35 neighbours
+updated 34 neighbours
+updated 32 neighbours
+updated 32 neighbours
+updated 25 neighbours
+updated 28 neighbours
+updated 37 neighbours
+updated 29 neighbours
+updated 27 neighbours
+updated 21 neighbours
+updated 26 neighbours
+updated 30 neighbours
+updated 22 neighbours
+updated 21 neighbours
+updated 26 neighbours
+updated 25 neighbours
+updated 30 neighbours
+updated 25 neighbours
+updated 27 neighbours
+updated 28 neighbours
+updated 30 neighbours
+updated 29 neighbours
+updated 28 neighbours
+updated 24 neighbours
+updated 26 neighbours
+updated 22 neighbours
+updated 26 neighbours
+updated 27 neighbours
+updated 28 neighbours
+updated 31 neighbours
+updated 32 neighbours
+updated 27 neighbours
+updated 28 neighbours
+updated 25 neighbours
+updated 28 neighbours
+updated 29 neighbours
+updated 27 neighbours
+updated 23 neighbours
+updated 27 neighbours
+updated 24 neighbours
+updated 32 neighbours
+updated 24 neighbours
+updated 25 neighbours
+updated 24 neighbours
+updated 26 neighbours
+updated 21 neighbours
+updated 22 neighbours
+updated 26 neighbours
+updated 25 neighbours
+updated 22 neighbours
+updated 25 neighbours
+updated 26 neighbours
+updated 25 neighbours
+updated 28 neighbours
+updated 31 neighbours
+updated 30 neighbours
+updated 18 neighbours
+updated 24 neighbours
+updated 11 neighbours
+updated 9 neighbours
+updated 10 neighbours
+updated 10 neighbours
+updated 11 neighbours
+updated 12 neighbours
+updated 11 neighbours
+updated 14 neighbours
+updated 14 neighbours
+updated 12 neighbours
+updated 10 neighbours
+updated 10 neighbours
+updated 11 neighbours
+updated 10 neighbours
+updated 11 neighbours
+updated 13 neighbours
+updated 14 neighbours
+updated 13 neighbours
+updated 15 neighbours
+updated 12 neighbours
+updated 12 neighbours
+updated 13 neighbours
+updated 12 neighbours
+updated 12 neighbours
+updated 12 neighbours
+updated 12 neighbours
+updated 10 neighbours
+updated 19 neighbours
+updated 12 neighbours
+updated 12 neighbours
+updated 13 neighbours
+updated 10 neighbours
+updated 10 neighbours
+updated 12 neighbours
+updated 11 neighbours
+updated 13 neighbours
+updated 11 neighbours
+updated 13 neighbours
+updated 13 neighbours
+updated 12 neighbours
+updated 9 neighbours
+updated 11 neighbours
+updated 14 neighbours
+updated 17 neighbours
+updated 11 neighbours
+updated 11 neighbours
+updated 10 neighbours
+updated 15 neighbours
+updated 17 neighbours
+updated 11 neighbours
+updated 11 neighbours
+updated 16 neighbours
+updated 14 neighbours
+updated 12 neighbours
+updated 11 neighbours
+updated 14 neighbours
+updated 13 neighbours
+updated 11 neighbours
+updated 10 neighbours
+updated 8 neighbours
+updated 19 neighbours
+updated 27 neighbours
+updated 25 neighbours
+updated 31 neighbours
+updated 23 neighbours
+updated 23 neighbours
+updated 20 neighbours
+updated 23 neighbours
+updated 25 neighbours
+updated 21 neighbours
+updated 22 neighbours
+updated 21 neighbours
+updated 21 neighbours
+updated 20 neighbours
+updated 21 neighbours
+updated 20 neighbours
+updated 25 neighbours
+updated 21 neighbours
+updated 21 neighbours
+updated 24 neighbours
+updated 19 neighbours
+updated 17 neighbours
+updated 20 neighbours
+updated 18 neighbours
+updated 21 neighbours
+updated 20 neighbours
+updated 16 neighbours
+updated 17 neighbours
+updated 13 neighbours
+updated 13 neighbours
+updated 17 neighbours
+updated 17 neighbours
+updated 17 neighbours
+updated 16 neighbours
+updated 16 neighbours
+updated 15 neighbours
+updated 22 neighbours
+updated 17 neighbours
+updated 19 neighbours
+updated 18 neighbours
+updated 15 neighbours
+updated 18 neighbours
+updated 16 neighbours
+updated 23 neighbours
+updated 16 neighbours
+updated 19 neighbours
+updated 19 neighbours
+updated 25 neighbours
+updated 17 neighbours
+updated 20 neighbours
+updated 13 neighbours
+updated 13 neighbours
+updated 12 neighbours
+updated 15 neighbours
+updated 15 neighbours
+updated 13 neighbours
+updated 13 neighbours
+updated 12 neighbours
+updated 14 neighbours
+updated 15 neighbours
+updated 17 neighbours
+updated 18 neighbours
+updated 15 neighbours
+updated 12 neighbours
+updated 11 neighbours
+updated 17 neighbours
+updated 19 neighbours
+updated 22 neighbours
+updated 26 neighbours
+updated 25 neighbours
+updated 20 neighbours
+updated 22 neighbours
+updated 21 neighbours
+updated 19 neighbours
+updated 21 neighbours
+updated 21 neighbours
+updated 19 neighbours
+updated 18 neighbours
+updated 18 neighbours
+updated 18 neighbours
+updated 20 neighbours
+updated 19 neighbours
+updated 22 neighbours
+updated 18 neighbours
+updated 18 neighbours
+updated 20 neighbours
+updated 20 neighbours
+updated 19 neighbours
+updated 22 neighbours
+updated 16 neighbours
+updated 15 neighbours
+updated 13 neighbours
+updated 15 neighbours
+updated 19 neighbours
+updated 19 neighbours
+updated 20 neighbours
+updated 16 neighbours
+updated 18 neighbours
+updated 18 neighbours
+updated 16 neighbours
+updated 20 neighbours
+updated 16 neighbours
+updated 16 neighbours
+updated 19 neighbours
+updated 15 neighbours
+updated 16 neighbours
+updated 18 neighbours
+updated 20 neighbours
+updated 22 neighbours
+updated 20 neighbours
+updated 20 neighbours
+updated 21 neighbours
+updated 19 neighbours
+updated 18 neighbours
+updated 18 neighbours
+updated 16 neighbours
+updated 20 neighbours
+updated 20 neighbours
+updated 17 neighbours
+updated 19 neighbours
+updated 19 neighbours
+updated 17 neighbours
+updated 20 neighbours
+updated 20 neighbours
+updated 22 neighbours
+updated 21 neighbours
+updated 21 neighbours
+updated 18 neighbours
+updated 24 neighbours
+updated 21 neighbours
+updated 16 neighbours
+updated 21 neighbours
+updated 26 neighbours
+updated 22 neighbours
+updated 19 neighbours
+updated 23 neighbours
+updated 22 neighbours
+updated 17 neighbours
+updated 19 neighbours
+updated 23 neighbours
+updated 21 neighbours
+updated 21 neighbours
+updated 22 neighbours
+updated 22 neighbours
+updated 25 neighbours
+updated 19 neighbours
+updated 22 neighbours
+updated 26 neighbours
+updated 24 neighbours
+updated 18 neighbours
+updated 22 neighbours
+updated 20 neighbours
+updated 27 neighbours
+updated 20 neighbours
+updated 22 neighbours
+updated 24 neighbours
+updated 18 neighbours
+updated 19 neighbours
+updated 19 neighbours
+updated 18 neighbours
+updated 16 neighbours
+updated 17 neighbours
+updated 14 neighbours
+updated 17 neighbours
+updated 18 neighbours
+updated 22 neighbours
+updated 19 neighbours
+updated 20 neighbours
+updated 19 neighbours
+updated 26 neighbours
+updated 22 neighbours
+updated 24 neighbours
+updated 27 neighbours
+updated 19 neighbours
+updated 20 neighbours
+updated 16 neighbours
+updated 18 neighbours
+updated 19 neighbours
+updated 18 neighbours
+updated 25 neighbours
+updated 24 neighbours
+updated 26 neighbours
+updated 25 neighbours
+updated 28 neighbours
+updated 23 neighbours
+updated 23 neighbours
+updated 23 neighbours
+updated 21 neighbours
+updated 22 neighbours
+updated 26 neighbours
+updated 23 neighbours
+updated 25 neighbours
+updated 24 neighbours
+updated 29 neighbours
+updated 30 neighbours
+updated 29 neighbours
+updated 26 neighbours
+updated 28 neighbours
+updated 29 neighbours
+updated 27 neighbours
+updated 28 neighbours
+updated 27 neighbours
+updated 30 neighbours
+updated 19 neighbours
+updated 20 neighbours
+updated 25 neighbours
+updated 18 neighbours
+updated 21 neighbours
+updated 29 neighbours
+updated 25 neighbours
+updated 30 neighbours
+updated 25 neighbours
+updated 28 neighbours
+updated 25 neighbours
+ GLFW - An OpenGL framework Version 3.0.2
+   Copyright (c) 2002-2006 Marcus Geelnard
+   Copyright (c) 2006-2010 Camilla Berglund
+
+ GLee (OpenGL Easy Extension library) Version 5.2
+   Copyright (c)2006  Ben Woodhouse  All rights reserved.
+
+ zlib version 1.2.8
+   Copyright (C) 1995-2012 Jean-loup Gailly and Mark Adler
+
+libpng version 1.7.0beta17 - August 22, 2013
+Copyright (c) 1998-2013 Glenn Randers-Pehrson
+Copyright (c) 1996-1997 Andreas Dilger
+Copyright (c) 1995-1996 Guy Eric Schalnat, Group 42, Inc.
+GLFW initialized
+Initializing game
+Initializing GFX
+Trying to open audio device 'OpenAL Soft'...
+Creating audio context...
+Loading image gui/font.default
+Loading image gui/button.enabled
+Loading image gui/button.disabled
+Loading image gui/button.hover
+Loading image gui/button.active
+Loading image gui/font.big
+Game object initialized 0000000001d8c090, new game
+entering mainloop
+Texture gui/font.big updated since 0...
+Loading image gui/font.big
+Texture gui/button.hover updated since 0...
+Loading image gui/button.hover
+Texture gui/button.disabled updated since 0...
+Loading image gui/button.disabled
+Texture gui/button.active updated since 0...
+Loading image gui/button.active
+Texture gui/button.enabled updated since 0...
+Loading image gui/button.enabled
+Texture gui/font.default updated since 0...
+Loading image gui/font.default
++RunningState() 0000000001de9580 0000000001d8c108 0000000001d8c090 0000000001d8c090
+Loading cell properties for type 'air'
+Loading cell properties for type 'brick'
+Loading image cells/texture/brickstep
+Loading image cells/texture/brickstep_crack
+Loading image cells/texture/brickstep_mossy
+Loading cell properties for type 'bedrock'
+Loading image cells/texture/bedrock
+Loading cell properties for type 'torch'
+Loading cell properties for type 'carpet.red'
+Loading image cells/texture/carpet.red
+Loading cell properties for type 'default'
+Loading image cells/texture/dirt
+Loading cell properties for type 'dirt'
+Loading cell properties for type 'frozenlava'
+Loading image cells/texture/rock
+Loading cell properties for type 'gate'
+Loading image cells/texture/gate
+Loading cell properties for type 'lava'
+Loading image cells/texture/lava
+Loading cell properties for type 'pillar'
+Loading cell properties for type 'rock'
+Loading cell properties for type 'step'
+Loading image cells/texture/step
+Loading cell properties for type 'brick.secret'
+Loading cell properties for type 'torch2'
+Loading cell properties for type 'torch3'
+Loading cell properties for type 'wood'
+Loading image cells/texture/planks
+Loading cell properties for type 'ice'
+Loading image cells/texture/water
+Loading cell properties for type 'teleport'
+Loading image cells/texture/teleport.off
+Loading cell properties for type 'door.right.closed'
+Loading cell properties for type 'door.right.open'
+Loading cell properties for type 'ladder.right'
+Loading image cells/texture/ladder
+Loading cell properties for type 'shooter'
+Loading image cells/texture/shooter
+Loading cell properties for type 'bars'
+Loading image cells/texture/bars
+Loading cell properties for type 'water'
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Ignoring unknown feature property: mob
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Feature 'start'
+Feature 'bridge'
+Feature 'door'
+Feature 'alcove'
+Feature 'hallway_small'
+Feature 'doorway'
+Feature 'hallway'
+Feature 'hallway.ladder.down'
+Feature 'stairs_short'
+Feature 'doorway_wood'
+Feature 'hallway.ladder.up'
+Feature 'hallway_lava'
+Feature 'living_quarters.0'
+Feature 'mote'
+Loading image entities/texture/chest
+Loading image entities/texture/slime
+Loading image entities/texture/particle.rock
+Loading image entities/texture/torch
+Loading image entities/texture/spider
+Loading image entities/texture/particle.bfw9k
+Line 21: Ignoring 'noclip'
+Loading image entities/texture/particle.bubble
+Loading image entities/texture/particle.teleport
+Line 22: Ignoring 'noclip'
+Loading image entities/texture/wizard
+Loading image entities/texture/wizard.emissive
+Loading image entities/texture/grass
+Loading image entities/texture/hanging_moss.small
+Loading image entities/texture/arrow
+Loading image entities/texture/projectile.bfw9k
+Line 6: ignoring 'eqadddex'
+Loading image items/texture/sword2
+Loading image items/texture/torch
+Loading image items/texture/leather
+Loading image items/texture/fist
+Loading image items/texture/scroll
+Loading image items/texture/gold
+Loading image items/texture/key
+Loading image items/texture/potion.green
+Loading image items/texture/potion.clear
+Loading image items/texture/wand.black
+Loading image items/texture/wand.empty
+Loading image items/texture/potion.red
+Loading image items/texture/potion.empty
+Loading image items/texture/potion.yellow
+Loading image items/texture/lockpick
+Loading image items/texture/gem.earth
+Loading image items/texture/gem.fire
+Loading image items/texture/gem.life
+Loading image items/texture/gem.water
+Loading image items/texture/gem.wind
+Loading image items/texture/ring.gold
+Loading image items/texture/ring.iron
+Loading image items/texture/ring.ruby
+Loading image items/texture/ring.silver
+Loading image items/texture/potion.purple
+loading spell spell.test
+Creating ground...
+Filling ground...
+Building features...
+Loading image gui/durability
+Made a nice world with 613 features and height 32 :) ...
+Carving caves...
+Placing 3 teleports...
+Loading image cells/texture/teleport.on
+Placing 10 traps...
+Spawning feature entities...
+Placing 201 items...
+Placing some decoration (668 of them)...
+Placing 101 enemies...
+Wiping the floor...
+Updating all cells...
+updated 273585 neighbours
+Done!
+Loading image gui/crosshair
+Loading image gui/slot
+Loading image gui/font.small
+Loading image items/texture/gem.empty
+22654 cell vertex updates
+Loading image gui/maparrow
+updated 82513 neighbours
+Loading sound land
+Read 20112 / 20112 bytes from sound land
+Format is: 1 channels, 48000 hz
+Loading sound oof
+Read 63862 / 63862 bytes from sound oof
+Format is: 1 channels, 44100 hz
+Loading sound step_d
+Read 17528 / 17528 bytes from sound step_d
+Format is: 1 channels, 44100 hz
+Loading sound step_b
+Read 48058 / 48058 bytes from sound step_b
+Format is: 1 channels, 44100 hz
+Unknown key: 0155 U
+Unknown key: 0155 U
+Unknown key: 0155 U
+Unknown key: 0155 U
+Unknown key: 0155 U
+Loading sound step_c
+Read 44386 / 44386 bytes from sound step_c
+Format is: 1 channels, 44100 hz
+Loading sound step_a
+Read 58520 / 58520 bytes from sound step_a
+Format is: 1 channels, 44100 hz
+updated 30 neighbours
+ GLFW - An OpenGL framework Version 3.0.2
+   Copyright (c) 2002-2006 Marcus Geelnard
+   Copyright (c) 2006-2010 Camilla Berglund
+
+ GLee (OpenGL Easy Extension library) Version 5.2
+   Copyright (c)2006  Ben Woodhouse  All rights reserved.
+
+ zlib version 1.2.8
+   Copyright (C) 1995-2012 Jean-loup Gailly and Mark Adler
+
+libpng version 1.7.0beta17 - August 22, 2013
+Copyright (c) 1998-2013 Glenn Randers-Pehrson
+Copyright (c) 1996-1997 Andreas Dilger
+Copyright (c) 1995-1996 Guy Eric Schalnat, Group 42, Inc.
+GLFW initialized
+Initializing game
+Initializing GFX
+Trying to open audio device 'OpenAL Soft'...
+Creating audio context...
+Loading image gui/font.default
+Loading image gui/button.enabled
+Loading image gui/button.disabled
+Loading image gui/button.hover
+Loading image gui/button.active
+Loading image gui/font.big
+Game object initialized 0000000001f8c090, new game
+entering mainloop
+Texture gui/font.big updated since 0...
+Loading image gui/font.big
+Texture gui/button.hover updated since 0...
+Loading image gui/button.hover
+Texture gui/button.disabled updated since 0...
+Loading image gui/button.disabled
+Texture gui/button.active updated since 0...
+Loading image gui/button.active
+Texture gui/button.enabled updated since 0...
+Loading image gui/button.enabled
+Texture gui/font.default updated since 0...
+Loading image gui/font.default
++RunningState() 0000000000319580 0000000001f8c108 0000000001f8c090 0000000001f8c090
+Loading cell properties for type 'air'
+Loading cell properties for type 'brick'
+Loading image cells/texture/brickstep
+Loading image cells/texture/brickstep_crack
+Loading image cells/texture/brickstep_mossy
+Loading cell properties for type 'bedrock'
+Loading image cells/texture/bedrock
+Loading cell properties for type 'torch'
+Loading cell properties for type 'carpet.red'
+Loading image cells/texture/carpet.red
+Loading cell properties for type 'default'
+Loading image cells/texture/dirt
+Loading cell properties for type 'dirt'
+Loading cell properties for type 'frozenlava'
+Loading image cells/texture/rock
+Loading cell properties for type 'gate'
+Loading image cells/texture/gate
+Loading cell properties for type 'lava'
+Loading image cells/texture/lava
+Loading cell properties for type 'pillar'
+Loading cell properties for type 'rock'
+Loading cell properties for type 'step'
+Loading image cells/texture/step
+Loading cell properties for type 'brick.secret'
+Loading cell properties for type 'torch2'
+Loading cell properties for type 'torch3'
+Loading cell properties for type 'wood'
+Loading image cells/texture/planks
+Loading cell properties for type 'ice'
+Loading image cells/texture/water
+Loading cell properties for type 'teleport'
+Loading image cells/texture/teleport.off
+Loading cell properties for type 'door.right.closed'
+Loading cell properties for type 'door.right.open'
+Loading cell properties for type 'ladder.right'
+Loading image cells/texture/ladder
+Loading cell properties for type 'shooter'
+Loading image cells/texture/shooter
+Loading cell properties for type 'bars'
+Loading image cells/texture/bars
+Loading cell properties for type 'water'
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Ignoring unknown feature property: mob
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Feature 'start'
+Feature 'bridge'
+Feature 'door'
+Feature 'alcove'
+Feature 'hallway_small'
+Feature 'doorway'
+Feature 'hallway'
+Feature 'hallway.ladder.down'
+Feature 'stairs_short'
+Feature 'doorway_wood'
+Feature 'hallway.ladder.up'
+Feature 'hallway_lava'
+Feature 'living_quarters.0'
+Feature 'mote'
+Loading image entities/texture/chest
+Loading image entities/texture/slime
+Loading image entities/texture/particle.rock
+Loading image entities/texture/torch
+Loading image entities/texture/spider
+Loading image entities/texture/particle.bfw9k
+Line 21: Ignoring 'noclip'
+Loading image entities/texture/particle.bubble
+Loading image entities/texture/particle.teleport
+Line 22: Ignoring 'noclip'
+Loading image entities/texture/wizard
+Loading image entities/texture/wizard.emissive
+Loading image entities/texture/grass
+Loading image entities/texture/hanging_moss.small
+Loading image entities/texture/arrow
+Loading image entities/texture/projectile.bfw9k
+Line 6: ignoring 'eqadddex'
+Loading image items/texture/sword2
+Loading image items/texture/torch
+Loading image items/texture/leather
+Loading image items/texture/fist
+Loading image items/texture/scroll
+Loading image items/texture/gold
+Loading image items/texture/key
+Loading image items/texture/potion.green
+Loading image items/texture/potion.clear
+Loading image items/texture/wand.black
+Loading image items/texture/wand.empty
+Loading image items/texture/potion.red
+Loading image items/texture/potion.empty
+Loading image items/texture/potion.yellow
+Loading image items/texture/lockpick
+Loading image items/texture/gem.earth
+Loading image items/texture/gem.fire
+Loading image items/texture/gem.life
+Loading image items/texture/gem.water
+Loading image items/texture/gem.wind
+Loading image items/texture/ring.gold
+Loading image items/texture/ring.iron
+Loading image items/texture/ring.ruby
+Loading image items/texture/ring.silver
+Loading image items/texture/potion.purple
+loading spell spell.test
+Creating ground...
+Filling ground...
+Building features...
+Loading image gui/durability
+Made a nice world with 711 features and height 32 :) ...
+Carving caves...
+Placing 8 teleports...
+Loading image cells/texture/teleport.on
+Placing 18 traps...
+Spawning feature entities...
+Placing 164 items...
+Placing some decoration (643 of them)...
+Placing 55 enemies...
+Wiping the floor...
+Updating all cells...
+updated 276557 neighbours
+Done!
+Loading image gui/crosshair
+Loading image gui/slot
+Loading image gui/font.small
+Loading image items/texture/gem.empty
+24961 cell vertex updates
+Loading image gui/maparrow
+updated 90532 neighbours
+Loading sound land
+Read 20112 / 20112 bytes from sound land
+Format is: 1 channels, 48000 hz
+Loading sound oof
+Read 63862 / 63862 bytes from sound oof
+Format is: 1 channels, 44100 hz
+Loading sound step_d
+Read 17528 / 17528 bytes from sound step_d
+Format is: 1 channels, 44100 hz
+Loading sound step_c
+Read 44386 / 44386 bytes from sound step_c
+Format is: 1 channels, 44100 hz
+Loading sound step_a
+Read 58520 / 58520 bytes from sound step_a
+Format is: 1 channels, 44100 hz
+Loading sound step_b
+Read 48058 / 48058 bytes from sound step_b
+Format is: 1 channels, 44100 hz
+Loading image gui/button
+Loading image gui/slot.amulet
+Loading image gui/slot.helmet
+Loading image gui/slot.ring
+Loading image gui/slot.armor
+Loading image gui/slot.hand
+Loading image gui/slot.pants
+Loading image gui/slot.boots
+InventoryGui::HandleEvent putting item Bottle of Air 1 in slot 4
+Putting existing item in the backpack
+updated 7 neighbours
+updated 8 neighbours
+updated 8 neighbours
+updated 9 neighbours
+updated 13 neighbours
+updated 15 neighbours
+updated 17 neighbours
+updated 18 neighbours
+updated 22 neighbours
+updated 17 neighbours
+updated 21 neighbours
+updated 19 neighbours
+updated 18 neighbours
+updated 19 neighbours
+updated 15 neighbours
+updated 22 neighbours
+updated 22 neighbours
+updated 19 neighbours
+updated 21 neighbours
+updated 20 neighbours
+updated 23 neighbours
+updated 17 neighbours
+updated 20 neighbours
+updated 16 neighbours
+updated 21 neighbours
+updated 22 neighbours
+updated 19 neighbours
+updated 21 neighbours
+updated 25 neighbours
+updated 21 neighbours
+updated 20 neighbours
+updated 20 neighbours
+updated 21 neighbours
+updated 21 neighbours
+updated 22 neighbours
+updated 19 neighbours
+updated 26 neighbours
+updated 20 neighbours
+updated 19 neighbours
+updated 21 neighbours
+updated 24 neighbours
+updated 19 neighbours
+updated 21 neighbours
+updated 23 neighbours
+updated 19 neighbours
+updated 18 neighbours
+updated 22 neighbours
+updated 20 neighbours
+updated 21 neighbours
+updated 19 neighbours
+updated 18 neighbours
+updated 30 neighbours
+updated 19 neighbours
+updated 18 neighbours
+updated 16 neighbours
+updated 15 neighbours
+updated 18 neighbours
+updated 16 neighbours
+updated 13 neighbours
+updated 13 neighbours
+updated 14 neighbours
+updated 16 neighbours
+updated 18 neighbours
+updated 17 neighbours
+updated 13 neighbours
+updated 18 neighbours
+updated 19 neighbours
+updated 21 neighbours
+updated 18 neighbours
+updated 15 neighbours
+updated 20 neighbours
+updated 19 neighbours
+updated 21 neighbours
+updated 21 neighbours
+updated 23 neighbours
+updated 22 neighbours
+updated 20 neighbours
+updated 19 neighbours
+updated 19 neighbours
+updated 18 neighbours
+updated 14 neighbours
+updated 19 neighbours
+updated 18 neighbours
+updated 18 neighbours
+updated 16 neighbours
+updated 14 neighbours
+updated 19 neighbours
+updated 17 neighbours
+updated 18 neighbours
+updated 15 neighbours
+updated 17 neighbours
+updated 18 neighbours
+updated 18 neighbours
+updated 16 neighbours
+updated 20 neighbours
+updated 18 neighbours
+updated 19 neighbours
+updated 16 neighbours
+updated 17 neighbours
+updated 18 neighbours
+updated 21 neighbours
+updated 20 neighbours
+updated 21 neighbours
+updated 20 neighbours
+updated 16 neighbours
+updated 18 neighbours
+ GLFW - An OpenGL framework Version 3.0.2
+   Copyright (c) 2002-2006 Marcus Geelnard
+   Copyright (c) 2006-2010 Camilla Berglund
+
+ GLee (OpenGL Easy Extension library) Version 5.2
+   Copyright (c)2006  Ben Woodhouse  All rights reserved.
+
+ zlib version 1.2.8
+   Copyright (C) 1995-2012 Jean-loup Gailly and Mark Adler
+
+libpng version 1.7.0beta17 - August 22, 2013
+Copyright (c) 1998-2013 Glenn Randers-Pehrson
+Copyright (c) 1996-1997 Andreas Dilger
+Copyright (c) 1995-1996 Guy Eric Schalnat, Group 42, Inc.
+GLFW initialized
+Initializing game
+Initializing GFX
+Trying to open audio device 'OpenAL Soft'...
+Creating audio context...
+Loading image gui/font.default
+Loading image gui/button.enabled
+Loading image gui/button.disabled
+Loading image gui/button.hover
+Loading image gui/button.active
+Loading image gui/font.big
+Game object initialized 00000000002ec090, new game
+entering mainloop
+Texture gui/font.big updated since 0...
+Loading image gui/font.big
+Texture gui/button.hover updated since 0...
+Loading image gui/button.hover
+Texture gui/button.disabled updated since 0...
+Loading image gui/button.disabled
+Texture gui/button.active updated since 0...
+Loading image gui/button.active
+Texture gui/button.enabled updated since 0...
+Loading image gui/button.enabled
+Texture gui/font.default updated since 0...
+Loading image gui/font.default
++RunningState() 0000000000347580 00000000002ec108 00000000002ec090 00000000002ec090
+Loading cell properties for type 'air'
+Loading cell properties for type 'brick'
+Loading image cells/texture/brickstep
+Loading image cells/texture/brickstep_crack
+Loading image cells/texture/brickstep_mossy
+Loading cell properties for type 'bedrock'
+Loading image cells/texture/bedrock
+Loading cell properties for type 'torch'
+Loading cell properties for type 'carpet.red'
+Loading image cells/texture/carpet.red
+Loading cell properties for type 'default'
+Loading image cells/texture/dirt
+Loading cell properties for type 'dirt'
+Loading cell properties for type 'frozenlava'
+Loading image cells/texture/rock
+Loading cell properties for type 'gate'
+Loading image cells/texture/gate
+Loading cell properties for type 'lava'
+Loading image cells/texture/lava
+Loading cell properties for type 'pillar'
+Loading cell properties for type 'rock'
+Loading cell properties for type 'step'
+Loading image cells/texture/step
+Loading cell properties for type 'brick.secret'
+Loading cell properties for type 'torch2'
+Loading cell properties for type 'torch3'
+Loading cell properties for type 'wood'
+Loading image cells/texture/planks
+Loading cell properties for type 'ice'
+Loading image cells/texture/water
+Loading cell properties for type 'teleport'
+Loading image cells/texture/teleport.off
+Loading cell properties for type 'door.right.closed'
+Loading cell properties for type 'door.right.open'
+Loading cell properties for type 'ladder.right'
+Loading image cells/texture/ladder
+Loading cell properties for type 'shooter'
+Loading image cells/texture/shooter
+Loading cell properties for type 'bars'
+Loading image cells/texture/bars
+Loading cell properties for type 'water'
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Ignoring unknown feature property: mob
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Feature 'start'
+Feature 'bridge'
+Feature 'door'
+Feature 'alcove'
+Feature 'hallway_small'
+Feature 'doorway'
+Feature 'hallway'
+Feature 'hallway.ladder.down'
+Feature 'stairs_short'
+Feature 'doorway_wood'
+Feature 'hallway.ladder.up'
+Feature 'hallway_lava'
+Feature 'living_quarters.0'
+Feature 'mote'
+Loading image entities/texture/chest
+Loading image entities/texture/slime
+Loading image entities/texture/particle.rock
+Loading image entities/texture/torch
+Loading image entities/texture/spider
+Loading image entities/texture/particle.bfw9k
+Line 21: Ignoring 'noclip'
+Loading image entities/texture/particle.bubble
+Loading image entities/texture/particle.teleport
+Line 22: Ignoring 'noclip'
+Loading image entities/texture/wizard
+Loading image entities/texture/wizard.emissive
+Loading image entities/texture/grass
+Loading image entities/texture/hanging_moss.small
+Loading image entities/texture/arrow
+Loading image entities/texture/projectile.bfw9k
+Line 6: ignoring 'eqadddex'
+Loading image items/texture/sword2
+Loading image items/texture/torch
+Loading image items/texture/leather
+Loading image items/texture/fist
+Loading image items/texture/scroll
+Loading image items/texture/gold
+Loading image items/texture/key
+Loading image items/texture/potion.green
+Loading image items/texture/potion.clear
+Loading image items/texture/wand.black
+Loading image items/texture/wand.empty
+Loading image items/texture/potion.red
+Loading image items/texture/potion.empty
+Loading image items/texture/potion.yellow
+Loading image items/texture/lockpick
+Loading image items/texture/gem.earth
+Loading image items/texture/gem.fire
+Loading image items/texture/gem.life
+Loading image items/texture/gem.water
+Loading image items/texture/gem.wind
+Loading image items/texture/ring.gold
+Loading image items/texture/ring.iron
+Loading image items/texture/ring.ruby
+Loading image items/texture/ring.silver
+Loading image items/texture/potion.purple
+loading spell spell.test
+Creating ground...
+Filling ground...
+Building features...
+Loading image gui/durability
+Made a nice world with 408 features and height 29 :) ...
+Carving caves...
+Placing 5 teleports...
+Loading image cells/texture/teleport.on
+Placing 12 traps...
+Spawning feature entities...
+Placing 192 items...
+Placing some decoration (639 of them)...
+Placing 90 enemies...
+Wiping the floor...
+Updating all cells...
+updated 268485 neighbours
+Done!
+Loading image gui/crosshair
+Loading image gui/slot
+Loading image gui/font.small
+Loading image items/texture/gem.empty
+17273 cell vertex updates
+Loading image gui/maparrow
+updated 63585 neighbours
+Loading sound land
+Read 20112 / 20112 bytes from sound land
+Format is: 1 channels, 48000 hz
+Loading sound oof
+Read 63862 / 63862 bytes from sound oof
+Format is: 1 channels, 44100 hz
+Loading sound step_b
+Read 48058 / 48058 bytes from sound step_b
+Format is: 1 channels, 44100 hz
+Loading sound step_c
+Read 44386 / 44386 bytes from sound step_c
+Format is: 1 channels, 44100 hz
+Loading sound step_d
+Read 17528 / 17528 bytes from sound step_d
+Format is: 1 channels, 44100 hz
+Loading image gui/button
+Loading image gui/slot.amulet
+Loading image gui/slot.helmet
+Loading image gui/slot.ring
+Loading image gui/slot.armor
+Loading image gui/slot.hand
+Loading image gui/slot.pants
+Loading image gui/slot.boots
+InventoryGui::HandleEvent putting item Bottle of Air 1 in slot 4
+Putting existing item in the backpack
+Loading sound step_a
+Read 58520 / 58520 bytes from sound step_a
+Format is: 1 channels, 44100 hz
+updated 18 neighbours
+updated 15 neighbours
+updated 21 neighbours
+updated 21 neighbours
+updated 23 neighbours
+updated 20 neighbours
+updated 22 neighbours
+updated 21 neighbours
+updated 24 neighbours
+updated 22 neighbours
+updated 18 neighbours
+updated 19 neighbours
+updated 20 neighbours
+updated 24 neighbours
+updated 20 neighbours
+updated 21 neighbours
+updated 24 neighbours
+updated 18 neighbours
+updated 20 neighbours
+updated 22 neighbours
+updated 21 neighbours
+updated 21 neighbours
+updated 23 neighbours
+updated 20 neighbours
+updated 21 neighbours
+updated 21 neighbours
+updated 18 neighbours
+updated 20 neighbours
+updated 18 neighbours
+updated 19 neighbours
+updated 20 neighbours
+updated 18 neighbours
+updated 18 neighbours
+updated 22 neighbours
+updated 24 neighbours
+updated 22 neighbours
+updated 22 neighbours
+updated 19 neighbours
+updated 17 neighbours
+updated 17 neighbours
+updated 20 neighbours
+updated 19 neighbours
+updated 25 neighbours
+updated 17 neighbours
+updated 19 neighbours
+updated 21 neighbours
+updated 19 neighbours
+updated 17 neighbours
+updated 20 neighbours
+updated 23 neighbours
+updated 21 neighbours
+updated 20 neighbours
+updated 22 neighbours
+updated 19 neighbours
+updated 20 neighbours
+updated 19 neighbours
+updated 16 neighbours
+updated 18 neighbours
+updated 24 neighbours
+updated 21 neighbours
+updated 21 neighbours
+updated 17 neighbours
+updated 17 neighbours
+updated 16 neighbours
+updated 20 neighbours
+updated 18 neighbours
+updated 20 neighbours
+updated 19 neighbours
+updated 21 neighbours
+updated 22 neighbours
+updated 24 neighbours
+updated 23 neighbours
+updated 20 neighbours
+updated 17 neighbours
+updated 22 neighbours
+updated 20 neighbours
+updated 19 neighbours
+updated 26 neighbours
+updated 24 neighbours
+updated 27 neighbours
+updated 29 neighbours
+updated 31 neighbours
+updated 35 neighbours
+updated 44 neighbours
+updated 31 neighbours
+updated 28 neighbours
+updated 24 neighbours
+updated 27 neighbours
+updated 24 neighbours
+updated 22 neighbours
+updated 23 neighbours
+updated 24 neighbours
+updated 23 neighbours
+updated 25 neighbours
+updated 28 neighbours
+updated 23 neighbours
+updated 32 neighbours
+updated 29 neighbours
+updated 19 neighbours
+updated 19 neighbours
+updated 21 neighbours
+updated 20 neighbours
+updated 26 neighbours
+updated 28 neighbours
+updated 28 neighbours
+updated 28 neighbours
+updated 32 neighbours
+updated 25 neighbours
+updated 25 neighbours
+updated 28 neighbours
+updated 23 neighbours
+updated 24 neighbours
+updated 21 neighbours
+updated 16 neighbours
+updated 14 neighbours
+updated 18 neighbours
+updated 17 neighbours
+updated 21 neighbours
+updated 16 neighbours
+updated 14 neighbours
+updated 15 neighbours
+updated 16 neighbours
+updated 16 neighbours
+updated 19 neighbours
+updated 21 neighbours
+updated 20 neighbours
+updated 19 neighbours
+updated 25 neighbours
+updated 23 neighbours
+updated 26 neighbours
+updated 20 neighbours
+updated 22 neighbours
+updated 21 neighbours
+updated 25 neighbours
+updated 19 neighbours
+updated 26 neighbours
+updated 23 neighbours
+updated 20 neighbours
+updated 21 neighbours
+updated 21 neighbours
+updated 26 neighbours
+updated 22 neighbours
+updated 25 neighbours
+updated 25 neighbours
+updated 22 neighbours
+updated 22 neighbours
+updated 20 neighbours
+updated 29 neighbours
+updated 32 neighbours
+updated 23 neighbours
+updated 22 neighbours
+updated 27 neighbours
+updated 31 neighbours
+updated 33 neighbours
+updated 33 neighbours
+updated 26 neighbours
+updated 28 neighbours
+updated 29 neighbours
+updated 36 neighbours
+updated 38 neighbours
+updated 35 neighbours
+updated 36 neighbours
+updated 37 neighbours
+updated 40 neighbours
+updated 39 neighbours
+updated 33 neighbours
+updated 36 neighbours
+updated 28 neighbours
+updated 32 neighbours
+updated 31 neighbours
+updated 33 neighbours
+updated 37 neighbours
+updated 32 neighbours
+updated 35 neighbours
+updated 42 neighbours
+updated 27 neighbours
+updated 32 neighbours
+updated 36 neighbours
+updated 32 neighbours
+updated 39 neighbours
+updated 35 neighbours
+updated 36 neighbours
+updated 39 neighbours
+updated 35 neighbours
+updated 29 neighbours
+updated 26 neighbours
+updated 29 neighbours
+updated 33 neighbours
+updated 30 neighbours
+updated 29 neighbours
+updated 36 neighbours
+updated 30 neighbours
+updated 32 neighbours
+updated 27 neighbours
+updated 30 neighbours
+updated 28 neighbours
+updated 26 neighbours
+updated 28 neighbours
+updated 28 neighbours
+updated 29 neighbours
+updated 29 neighbours
+updated 27 neighbours
+updated 29 neighbours
+updated 30 neighbours
+updated 30 neighbours
+updated 22 neighbours
+updated 22 neighbours
+updated 23 neighbours
+updated 21 neighbours
+updated 25 neighbours
+updated 28 neighbours
+updated 31 neighbours
+updated 29 neighbours
+updated 18 neighbours
+updated 18 neighbours
+updated 23 neighbours
+updated 23 neighbours
+updated 18 neighbours
+updated 19 neighbours
+updated 21 neighbours
+updated 21 neighbours
+updated 24 neighbours
+updated 20 neighbours
+updated 22 neighbours
+updated 23 neighbours
+updated 19 neighbours
+updated 22 neighbours
+updated 19 neighbours
+updated 17 neighbours
+updated 18 neighbours
+updated 15 neighbours
+updated 19 neighbours
+updated 20 neighbours
+updated 31 neighbours
+updated 24 neighbours
+updated 24 neighbours
+updated 28 neighbours
+updated 23 neighbours
+updated 25 neighbours
+updated 22 neighbours
+updated 27 neighbours
+updated 21 neighbours
+updated 21 neighbours
+updated 25 neighbours
+updated 21 neighbours
+updated 26 neighbours
+updated 22 neighbours
+updated 22 neighbours
+updated 22 neighbours
+updated 27 neighbours
+updated 23 neighbours
+updated 21 neighbours
+updated 20 neighbours
+updated 25 neighbours
+updated 24 neighbours
+updated 23 neighbours
+updated 26 neighbours
+updated 23 neighbours
+updated 23 neighbours
+updated 28 neighbours
+updated 26 neighbours
+updated 20 neighbours
+updated 27 neighbours
+updated 25 neighbours
+updated 24 neighbours
+updated 19 neighbours
+updated 17 neighbours
+updated 17 neighbours
+updated 17 neighbours
+updated 19 neighbours
+updated 19 neighbours
+updated 20 neighbours
+updated 24 neighbours
+updated 27 neighbours
+updated 23 neighbours
+updated 25 neighbours
+updated 21 neighbours
+updated 27 neighbours
+updated 26 neighbours
+updated 28 neighbours
+updated 29 neighbours
+updated 24 neighbours
+updated 25 neighbours
+updated 25 neighbours
+updated 29 neighbours
+updated 25 neighbours
+updated 31 neighbours
+updated 26 neighbours
+updated 24 neighbours
+updated 22 neighbours
+updated 26 neighbours
+updated 29 neighbours
+updated 27 neighbours
+updated 28 neighbours
+updated 22 neighbours
+updated 26 neighbours
+updated 26 neighbours
+updated 31 neighbours
+updated 31 neighbours
+updated 29 neighbours
+updated 27 neighbours
+updated 25 neighbours
+updated 21 neighbours
+updated 30 neighbours
+updated 27 neighbours
+updated 25 neighbours
+updated 27 neighbours
+updated 31 neighbours
+updated 35 neighbours
+updated 41 neighbours
+updated 33 neighbours
+updated 30 neighbours
+updated 30 neighbours
+updated 30 neighbours
+updated 32 neighbours
+updated 35 neighbours
+updated 31 neighbours
+updated 32 neighbours
+updated 33 neighbours
+updated 37 neighbours
+updated 32 neighbours
+updated 32 neighbours
+updated 36 neighbours
+updated 39 neighbours
+updated 44 neighbours
+updated 47 neighbours
+updated 47 neighbours
+updated 39 neighbours
+updated 32 neighbours
+updated 32 neighbours
+updated 33 neighbours
+updated 37 neighbours
+updated 34 neighbours
+updated 36 neighbours
+updated 38 neighbours
+updated 34 neighbours
+updated 32 neighbours
+updated 29 neighbours
+updated 28 neighbours
+updated 31 neighbours
+updated 32 neighbours
+updated 32 neighbours
+updated 34 neighbours
+updated 33 neighbours
+updated 31 neighbours
+updated 35 neighbours
+updated 31 neighbours
+updated 36 neighbours
+updated 33 neighbours
+updated 38 neighbours
+updated 35 neighbours
+updated 36 neighbours
+updated 35 neighbours
+updated 29 neighbours
+updated 24 neighbours
+updated 30 neighbours
+updated 34 neighbours
+updated 31 neighbours
+updated 35 neighbours
+updated 31 neighbours
+updated 35 neighbours
+updated 31 neighbours
+updated 29 neighbours
+updated 33 neighbours
+updated 26 neighbours
+updated 25 neighbours
+updated 29 neighbours
+updated 26 neighbours
+updated 23 neighbours
+updated 26 neighbours
+updated 21 neighbours
+updated 20 neighbours
+updated 22 neighbours
+updated 23 neighbours
+updated 22 neighbours
+updated 25 neighbours
+updated 23 neighbours
+updated 24 neighbours
+updated 21 neighbours
+updated 26 neighbours
+updated 29 neighbours
+updated 24 neighbours
+updated 21 neighbours
+updated 16 neighbours
+updated 17 neighbours
+updated 21 neighbours
+updated 19 neighbours
+updated 18 neighbours
+updated 19 neighbours
+updated 21 neighbours
+updated 24 neighbours
+updated 24 neighbours
+updated 17 neighbours
+updated 19 neighbours
+updated 14 neighbours
+updated 17 neighbours
+updated 17 neighbours
+updated 18 neighbours
+updated 18 neighbours
+updated 14 neighbours
+updated 14 neighbours
+updated 17 neighbours
+updated 17 neighbours
+updated 18 neighbours
+updated 19 neighbours
+updated 19 neighbours
+updated 12 neighbours
+updated 15 neighbours
+updated 17 neighbours
+updated 15 neighbours
+updated 17 neighbours
+updated 18 neighbours
+updated 16 neighbours
+updated 16 neighbours
+updated 15 neighbours
+updated 13 neighbours
+updated 14 neighbours
+updated 16 neighbours
+updated 20 neighbours
+updated 13 neighbours
+updated 18 neighbours
+updated 15 neighbours
+updated 14 neighbours
+updated 15 neighbours
+updated 16 neighbours
+updated 13 neighbours
+updated 17 neighbours
+updated 17 neighbours
+updated 16 neighbours
+updated 17 neighbours
+updated 15 neighbours
+updated 15 neighbours
+updated 20 neighbours
+updated 14 neighbours
+updated 17 neighbours
+updated 15 neighbours
+updated 13 neighbours
+updated 18 neighbours
+updated 16 neighbours
+updated 13 neighbours
+updated 14 neighbours
+updated 21 neighbours
+updated 13 neighbours
+updated 19 neighbours
+updated 18 neighbours
+updated 17 neighbours
+updated 17 neighbours
+updated 15 neighbours
+updated 16 neighbours
+updated 17 neighbours
+updated 19 neighbours
+updated 14 neighbours
+updated 16 neighbours
+updated 14 neighbours
+updated 11 neighbours
+updated 12 neighbours
+updated 9 neighbours
+updated 13 neighbours
+updated 12 neighbours
+updated 12 neighbours
+updated 14 neighbours
+updated 8 neighbours
+updated 10 neighbours
+updated 11 neighbours
+updated 11 neighbours
+updated 11 neighbours
+updated 13 neighbours
+updated 10 neighbours
+updated 9 neighbours
+updated 10 neighbours
+updated 11 neighbours
+updated 14 neighbours
+updated 9 neighbours
+updated 10 neighbours
+updated 10 neighbours
+updated 16 neighbours
+updated 11 neighbours
+updated 10 neighbours
+updated 9 neighbours
+updated 13 neighbours
+updated 10 neighbours
+updated 13 neighbours
+updated 12 neighbours
+updated 12 neighbours
+updated 13 neighbours
+updated 13 neighbours
+updated 10 neighbours
+updated 9 neighbours
+updated 15 neighbours
+updated 14 neighbours
+updated 17 neighbours
+updated 11 neighbours
+updated 12 neighbours
+updated 9 neighbours
+updated 11 neighbours
+updated 10 neighbours
+updated 14 neighbours
+updated 10 neighbours
+updated 14 neighbours
+updated 10 neighbours
+updated 10 neighbours
+updated 12 neighbours
+updated 13 neighbours
+updated 13 neighbours
+updated 12 neighbours
+updated 14 neighbours
+updated 15 neighbours
+updated 11 neighbours
+updated 14 neighbours
+updated 9 neighbours
+updated 12 neighbours
+updated 16 neighbours
+updated 11 neighbours
+updated 11 neighbours
+updated 13 neighbours
+updated 10 neighbours
+updated 9 neighbours
+updated 13 neighbours
+updated 14 neighbours
+updated 11 neighbours
+updated 10 neighbours
+updated 11 neighbours
+updated 14 neighbours
+updated 17 neighbours
+updated 11 neighbours
+updated 11 neighbours
+updated 8 neighbours
+updated 14 neighbours
+updated 13 neighbours
+updated 10 neighbours
+updated 10 neighbours
+updated 13 neighbours
+updated 12 neighbours
+updated 12 neighbours
+updated 10 neighbours
+updated 12 neighbours
+updated 10 neighbours
+updated 10 neighbours
+updated 14 neighbours
+updated 17 neighbours
+updated 11 neighbours
+updated 15 neighbours
+updated 11 neighbours
+updated 11 neighbours
+updated 10 neighbours
+updated 10 neighbours
+updated 14 neighbours
+updated 10 neighbours
+updated 11 neighbours
+updated 9 neighbours
+updated 14 neighbours
+updated 11 neighbours
+updated 10 neighbours
+updated 11 neighbours
+updated 12 neighbours
+updated 10 neighbours
+updated 12 neighbours
+updated 10 neighbours
+updated 12 neighbours
+updated 9 neighbours
+updated 9 neighbours
+updated 13 neighbours
+updated 13 neighbours
+updated 15 neighbours
+updated 10 neighbours
+updated 11 neighbours
+updated 10 neighbours
+updated 15 neighbours
+updated 14 neighbours
+updated 10 neighbours
+updated 13 neighbours
+updated 10 neighbours
+updated 17 neighbours
+updated 12 neighbours
+updated 15 neighbours
+updated 7 neighbours
+updated 5 neighbours
+updated 6 neighbours
+updated 7 neighbours
+updated 6 neighbours
+updated 6 neighbours
+updated 6 neighbours
+updated 6 neighbours
+updated 7 neighbours
+updated 6 neighbours
+updated 9 neighbours
+updated 10 neighbours
+updated 7 neighbours
+updated 9 neighbours
+updated 8 neighbours
+updated 9 neighbours
+updated 8 neighbours
+updated 7 neighbours
+updated 7 neighbours
+updated 6 neighbours
+updated 6 neighbours
+updated 13 neighbours
+updated 6 neighbours
+updated 7 neighbours
+updated 7 neighbours
+updated 7 neighbours
+updated 7 neighbours
+updated 7 neighbours
+updated 6 neighbours
+updated 10 neighbours
+updated 7 neighbours
+updated 6 neighbours
+updated 10 neighbours
+updated 8 neighbours
+updated 8 neighbours
+updated 6 neighbours
+updated 6 neighbours
+updated 6 neighbours
+updated 7 neighbours
+updated 6 neighbours
+updated 7 neighbours
+updated 7 neighbours
+updated 8 neighbours
+updated 7 neighbours
+updated 8 neighbours
+updated 7 neighbours
+updated 10 neighbours
+updated 7 neighbours
+updated 6 neighbours
+updated 9 neighbours
+updated 9 neighbours
+updated 8 neighbours
+updated 8 neighbours
+updated 6 neighbours
+updated 7 neighbours
+updated 6 neighbours
+updated 7 neighbours
+updated 11 neighbours
+updated 14 neighbours
+updated 16 neighbours
+updated 18 neighbours
+updated 20 neighbours
+updated 23 neighbours
+updated 25 neighbours
+updated 22 neighbours
+updated 24 neighbours
+updated 27 neighbours
+updated 30 neighbours
+updated 26 neighbours
+updated 26 neighbours
+updated 29 neighbours
+updated 31 neighbours
+updated 24 neighbours
+updated 22 neighbours
+updated 23 neighbours
+updated 23 neighbours
+updated 23 neighbours
+updated 29 neighbours
+updated 22 neighbours
+updated 24 neighbours
+updated 30 neighbours
+updated 27 neighbours
+updated 28 neighbours
+updated 25 neighbours
+updated 23 neighbours
+updated 22 neighbours
+updated 21 neighbours
+updated 29 neighbours
+updated 23 neighbours
+updated 22 neighbours
+updated 28 neighbours
+updated 27 neighbours
+updated 25 neighbours
+updated 26 neighbours
+updated 22 neighbours
+updated 24 neighbours
+updated 24 neighbours
+updated 25 neighbours
+updated 27 neighbours
+updated 25 neighbours
+updated 23 neighbours
+updated 26 neighbours
+updated 22 neighbours
+updated 27 neighbours
+updated 25 neighbours
+updated 24 neighbours
+updated 27 neighbours
+updated 27 neighbours
+updated 27 neighbours
+updated 30 neighbours
+updated 28 neighbours
+updated 29 neighbours
+updated 29 neighbours
+updated 27 neighbours
+updated 21 neighbours
+updated 21 neighbours
+updated 24 neighbours
+updated 29 neighbours
+updated 25 neighbours
+updated 36 neighbours
+updated 23 neighbours
+updated 26 neighbours
+updated 25 neighbours
+updated 24 neighbours
+updated 22 neighbours
+updated 22 neighbours
+updated 25 neighbours
+updated 22 neighbours
+updated 18 neighbours
+updated 18 neighbours
+updated 15 neighbours
+updated 17 neighbours
+updated 23 neighbours
+updated 25 neighbours
+updated 21 neighbours
+updated 19 neighbours
+updated 20 neighbours
+updated 24 neighbours
+updated 28 neighbours
+updated 27 neighbours
+updated 31 neighbours
+updated 21 neighbours
+updated 22 neighbours
+updated 18 neighbours
+updated 19 neighbours
+updated 17 neighbours
+updated 17 neighbours
+updated 19 neighbours
+updated 25 neighbours
+updated 21 neighbours
+updated 22 neighbours
+updated 22 neighbours
+updated 25 neighbours
+updated 30 neighbours
+updated 22 neighbours
+updated 23 neighbours
+updated 18 neighbours
+updated 19 neighbours
+updated 17 neighbours
+updated 20 neighbours
+updated 23 neighbours
+updated 28 neighbours
+updated 22 neighbours
+updated 25 neighbours
+updated 31 neighbours
+updated 35 neighbours
+updated 32 neighbours
+updated 29 neighbours
+updated 29 neighbours
+updated 25 neighbours
+updated 34 neighbours
+updated 31 neighbours
+updated 28 neighbours
+updated 31 neighbours
+updated 29 neighbours
+updated 27 neighbours
+updated 39 neighbours
+updated 31 neighbours
+updated 26 neighbours
+updated 23 neighbours
+updated 25 neighbours
+updated 25 neighbours
+updated 24 neighbours
+updated 29 neighbours
+updated 29 neighbours
+updated 28 neighbours
+updated 32 neighbours
+updated 36 neighbours
+updated 31 neighbours
+updated 35 neighbours
+updated 29 neighbours
+updated 28 neighbours
+updated 25 neighbours
+ GLFW - An OpenGL framework Version 3.0.2
+   Copyright (c) 2002-2006 Marcus Geelnard
+   Copyright (c) 2006-2010 Camilla Berglund
+
+ GLee (OpenGL Easy Extension library) Version 5.2
+   Copyright (c)2006  Ben Woodhouse  All rights reserved.
+
+ zlib version 1.2.8
+   Copyright (C) 1995-2012 Jean-loup Gailly and Mark Adler
+
+libpng version 1.7.0beta17 - August 22, 2013
+Copyright (c) 1998-2013 Glenn Randers-Pehrson
+Copyright (c) 1996-1997 Andreas Dilger
+Copyright (c) 1995-1996 Guy Eric Schalnat, Group 42, Inc.
+GLFW initialized
+Initializing game
+Initializing GFX
+Trying to open audio device 'OpenAL Soft'...
+Creating audio context...
+Loading image gui/font.default
+Loading image gui/button.enabled
+Loading image gui/button.disabled
+Loading image gui/button.hover
+Loading image gui/button.active
+Loading image gui/font.big
+Game object initialized 000000000033c090, new game
+entering mainloop
+Texture gui/font.big updated since 0...
+Loading image gui/font.big
+Texture gui/button.hover updated since 0...
+Loading image gui/button.hover
+Texture gui/button.disabled updated since 0...
+Loading image gui/button.disabled
+Texture gui/button.active updated since 0...
+Loading image gui/button.active
+Texture gui/button.enabled updated since 0...
+Loading image gui/button.enabled
+Texture gui/font.default updated since 0...
+Loading image gui/font.default
++RunningState() 0000000001f17580 000000000033c108 000000000033c090 000000000033c090
+Loading cell properties for type 'air'
+Loading cell properties for type 'brick'
+Loading image cells/texture/brickstep
+Loading image cells/texture/brickstep_crack
+Loading image cells/texture/brickstep_mossy
+Loading cell properties for type 'bedrock'
+Loading image cells/texture/bedrock
+Loading cell properties for type 'torch'
+Loading cell properties for type 'carpet.red'
+Loading image cells/texture/carpet.red
+Loading cell properties for type 'default'
+Loading image cells/texture/dirt
+Loading cell properties for type 'dirt'
+Loading cell properties for type 'frozenlava'
+Loading image cells/texture/rock
+Loading cell properties for type 'gate'
+Loading image cells/texture/gate
+Loading cell properties for type 'lava'
+Loading image cells/texture/lava
+Loading cell properties for type 'pillar'
+Loading cell properties for type 'rock'
+Loading cell properties for type 'step'
+Loading image cells/texture/step
+Loading cell properties for type 'brick.secret'
+Loading cell properties for type 'torch2'
+Loading cell properties for type 'torch3'
+Loading cell properties for type 'wood'
+Loading image cells/texture/planks
+Loading cell properties for type 'ice'
+Loading image cells/texture/water
+Loading cell properties for type 'teleport'
+Loading image cells/texture/teleport.off
+Loading cell properties for type 'door.right.closed'
+Loading cell properties for type 'door.right.open'
+Loading cell properties for type 'ladder.right'
+Loading image cells/texture/ladder
+Loading cell properties for type 'shooter'
+Loading image cells/texture/shooter
+Loading cell properties for type 'bars'
+Loading image cells/texture/bars
+Loading cell properties for type 'water'
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Ignoring unknown feature property: mob
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Feature 'start'
+Feature 'bridge'
+Feature 'door'
+Feature 'alcove'
+Feature 'hallway_small'
+Feature 'doorway'
+Feature 'hallway'
+Feature 'hallway.ladder.down'
+Feature 'stairs_short'
+Feature 'doorway_wood'
+Feature 'hallway.ladder.up'
+Feature 'hallway_lava'
+Feature 'living_quarters.0'
+Feature 'mote'
+Loading image entities/texture/chest
+Loading image entities/texture/slime
+Loading image entities/texture/particle.rock
+Loading image entities/texture/torch
+Loading image entities/texture/spider
+Loading image entities/texture/particle.bfw9k
+Line 21: Ignoring 'noclip'
+Loading image entities/texture/particle.bubble
+Loading image entities/texture/particle.teleport
+Line 22: Ignoring 'noclip'
+Loading image entities/texture/wizard
+Loading image entities/texture/wizard.emissive
+Loading image entities/texture/grass
+Loading image entities/texture/hanging_moss.small
+Loading image entities/texture/arrow
+Loading image entities/texture/projectile.bfw9k
+Line 6: ignoring 'eqadddex'
+Loading image items/texture/sword2
+Loading image items/texture/torch
+Loading image items/texture/leather
+Loading image items/texture/fist
+Loading image items/texture/scroll
+Loading image items/texture/gold
+Loading image items/texture/key
+Loading image items/texture/potion.green
+Loading image items/texture/potion.clear
+Loading image items/texture/wand.black
+Loading image items/texture/wand.empty
+Loading image items/texture/potion.red
+Loading image items/texture/potion.empty
+Loading image items/texture/potion.yellow
+Loading image items/texture/lockpick
+Loading image items/texture/gem.earth
+Loading image items/texture/gem.fire
+Loading image items/texture/gem.life
+Loading image items/texture/gem.water
+Loading image items/texture/gem.wind
+Loading image items/texture/ring.gold
+Loading image items/texture/ring.iron
+Loading image items/texture/ring.ruby
+Loading image items/texture/ring.silver
+Loading image items/texture/potion.purple
+loading spell spell.test
+Creating ground...
+Filling ground...
+Building features...
+Loading image gui/durability
+Made a nice world with 423 features and height 29 :) ...
+Carving caves...
+Placing 11 teleports...
+Loading image cells/texture/teleport.on
+Placing 10 traps...
+Spawning feature entities...
+Placing 212 items...
+Placing some decoration (638 of them)...
+Placing 112 enemies...
+Wiping the floor...
+Updating all cells...
+updated 275292 neighbours
+Done!
+Loading image gui/crosshair
+Loading image gui/slot
+Loading image gui/font.small
+Loading image items/texture/gem.empty
+17090 cell vertex updates
+Loading image gui/maparrow
+updated 57715 neighbours
+Loading sound land
+Read 20112 / 20112 bytes from sound land
+Format is: 1 channels, 48000 hz
+Loading sound oof
+Read 63862 / 63862 bytes from sound oof
+Format is: 1 channels, 44100 hz
+Loading image gui/button
+Loading image gui/slot.amulet
+Loading image gui/slot.helmet
+Loading image gui/slot.ring
+Loading image gui/slot.armor
+Loading image gui/slot.hand
+Loading image gui/slot.pants
+Loading image gui/slot.boots
+InventoryGui::HandleEvent putting item Bottle of Air 1 in slot 4
+Putting existing item in the backpack
+Loading sound step_c
+Read 44386 / 44386 bytes from sound step_c
+Format is: 1 channels, 44100 hz
+Loading sound step_a
+Read 58520 / 58520 bytes from sound step_a
+Format is: 1 channels, 44100 hz
+Loading sound step_b
+Read 48058 / 48058 bytes from sound step_b
+Format is: 1 channels, 44100 hz
+Loading sound step_d
+Read 17528 / 17528 bytes from sound step_d
+Format is: 1 channels, 44100 hz
+updated 41 neighbours
+updated 41 neighbours
+updated 44 neighbours
+updated 36 neighbours
+updated 23 neighbours
+updated 19 neighbours
+updated 22 neighbours
+updated 18 neighbours
+updated 16 neighbours
+updated 16 neighbours
+updated 18 neighbours
+updated 18 neighbours
+updated 19 neighbours
+updated 20 neighbours
+updated 25 neighbours
+updated 34 neighbours
+updated 42 neighbours
+updated 75 neighbours
+updated 60 neighbours
+updated 30 neighbours
+updated 51 neighbours
+updated 35 neighbours
+updated 82 neighbours
+updated 36 neighbours
+updated 29 neighbours
+updated 28 neighbours
+updated 32 neighbours
+updated 28 neighbours
+updated 24 neighbours
+updated 24 neighbours
+updated 19 neighbours
+updated 17 neighbours
+updated 23 neighbours
+updated 22 neighbours
+updated 24 neighbours
+updated 29 neighbours
+updated 23 neighbours
+updated 32 neighbours
+updated 27 neighbours
+updated 28 neighbours
+updated 27 neighbours
+updated 29 neighbours
+updated 32 neighbours
+updated 28 neighbours
+updated 27 neighbours
+updated 30 neighbours
+updated 29 neighbours
+updated 26 neighbours
+updated 25 neighbours
+updated 30 neighbours
+updated 22 neighbours
+updated 25 neighbours
+updated 25 neighbours
+updated 29 neighbours
+updated 24 neighbours
+updated 21 neighbours
+updated 22 neighbours
+updated 21 neighbours
+updated 26 neighbours
+updated 24 neighbours
+updated 28 neighbours
+updated 28 neighbours
+updated 25 neighbours
+updated 27 neighbours
+updated 24 neighbours
+updated 30 neighbours
+updated 27 neighbours
+updated 25 neighbours
+updated 26 neighbours
+updated 27 neighbours
+updated 28 neighbours
+updated 23 neighbours
+updated 24 neighbours
+updated 26 neighbours
+updated 23 neighbours
+updated 26 neighbours
+updated 25 neighbours
+updated 22 neighbours
+updated 23 neighbours
+updated 26 neighbours
+updated 25 neighbours
+updated 19 neighbours
+updated 25 neighbours
+updated 24 neighbours
+updated 21 neighbours
+updated 23 neighbours
+updated 20 neighbours
+updated 20 neighbours
+updated 23 neighbours
+updated 21 neighbours
+updated 21 neighbours
+updated 22 neighbours
+updated 18 neighbours
+updated 19 neighbours
+updated 22 neighbours
+updated 21 neighbours
+updated 20 neighbours
+updated 17 neighbours
+updated 19 neighbours
+updated 23 neighbours
+updated 19 neighbours
+updated 16 neighbours
+updated 19 neighbours
+updated 20 neighbours
+updated 23 neighbours
+updated 21 neighbours
+updated 25 neighbours
+updated 20 neighbours
+updated 23 neighbours
+updated 21 neighbours
+updated 24 neighbours
+updated 24 neighbours
+updated 24 neighbours
+updated 20 neighbours
+updated 19 neighbours
+updated 17 neighbours
+updated 17 neighbours
+updated 13 neighbours
+updated 12 neighbours
+updated 14 neighbours
+updated 14 neighbours
+updated 15 neighbours
+updated 19 neighbours
+updated 18 neighbours
+updated 17 neighbours
+updated 17 neighbours
+updated 16 neighbours
+updated 15 neighbours
+updated 18 neighbours
+updated 16 neighbours
+updated 17 neighbours
+updated 17 neighbours
+updated 19 neighbours
+updated 16 neighbours
+updated 15 neighbours
+updated 16 neighbours
+updated 19 neighbours
+updated 13 neighbours
+updated 16 neighbours
+updated 15 neighbours
+updated 18 neighbours
+updated 14 neighbours
+updated 18 neighbours
+updated 16 neighbours
+updated 14 neighbours
+updated 18 neighbours
+updated 16 neighbours
+updated 17 neighbours
+updated 18 neighbours
+updated 19 neighbours
+updated 18 neighbours
+updated 17 neighbours
+updated 19 neighbours
+updated 19 neighbours
+updated 21 neighbours
+updated 19 neighbours
+updated 15 neighbours
+updated 17 neighbours
+updated 11 neighbours
+updated 14 neighbours
+updated 15 neighbours
+updated 17 neighbours
+updated 19 neighbours
+updated 17 neighbours
+updated 18 neighbours
+updated 16 neighbours
+updated 19 neighbours
+updated 12 neighbours
+updated 12 neighbours
+updated 13 neighbours
+updated 13 neighbours
+updated 13 neighbours
+updated 16 neighbours
+updated 18 neighbours
+updated 14 neighbours
+updated 15 neighbours
+updated 17 neighbours
+updated 14 neighbours
+updated 11 neighbours
+updated 14 neighbours
+updated 17 neighbours
+updated 17 neighbours
+updated 15 neighbours
+updated 12 neighbours
+updated 16 neighbours
+updated 17 neighbours
+updated 16 neighbours
+updated 16 neighbours
+updated 16 neighbours
+updated 16 neighbours
+updated 15 neighbours
+updated 16 neighbours
+updated 13 neighbours
+updated 14 neighbours
+updated 17 neighbours
+updated 12 neighbours
+updated 11 neighbours
+updated 16 neighbours
+updated 14 neighbours
+updated 13 neighbours
+updated 15 neighbours
+updated 19 neighbours
+updated 15 neighbours
+updated 21 neighbours
+updated 16 neighbours
+updated 19 neighbours
+updated 16 neighbours
+updated 14 neighbours
+updated 14 neighbours
+updated 14 neighbours
+updated 18 neighbours
+updated 16 neighbours
+updated 13 neighbours
+updated 12 neighbours
+updated 15 neighbours
+updated 16 neighbours
+updated 18 neighbours
+updated 16 neighbours
+updated 15 neighbours
+updated 17 neighbours
+updated 20 neighbours
+updated 18 neighbours
+updated 17 neighbours
+updated 15 neighbours
+updated 17 neighbours
+updated 16 neighbours
+updated 16 neighbours
+updated 18 neighbours
+updated 16 neighbours
+updated 17 neighbours
+updated 19 neighbours
+updated 18 neighbours
+updated 16 neighbours
+updated 16 neighbours
+updated 17 neighbours
+updated 16 neighbours
+updated 12 neighbours
+updated 17 neighbours
+updated 17 neighbours
+updated 19 neighbours
+updated 17 neighbours
+updated 20 neighbours
+updated 17 neighbours
+updated 17 neighbours
+updated 17 neighbours
+updated 18 neighbours
+updated 15 neighbours
+updated 15 neighbours
+updated 16 neighbours
+updated 18 neighbours
+updated 20 neighbours
+updated 15 neighbours
+updated 14 neighbours
+updated 13 neighbours
+updated 18 neighbours
+updated 16 neighbours
+updated 16 neighbours
+updated 17 neighbours
+updated 18 neighbours
+updated 19 neighbours
+updated 15 neighbours
+updated 17 neighbours
+updated 15 neighbours
+updated 13 neighbours
+updated 13 neighbours
+updated 16 neighbours
+updated 19 neighbours
+updated 22 neighbours
+updated 16 neighbours
+updated 18 neighbours
+updated 17 neighbours
+updated 16 neighbours
+updated 17 neighbours
+updated 15 neighbours
+updated 16 neighbours
+updated 14 neighbours
+updated 16 neighbours
+updated 16 neighbours
+updated 16 neighbours
+updated 16 neighbours
+updated 15 neighbours
+updated 18 neighbours
+updated 15 neighbours
+updated 16 neighbours
+updated 16 neighbours
+updated 17 neighbours
+updated 15 neighbours
+updated 18 neighbours
+updated 17 neighbours
+updated 13 neighbours
+updated 16 neighbours
+updated 10 neighbours
+updated 15 neighbours
+updated 16 neighbours
+updated 17 neighbours
+updated 19 neighbours
+updated 14 neighbours
+updated 15 neighbours
+updated 14 neighbours
+updated 15 neighbours
+updated 16 neighbours
+updated 19 neighbours
+updated 17 neighbours
+updated 15 neighbours
+updated 15 neighbours
+updated 16 neighbours
+updated 18 neighbours
+updated 16 neighbours
+updated 19 neighbours
+updated 14 neighbours
+updated 17 neighbours
+updated 16 neighbours
+updated 14 neighbours
+updated 15 neighbours
+updated 16 neighbours
+updated 17 neighbours
+updated 18 neighbours
+updated 19 neighbours
+updated 16 neighbours
+updated 16 neighbours
+updated 16 neighbours
+updated 19 neighbours
+updated 18 neighbours
+updated 23 neighbours
+updated 19 neighbours
+updated 17 neighbours
+updated 24 neighbours
+updated 25 neighbours
+updated 23 neighbours
+updated 27 neighbours
+updated 23 neighbours
+updated 25 neighbours
+updated 20 neighbours
+updated 19 neighbours
+updated 59 neighbours
+updated 22 neighbours
+updated 40 neighbours
+updated 42 neighbours
+updated 42 neighbours
+updated 27 neighbours
+updated 114 neighbours
+updated 28 neighbours
+updated 55 neighbours
+updated 45 neighbours
+updated 24 neighbours
+updated 24 neighbours
+updated 29 neighbours
+updated 32 neighbours
+updated 33 neighbours
+updated 33 neighbours
+updated 25 neighbours
+updated 28 neighbours
+updated 27 neighbours
+updated 29 neighbours
+updated 22 neighbours
+updated 25 neighbours
+updated 25 neighbours
+updated 81 neighbours
+updated 27 neighbours
+updated 27 neighbours
+updated 27 neighbours
+updated 22 neighbours
+updated 31 neighbours
+updated 22 neighbours
+updated 23 neighbours
+updated 25 neighbours
+updated 24 neighbours
+updated 21 neighbours
+updated 19 neighbours
+updated 18 neighbours
+updated 23 neighbours
+updated 24 neighbours
+updated 25 neighbours
+updated 18 neighbours
+updated 15 neighbours
+updated 10 neighbours
+updated 12 neighbours
+updated 8 neighbours
+updated 7 neighbours
+updated 8 neighbours
+updated 7 neighbours
+updated 9 neighbours
+updated 8 neighbours
+updated 5 neighbours
+updated 9 neighbours
+updated 9 neighbours
+updated 9 neighbours
+updated 21 neighbours
+updated 23 neighbours
+updated 7 neighbours
+updated 6 neighbours
+updated 9 neighbours
+updated 7 neighbours
+updated 7 neighbours
+updated 9 neighbours
+updated 8 neighbours
+updated 9 neighbours
+updated 9 neighbours
+updated 8 neighbours
+updated 40 neighbours
+updated 14 neighbours
+updated 12 neighbours
+updated 10 neighbours
+updated 13 neighbours
+updated 12 neighbours
+updated 12 neighbours
+updated 14 neighbours
+updated 13 neighbours
+updated 12 neighbours
+updated 11 neighbours
+updated 9 neighbours
+updated 8 neighbours
+updated 9 neighbours
+updated 10 neighbours
+updated 10 neighbours
+updated 10 neighbours
+updated 11 neighbours
+updated 10 neighbours
+updated 10 neighbours
+updated 10 neighbours
+updated 10 neighbours
+updated 10 neighbours
+updated 10 neighbours
+updated 10 neighbours
+updated 11 neighbours
+updated 9 neighbours
+updated 10 neighbours
+updated 8 neighbours
+updated 11 neighbours
+updated 9 neighbours
+updated 9 neighbours
+updated 10 neighbours
+updated 10 neighbours
+updated 12 neighbours
+updated 11 neighbours
+updated 10 neighbours
+updated 9 neighbours
+updated 9 neighbours
+updated 10 neighbours
+updated 9 neighbours
+updated 10 neighbours
+updated 10 neighbours
+updated 11 neighbours
+updated 10 neighbours
+updated 10 neighbours
+updated 9 neighbours
+updated 11 neighbours
+updated 9 neighbours
+updated 12 neighbours
+updated 10 neighbours
+updated 10 neighbours
+updated 8 neighbours
+updated 11 neighbours
+updated 8 neighbours
+updated 10 neighbours
+updated 9 neighbours
+updated 9 neighbours
+updated 11 neighbours
+updated 10 neighbours
+updated 9 neighbours
+updated 10 neighbours
+updated 10 neighbours
+updated 11 neighbours
+updated 10 neighbours
+updated 9 neighbours
+updated 9 neighbours
+updated 9 neighbours
+updated 10 neighbours
+updated 10 neighbours
+updated 10 neighbours
+updated 9 neighbours
+updated 11 neighbours
+updated 9 neighbours
+updated 11 neighbours
+updated 10 neighbours
+updated 39 neighbours
+updated 388 neighbours
+updated 54 neighbours
+updated 24 neighbours
+updated 23 neighbours
+updated 31 neighbours
+updated 24 neighbours
+updated 59 neighbours
+updated 22 neighbours
+updated 17 neighbours
+updated 11 neighbours
+updated 11 neighbours
+updated 12 neighbours
+updated 12 neighbours
+updated 13 neighbours
+updated 10 neighbours
+updated 9 neighbours
+updated 13 neighbours
+updated 436 neighbours
+updated 12 neighbours
+updated 12 neighbours
+updated 16 neighbours
+updated 60 neighbours
+updated 11 neighbours
+updated 15 neighbours
+updated 15 neighbours
+updated 17 neighbours
+updated 17 neighbours
+updated 16 neighbours
+updated 16 neighbours
+updated 20 neighbours
+updated 26 neighbours
+updated 16 neighbours
+updated 13 neighbours
+updated 14 neighbours
+updated 15 neighbours
+updated 16 neighbours
+updated 14 neighbours
+updated 14 neighbours
+updated 17 neighbours
+updated 16 neighbours
+updated 14 neighbours
+updated 16 neighbours
+updated 16 neighbours
+updated 14 neighbours
+updated 17 neighbours
+updated 18 neighbours
+updated 17 neighbours
+updated 15 neighbours
+updated 19 neighbours
+updated 14 neighbours
+updated 21 neighbours
+updated 16 neighbours
+updated 19 neighbours
+updated 14 neighbours
+updated 15 neighbours
+updated 12 neighbours
+updated 14 neighbours
+updated 15 neighbours
+updated 12 neighbours
+updated 15 neighbours
+updated 10 neighbours
+updated 11 neighbours
+updated 12 neighbours
+updated 16 neighbours
+updated 34 neighbours
+updated 16 neighbours
+updated 17 neighbours
+updated 18 neighbours
+updated 16 neighbours
+updated 16 neighbours
+updated 18 neighbours
+updated 19 neighbours
+updated 21 neighbours
+updated 18 neighbours
+updated 17 neighbours
+updated 20 neighbours
+updated 17 neighbours
+updated 18 neighbours
+updated 20 neighbours
+updated 34 neighbours
+updated 29 neighbours
+updated 34 neighbours
+updated 16 neighbours
+updated 96 neighbours
+updated 35 neighbours
+updated 34 neighbours
+updated 18 neighbours
+updated 40 neighbours
+updated 17 neighbours
+updated 14 neighbours
+updated 60 neighbours
+updated 44 neighbours
+updated 14 neighbours
+updated 28 neighbours
+updated 13 neighbours
+updated 21 neighbours
+updated 10 neighbours
+updated 8 neighbours
+updated 10 neighbours
+updated 8 neighbours
+updated 9 neighbours
+updated 8 neighbours
+updated 38 neighbours
+updated 15 neighbours
+updated 14 neighbours
+updated 19 neighbours
+updated 11 neighbours
+updated 12 neighbours
+updated 13 neighbours
+updated 12 neighbours
+updated 13 neighbours
+updated 13 neighbours
+updated 18 neighbours
+updated 15 neighbours
+updated 12 neighbours
+updated 12 neighbours
+updated 12 neighbours
+updated 12 neighbours
+updated 17 neighbours
+updated 15 neighbours
+updated 11 neighbours
+updated 18 neighbours
+updated 11 neighbours
+updated 45 neighbours
+updated 14 neighbours
+updated 13 neighbours
+updated 17 neighbours
+updated 15 neighbours
+updated 13 neighbours
+updated 12 neighbours
+updated 12 neighbours
+updated 12 neighbours
+updated 14 neighbours
+updated 17 neighbours
+updated 16 neighbours
+updated 12 neighbours
+updated 14 neighbours
+updated 19 neighbours
+updated 13 neighbours
+updated 13 neighbours
+updated 12 neighbours
+updated 12 neighbours
+updated 14 neighbours
+updated 61 neighbours
+updated 15 neighbours
+updated 45 neighbours
+updated 18 neighbours
+updated 17 neighbours
+updated 412 neighbours
+updated 18 neighbours
+updated 24 neighbours
+updated 20 neighbours
+updated 33 neighbours
+updated 20 neighbours
+updated 28 neighbours
+updated 20 neighbours
+updated 21 neighbours
+updated 39 neighbours
+updated 72 neighbours
+updated 39 neighbours
+updated 15 neighbours
+updated 13 neighbours
+updated 14 neighbours
+updated 12 neighbours
+updated 12 neighbours
+updated 11 neighbours
+updated 205 neighbours
+updated 8 neighbours
+updated 8 neighbours
+updated 23 neighbours
+updated 11 neighbours
+updated 13 neighbours
+updated 36 neighbours
+updated 11 neighbours
+updated 10 neighbours
+updated 16 neighbours
+updated 14 neighbours
+updated 13 neighbours
+updated 18 neighbours
+updated 40 neighbours
+updated 49 neighbours
+updated 18 neighbours
+updated 19 neighbours
+updated 24 neighbours
+updated 23 neighbours
+updated 74 neighbours
+updated 22 neighbours
+updated 28 neighbours
+updated 23 neighbours
+updated 44 neighbours
+updated 29 neighbours
+updated 28 neighbours
+updated 23 neighbours
+updated 48 neighbours
+updated 27 neighbours
+updated 21 neighbours
+updated 19 neighbours
+updated 47 neighbours
+updated 13 neighbours
+updated 18 neighbours
+updated 18 neighbours
+updated 11 neighbours
+updated 12 neighbours
+updated 14 neighbours
+updated 53 neighbours
+updated 18 neighbours
+updated 20 neighbours
+updated 26 neighbours
+updated 23 neighbours
+updated 29 neighbours
+updated 43 neighbours
+updated 26 neighbours
+updated 54 neighbours
+updated 43 neighbours
+updated 28 neighbours
+updated 28 neighbours
+updated 19 neighbours
+updated 31 neighbours
+updated 28 neighbours
+updated 30 neighbours
+updated 81 neighbours
+updated 29 neighbours
+updated 26 neighbours
+updated 28 neighbours
+updated 48 neighbours
+updated 29 neighbours
+updated 37 neighbours
+updated 44 neighbours
+updated 298 neighbours
+updated 19 neighbours
+updated 19 neighbours
+updated 20 neighbours
+updated 21 neighbours
+updated 17 neighbours
+updated 22 neighbours
+updated 18 neighbours
+updated 19 neighbours
+updated 18 neighbours
+updated 22 neighbours
+updated 20 neighbours
+updated 20 neighbours
+updated 29 neighbours
+updated 19 neighbours
+updated 17 neighbours
+updated 324 neighbours
+updated 17 neighbours
+updated 48 neighbours
+updated 21 neighbours
+updated 16 neighbours
+updated 17 neighbours
+updated 20 neighbours
+updated 19 neighbours
+updated 21 neighbours
+updated 20 neighbours
+updated 14 neighbours
+updated 18 neighbours
+updated 21 neighbours
+updated 27 neighbours
+updated 29 neighbours
+updated 18 neighbours
+updated 20 neighbours
+updated 19 neighbours
+updated 23 neighbours
+updated 17 neighbours
+updated 18 neighbours
+updated 16 neighbours
+updated 19 neighbours
+updated 50 neighbours
+updated 17 neighbours
+updated 15 neighbours
+updated 15 neighbours
+updated 15 neighbours
+updated 13 neighbours
+updated 20 neighbours
+updated 14 neighbours
+updated 19 neighbours
+updated 17 neighbours
+updated 17 neighbours
+updated 18 neighbours
+updated 17 neighbours
+updated 12 neighbours

@@ -2,13 +2,13 @@ tex water
 dynamic
 transparent
 liquid
-uvturb
-wave
+#uvturb
+#wave
 speed 0.75
 DoubleSided
 
 OnUseItemReplaceItem potion.empty potion.water
-OnUseItemAddDetail   potion.empty -1
+OnUseItemAddDetail   potion.empty -15
 
-OnUseItemReplaceItem potion.water potion.empty
-OnUseItemAddDetail   potion.water 1
+#OnUseItemReplaceItem potion.water potion.empty
+#OnUseItemAddDetail   potion.water 15

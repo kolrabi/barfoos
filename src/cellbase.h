@@ -8,53 +8,72 @@
 class CellBase : public Triggerable {
 public:
 
-  const std::string &GetType() const;
-  const CellProperties &GetInfo() const;
+  const std::string &       GetType() const;
+  const CellProperties &    GetInfo() const;
 
-  void SetTeleportTarget(const IVector3 &target);
-  bool IsTeleport() const { return this->teleport; }
+  void                      Lock(ID id);
+  void                      Unlock();
+  ID                        GetLockedID() const;
 
-  void SetTriggerTarget(uint32_t triggerTargetId);
-  bool IsTrigger() const { return this->isTrigger; }
+  void                      SetTeleportTarget(const IVector3 &target);
+  void                      SetTriggerTarget(uint32_t triggerTargetId);
+  void                      SetSpawnOnActive(const std::string &mob, Side side, float rate);
 
-  void SetSpawnOnActive(const std::string &mob, Side side, float rate);
+  void                      SetLocked(bool locked); // TODO: rename
+  void                      SetIgnoreLock(bool ignore);
+  void                      SetIgnoreWrite(bool ignore);
+  void                      SetDetail(uint32_t detail);
+  void                      SetFeatureID(uint32_t f);
 
-  void Lock(ID id);
-  void Unlock();
-  ID GetLockedID() const;
+  float                     GetHeight(float x, float z) const;
+  float                     GetHeightBottom(float x, float z) const;
+  float                     GetHeightClamp(float x, float z) const;
+  float                     GetHeightBottomClamp(float x, float z) const;
 
-  float GetHeight(float x, float z) const;
-  float GetHeightBottom(float x, float z) const;
-  float GetHeightClamp(float x, float z) const;
-  float GetHeightBottomClamp(float x, float z) const;
+  bool                      IsBottomFlat() const;
+  bool                      IsDynamic() const;
+  bool                      IsLiquid() const;
+  bool                      IsSolid() const;
+  bool                      IsTeleport() const;
+  bool                      IsTopFlat() const;
+  bool                      IsTransparent() const;
+  bool                      IsTrigger() const;
 
-  bool IsTopFlat() const;
-  bool IsBottomFlat() const;
-  bool IsTransparent() const;
+  bool                      IsLocked() const; // TODO: rename
+  bool                      GetIgnoreLock() const;
+  bool                      GetIgnoreWrite() const;
+  uint32_t                  GetDetail() const;
+  uint32_t                  GetFeatureID() const;
+
+  World *                   GetWorld() const;
+  IVector3                  GetPosition() const;
+
+  Cell &                    operator[](Side side);
+  const Cell &              operator[](Side side) const;
   
 protected:
 
-  CellBase(const std::string &type);
+                            CellBase(const std::string &type);
 
-  const CellProperties *info;
-  World *world;
-  IVector3 pos;
-  Cell *neighbours[6];
-  float lastT;
-  float nextActivationT;
+  const CellProperties *    info;
+  World *                   world;
+  IVector3                  pos;
+  Cell *                    neighbours[6];
+  float                     lastT;
+  float                     nextActivationT;
 
-  bool teleport;
-  IVector3 teleportTarget;
+  bool                      teleport;
+  IVector3                  teleportTarget;
 
-  std::string spawnOnActiveMob;
-  SpawnClass spawnOnActiveClass;
-  Side spawnOnActiveSide;
-  float spawnOnActiveRate;
+  std::string               spawnOnActiveMob;
+  SpawnClass                spawnOnActiveClass;
+  Side                      spawnOnActiveSide;
+  float                     spawnOnActiveRate;
 
-  bool isTrigger;
-  ID triggerTargetId;
+  bool                      isTrigger;
+  ID                        triggerTargetId;
 
-  static const int OffsetScale = 127;
+  static const int          OffsetScale = 127;
 
   // shared information, that will stay the same after assignment from different cell
   struct SharedInfo {
@@ -108,12 +127,21 @@ protected:
   bool vertsDirty, colorDirty;
 };
 
+inline const CellProperties &CellBase::GetInfo() const {
+  return *this->info;
+}
+
 inline const std::string &CellBase::GetType() const {
   return this->info->type;
 }
 
-inline const CellProperties &CellBase::GetInfo() const {
-  return *this->info;
+
+inline World *CellBase::GetWorld() const {
+  return this->world;
+}
+
+inline IVector3 CellBase::GetPosition() const {
+  return this->pos;
 }
 
 inline void CellBase::SetTeleportTarget(const IVector3 &target) {
@@ -277,6 +305,73 @@ inline bool CellBase::IsTransparent() const {
     !IsTopFlat() || !IsBottomFlat() || YOfsb(0) != 0.0 || YOfs(0) != 1.0;
 }
 
+inline bool CellBase::IsSolid() const {
+  return this->info->flags & CellFlags::Solid;
+}
+
+inline bool CellBase::IsLiquid() const {
+  return this->info->flags & CellFlags::Liquid;
+}
+
+inline bool CellBase::IsDynamic() const {
+  return this->info->flags & CellFlags::Dynamic || this->GetTriggerId() || this->IsTrigger();
+}
+
+inline bool CellBase::IsTrigger() const {
+  return this->isTrigger;
+}
+
+inline bool CellBase::IsTeleport() const {
+  return this->teleport;
+}
+
+inline bool CellBase::IsLocked() const {
+  return this->shared.isLocked;
+}
+
+inline void CellBase::SetLocked(bool locked) {
+  this->shared.isLocked = locked;
+}
+
+inline bool CellBase::GetIgnoreLock() const {
+  return this->shared.ignoreLock;
+}
+
+inline void CellBase::SetIgnoreLock(bool ignore) {
+  this->shared.ignoreLock = ignore;
+}
+
+inline bool CellBase::GetIgnoreWrite() const {
+  return this->shared.ignoreWrite;
+}
+
+inline void CellBase::SetIgnoreWrite(bool ignore) {
+  this->shared.ignoreWrite = ignore;
+}
+
+inline uint32_t CellBase::GetDetail() const {
+  return this->shared.detail;
+}
+
+inline void CellBase::SetDetail(uint32_t detail) {
+  this->shared.detail = detail;
+}
+
+inline uint32_t CellBase::GetFeatureID() const {
+  return this->shared.featureID;
+}
+
+inline void CellBase::SetFeatureID(uint32_t f) {
+  this->shared.featureID = f;
+}
+
+inline Cell &CellBase::operator[](Side side) {
+  return *this->neighbours[(int)side];
+}
+
+inline const Cell &CellBase::operator[](Side side) const {
+  return *this->neighbours[(int)side];
+}
 
 #endif
 

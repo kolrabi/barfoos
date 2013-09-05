@@ -4,6 +4,7 @@ story:
 
 - description:  village crisis
   ideas:        |-
+                postapocalyptic pseudo fantasy
                 underground "village"
                 village needs barfoos (barf ooze?)
                 enter dungeon, make your way to surface
@@ -17,27 +18,38 @@ story:
 
 - description:  multiplayer dungeon crawler
   ideas:        |-
+                plain old fantasy
                 just kill everything	
                 get to next level
-                permadeath?
 
 - description:  find your pet
   ideas:        |-
+                modern times
                 your pet runs into the dungeon
                 you follow to find it
                 endboss drops item to level up pet
                 level up pet to fight along you
                 or try to make your way back without leveling it up
 
-
   names:
-    - "A Journey of Dog"
-    - "Dogquest"
-    - "Heel!"
+    - A Journey of Dog
+    - Dogquest
+    - Heel!
+
+- description: 	dungeon pizza
+  ideas:        |-
+                bring pizza (or other food) to the endboss
+                defend pizza against other monsters
+                fight with food on the way down?
+                bring the money back to your boss
+                survive
+  names: 
+    - Deliver
 
 other:
   - permadeath?
   - magic:
     - mana vs. gems
+  - theme:
     
 ...

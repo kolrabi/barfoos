@@ -17,8 +17,10 @@ public:
 
   void Draw(std::vector<Vertex> &vertices) const;
   void DrawEmissive(std::vector<Vertex> &vertices) const;
-  void DrawHighlight(std::vector<Vertex> &vertices) const;
   
+  uint8_t                   GetVisibility() const;
+  void                      SetVisibility(uint8_t visibility);
+
   void SetReversedSides(bool rev) { this->reversedSides = rev; }
 
 protected:
@@ -51,6 +53,15 @@ inline const Texture *CellRender::GetEmissiveTexture() const {
     return this->emissiveActiveTexture;
   }
   return this->emissiveTexture;
+}
+
+
+inline uint8_t CellRender::GetVisibility() const {
+  return this->visibility;
+}
+
+inline void CellRender::SetVisibility(uint8_t visibility) {
+  this->visibility = visibility;
 }
 
 #endif

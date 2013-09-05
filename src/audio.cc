@@ -10,6 +10,7 @@
 #include <AL/alc.h>
 #include <vorbis/vorbisfile.h>
 
+/** C'tor. */
 Audio::Audio() :
   device(nullptr),
   context(nullptr),
@@ -18,19 +19,33 @@ Audio::Audio() :
 {
 }
 
+/** D'tor. Deinitializes audio if needed. */
 Audio::~Audio() {
   if (this->isInited) this->Deinit();
 }
 
-bool Audio::Init() {
+/** Initialize audio.
+ * @return true if successful.
+ */
+bool
+Audio::Init() {
   const ALCchar *deviceName = alcGetString(NULL, ALC_DEFAULT_DEVICE_SPECIFIER);
+
+  Log("Trying to open audio device '%s'...\n", deviceName);
   this->device = alcOpenDevice(deviceName);
   if (!this->device) {
     Log("Could not open OpenAL device: %04x\n", alGetError());
     return true;
   }
 
+  Log("Creating audio context...\n", deviceName);
   this->context = alcCreateContext((ALCdevice*)this->device, nullptr);
+  if (!this->context) {
+    Log("Could not create audio context: %04x\n", alGetError());
+    alcCloseDevice((ALCdevice*)this->device);
+    this->device = nullptr;
+    return true;
+  }
 
   alcMakeContextCurrent((ALCcontext*)this->context);
   alcProcessContext((ALCcontext*)this->context);
@@ -38,16 +53,28 @@ bool Audio::Init() {
   return this->isInited = true;
 }
 
-void Audio::Deinit() {
+/** Deinitialize audio.
+ * Stops all sources, releases all buffers.
+ * Destroys audio context and closes device.
+ */
+void
+Audio::Deinit() {
   if (!this->isInited) return;
 
+  Log("Deinitializing audio...\n");
+
+  Log("Clearing out audio sources...\n");
+  this->sources.clear();
+
+  Log("Destroying audio buffers...\n");
   for (auto &b:this->buffers) delete b.second;
   this->buffers.clear();
 
-  this->sources.clear();
+  Log("Destroying audio context...\n");
   alcMakeContextCurrent((ALCcontext*)this->context);
   alcDestroyContext((ALCcontext*)this->context);
 
+  Log("Closing audio device...\n");
   alcCloseDevice((ALCdevice*)this->device);
 
   this->context = nullptr;
@@ -56,7 +83,12 @@ void Audio::Deinit() {
   this->isInited = false;
 }
 
-void Audio::Update(Game &) {
+/** Update game audio.
+ * Updates listener position and velocity to that of the player
+ * if it has been set. Removes all finished sources. 
+ */
+void 
+Audio::Update(Game &) {
   if (!this->isInited) return;
 
   Vector3 listenerPos(      this->player ? this->player->GetSmoothEyePosition() : Vector3(0,0,0));
@@ -83,7 +115,13 @@ void Audio::Update(Game &) {
   }
 }
 
-Audio::Buffer *Audio::GetSoundBuffer(const std::string &name) {
+/** Retrieve the audio buffer for a sound.
+ * Loads it if neccessary.
+ * @param name Name of sound to load.
+ * @return The loaded buffer (empty if sound is not found). nullptr if Audio was not initialized.
+ */
+Audio::Buffer *
+Audio::GetSoundBuffer(const std::string &name) {
   if (!this->isInited) return nullptr;
 
   auto iter = this->buffers.find(name);
@@ -93,17 +131,34 @@ Audio::Buffer *Audio::GetSoundBuffer(const std::string &name) {
   return this->buffers[name];
 }
 
-void Audio::PlaySound(const std::string &name, const Vector3 &pos, float pitch) {
-  if (!this->isInited) return;
-  if (name == "") return;
+/** Play a sound.
+  * @param name Name of sound to play.
+  * @param pos Initial position of sound source.
+  * @param loop If true loop the sound indefinitely. Don't forget to store the
+  *             source pointer or you won't be able to ever stop it.
+  * @param pitch Relative pitch of sound.
+  * @return The new source playing the requested sound.
+  */
+std::shared_ptr<Audio::Source>
+Audio::PlaySound(const std::string &name, const Vector3 &pos, const Vector3 &velocity, bool loop, float volume, float pitch) {
+
+  if (!this->isInited) return nullptr;
+  if (name == "") return nullptr;
 
   //Log("trying to play sound %s\n", name.c_str());
-  this->sources.push_back(std::shared_ptr<Audio::Source>(new Audio::Source(this->GetSoundBuffer(name), pos, pitch)));
+  std::shared_ptr<Audio::Source> source(new Audio::Source(this->GetSoundBuffer(name), pos, velocity, loop, volume, pitch));
+  this->sources.push_back(source);
+  return source;
 }
 
 // =========================================================================
 
-Audio::Buffer *Audio::Buffer::LoadOgg(const std::string &name) {
+/** Load and decode an ogg vorbis file and put it in a buffer.
+  * @param name Name of sound asset to load.
+  * @return The loaded sound asset in an audio buffer.
+  */
+Audio::Buffer *
+Audio::Buffer::LoadOgg(const std::string &name) {
   Audio::Buffer *buffer = new Audio::Buffer();
 
   Log("Loading sound %s\n", name.c_str());
@@ -153,12 +208,14 @@ Audio::Buffer *Audio::Buffer::LoadOgg(const std::string &name) {
   return buffer;
 }
 
+/** C'tor. */
 Audio::Buffer::Buffer() :
   buffer(0)
 {
   alGenBuffers(1, &this->buffer);
 }
 
+/** D'tor. */
 Audio::Buffer::~Buffer() {
   if (this->buffer)
     alDeleteBuffers(1, &this->buffer);
@@ -166,31 +223,68 @@ Audio::Buffer::~Buffer() {
 
 // =========================================================================
 
-Audio::Source::Source(Buffer *buffer, const Vector3 &pos, float pitch) :
+Audio::Source::Source(Buffer *buffer, const Vector3 &pos, const Vector3 &velocity, bool loop, float volume, float pitch) :
   source(0)
 {
   alGenSources(1, &this->source);
-  //Log("alGenSources: %04x\n", alGetError());
 
   alSource3f(this->source, AL_POSITION, pos.x, pos.y, pos.z);
+  alSource3f(this->source, AL_VELOCITY, velocity.x, velocity.y, velocity.z);
+  alSourcef(this->source, AL_GAIN, volume);
   alSourcef(this->source, AL_PITCH, pitch);
-  alSourcei(this->source, AL_BUFFER, buffer->GetBuffer());
-  //Log("alSourcei: %04x\n", alGetError());
+  alSourcei(this->source, AL_BUFFER, buffer->buffer);
+  alSourcei(this->source, AL_LOOPING, loop );
   alSourcePlay(this->source);
-  //Log("alSourcePlay: %04x\n", alGetError());
 
   //Log("playing source %u with buffer %u at pos %f %f %f\n", this->source, buffer->GetBuffer(), pos.x, pos.y, pos.z);
 }
 
+/** D'tor. */
 Audio::Source::~Source() {
   if (this->source) alDeleteSources(1, &this->source);
 }
 
-bool Audio::Source::IsStillPlaying() const {
+/** Check playing state of a source.
+  * @return true if source is still playing.
+  */
+bool 
+Audio::Source::IsStillPlaying() const {
   if (!this->source) return false;
 
   ALint state;
   alGetSourcei(this->source, AL_SOURCE_STATE, &state);
 
   return state != AL_STOPPED;
+}
+
+/** Update the position of a source.
+  * @param pos The new position.
+  */
+void 
+Audio::Source::SetPosition(const Vector3 &pos) {
+  alSource3f(this->source, AL_POSITION, pos.x, pos.y, pos.z);
+}
+
+/** Update the velocity of a source.
+  * @param pos The new velocity.
+  */
+void
+Audio::Source::SetVelocity(const Vector3 &velocity) {
+  alSource3f(this->source, AL_VELOCITY, velocity.x, velocity.y, velocity.z);
+}
+
+/** Update the pitch of a source.
+  * @param pos The new pitch.
+  */
+void
+Audio::Source::SetPitch(float pitch) {
+  alSourcef(this->source, AL_PITCH, pitch);
+}
+
+/** Update the volume of a source.
+  * @param pos The new volume.
+  */
+void
+Audio::Source::SetVolume(float volume) {
+  alSourcef(this->source, AL_GAIN, volume);
 }

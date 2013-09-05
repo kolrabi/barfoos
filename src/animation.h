@@ -12,12 +12,18 @@ struct Animation {
   /** Frames per second. */
   float fps;
   
+  /** Default animation, one frame starting from 0. */
   Animation() :
     firstFrame(0), 
     frameCount(1), 
     fps(0) 
   {}
   
+  /** Animation c'tor
+   * @param firstFrame Index of first frame in animation.
+   * @param frameCount Total number of frames in animation.
+   * @param fps Frames per seconds.
+   */
   Animation(size_t firstFrame, size_t frameCount, float fps) : 
     firstFrame(firstFrame), 
     frameCount(frameCount), 

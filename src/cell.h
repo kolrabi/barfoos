@@ -11,126 +11,80 @@
 class Cell final : public CellRender {
 public:
 
-  Cell(const std::string &type = "default");
-  Cell(const Cell &that);
-  ~Cell();
+                            Cell(const std::string &type = "default");
+                            Cell(const Cell &that);
+                            ~Cell();
 
-  Cell &operator=(const Cell &that);
+  Cell &                    operator=(const Cell &that);
 
-  void Update(RunningState &state);
+  void                      SetWorld(World *world, const IVector3 &pos);
+  void                      Update(RunningState &state);
 
-  void UpdateNeighbours(size_t depth = 16);
+  void                      UpdateNeighbours(size_t depth = 16);
 
-  uint8_t GetVisibility() const;
-  void SetVisibility(uint8_t visibility);
+  // TODO: CellRender
+  Cell &                    SetOrder(bool topReversed, bool bottomReversed);
 
-  Cell &SetOrder(bool topReversed, bool bottomReversed);
-
-  bool IsSolid() const;
-  bool IsLiquid() const;
-  bool IsDynamic() const;
-  bool IsTrigger() const;
-
-  void SetWorld(World *world, const IVector3 &pos);
-  World *GetWorld() const;
-  IVector3 GetPosition() const;
+  // TODO: CellBase --->
+  bool                      IsSeen(size_t checkNeighbours = 0) const;
+  // <---
 
   void                      PlaySound(RunningState &state, const std::string &sound);
 
-  const IColor &GetLightLevel() const;
-  bool SetLightLevel(const IColor &level, bool force=false);
+  const IColor &            GetLightLevel() const;
+  bool                      SetLightLevel(const IColor &level, bool force = false);
 
-  bool IsLocked() const;
-  void SetLocked(bool locked);
+  bool                      CheckSideSolid(Side side, const Vector3 &org, bool sneak = false) const;
 
-  bool GetIgnoreLock() const;
-  void SetIgnoreLock(bool ignore);
+  AABB                      GetAABB() const;
 
-  bool GetIgnoreWrite() const;
-  void SetIgnoreWrite(bool ignore);
+  void                      Tick(RunningState &state);
 
-  uint32_t GetDetail() const;
-  void SetDetail(uint32_t detail);
+  bool                      Ray(const Vector3 &start, const Vector3 &dir, float &t, Vector3 &p) const;
 
-  uint32_t GetFeatureID() const;
-  void SetFeatureID(uint32_t f);
+  bool                      Flow(Side side);
 
-  bool IsSeen(size_t checkNeighbours = 0) const;
+  void                      OnUse(RunningState &state, Mob &user, bool force = false);
+  void                      OnUseItem(RunningState &state, Mob &user, Item &item);
+  void                      OnStepOn(RunningState &state, Mob &mob);
+  void                      OnStepOff(RunningState &state, Mob &mob);
 
-  bool HasSolidSides() const;
-  bool CheckSideSolid(Side side, const Vector3 &org, bool sneak = false) const;
+  void                      Rotate();
 
-  AABB GetAABB() const;
-
-  void Tick(RunningState &state);
-
-  bool Ray(const Vector3 &start, const Vector3 &dir, float &t, Vector3 &p) const;
-  Cell &operator[](Side side);
-  const Cell &operator[](Side side) const;
-
-  bool Flow(Side side);
-
-  void OnUse(RunningState &state, Mob &user, bool force = false);
-  void OnUseItem(RunningState &state, Mob &user, Item &item);
-  void OnStepOn(RunningState &state, Mob &mob);
-  void OnStepOff(RunningState &state, Mob &mob);
-
-  void Rotate();
-
-  Cell &SetYOffsets(float a, float b, float c, float d);
-  Cell &SetYOffsetsBottom(float a, float b, float c, float d);
+  Cell &                    SetYOffsets(float a, float b, float c, float d);
+  Cell &                    SetYOffsetsBottom(float a, float b, float c, float d);
 
 protected:
 
   // unique information, that will change after assignment from different cell
 
-  uint8_t tickPhase;
-  IColor lightLevel;
+  /** Current tick phase from 0 to tickInterval. Tick()s on 0. */
+  uint8_t                   tickPhase;
 
-  float lastUseT;
+  /** Current light color in cell. */
+  IColor                    lightLevel;
 
-  friend Serializer &operator << (Serializer &ser, const Cell &cell);
-  friend Deserializer &operator >> (Deserializer &deser, Cell &cell);
+  /** Time of last usage. */
+  float                     lastUseT;
+
+  friend Serializer &       operator << (Serializer &ser, const Cell &cell);
+  friend Deserializer &     operator >> (Deserializer &deser, Cell &cell);
 };
 
 Serializer &operator << (Serializer &ser, const Cell &);
 
-inline World *Cell::GetWorld() const {
-  return this->world;
-}
-
-inline IVector3 Cell::GetPosition() const {
-  return this->pos;
-}
-
-inline uint8_t Cell::GetVisibility() const {
-  return this->visibility;
-}
-
-inline void Cell::SetVisibility(uint8_t visibility) {
-  this->visibility = visibility;
-}
-
-inline bool Cell::IsSolid() const {
-  return this->info->flags & CellFlags::Solid;
-}
-
-inline bool Cell::IsLiquid() const {
-  return this->info->flags & CellFlags::Liquid;
-}
-
-inline bool Cell::IsDynamic() const {
-  return this->info->flags & CellFlags::Dynamic || this->GetTriggerId() || this->IsTrigger();
-}
-
-inline bool Cell::IsTrigger() const {
-  return this->isTrigger;
-}
-
+/** Get the current light level of the cell.
+  * @return The light level.
+  */
 inline const IColor &Cell::GetLightLevel() const {
   return this->lightLevel;
 }
 
+/** Update the current light level of the cell.
+  * @param level New light level.
+  * @param force Force setting the light level.
+  * @return true if light level was changed.
+  */
 inline bool Cell::SetLightLevel(const IColor &level, bool force) {
   // only update when changing
   if (!force && level == this->lightLevel) return false;
@@ -138,55 +92,6 @@ inline bool Cell::SetLightLevel(const IColor &level, bool force) {
   lightLevel = level;
   return true;
 }
-
-inline bool Cell::IsLocked() const {
-  return this->shared.isLocked;
-}
-
-inline void Cell::SetLocked(bool locked) {
-  this->shared.isLocked = locked;
-}
-
-inline bool Cell::GetIgnoreLock() const {
-  return this->shared.ignoreLock;
-}
-
-inline void Cell::SetIgnoreLock(bool ignore) {
-  this->shared.ignoreLock = ignore;
-}
-
-inline bool Cell::GetIgnoreWrite() const {
-  return this->shared.ignoreWrite;
-}
-
-inline void Cell::SetIgnoreWrite(bool ignore) {
-  this->shared.ignoreWrite = ignore;
-}
-
-inline uint32_t Cell::GetDetail() const {
-  return this->shared.detail;
-}
-
-inline void Cell::SetDetail(uint32_t detail) {
-  this->shared.detail = detail;
-}
-
-inline uint32_t Cell::GetFeatureID() const {
-  return this->shared.featureID;
-}
-
-inline void Cell::SetFeatureID(uint32_t f) {
-  this->shared.featureID = f;
-}
-
-inline Cell &Cell::operator[](Side side) {
-  return *this->neighbours[(int)side];
-}
-
-inline const Cell &Cell::operator[](Side side) const {
-  return *this->neighbours[(int)side];
-}
-
 
 #endif
 
