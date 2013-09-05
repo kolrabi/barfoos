@@ -1,35 +1,43 @@
 ---
+
 story:
 
-- description: village crisis
-  ideas: |-
-    underground "village",
-    village needs barfoos (barf ooze?),
-    enter dungeon, make your way to surface
-    scenery changes: classical dungeon -> caves -> modern ruins
-    at end destroy source of magic
-    make your way back to your village, fighting monsters without magic
-    permadeath?
-  possible names: 
+- description:  village crisis
+  ideas:        |-
+                underground "village"
+                village needs barfoos (barf ooze?)
+                enter dungeon, make your way to surface
+                scenery changes: classical dungeon -> caves -> modern ruins
+                at end destroy source of magic
+                make your way back to your village
+                fighting monsters without magic
+
+  names: 
     - barfoos
 
-- description: multiplayer dungeon crawler
-  ideas: |-
-    just kill everything	
-    get to next level
-    permadeath?
+- description:  multiplayer dungeon crawler
+  ideas:        |-
+                just kill everything	
+                get to next level
+                permadeath?
 
-- description: find your pet
-  ideas: |-
-    your pet runs into the dungeon
-    you follow to find it
-    endboss drops item to level up pet
-    level up pet to fight along you
-    or try to make your way back without leveling up
-  possible names:
+- description:  find your pet
+  ideas:        |-
+                your pet runs into the dungeon
+                you follow to find it
+                endboss drops item to level up pet
+                level up pet to fight along you
+                or try to make your way back without leveling it up
+
+
+  names:
     - "A Journey of Dog"
     - "Dogquest"
     - "Heel!"
 
-other ideas:
+other:
+  - permadeath?
+  - magic:
+    - mana vs. gems
+    
 ...

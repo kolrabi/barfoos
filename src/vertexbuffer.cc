@@ -6,7 +6,7 @@
 #include "vertex.h"
 #include "vertexbuffer.h"
 
-#define USE_VBO 0
+#define USE_VBO 1
 
 VertexBuffer::VertexBuffer() :
   dirty(true),

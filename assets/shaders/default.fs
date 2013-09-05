@@ -13,7 +13,6 @@ uniform mat4 u_matView;
 
 uniform vec4 u_fade;
 
-varying vec3 v_pos;
 varying vec2 v_tex;
 varying vec4 v_color;
 varying vec3 v_norm;
@@ -34,11 +33,8 @@ void main() {
   vec3 uColorLin = pow(u_color.rgb, vec3(1.0/gamma));
   vec3 uLightLin = pow(u_light.rgb, vec3(1.0/gamma));
 
-  float fogDepth = length(v_pos)*0.1;
-  float fogIntensity = 0.0; //pow(max(0.0, u_fogLin * fogDepth), 0.5);
-
   vec3 colorLin = (lightLin + uLightLin) * (vColorLin * uColorLin * texLin);
-  colorLin = mix(colorLin, u_fogColor.rgb, min(1.0, fogIntensity)) + u_fade.rgb;
+//  colorLin = mix(colorLin, u_fogColor.rgb, min(1.0, fogIntensity)) + u_fade.rgb;
 
   vec3 colorSRGB = pow(colorLin, vec3(gamma));
   gl_FragColor = vec4(colorSRGB, texSRGB.a);
