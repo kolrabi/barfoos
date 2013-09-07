@@ -219,34 +219,54 @@ Cell::Update(
   }
 }
 
+/** Let a mob interact with this cell without an item.
+  * @param state Running state.
+  * @param user Mob that is using the cell.
+  * @param force If true ignore the cell's useChance parameter.
+  */
 void
 Cell::OnUse(RunningState &state, Mob &user, bool force) {
-  if (state.GetGame().GetTime() - this->lastUseT < this->info->useDelay) return;
-  if (!force && !state.GetRandom().Chance(this->info->useChance)) return;
+  // enforce delay
+  if (state.GetGame().GetTime() - this->lastUseT < this->info->useDelay) 
+    return;
 
+  // enforce chance
+  if (!force && !state.GetRandom().Chance(this->info->useChance)) 
+    return;
+
+  // update use time
   this->lastUseT = state.GetGame().GetTime();
 
+  // check if it is locked
   if (this->shared.lockedID) {
     state.GetPlayer().AddMessage("It is locked!");
     PlaySound(state, "use.locked");
     return;
   }
 
+  // replace cell if wanted
   const CellProperties *info = this->info;
   if (info->flags & CellFlags::OnUseReplace) {
     this->world->SetCell(GetPosition(), Cell(info->replace)).lastUseT = state.GetGame().GetTime();
   }
 
+  // cascade through neighbours
   for (int i=0; i<6; i++) {
     if (info->onUseCascade & (1<<i) && this->neighbours[i]->info == info)
       this->neighbours[i]->OnUse(state, user, true);
   }
-  PlaySound(state, "use");
+
+  if (!force) PlaySound(state, "use");
 }
 
-void Cell::Tick(RunningState &state) {
+/** Let a cell tick.
+  * Updates tick phase. Let's liquid cells flow.
+  * @param state Running state.
+  */
+void 
+Cell::Tick(RunningState &state) {
   this->tickPhase = (this->tickPhase + 1) % this->shared.tickInterval;
-  //if (this->tickPhase) return;
+  if (this->tickPhase) return;
 
   if (this->neighbours[0] == nullptr) return;
 
@@ -288,6 +308,10 @@ void Cell::Tick(RunningState &state) {
   }
 }
 
+/** Try to flow a cell's content to one of its sides.
+  * @param side Side to which to flow.
+  * @return true if successful, false if not a liquid or side cell is solid.
+  */
 bool
 Cell::Flow(Side side) {
   if ((this->info->flags & CellFlags::Liquid) == 0) return false;
@@ -325,6 +349,8 @@ Cell::Flow(Side side) {
   return true;
 }
 
+/** Update this cell because one or more of its neighbours has changed.
+  */
 void
 Cell::UpdateNeighbours(
   size_t
@@ -427,13 +453,23 @@ Cell::UpdateNeighbours(
   }
 }
 
+/** Get the light color of a cell for a given side and corner.
+  * @param side Side for which to get the light.
+  * @param corner From 0 - 3 the index of the corner for the given side.
+  * @return The light color. 
+  */
 IColor
 CellRender::SideCornerColor(Side side, size_t corner) const {
+  // not initialized yet?
   if (!world) return IColor();
 
+  // is cell emitting light?
   if (!GetInfo().light.IsBlack()) {
     return GetInfo().light;
   }
+
+  // for each corner of the side, average the four surrounding light
+  // values.
 
   IVector3 va(1,0,0), vb(0,1,0);
   IVector3 p0 = pos[side];
@@ -458,6 +494,11 @@ CellRender::SideCornerColor(Side side, size_t corner) const {
   return (l0+l1+l2+l3)/4;
 }
 
+/** Set top and bottom vertex order.
+  * @param topReversed Whether or not to reverse top side vertex order. 
+  * @param bottomReversed Whether or not to reverse bottom side vertex order. 
+  * @return The updated cell.
+  */
 Cell &
 Cell::SetOrder(bool topReversed, bool bottomReversed) {
   this->shared.reversedTop = topReversed;
@@ -466,29 +507,52 @@ Cell::SetOrder(bool topReversed, bool bottomReversed) {
   return *this;
 }
 
+/** Set top corner heights.
+  * @param a Height of corner 0.
+  * @param b Height of corner 1.
+  * @param c Height of corner 2.
+  * @param d Height of corner 3.
+  * @return The updated cell.
+  */
 Cell &
 Cell::SetYOffsets(float a, float b, float c, float d) {
   this->shared.topHeights[0] = a * OffsetScale;
   this->shared.topHeights[1] = b * OffsetScale;
   this->shared.topHeights[2] = c * OffsetScale;
   this->shared.topHeights[3] = d * OffsetScale;
-  if (world && !IsDynamic()) world->MarkForUpdateNeighbours(this);
+  world->MarkForUpdateNeighbours(this);
   this->shared.topFlat = a == b && b == c && c == d;
   return *this;
 }
 
+/** Set bottom corner heights.
+  * @param a Height of corner 0.
+  * @param b Height of corner 1.
+  * @param c Height of corner 2.
+  * @param d Height of corner 3.
+  * @return The updated cell.
+  */
 Cell &
 Cell::SetYOffsetsBottom(float a, float b, float c, float d) {
   this->shared.bottomHeights[0] = a * OffsetScale;
   this->shared.bottomHeights[1] = b * OffsetScale;
   this->shared.bottomHeights[2] = c * OffsetScale;
   this->shared.bottomHeights[3] = d * OffsetScale;
-  if (world && !IsDynamic()) world->MarkForUpdateNeighbours(this);
+  world->MarkForUpdateNeighbours(this);
   this->shared.bottomFlat = a == b && b == c && c == d;
   return *this;
 }
 
-bool Cell::CheckSideSolid(Side side, const Vector3 &org, bool sneak) const {
+/** Check solidity of a cells side.
+  * Also checks the solidity of the adjacent cell.
+  * @param side Side to check.
+  * @param org Origin vector to use for cell floor height check.
+  * @param sneak If true, prevent going over ledges.
+  * @return true if cell clips movement out of the given side or
+  *         if the adjacent cell clips movement into it.
+  */
+bool
+Cell::CheckSideSolid(Side side, const Vector3 &org, bool sneak) const {
   if (!this->world) return true;
 
   const Cell &cell = self[side];
@@ -517,7 +581,14 @@ bool Cell::CheckSideSolid(Side side, const Vector3 &org, bool sneak) const {
   return (clipIn && heightCheck) || clipOut;
 }
 
-void Cell::SetWorld(World *world, const IVector3 &pos) {
+/** Set world and position.
+  * This is comparable to Entity::Start. Selects a random texture.
+  * Gets neighbour cells from world. Marks cell for update.
+  * @param world World of which the cell is part.
+  * @param pos Position of cell in world.
+  */
+void
+Cell::SetWorld(World *world, const IVector3 &pos) {
   this->world = world;
 
   if (info->textures.empty()) {
@@ -544,29 +615,37 @@ void Cell::SetWorld(World *world, const IVector3 &pos) {
   world->MarkForUpdateNeighbours(this);
 }
 
-AABB Cell::GetAABB() const {
+/** Get the bounding box for this cell in world space.
+  * @return The bounding box.
+  */
+AABB
+Cell::GetAABB() const {
   AABB aabb;
   aabb.center = Vector3(this->pos) + Vector3(0.5,0.5,0.5);
   aabb.extents = Vector3(0.5,0.5,0.5);
   return aabb;
 }
 
-bool Cell::IsSeen(size_t) const {
+/** Check whether the player has seen this cell yet.
+  * Compares the cell's feature id with the list of all seen features.
+  * @return true if cell was seen.
+  */
+bool
+Cell::IsSeen(size_t) const {
   if (!this->world) return false;
   if (this->GetFeatureID() == InvalidID) return false;
-/*
-  if (checkNeighbours) {
-    for (int xx=-checkNeighbours; xx <= (int)checkNeighbours; xx++) {
-      for (int zz=-checkNeighbours; zz <= (int)checkNeighbours; zz++) {
-        if (this->world->GetCell(IVector3(this->pos.x+xx, this->pos.y, this->pos.z+zz)).IsSeen()) return true;
-      }
-    }
-  }*/
 
   if (!this->visibility && (info->flags & CellFlags::DoNotRender) == 0) return false;
   return this->world->GetMap().IsFeatureSeen(this->GetFeatureID());
 }
 
+/** Cast a ray against the triangles of the cell.
+  * @param start Ray start point.
+  * @param dir   Ray direction vector.
+  * @param[out] t Time of hit if hit.
+  * @param[out] p Position of hit if hit.
+  * @return true if ray hit the cell, false otherwise.
+  */
 bool
 Cell::Ray(const Vector3 &start, const Vector3 &dir, float &t, Vector3 &p) const {
   bool hit = false;
@@ -596,7 +675,13 @@ Cell::Ray(const Vector3 &start, const Vector3 &dir, float &t, Vector3 &p) const 
   return hit;
 }
 
-void Cell::OnStepOn(RunningState &state, Mob &mob) {
+/** Handle a mob stepping on the cell.
+  * Takes care of teleportation and triggering.
+  * @param state Running state.
+  * @param mob Mob that stepped on the cell.
+  */
+void
+Cell::OnStepOn(RunningState &state, Mob &mob) {
   if (this->teleport && state.GetGame().GetTime() > this->nextActivationT) {
     IVector3 target(this->teleportTarget);
     Cell &targetCell = state.GetWorld().GetCell(target);
@@ -605,7 +690,8 @@ void Cell::OnStepOn(RunningState &state, Mob &mob) {
     targetCell.nextActivationT = state.GetGame().GetTime() + 2;
 
     mob.Teleport(state, Vector3(target));
-    PlaySound(state, "teleport");
+    this->PlaySound(state, "teleport");
+    targetCell.PlaySound(state, "teleport");
   }
 
   if (this->isTrigger) {
@@ -614,14 +700,27 @@ void Cell::OnStepOn(RunningState &state, Mob &mob) {
   }
 }
 
-void Cell::OnStepOff(RunningState &state, Mob &) {
+/** Handle a mob stepping off the cell.
+  * Takes care of triggering.
+  * @param mob Mob that stepped off. (unused)
+  * @param state Running state.
+  */
+void
+Cell::OnStepOff(RunningState &state, Mob &) {
   if (this->isTrigger) {
     state.TriggerOff(this->triggerTargetId);
     PlaySound(state, "trigger.off");
   }
 }
 
-void Cell::OnUseItem(RunningState &, Mob &, Item &item) {
+/** Handle a mob using an item on the cell.
+  * Replaces items or the cell if needed. Adds or removes liquid.
+  * @param state Running state. (unused)
+  * @param user Mob that uses the item. (unused)
+  * @param item Item that was used.
+  */
+void
+Cell::OnUseItem(RunningState &, Mob &, Item &item) {
   std::string itemType = item.GetType();
 
   auto iter1 = this->info->onUseItemReplaceItem.find(itemType);
@@ -644,7 +743,11 @@ void Cell::OnUseItem(RunningState &, Mob &, Item &item) {
   }
 }
 
-void Cell::Rotate() {
+/** Rotate a cell by 90 degrees. 
+  * Used for rotated features.
+  */
+void
+Cell::Rotate() {
   int16_t tmp = this->shared.topHeights[0];
   this->shared.topHeights[0] = this->shared.topHeights[1];
   this->shared.topHeights[1] = this->shared.topHeights[2];
@@ -659,14 +762,19 @@ void Cell::Rotate() {
 
   this->shared.scale = this->shared.scale.ZYX();
   this->reversedSides = !this->reversedSides;
+  this->shared.reversedTop = !this->shared.reversedTop;
+  this->shared.reversedBottom = !this->shared.reversedBottom;
 }
 
+/** Play a sound at the cell's position.
+  * @param state Running state.
+  * @param type Type of sound to play.
+  */
 void
 Cell::PlaySound(RunningState &state, const std::string &type) {
   if (this->info->sounds.find(type) == this->info->sounds.end()) return;
   state.GetGame().GetAudio().PlaySound(this->info->sounds.at(type), GetAABB().center);
 }
-
 
 Serializer &operator << (Serializer &ser, const Cell &cell) {
   ser << (Triggerable&)cell;

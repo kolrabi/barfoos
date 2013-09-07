@@ -266,7 +266,7 @@ Audio::Source::SetPosition(const Vector3 &pos) {
 }
 
 /** Update the velocity of a source.
-  * @param pos The new velocity.
+  * @param velocity The new velocity.
   */
 void
 Audio::Source::SetVelocity(const Vector3 &velocity) {
@@ -274,7 +274,7 @@ Audio::Source::SetVelocity(const Vector3 &velocity) {
 }
 
 /** Update the pitch of a source.
-  * @param pos The new pitch.
+  * @param pitch The new pitch.
   */
 void
 Audio::Source::SetPitch(float pitch) {
@@ -282,7 +282,7 @@ Audio::Source::SetPitch(float pitch) {
 }
 
 /** Update the volume of a source.
-  * @param pos The new volume.
+  * @param volume The new volume.
   */
 void
 Audio::Source::SetVolume(float volume) {

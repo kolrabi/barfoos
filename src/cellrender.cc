@@ -83,6 +83,10 @@ CellRender::DrawEmissive(std::vector<Vertex> &verts) const {
   }
 }
 
+/** Get all 4 corner colors for a given side.
+  * @param side Side to use.
+  * @param[out] colors Where to store the colors.
+  */
 void 
 CellRender::SideColors(Side side, IColor *colors) const {
   colors[0] = this->SideCornerColor(side, 0);
@@ -91,6 +95,10 @@ CellRender::SideColors(Side side, IColor *colors) const {
   colors[3] = this->SideCornerColor(side, 3);
 }
 
+/** Set normal texture.
+  * @param tex Texture to use.
+  * @param multi If true, texture contains multiple sides.
+  */
 void
 CellRender::SetTexture(const Texture *tex, bool multi) {
   if (multi) {
@@ -101,6 +109,9 @@ CellRender::SetTexture(const Texture *tex, bool multi) {
   this->texture = tex; 
 }
 
+/** Set emissive normal texture.
+  * @param tex Texture to use.
+  */
 void
 CellRender::SetEmissiveTexture(const Texture *tex) {
   this->emissiveTexture = tex; 

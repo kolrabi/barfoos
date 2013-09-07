@@ -63,6 +63,14 @@ Stats::MeleeAttack(const Entity &attacker, const Entity &victim, const Item &ite
   return info;
 }
 
+/** Calculate the outcome of a magic attack.
+ * @param attackerID Entity ID of attacker.
+ * @param victim Entity that defends.
+ * @param damage Damage to inflict. (Will be scaled by def.)
+ * @param element Magic element.
+ * @return Result of the attack.
+ * @todo Also consider resistance against element.
+ */
 HealthInfo
 Stats::MagicAttack(ID attackerID, const Entity &victim, float damage, Element element) {
   HealthInfo info;
@@ -87,13 +95,14 @@ Stats::MagicAttack(ID attackerID, const Entity &victim, float damage, Element el
   return info;
 }
 
-  /** Calculate the outcome of an explosion attack.
-   * @param attacker Entity that attacks
-   * @param victim Entity that defends
-   * @param damage Damage to inflict
-   * @param random A random number generator for variance
-   * @return Result of the attack.
-   */
+/** Calculate the outcome of an explosion attack.
+ * @param attackerID Entity ID that attacks.
+ * @param victim Entity that defends.
+ * @param damage Damage to inflict.
+ * @param element Element of the explosion.
+ * @return Result of the attack.
+ * @todo Also consider resistance against element.
+ */
 HealthInfo
 Stats::ExplosionAttack(ID attackerID, const Entity &victim, float damage, Element element) {
   HealthInfo info;
@@ -118,6 +127,13 @@ Stats::ExplosionAttack(ID attackerID, const Entity &victim, float damage, Elemen
   return info;
 }
 
+/** Calculate the result of a projectile attack (arrows).
+  * @param projectile Projectile that hit the victim.
+  * @param victim Victim entity that was hit.
+  * @param damage Base damage to do.
+  * @return Result of the attack.
+  * @todo Also consider resistance against arrows and projectile elements.
+  */
 HealthInfo
 Stats::ProjectileAttack(const Entity &projectile, const Entity &victim, float damage) {
   HealthInfo info;
@@ -163,7 +179,7 @@ Stats::AddExp(float exp) {
  */
 float
 Stats::GetExpForLevel(size_t lvl) {
-  return std::pow(Const::ExpLevelBase, std::sqrt(lvl - 1));
+  return std::pow(Const::ExpLevelBase, std::pow(lvl - 1, Const::ExpLevelExponent))-1;
 }
 
 /** Get the level for the exp.
@@ -172,9 +188,9 @@ Stats::GetExpForLevel(size_t lvl) {
  */
 size_t
 Stats::GetLevelForExp(float exp) {
-  static constexpr float ln_5_sq = std::log(Const::ExpLevelBase) * std::log(Const::ExpLevelBase);
-  float l = std::log(exp+1);
-  return (l*l + ln_5_sq) / ln_5_sq;
+  static constexpr float a = std::pow(std::log(Const::ExpLevelBase), 1.0f/Const::ExpLevelExponent);
+  float b = std::pow(std::log(exp+1), 1.0f/Const::ExpLevelExponent);
+  return (b + a) / a;
 }
 
 /** Get the experience points neccessary for a given level.

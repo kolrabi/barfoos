@@ -59,9 +59,14 @@ struct CellProperties : public Properties {
 
   /** An array of textures to randomly choose from when cell is added to world. */
   std::vector<const Texture *> textures;
+
+  /** An array of textures to use for emission. */
   std::vector<const Texture *> emissiveTextures;
 
+  /** Texture to use when cell is "active". */
   std::string activeTexture;
+
+  /** Emissive texture to use when cell is "active". */
   std::string emissiveActiveTexture;
 
   /** Light emission from this kind of cell.
@@ -101,8 +106,13 @@ struct CellProperties : public Properties {
     */
   uint32_t detailBelowReplace;
 
+  /** Item replacement on use: olditem -> newitem. */
   std::unordered_map<std::string, std::string> onUseItemReplaceItem;
+
+  /** Cell replacement on use: item -> newcell. */
   std::unordered_map<std::string, std::string> onUseItemReplace;
+
+  /** Cell liquid update on use: item -> detaildiff. */
   std::unordered_map<std::string, int> onUseItemAddDetail;
 
   /** Rendering scale of this cell. Has no effect on collision detection.
@@ -110,27 +120,52 @@ struct CellProperties : public Properties {
     */
   Vector3 scale;
 
+  /** Movement speed factor. */
   float speedModifier;
+
+  /** Friction factor. */
   float friction;
 
+  /** Always show these sides. */
   uint32_t showSides;
+
+  /** Always hide these sides (overrides showSides). */
   uint32_t hideSides;
+
+  /** Clip movement into cell from these sides. */
   uint32_t clipSidesIn;  // default: don't clip movement into cell from all sides when solid
+
+  /** Clip movement out of cell towards these sides. */
   uint32_t clipSidesOut; // default: don't clip movement out of cell to all sides when solid
 
+  /** On use, also trigger use in cells on these sides. */
   uint32_t onUseCascade;
+
+  /** Time delay between uses. */
   float useDelay;
+
+  /** Block break resistance. */
   float breakStrength;
+
+  /** Lava damage per second. */
   float lavaDamage;
+
+  /** Chance of successful use. */
   float useChance;
 
+  /** Particle entity to use when cell breaks. */
   std::string breakParticle;
 
+  /** Replace when flowing onto something: targetcelltype -> newtargetcelltype. */
   std::unordered_map<std::string, std::string> onFlowOntoReplaceTarget;
+
+  /** Replace when flowing onto something: targetcelltype -> newowncelltype. */
   std::unordered_map<std::string, std::string> onFlowOntoReplaceSelf;
 
+  /** Chance of this cell to be initially locked. (Cascades into onUseCascade neighbours.) */
   float lockedChance;
 
+  /** A list of sounds: soundType -> soundfile. */
   std::unordered_map<std::string, std::string> sounds;
 
   CellProperties();

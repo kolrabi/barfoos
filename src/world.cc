@@ -350,6 +350,7 @@ World::Update(
  * Cast a ray from a given location along the x axis.
  * @param org Ray origin.
  * @param dir Ray direction.
+ * @param sneak If true assume sneaking mob and prevent falling from ledges.
  * @return true if the next adjacent cell in the given direction is solid and
  *         top of cell at that position is above the ray (hitting solid part
  *         of the cell).
@@ -372,6 +373,7 @@ World::CastRayX(const Vector3 &org, float dir, bool sneak) const {
  * Cast a ray from a given location along the z axis.
  * @param org Ray origin.
  * @param dir Ray direction.
+ * @param sneak If true assume sneaking mob and prevent falling from ledges.
  * @return true if the next adjacent cell in the given direction is solid and
  *         top of cell at that position is above the ray (hitting solid part
  *         of the cell).
@@ -510,6 +512,7 @@ World::IsAABBSolid(const AABB &aabb) const {
  * @param axis Output of the colliding axis flags.
  * @param[out] cell Returns one of the cell with which the aabb collided.
  * @param[out] side Returns the side of the cell that collided.
+ * @param sneak If true, assume sneaking mob and prevent falling from ledges.
  * @return The final center position of the AABB.
  * @note Might not work for too big AABBs.
  */

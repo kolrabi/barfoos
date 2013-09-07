@@ -10,6 +10,7 @@ namespace Const {
   static constexpr float WalkSpeedFactorPerAGI   = 0.2f; // double walk speed every 5 agi points
   static constexpr float AttackSpeedFactorPerAGI = 0.2f; // double speed every 5 agi points
   static constexpr float ExpLevelBase            = 5.0f; //
+  static constexpr float ExpLevelExponent        = 0.4f; //
   static constexpr float ExpLevelSkill           = 3.0f; //
 };
 

@@ -35,6 +35,7 @@ story:
     - A Journey of Dog
     - Dogquest
     - Heel!
+    - Stroll
 
 - description: 	dungeon pizza
   ideas:        |-

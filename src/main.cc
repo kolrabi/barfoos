@@ -4,6 +4,8 @@
 #include <png.h>
 #include <zlib.h>
 
+#include <thread>
+
 static std::string credits() {
   std::string str;
 
@@ -28,6 +30,8 @@ static std::string credits() {
 
 int main(int, char **) {
   std::setlocale(LC_ALL, "en_US.utf8");
+
+  std::thread thread([]() {});
 
   Log("%s", credits().c_str());
 

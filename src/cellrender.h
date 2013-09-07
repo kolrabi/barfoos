@@ -6,41 +6,63 @@
 class CellRender : public CellBase {
 public:
 
-  void  SetTexture(const Texture *tex, bool multi = false);
-  const Texture *GetTexture() const;
+  void                      SetTexture          (const Texture *tex, bool multi = false);
+  const Texture *           GetTexture          ()                                        const;
 
-  void  SetEmissiveTexture(const Texture *tex);
-  const Texture *GetEmissiveTexture() const;
+  void                      SetEmissiveTexture  (const Texture *tex);
+  const Texture *           GetEmissiveTexture  ()                                        const;
 
-  bool UpdateVertices();
-  void UpdateColors();
+  bool                      UpdateVertices      ();
+  void                      UpdateColors        ();
 
-  void Draw(std::vector<Vertex> &vertices) const;
-  void DrawEmissive(std::vector<Vertex> &vertices) const;
+  void                      Draw                (std::vector<Vertex> &vertices)           const;
+  void                      DrawEmissive        (std::vector<Vertex> &vertices)           const;
   
-  uint8_t                   GetVisibility() const;
-  void                      SetVisibility(uint8_t visibility);
+  uint8_t                   GetVisibility       ()                                        const;
+  void                      SetVisibility       (uint8_t visibility);
 
-  void SetReversedSides(bool rev) { this->reversedSides = rev; }
+  void                      SetReversedSides    (bool rev)                                      { this->reversedSides = rev; }
 
 protected:
 
-  CellRender(const std::string &type);
+                            CellRender          (const std::string &type);
 
-  uint8_t visibility;
-  bool reversedSides;
-  Vector3 corners[8];
-  std::vector<Vertex> verts;
-  const Texture *texture, *emissiveTexture;
-  const Texture *activeTexture, *emissiveActiveTexture;
-  float uscale;
+  /** Side visibility. */
+  uint8_t                   visibility;
 
-  IColor SideCornerColor(Side side, size_t corner) const;
-  void SideColors(Side side, IColor *colors) const;
-  void SideColors(Side side, std::vector<IColor> &outcolors, bool reverse) const;
-  void SideVerts(Side side, std::vector<Vertex> &verts, bool reverse = false) const;
+  /** Whether or not to draw the sides reversed. */
+  bool                      reversedSides;
+
+  /** Corner positions relative to cell. */
+  Vector3                   corners[8];
+
+  /** Cell vertices in world space. */
+  std::vector<Vertex>       verts;
+
+  /** Applied texture. */
+  const Texture *           texture;
+
+  /** Applied emissive texture. */
+  const Texture *           emissiveTexture;
+
+  /** Texture to use when "active". */
+  const Texture *           activeTexture;
+
+  /** Emissive texture to use when "active". */
+  const Texture *           emissiveActiveTexture;
+
+  /** Texture u coordinate scale. */
+  float                     uscale;
+
+  IColor                    SideCornerColor     (Side side, size_t corner)                const;
+  void                      SideColors          (Side side, IColor *colors)               const;
+  void                      SideColors          (Side side, std::vector<IColor> &outcolors, bool reverse)     const;
+  void                      SideVerts           (Side side, std::vector<Vertex> &verts, bool reverse = false) const;
 };
 
+/** Get current texture.
+  * @return Normal texture for this cell, or active. 
+  */
 inline const Texture *CellRender::GetTexture() const {
   if (this->activeTexture && this->lastT < this->nextActivationT) {
     return this->activeTexture;
@@ -48,6 +70,9 @@ inline const Texture *CellRender::GetTexture() const {
   return this->texture;
 }
 
+/** Get current emissive texture.
+  * @return Normal texture for this cell, or active. 
+  */
 inline const Texture *CellRender::GetEmissiveTexture() const {
   if (this->emissiveActiveTexture && this->lastT < this->nextActivationT) {
     return this->emissiveActiveTexture;
@@ -55,11 +80,16 @@ inline const Texture *CellRender::GetEmissiveTexture() const {
   return this->emissiveTexture;
 }
 
-
+/** Get side visibility.
+  * @return Visibility mask.
+  */
 inline uint8_t CellRender::GetVisibility() const {
   return this->visibility;
 }
 
+/** Set side visibility.
+  * @param visibility Visibility mask.
+  */
 inline void CellRender::SetVisibility(uint8_t visibility) {
   this->visibility = visibility;
 }

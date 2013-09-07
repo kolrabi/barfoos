@@ -23,42 +23,68 @@ AM_CONDITIONAL([MECKES],  [test x$OSTYPE = xdarwin11  ])
 
 LDFLAGS="-L/opt/local/lib"
 
+AC_MSG_CHECKING([for operating system...])
 if test x$OS = xWindows_NT; then
+  AC_MSG_RESULT([Windows])
   AC_DEFINE(WIN32)
   AC_CHECK_LIB(winmm, main)
   AC_CHECK_LIB(opengl32, main)
   AC_CHECK_LIB(gdi32, main)
-  AC_CHECK_LIB(glu32, main)
+  # AC_CHECK_LIB(glu32, main)
 elif test x$OSTYPE = xdarwin11; then
+  AC_MSG_RESULT([MacOS X])
   AC_DEFINE(MACOSX)
 else
-  AC_CHECK_LIB(GL, main)
-  AC_CHECK_LIB(GLU, main)
-
+  AC_CHECK_LIB(X11,     XOpenDisplay, [
+    AC_MSG_RESULT([X11 compatible])
+    AC_CHECK_LIB(Xxf86vm, XF86VidModeQueryExtension)
+    AC_CHECK_LIB(Xrandr,  main)
+    AC_CHECK_LIB(Xi,      main)
+  ], [
+    AC_MSG_RESULT([unknown])
+    AC_CHECK_LIB(GL, main, [], [
+      AC_MSG_ERROR([no graphics system found])
+    ])
+  ])
 fi
-AC_CHECK_HEADER(pthread.h)
-AC_CHECK_LIB(pthread, main, [], AC_CHECK_LIB(pthreadGC2, main))
 
-  AC_CHECK_LIB(X11,     XOpenDisplay)
-  AC_CHECK_LIB(Xxf86vm, XF86VidModeQueryExtension)
-  AC_CHECK_LIB(Xrandr,  main)
-  AC_CHECK_LIB(Xi,      main)
+AC_CHECK_HEADER(pthread.h, [
+  AC_CHECK_LIB(pthread, main, [], [
+    AC_CHECK_LIB(pthreadGC2, main, [], [
+      AC_MSG_ERROR([cannot find pthread library!])
+    ])
+  ])
+], [
+  AC_MSG_ERROR([cannot find pthread headers!])
+])
 
-AC_CHECK_HEADER(GLFW/glfw3.h)
-AC_CHECK_LIB(glfw3, main)
+AC_CHECK_HEADER(GLFW/glfw3.h, [
+  AC_CHECK_LIB(glfw3, main, [
+  ], [
+    AC_MSG_ERROR([cannot find glfw3 library])
+  ])
+], [
+  AC_MSG_ERROR([cannot find glfw3 header])
+])
 
 AC_CHECK_HEADER(AL/al.h)
-AC_CHECK_HEADER(vorbis/vorbisfile.h)
-AC_CHECK_HEADER(vorbis/vorbisenc.h)
-AC_CHECK_LIB(openal, main)
-AC_CHECK_LIB(OpenAL32, main)
-AC_CHECK_LIB(ogg, main)
-AC_CHECK_LIB(vorbis, main)
-AC_CHECK_LIB(vorbisfile, main)
+AC_CHECK_LIB(openal, main, [], [
+  AC_CHECK_LIB(OpenAL32, main, [], [
+    AC_MSG_WARN([cannot find an OpenAL implementation. Sound will be disabled.])
+  ])
+])
+
+AC_CHECK_HEADERS([vorbis/vorbisfile.h vorbis/vorbisenc.h], [
+  AC_CHECK_LIB(ogg, main)
+  AC_CHECK_LIB(vorbis, main)
+  AC_CHECK_LIB(vorbisfile, main)
+], [
+  AC_MSG_WARN([cannot find ogg vorbis headers. Sound will be disabled.])
+])
+
 
 AC_CHECK_LIB(z, main)
 AC_CHECK_LIB(png, main)
-
 
 AC_CHECK_FUNCS([clock_gettime])
 AC_FUNC_MALLOC
