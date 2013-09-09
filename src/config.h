@@ -31,6 +31,9 @@
 /* Define to 1 if you have the `png' library (-lpng). */
 #define HAVE_LIBPNG 1
 
+/* Define to 1 if you have the `protobuf' library (-lprotobuf). */
+#define HAVE_LIBPROTOBUF 1
+
 /* Define to 1 if you have the `pthread' library (-lpthread). */
 #define HAVE_LIBPTHREAD 1
 

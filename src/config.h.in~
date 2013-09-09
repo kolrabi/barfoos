@@ -12,6 +12,9 @@
 /* Define to 1 if you have the `GL' library (-lGL). */
 #undef HAVE_LIBGL
 
+/* Define to 1 if you have the `glfw3' library (-lglfw3). */
+#undef HAVE_LIBGLFW3
+
 /* Define to 1 if you have the `ogg' library (-logg). */
 #undef HAVE_LIBOGG
 

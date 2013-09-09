@@ -16,6 +16,7 @@ AC_SUBST(VER_BLD, 0)
 AC_PROG_CC
 AM_PROG_CC_C_O
 AC_PROG_CXX
+AC_PATH_PROG([PROTOC], [protoc])
 
 # Checks for libraries.
 AM_CONDITIONAL([WINDOOF], [test x$OS     = xWindows_NT])
@@ -79,6 +80,8 @@ AC_CHECK_HEADERS([vorbis/vorbisfile.h vorbis/vorbisenc.h], [
 
 AC_CHECK_LIB(z, main)
 AC_CHECK_LIB(png, main)
+
+AC_CHECK_LIB(protobuf, main)
 
 AC_CHECK_FUNCS([clock_gettime])
 AC_FUNC_MALLOC

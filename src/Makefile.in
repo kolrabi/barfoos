@@ -63,50 +63,51 @@ CONFIG_CLEAN_FILES = res.rc
 CONFIG_CLEAN_VPATH_FILES =
 am__installdirs = "$(DESTDIR)$(bindir)"
 PROGRAMS = $(bin_PROGRAMS)
-am__barfoos_SOURCES_DIST = main.cc image.cc image.h gfx.cc gfx.h \
-	gfxview.cc gfxview.h gfxscreen.cc gfxscreen.h vertexbuffer.cc \
-	vertexbuffer.h audio.cc audio.h fileio.cc fileio.h texture.cc \
-	texture.h GLee.c GLee.h game.cc game.h runningstate.cc \
-	runningstate.h mainmenustate.cc mainmenustate.h mainmenugui.cc \
-	mainmenugui.h simplex.cc simplex.h text.cc text.h shader.cc \
-	shader.h stats.cc stats.h properties.cc properties.h spell.cc \
-	spell.h gui.cc gui.h inventorygui.cc inventorygui.h entity.cc \
-	entity.h mob.cc mob.h monster.cc monster.h player.cc player.h \
-	itementity.cc itementity.h projectile.cc projectile.h \
-	trigger.cc trigger.h cell.cc cell.h cellproperties.cc \
-	cellproperties.h cellrender.cc feature.cc feature.h world.cc \
-	world.h worldedit.cc worldedit.h worldbuilder.cc \
-	worldbuilder.h item.cc item.h itemproperties.cc \
-	itemproperties.h inventory.cc inventory.h effect.cc effect.h \
-	common.h ivector3.h space.h vector3.h random.h util.cc util.h \
-	aabb.h 2d.h serializer.cc serializer.h deserializer.cc \
-	deserializer.h input.cc input.h profile.cc profile.h log.cc \
-	log.h res.rc icon.ico
-@WINDOOF_TRUE@am__objects_1 = res.$(OBJEXT)
-am_barfoos_OBJECTS = barfoos-main.$(OBJEXT) barfoos-image.$(OBJEXT) \
-	barfoos-gfx.$(OBJEXT) barfoos-gfxview.$(OBJEXT) \
-	barfoos-gfxscreen.$(OBJEXT) barfoos-vertexbuffer.$(OBJEXT) \
-	barfoos-audio.$(OBJEXT) barfoos-fileio.$(OBJEXT) \
-	barfoos-texture.$(OBJEXT) barfoos-GLee.$(OBJEXT) \
-	barfoos-game.$(OBJEXT) barfoos-runningstate.$(OBJEXT) \
-	barfoos-mainmenustate.$(OBJEXT) barfoos-mainmenugui.$(OBJEXT) \
-	barfoos-simplex.$(OBJEXT) barfoos-text.$(OBJEXT) \
-	barfoos-shader.$(OBJEXT) barfoos-stats.$(OBJEXT) \
-	barfoos-properties.$(OBJEXT) barfoos-spell.$(OBJEXT) \
-	barfoos-gui.$(OBJEXT) barfoos-inventorygui.$(OBJEXT) \
-	barfoos-entity.$(OBJEXT) barfoos-mob.$(OBJEXT) \
-	barfoos-monster.$(OBJEXT) barfoos-player.$(OBJEXT) \
-	barfoos-itementity.$(OBJEXT) barfoos-projectile.$(OBJEXT) \
-	barfoos-trigger.$(OBJEXT) barfoos-cell.$(OBJEXT) \
-	barfoos-cellproperties.$(OBJEXT) barfoos-cellrender.$(OBJEXT) \
-	barfoos-feature.$(OBJEXT) barfoos-world.$(OBJEXT) \
-	barfoos-worldedit.$(OBJEXT) barfoos-worldbuilder.$(OBJEXT) \
-	barfoos-item.$(OBJEXT) barfoos-itemproperties.$(OBJEXT) \
-	barfoos-inventory.$(OBJEXT) barfoos-effect.$(OBJEXT) \
-	barfoos-util.$(OBJEXT) barfoos-serializer.$(OBJEXT) \
-	barfoos-deserializer.$(OBJEXT) barfoos-input.$(OBJEXT) \
-	barfoos-profile.$(OBJEXT) barfoos-log.$(OBJEXT) \
-	$(am__objects_1)
+am__barfoos_SOURCES_DIST = test.pb.cc main.cc image.cc image.h gfx.cc \
+	gfx.h gfxview.cc gfxview.h gfxscreen.cc gfxscreen.h \
+	vertexbuffer.cc vertexbuffer.h audio.cc audio.h fileio.cc \
+	fileio.h texture.cc texture.h GLee.c GLee.h game.cc game.h \
+	runningstate.cc runningstate.h mainmenustate.cc \
+	mainmenustate.h mainmenugui.cc mainmenugui.h simplex.cc \
+	simplex.h text.cc text.h shader.cc shader.h stats.cc stats.h \
+	properties.cc properties.h spell.cc spell.h gui.cc gui.h \
+	inventorygui.cc inventorygui.h entity.cc entity.h mob.cc mob.h \
+	monster.cc monster.h player.cc player.h itementity.cc \
+	itementity.h projectile.cc projectile.h trigger.cc trigger.h \
+	cell.cc cell.h cellproperties.cc cellproperties.h \
+	cellrender.cc feature.cc feature.h world.cc world.h \
+	worldedit.cc worldedit.h worldbuilder.cc worldbuilder.h \
+	item.cc item.h itemproperties.cc itemproperties.h inventory.cc \
+	inventory.h effect.cc effect.h common.h ivector3.h space.h \
+	vector3.h random.h util.cc util.h aabb.h 2d.h serializer.cc \
+	serializer.h deserializer.cc deserializer.h input.cc input.h \
+	profile.cc profile.h log.cc log.h res.rc icon.ico
+am__objects_1 = barfoos-test.pb.$(OBJEXT)
+@WINDOOF_TRUE@am__objects_2 = res.$(OBJEXT)
+am_barfoos_OBJECTS = $(am__objects_1) barfoos-main.$(OBJEXT) \
+	barfoos-image.$(OBJEXT) barfoos-gfx.$(OBJEXT) \
+	barfoos-gfxview.$(OBJEXT) barfoos-gfxscreen.$(OBJEXT) \
+	barfoos-vertexbuffer.$(OBJEXT) barfoos-audio.$(OBJEXT) \
+	barfoos-fileio.$(OBJEXT) barfoos-texture.$(OBJEXT) \
+	barfoos-GLee.$(OBJEXT) barfoos-game.$(OBJEXT) \
+	barfoos-runningstate.$(OBJEXT) barfoos-mainmenustate.$(OBJEXT) \
+	barfoos-mainmenugui.$(OBJEXT) barfoos-simplex.$(OBJEXT) \
+	barfoos-text.$(OBJEXT) barfoos-shader.$(OBJEXT) \
+	barfoos-stats.$(OBJEXT) barfoos-properties.$(OBJEXT) \
+	barfoos-spell.$(OBJEXT) barfoos-gui.$(OBJEXT) \
+	barfoos-inventorygui.$(OBJEXT) barfoos-entity.$(OBJEXT) \
+	barfoos-mob.$(OBJEXT) barfoos-monster.$(OBJEXT) \
+	barfoos-player.$(OBJEXT) barfoos-itementity.$(OBJEXT) \
+	barfoos-projectile.$(OBJEXT) barfoos-trigger.$(OBJEXT) \
+	barfoos-cell.$(OBJEXT) barfoos-cellproperties.$(OBJEXT) \
+	barfoos-cellrender.$(OBJEXT) barfoos-feature.$(OBJEXT) \
+	barfoos-world.$(OBJEXT) barfoos-worldedit.$(OBJEXT) \
+	barfoos-worldbuilder.$(OBJEXT) barfoos-item.$(OBJEXT) \
+	barfoos-itemproperties.$(OBJEXT) barfoos-inventory.$(OBJEXT) \
+	barfoos-effect.$(OBJEXT) barfoos-util.$(OBJEXT) \
+	barfoos-serializer.$(OBJEXT) barfoos-deserializer.$(OBJEXT) \
+	barfoos-input.$(OBJEXT) barfoos-profile.$(OBJEXT) \
+	barfoos-log.$(OBJEXT) $(am__objects_2)
 barfoos_OBJECTS = $(am_barfoos_OBJECTS)
 barfoos_DEPENDENCIES =
 barfoos_LINK = $(CXXLD) $(barfoos_CXXFLAGS) $(CXXFLAGS) \
@@ -177,6 +178,7 @@ PACKAGE_TARNAME = @PACKAGE_TARNAME@
 PACKAGE_URL = @PACKAGE_URL@
 PACKAGE_VERSION = @PACKAGE_VERSION@
 PATH_SEPARATOR = @PATH_SEPARATOR@
+PROTOC = @PROTOC@
 SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
 STRIP = @STRIP@
@@ -234,11 +236,14 @@ CF = $(GL_CFLAGS) -Werror -Wall -Wextra -I$(top_srcdir)/src -DDATA_PATH=\"$(pkgd
 @WINDOOF_TRUE@LDWINFLAGS = #-mwindows -Wl,-Map=barfoos.map
 @MECKES_TRUE@LDMACOSXFLAGS = -framework OpenGL -framework cocoa -framework IOKit -framework OpenAL
 @MECKES_TRUE@CCMACOSXFLAGS = 
+PROTOS = test.pb.cc
+BUILT_SOURCES = $(PROTOS)
 barfoos_CXXFLAGS = $(CF) -std=c++11 $(CCMACOSXFLAGS)
 barfoos_CFLAGS = $(CF) -std=c99
 barfoos_LDADD = 
 barfoos_LDFLAGS = $(LDWINFLAGS) $(LDMACOSXFLAGS) 
 barfoos_SOURCES = \
+  $(PROTOS) \
   main.cc \
   image.cc image.h \
   gfx.cc gfx.h gfxview.cc gfxview.h gfxscreen.cc gfxscreen.h \
@@ -296,7 +301,7 @@ barfoos_SOURCES = \
   $(RESFILE)
 
 EXTRA_DIST = libgcc_s_dw2-1.dll libstdc++-6.dll icon.ico res.rc.in
-all: config.h
+all: $(BUILT_SOURCES) config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-am
 
 .SUFFIXES:
@@ -436,6 +441,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/barfoos-simplex.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/barfoos-spell.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/barfoos-stats.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/barfoos-test.pb.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/barfoos-text.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/barfoos-texture.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/barfoos-trigger.Po@am__quote@
@@ -486,6 +492,20 @@ barfoos-GLee.obj: GLee.c
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXXCOMPILE) -c -o $@ `$(CYGPATH_W) '$<'`
+
+barfoos-test.pb.o: test.pb.cc
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -MT barfoos-test.pb.o -MD -MP -MF $(DEPDIR)/barfoos-test.pb.Tpo -c -o barfoos-test.pb.o `test -f 'test.pb.cc' || echo '$(srcdir)/'`test.pb.cc
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/barfoos-test.pb.Tpo $(DEPDIR)/barfoos-test.pb.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='test.pb.cc' object='barfoos-test.pb.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -c -o barfoos-test.pb.o `test -f 'test.pb.cc' || echo '$(srcdir)/'`test.pb.cc
+
+barfoos-test.pb.obj: test.pb.cc
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -MT barfoos-test.pb.obj -MD -MP -MF $(DEPDIR)/barfoos-test.pb.Tpo -c -o barfoos-test.pb.obj `if test -f 'test.pb.cc'; then $(CYGPATH_W) 'test.pb.cc'; else $(CYGPATH_W) '$(srcdir)/test.pb.cc'; fi`
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/barfoos-test.pb.Tpo $(DEPDIR)/barfoos-test.pb.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='test.pb.cc' object='barfoos-test.pb.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -c -o barfoos-test.pb.obj `if test -f 'test.pb.cc'; then $(CYGPATH_W) 'test.pb.cc'; else $(CYGPATH_W) '$(srcdir)/test.pb.cc'; fi`
 
 barfoos-main.o: main.cc
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -MT barfoos-main.o -MD -MP -MF $(DEPDIR)/barfoos-main.Tpo -c -o barfoos-main.o `test -f 'main.cc' || echo '$(srcdir)/'`main.cc
@@ -1214,13 +1234,15 @@ distdir: $(DISTFILES)
 	  fi; \
 	done
 check-am: all-am
-check: check-am
+check: $(BUILT_SOURCES)
+	$(MAKE) $(AM_MAKEFLAGS) check-am
 all-am: Makefile $(PROGRAMS) config.h
 installdirs:
 	for dir in "$(DESTDIR)$(bindir)"; do \
 	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
 	done
-install: install-am
+install: $(BUILT_SOURCES)
+	$(MAKE) $(AM_MAKEFLAGS) install-am
 install-exec: install-exec-am
 install-data: install-data-am
 uninstall: uninstall-am
@@ -1250,6 +1272,7 @@ distclean-generic:
 maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"
 	@echo "it deletes files that may require special tools to rebuild."
+	-test -z "$(BUILT_SOURCES)" || rm -f $(BUILT_SOURCES)
 clean: clean-am
 
 clean-am: clean-binPROGRAMS clean-generic mostlyclean-am
@@ -1319,7 +1342,7 @@ ps-am:
 
 uninstall-am: uninstall-binPROGRAMS
 
-.MAKE: all install-am install-strip
+.MAKE: all check install install-am install-strip
 
 .PHONY: CTAGS GTAGS all all-am check check-am clean clean-binPROGRAMS \
 	clean-generic cscopelist ctags distclean distclean-compile \
@@ -1337,6 +1360,9 @@ uninstall-am: uninstall-binPROGRAMS
 
 .rc.o:
 	windres $< -o $@
+
+%.pb.cc: %.proto
+	$(PROTOC) --cpp_out=. $<
 
 @MECKES_TRUE@app:
 @MECKES_TRUE@	sh makeapp.sh
