@@ -26,6 +26,10 @@
 // useful if you need a reference to yourself
 #define self (*this)
 
+#if (HAVE_LIBOPENAL || HAVE_LIBOPENAL32) && HAVE_LIBOGG && HAVE_LIBVORBISFILE && HAVE_LIBVORBIS
+#define HAVE_AUDIO 1
+#endif
+
 // ====================================================================================
 
 #include "profile.h"

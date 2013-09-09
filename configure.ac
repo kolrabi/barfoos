@@ -58,14 +58,8 @@ AC_CHECK_HEADER(pthread.h, [
   AC_MSG_ERROR([cannot find pthread headers!])
 ])
 
-AC_CHECK_HEADER(GLFW/glfw3.h, [
-  AC_CHECK_LIB(glfw3, main, [
-  ], [
-    AC_MSG_ERROR([cannot find glfw3 library])
-  ])
-], [
-  AC_MSG_ERROR([cannot find glfw3 header])
-])
+AC_CHECK_HEADER(GLFW/glfw3.h, [], AC_MSG_ERROR([cannot find glfw3 header]))
+AC_CHECK_LIB(glfw3, main, [], AC_MSG_ERROR([cannot find glfw3 library]))
 
 AC_CHECK_HEADER(AL/al.h)
 AC_CHECK_LIB(openal, main, [], [

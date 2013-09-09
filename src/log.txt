@@ -28886,3 +28886,497 @@ updated 17 neighbours
 updated 18 neighbours
 updated 17 neighbours
 updated 12 neighbours
+ GLFW - An OpenGL framework Version 3.0.2
+   Copyright (c) 2002-2006 Marcus Geelnard
+   Copyright (c) 2006-2010 Camilla Berglund
+
+ GLee (OpenGL Easy Extension library) Version 5.2
+   Copyright (c)2006  Ben Woodhouse  All rights reserved.
+
+ zlib version 1.2.8
+   Copyright (C) 1995-2012 Jean-loup Gailly and Mark Adler
+
+libpng version 1.7.0beta17 - August 22, 2013
+Copyright (c) 1998-2013 Glenn Randers-Pehrson
+Copyright (c) 1996-1997 Andreas Dilger
+Copyright (c) 1995-1996 Guy Eric Schalnat, Group 42, Inc.
+GLFW initialized
+Initializing game
+Initializing GFX
+Loading image gui/font.default
+Loading image gui/button.enabled
+Loading image gui/button.disabled
+Loading image gui/button.hover
+Loading image gui/button.active
+Loading image gui/font.big
+Game object initialized 000000000201cfc0, new game
+entering mainloop
+Texture gui/font.big updated since 0...
+Loading image gui/font.big
+Texture gui/button.hover updated since 0...
+Loading image gui/button.hover
+Texture gui/button.disabled updated since 0...
+Loading image gui/button.disabled
+Texture gui/button.active updated since 0...
+Loading image gui/button.active
+Texture gui/button.enabled updated since 0...
+Loading image gui/button.enabled
+Texture gui/font.default updated since 0...
+Loading image gui/font.default
++RunningState() 00000000003150b0 000000000201d038 000000000201cfc0 000000000201cfc0
+Loading cell properties for type 'air'
+Loading cell properties for type 'brick'
+Loading image cells/texture/brickstep
+Loading image cells/texture/brickstep_crack
+Loading image cells/texture/brickstep_mossy
+Loading cell properties for type 'bedrock'
+Loading image cells/texture/bedrock
+Loading cell properties for type 'torch'
+Loading cell properties for type 'carpet.red'
+Loading image cells/texture/carpet.red
+Loading cell properties for type 'default'
+Loading image cells/texture/dirt
+Loading cell properties for type 'dirt'
+Loading cell properties for type 'frozenlava'
+Loading image cells/texture/rock
+Loading cell properties for type 'gate'
+Loading image cells/texture/gate
+Loading cell properties for type 'lava'
+Loading image cells/texture/lava
+Loading cell properties for type 'pillar'
+Loading cell properties for type 'rock'
+Loading cell properties for type 'step'
+Loading image cells/texture/step
+Loading cell properties for type 'brick.secret'
+Loading cell properties for type 'torch2'
+Loading cell properties for type 'torch3'
+Loading cell properties for type 'wood'
+Loading image cells/texture/planks
+Loading cell properties for type 'ice'
+Loading image cells/texture/water
+Loading cell properties for type 'teleport'
+Loading image cells/texture/teleport.off
+Loading cell properties for type 'door.right.closed'
+Loading cell properties for type 'door.right.open'
+Loading cell properties for type 'ladder.right'
+Loading image cells/texture/ladder
+Loading cell properties for type 'shooter'
+Loading image cells/texture/shooter
+Loading cell properties for type 'bars'
+Loading image cells/texture/bars
+Loading cell properties for type 'water'
+ GLFW - An OpenGL framework Version 3.0.2
+   Copyright (c) 2002-2006 Marcus Geelnard
+   Copyright (c) 2006-2010 Camilla Berglund
+
+ GLee (OpenGL Easy Extension library) Version 5.2
+   Copyright (c)2006  Ben Woodhouse  All rights reserved.
+
+ zlib version 1.2.8
+   Copyright (C) 1995-2012 Jean-loup Gailly and Mark Adler
+
+libpng version 1.7.0beta17 - August 22, 2013
+Copyright (c) 1998-2013 Glenn Randers-Pehrson
+Copyright (c) 1996-1997 Andreas Dilger
+Copyright (c) 1995-1996 Guy Eric Schalnat, Group 42, Inc.
+GLFW initialized
+Initializing game
+Initializing GFX
+Loading image gui/font.default
+Loading image gui/button.enabled
+Loading image gui/button.disabled
+Loading image gui/button.hover
+Loading image gui/button.active
+Loading image gui/font.big
+Game object initialized 0000000001da87b0, new game
+entering mainloop
+Texture gui/font.big updated since 0...
+Loading image gui/font.big
+Texture gui/button.hover updated since 0...
+Loading image gui/button.hover
+Texture gui/button.disabled updated since 0...
+Loading image gui/button.disabled
+Texture gui/button.active updated since 0...
+Loading image gui/button.active
+Texture gui/button.enabled updated since 0...
+Loading image gui/button.enabled
+Texture gui/font.default updated since 0...
+Loading image gui/font.default
++RunningState() 0000000001daeff0 0000000001da8828 0000000001da87b0 0000000001da87b0
+Loading cell properties for type 'air'
+Loading cell properties for type 'brick'
+Loading image cells/texture/brickstep
+Loading image cells/texture/brickstep_crack
+Loading image cells/texture/brickstep_mossy
+Loading cell properties for type 'bedrock'
+Loading image cells/texture/bedrock
+Loading cell properties for type 'torch'
+Loading cell properties for type 'carpet.red'
+Loading image cells/texture/carpet.red
+Loading cell properties for type 'default'
+Loading image cells/texture/dirt
+Loading cell properties for type 'dirt'
+Loading cell properties for type 'frozenlava'
+Loading image cells/texture/rock
+Loading cell properties for type 'gate'
+Loading image cells/texture/gate
+Loading cell properties for type 'lava'
+Loading image cells/texture/lava
+Loading cell properties for type 'pillar'
+Loading cell properties for type 'rock'
+Loading cell properties for type 'step'
+Loading image cells/texture/step
+Loading cell properties for type 'brick.secret'
+Loading cell properties for type 'torch2'
+Loading cell properties for type 'torch3'
+Loading cell properties for type 'wood'
+Loading image cells/texture/planks
+Loading cell properties for type 'ice'
+Loading image cells/texture/water
+Loading cell properties for type 'teleport'
+Loading image cells/texture/teleport.off
+Loading cell properties for type 'door.right.closed'
+Loading cell properties for type 'door.right.open'
+Loading cell properties for type 'ladder.right'
+Loading image cells/texture/ladder
+Loading cell properties for type 'shooter'
+Loading image cells/texture/shooter
+Loading cell properties for type 'bars'
+Loading image cells/texture/bars
+Loading cell properties for type 'water'
+ GLFW - An OpenGL framework Version 3.0.2
+   Copyright (c) 2002-2006 Marcus Geelnard
+   Copyright (c) 2006-2010 Camilla Berglund
+
+ GLee (OpenGL Easy Extension library) Version 5.2
+   Copyright (c)2006  Ben Woodhouse  All rights reserved.
+
+ zlib version 1.2.8
+   Copyright (C) 1995-2012 Jean-loup Gailly and Mark Adler
+
+libpng version 1.7.0beta17 - August 22, 2013
+Copyright (c) 1998-2013 Glenn Randers-Pehrson
+Copyright (c) 1996-1997 Andreas Dilger
+Copyright (c) 1995-1996 Guy Eric Schalnat, Group 42, Inc.
+GLFW initialized
+Initializing game
+Initializing GFX
+Loading image gui/font.default
+Loading image gui/button.enabled
+Loading image gui/button.disabled
+Loading image gui/button.hover
+Loading image gui/button.active
+Loading image gui/font.big
+Game object initialized 0000000001d0cd00, new game
+entering mainloop
+Texture gui/font.big updated since 0...
+Loading image gui/font.big
+Texture gui/button.hover updated since 0...
+Loading image gui/button.hover
+Texture gui/button.disabled updated since 0...
+Loading image gui/button.disabled
+Texture gui/button.active updated since 0...
+Loading image gui/button.active
+Texture gui/button.enabled updated since 0...
+Loading image gui/button.enabled
+Texture gui/font.default updated since 0...
+Loading image gui/font.default
+Shutting down
+Removing 0
+   game.cc  108 bool Game::Frame()                         / 
+     game.cc  174 void Game::Update(float, float)                6518 c,       8951 t,          1 t/c
+
+   game.cc  108 bool Game::Frame()                         / 
+     game.cc  159 void Game::Render() const                      6512 c,    3154092 t,        484 t/c
+
+   game.cc  108 bool Game::Frame()                               6512 c,    3948372 t,        606 t/c
+
+
+ GLFW - An OpenGL framework Version 3.0.2
+   Copyright (c) 2002-2006 Marcus Geelnard
+   Copyright (c) 2006-2010 Camilla Berglund
+
+ GLee (OpenGL Easy Extension library) Version 5.2
+   Copyright (c)2006  Ben Woodhouse  All rights reserved.
+
+ zlib version 1.2.8
+   Copyright (C) 1995-2012 Jean-loup Gailly and Mark Adler
+
+libpng version 1.7.0beta17 - August 22, 2013
+Copyright (c) 1998-2013 Glenn Randers-Pehrson
+Copyright (c) 1996-1997 Andreas Dilger
+Copyright (c) 1995-1996 Guy Eric Schalnat, Group 42, Inc.
+GLFW initialized
+Initializing game
+Initializing GFX
+Loading image gui/font.default
+Loading image gui/button.enabled
+Loading image gui/button.disabled
+Loading image gui/button.hover
+Loading image gui/button.active
+Loading image gui/font.big
+Game object initialized 00000000003e87b0, new game
+entering mainloop
+Texture gui/font.big updated since 0...
+Loading image gui/font.big
+Texture gui/button.hover updated since 0...
+Loading image gui/button.hover
+Texture gui/button.disabled updated since 0...
+Loading image gui/button.disabled
+Texture gui/button.active updated since 0...
+Loading image gui/button.active
+Texture gui/button.enabled updated since 0...
+Loading image gui/button.enabled
+Texture gui/font.default updated since 0...
+Loading image gui/font.default
+Shutting down
+Removing 0
+   game.cc  108 bool Game::Frame()                         / 
+     game.cc  174 void Game::Update(float, float)                3126 c,      17470 t,          5 t/c
+
+   game.cc  108 bool Game::Frame()                         / 
+     game.cc  159 void Game::Render() const                      3118 c,    2691192 t,        863 t/c
+
+   game.cc  108 bool Game::Frame()                               3118 c,    3277287 t,       1051 t/c
+
+
+ GLFW - An OpenGL framework Version 3.0.2
+   Copyright (c) 2002-2006 Marcus Geelnard
+   Copyright (c) 2006-2010 Camilla Berglund
+
+ GLee (OpenGL Easy Extension library) Version 5.2
+   Copyright (c)2006  Ben Woodhouse  All rights reserved.
+
+ zlib version 1.2.8
+   Copyright (C) 1995-2012 Jean-loup Gailly and Mark Adler
+
+libpng version 1.7.0beta17 - August 22, 2013
+Copyright (c) 1998-2013 Glenn Randers-Pehrson
+Copyright (c) 1996-1997 Andreas Dilger
+Copyright (c) 1995-1996 Guy Eric Schalnat, Group 42, Inc.
+GLFW initialized
+Initializing game
+Initializing GFX
+Loading image gui/font.default
+Loading image gui/button.enabled
+Loading image gui/button.disabled
+Loading image gui/button.hover
+Loading image gui/button.active
+Loading image gui/font.big
+Game object initialized 00000000003387b0, new game
+entering mainloop
+Texture gui/font.big updated since 0...
+Loading image gui/font.big
+Texture gui/button.hover updated since 0...
+Loading image gui/button.hover
+Texture gui/button.disabled updated since 0...
+Loading image gui/button.disabled
+Texture gui/button.active updated since 0...
+Loading image gui/button.active
+Texture gui/button.enabled updated since 0...
+Loading image gui/button.enabled
+Texture gui/font.default updated since 0...
+Loading image gui/font.default
+Shutting down
+Removing 0
+   game.cc  108 bool Game::Frame()                         / 
+     game.cc  174 void Game::Update(float, float)                2178 c,      12596 t,          5 t/c
+
+   game.cc  108 bool Game::Frame()                         / 
+     game.cc  159 void Game::Render() const                      2170 c,    2092028 t,        964 t/c
+
+   game.cc  108 bool Game::Frame()                               2170 c,    2627820 t,       1210 t/c
+
+
+ GLFW - An OpenGL framework Version 3.0.2
+   Copyright (c) 2002-2006 Marcus Geelnard
+   Copyright (c) 2006-2010 Camilla Berglund
+
+ GLee (OpenGL Easy Extension library) Version 5.2
+   Copyright (c)2006  Ben Woodhouse  All rights reserved.
+
+ zlib version 1.2.8
+   Copyright (C) 1995-2012 Jean-loup Gailly and Mark Adler
+
+libpng version 1.7.0beta17 - August 22, 2013
+Copyright (c) 1998-2013 Glenn Randers-Pehrson
+Copyright (c) 1996-1997 Andreas Dilger
+Copyright (c) 1995-1996 Guy Eric Schalnat, Group 42, Inc.
+GLFW initialized
+Initializing game
+Initializing GFX
+Loading image gui/font.default
+Loading image gui/button.enabled
+Loading image gui/button.disabled
+Loading image gui/button.hover
+Loading image gui/button.active
+Loading image gui/font.big
+Game object initialized 000000000034cd00, new game
+entering mainloop
+Texture gui/font.big updated since 0...
+Loading image gui/font.big
+Texture gui/button.hover updated since 0...
+Loading image gui/button.hover
+Texture gui/button.disabled updated since 0...
+Loading image gui/button.disabled
+Texture gui/button.active updated since 0...
+Loading image gui/button.active
+Texture gui/button.enabled updated since 0...
+Loading image gui/button.enabled
+Texture gui/font.default updated since 0...
+Loading image gui/font.default
+Shutting down
+Removing 0
+   game.cc  108 bool Game::Frame()                         / 
+     game.cc  174 void Game::Update(float, float)                6472 c,      12847 t,          1 t/c
+
+   game.cc  108 bool Game::Frame()                         / 
+     game.cc  159 void Game::Render() const                      6469 c,    2012768 t,        311 t/c
+
+   game.cc  108 bool Game::Frame()                               6469 c,    3955664 t,        611 t/c
+
+
+ GLFW - An OpenGL framework Version 3.0.2
+   Copyright (c) 2002-2006 Marcus Geelnard
+   Copyright (c) 2006-2010 Camilla Berglund
+
+ GLee (OpenGL Easy Extension library) Version 5.2
+   Copyright (c)2006  Ben Woodhouse  All rights reserved.
+
+ zlib version 1.2.8
+   Copyright (C) 1995-2012 Jean-loup Gailly and Mark Adler
+
+libpng version 1.7.0beta17 - August 22, 2013
+Copyright (c) 1998-2013 Glenn Randers-Pehrson
+Copyright (c) 1996-1997 Andreas Dilger
+Copyright (c) 1995-1996 Guy Eric Schalnat, Group 42, Inc.
+GLFW initialized
+Initializing game
+Initializing GFX
+Loading image gui/font.default
+Loading image gui/button.enabled
+Loading image gui/button.disabled
+Loading image gui/button.hover
+Loading image gui/button.active
+Loading image gui/font.big
+Game object initialized 0000000000368b10, new game
+entering mainloop
+Texture gui/font.big updated since 0...
+Loading image gui/font.big
+Texture gui/button.hover updated since 0...
+Loading image gui/button.hover
+Texture gui/button.disabled updated since 0...
+Loading image gui/button.disabled
+Texture gui/button.active updated since 0...
+Loading image gui/button.active
+Texture gui/button.enabled updated since 0...
+Loading image gui/button.enabled
+Texture gui/font.default updated since 0...
+Loading image gui/font.default
+Shutting down
+Removing 0
+   game.cc  108 bool Game::Frame()                         / 
+     game.cc  174 void Game::Update(float, float)                6203 c,      27542 t,          4 t/c
+
+   game.cc  108 bool Game::Frame()                         / 
+     game.cc  159 void Game::Render() const                      6194 c,    5122239 t,        826 t/c
+
+   game.cc  108 bool Game::Frame()                               6194 c,    6061584 t,        978 t/c
+
+
+ GLFW - An OpenGL framework Version 3.0.2
+   Copyright (c) 2002-2006 Marcus Geelnard
+   Copyright (c) 2006-2010 Camilla Berglund
+
+ GLee (OpenGL Easy Extension library) Version 5.2
+   Copyright (c)2006  Ben Woodhouse  All rights reserved.
+
+ zlib version 1.2.8
+   Copyright (C) 1995-2012 Jean-loup Gailly and Mark Adler
+
+libpng version 1.7.0beta17 - August 22, 2013
+Copyright (c) 1998-2013 Glenn Randers-Pehrson
+Copyright (c) 1996-1997 Andreas Dilger
+Copyright (c) 1995-1996 Guy Eric Schalnat, Group 42, Inc.
+GLFW initialized
+Initializing game
+Initializing GFX
+Loading image gui/font.default
+Loading image gui/button.enabled
+Loading image gui/button.disabled
+Loading image gui/button.hover
+Loading image gui/button.active
+Loading image gui/font.big
+Game object initialized 00000000003e8b10, new game
+entering mainloop
+Texture gui/font.big updated since 0...
+Loading image gui/font.big
+Texture gui/button.hover updated since 0...
+Loading image gui/button.hover
+Texture gui/button.disabled updated since 0...
+Loading image gui/button.disabled
+Texture gui/button.active updated since 0...
+Loading image gui/button.active
+Texture gui/button.enabled updated since 0...
+Loading image gui/button.enabled
+Texture gui/font.default updated since 0...
+Loading image gui/font.default
+Shutting down
+Removing 0
+   game.cc  108 bool Game::Frame()                         / 
+     game.cc  174 void Game::Update(float, float)                2037 c,      11459 t,          5 t/c
+
+   game.cc  108 bool Game::Frame()                         / 
+     game.cc  159 void Game::Render() const                      2027 c,    1927031 t,        950 t/c
+
+   game.cc  108 bool Game::Frame()                               2027 c,    2448510 t,       1207 t/c
+
+
+ GLFW - An OpenGL framework Version 3.0.2
+   Copyright (c) 2002-2006 Marcus Geelnard
+   Copyright (c) 2006-2010 Camilla Berglund
+
+ GLee (OpenGL Easy Extension library) Version 5.2
+   Copyright (c)2006  Ben Woodhouse  All rights reserved.
+
+ zlib version 1.2.8
+   Copyright (C) 1995-2012 Jean-loup Gailly and Mark Adler
+
+libpng version 1.7.0beta17 - August 22, 2013
+Copyright (c) 1998-2013 Glenn Randers-Pehrson
+Copyright (c) 1996-1997 Andreas Dilger
+Copyright (c) 1995-1996 Guy Eric Schalnat, Group 42, Inc.
+GLFW initialized
+Initializing game
+Initializing GFX
+Loading image gui/font.default
+Loading image gui/button.enabled
+Loading image gui/button.disabled
+Loading image gui/button.hover
+Loading image gui/button.active
+Loading image gui/font.big
+Game object initialized 000000000031cab0, new game
+entering mainloop
+Texture gui/font.big updated since 0...
+Loading image gui/font.big
+Texture gui/button.hover updated since 0...
+Loading image gui/button.hover
+Texture gui/button.disabled updated since 0...
+Loading image gui/button.disabled
+Texture gui/button.active updated since 0...
+Loading image gui/button.active
+Texture gui/button.enabled updated since 0...
+Loading image gui/button.enabled
+Texture gui/font.default updated since 0...
+Loading image gui/font.default
+Shutting down
+Removing 0
+   game.cc  108 bool Game::Frame()                         / 
+     game.cc  174 void Game::Update(float, float)                5133 c,       6372 t,          1 t/c
+
+   game.cc  108 bool Game::Frame()                         / 
+     game.cc  159 void Game::Render() const                      5121 c,    3120676 t,        609 t/c
+
+   game.cc  108 bool Game::Frame()                               5121 c,    4481085 t,        875 t/c
+
+

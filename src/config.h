@@ -2,7 +2,7 @@
 /* src/config.h.in.  Generated from configure.ac by autoheader.  */
 
 /* Define to 1 if you have the `clock_gettime' function. */
-/* #undef HAVE_CLOCK_GETTIME */
+#define HAVE_CLOCK_GETTIME 1
 
 /* Define to 1 if you have the <inttypes.h> header file. */
 #define HAVE_INTTYPES_H 1
@@ -16,12 +16,6 @@
 /* Define to 1 if you have the `glfw3' library (-lglfw3). */
 #define HAVE_LIBGLFW3 1
 
-/* Define to 1 if you have the `GLU' library (-lGLU). */
-/* #undef HAVE_LIBGLU */
-
-/* Define to 1 if you have the `glu32' library (-lglu32). */
-#define HAVE_LIBGLU32 1
-
 /* Define to 1 if you have the `ogg' library (-logg). */
 #define HAVE_LIBOGG 1
 
@@ -29,7 +23,7 @@
 /* #undef HAVE_LIBOPENAL */
 
 /* Define to 1 if you have the `OpenAL32' library (-lOpenAL32). */
-#define HAVE_LIBOPENAL32 1
+/* #undef HAVE_LIBOPENAL32 */
 
 /* Define to 1 if you have the `opengl32' library (-lopengl32). */
 #define HAVE_LIBOPENGL32 1
@@ -38,10 +32,10 @@
 #define HAVE_LIBPNG 1
 
 /* Define to 1 if you have the `pthread' library (-lpthread). */
-/* #undef HAVE_LIBPTHREAD */
+#define HAVE_LIBPTHREAD 1
 
 /* Define to 1 if you have the `pthreadGC2' library (-lpthreadGC2). */
-#define HAVE_LIBPTHREADGC2 1
+/* #undef HAVE_LIBPTHREADGC2 */
 
 /* Define to 1 if you have the `vorbis' library (-lvorbis). */
 #define HAVE_LIBVORBIS 1
@@ -51,9 +45,6 @@
 
 /* Define to 1 if you have the `winmm' library (-lwinmm). */
 #define HAVE_LIBWINMM 1
-
-/* Define to 1 if you have the `X11' library (-lX11). */
-/* #undef HAVE_LIBX11 */
 
 /* Define to 1 if you have the `Xi' library (-lXi). */
 /* #undef HAVE_LIBXI */
@@ -101,6 +92,12 @@
 
 /* Define to 1 if you have the <unistd.h> header file. */
 #define HAVE_UNISTD_H 1
+
+/* Define to 1 if you have the <vorbis/vorbisenc.h> header file. */
+#define HAVE_VORBIS_VORBISENC_H 1
+
+/* Define to 1 if you have the <vorbis/vorbisfile.h> header file. */
+#define HAVE_VORBIS_VORBISFILE_H 1
 
 /* Define to 1 if the system has the type `_Bool'. */
 #define HAVE__BOOL 1
