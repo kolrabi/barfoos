@@ -16,6 +16,7 @@ AC_SUBST(VER_BLD, 0)
 AC_PROG_CC
 AM_PROG_CC_C_O
 AC_PROG_CXX
+AC_PATH_PROG([PROTOC], [protoc])
 
 AX_CXX_COMPILE_STDCXX_11()
 
@@ -63,13 +64,8 @@ AC_CHECK_HEADER(pthread.h, [
   AC_MSG_ERROR([cannot find pthread headers!])
 ])
 
-AC_CHECK_HEADER(GLFW/glfw3.h, [
-  AC_CHECK_LIB(glfw3, main, [], [
-    AC_MSG_ERROR([cannot find glfw3 library])
-  ])
-], [
-  AC_MSG_ERROR([cannot find glfw3 header])
-])
+AC_CHECK_HEADER(GLFW/glfw3.h, [], AC_MSG_ERROR([cannot find glfw3 header]))
+AC_CHECK_LIB(glfw3, main, [], AC_MSG_ERROR([cannot find glfw3 library]))
 
 AC_CHECK_HEADER(AL/al.h)
 AC_CHECK_LIB(openal, main, [], [
@@ -88,6 +84,8 @@ AC_CHECK_HEADERS([vorbis/vorbisfile.h vorbis/vorbisenc.h], [
 
 AC_CHECK_LIB(z, main)
 AC_CHECK_LIB(png, main)
+
+AC_CHECK_LIB(protobuf, main)
 
 AC_CHECK_FUNCS([clock_gettime])
 AC_FUNC_MALLOC

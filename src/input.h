@@ -39,7 +39,8 @@ enum class InputKey : size_t {
   DebugEntityAABB,
   DebugDie,
   DebugNoclip,
-  DebugScreenshot
+  DebugScreenshot,
+  DebugLog
 };
 
 namespace std { template<> struct hash<InputKey> {

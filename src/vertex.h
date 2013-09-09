@@ -11,11 +11,11 @@ struct Vertex {
   float n[3];
   float xyz[3];
   
-  Vertex() : 
+  Vertex()/* : 
     uv { 0, 0 },
     rgb{ 1, 1, 1, 1 },
     n  { 0, 0, 0 },
-    xyz{ 0, 0, 0 }
+    xyz{ 0, 0, 0 }*/
   {}
 
   Vertex(const Vector3 &v, const IColor &c, float uu, float vv, const Vector3 &norm = Vector3()) :

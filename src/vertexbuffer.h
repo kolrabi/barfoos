@@ -15,6 +15,8 @@ public:
   size_t Add(const Vertex &vert);
   size_t Add(const std::vector<Vertex> &verts);
 
+  inline std::vector<Vertex> &GetVerts() { this->dirty = true; return verts; }
+
 private:
 
   bool dirty;

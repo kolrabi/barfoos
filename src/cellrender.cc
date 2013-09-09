@@ -57,32 +57,6 @@ static const SideData &GetSideData(Side s) {
   return sideData[(int)s];
 }
 
-/** Append cell vertices to a vector.
-  * @param verts Where to copy the vertices.
-  */
-void
-CellRender::Draw(std::vector<Vertex> &verts) const {
-  if (info->flags & CellFlags::DoNotRender || visibility == 0) return;
-
-  for (const Vertex &v : this->verts) {
-    verts.push_back(v);
-  }
-}
-
-/** Append cell vertices to a vector, with color values set to white.
-  * @param verts Where to copy the vertices.
-  */
-void
-CellRender::DrawEmissive(std::vector<Vertex> &verts) const {
-  if (info->flags & CellFlags::DoNotRender || visibility == 0) return;
-
-  for (const Vertex &v : this->verts) {
-    Vertex vv = v;
-    vv.rgb[0] = vv.rgb[1] = vv.rgb[2] = vv.rgb[3] = 1.0;
-    verts.push_back(vv);
-  }
-}
-
 /** Get all 4 corner colors for a given side.
   * @param side Side to use.
   * @param[out] colors Where to store the colors.

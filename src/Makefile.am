@@ -12,13 +12,21 @@ endif
 .rc.o:
 	windres $< -o $@
 
+PROTOS=test.pb.cc
+
+%.pb.cc: %.proto
+	$(PROTOC) --cpp_out=. $<
+
+BUILT_SOURCES=$(PROTOS)
+
 bin_PROGRAMS=barfoos
 
 barfoos_CXXFLAGS=$(CF)
 barfoos_CFLAGS=$(CF)
 barfoos_LDADD=
-barfoos_LDFLAGS=
+barfoos_LDFLAGS=$(LDWINFLAGS) $(LDMACOSXFLAGS) 
 barfoos_SOURCES=\
+  $(PROTOS) \
   main.cc \
   image.cc image.h \
   gfx.cc gfx.h gfxview.cc gfxview.h gfxscreen.cc gfxscreen.h \

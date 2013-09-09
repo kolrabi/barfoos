@@ -43,6 +43,18 @@ story:
     - Heel!
     - Stroll
 
+- description:  be the pet
+  ideas:        |-
+                you run away into a dungeon
+                you get lost and must find the way out
+                obviously no weapons or armor, just bite, bark, howl
+                maybe some transformation foods?
+                smell and hearing as gameplay elements
+
+  names:
+    - A Journey of Dog
+    - Stroll
+
 - description: 	dungeon pizza
   ideas:        |-
                 bring pizza (or other food) to the endboss
@@ -50,6 +62,9 @@ story:
                 fight with food on the way down?
                 bring the money back to your boss
                 survive
+                get promotions (level up, money for equipment)
+                harder dungeons
+                
   names: 
     - Deliver
     - Pizza Diablo

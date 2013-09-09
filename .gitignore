@@ -1,4 +1,6 @@
 *.o
+*.pb.h
+*.pb.cc
 /config.status
 /configure
 /depcomp

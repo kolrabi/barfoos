@@ -2,7 +2,7 @@
 /* src/config.h.in.  Generated from configure.ac by autoheader.  */
 
 /* Define to 1 if you have the `clock_gettime' function. */
-/* #undef HAVE_CLOCK_GETTIME */
+#define HAVE_CLOCK_GETTIME 1
 
 /* define if the compiler supports basic C++11 syntax */
 #define HAVE_CXX11 1
@@ -33,6 +33,9 @@
 
 /* Define to 1 if you have the `png' library (-lpng). */
 #define HAVE_LIBPNG 1
+
+/* Define to 1 if you have the `protobuf' library (-lprotobuf). */
+#define HAVE_LIBPROTOBUF 1
 
 /* Define to 1 if you have the `pthread' library (-lpthread). */
 #define HAVE_LIBPTHREAD 1

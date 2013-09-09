@@ -15,12 +15,6 @@
 /* Define to 1 if you have the `glfw3' library (-lglfw3). */
 #undef HAVE_LIBGLFW3
 
-/* Define to 1 if you have the `GLU' library (-lGLU). */
-#undef HAVE_LIBGLU
-
-/* Define to 1 if you have the `glu32' library (-lglu32). */
-#undef HAVE_LIBGLU32
-
 /* Define to 1 if you have the `ogg' library (-logg). */
 #undef HAVE_LIBOGG
 
@@ -50,9 +44,6 @@
 
 /* Define to 1 if you have the `winmm' library (-lwinmm). */
 #undef HAVE_LIBWINMM
-
-/* Define to 1 if you have the `X11' library (-lX11). */
-#undef HAVE_LIBX11
 
 /* Define to 1 if you have the `Xi' library (-lXi). */
 #undef HAVE_LIBXI
@@ -101,6 +92,12 @@
 /* Define to 1 if you have the <unistd.h> header file. */
 #undef HAVE_UNISTD_H
 
+/* Define to 1 if you have the <vorbis/vorbisenc.h> header file. */
+#undef HAVE_VORBIS_VORBISENC_H
+
+/* Define to 1 if you have the <vorbis/vorbisfile.h> header file. */
+#undef HAVE_VORBIS_VORBISFILE_H
+
 /* Define to 1 if the system has the type `_Bool'. */
 #undef HAVE__BOOL
 
@@ -125,6 +122,9 @@
 /* Define to the one symbol short name of this package. */
 #undef PACKAGE_TARNAME
 
+/* Define to the home page for this package. */
+#undef PACKAGE_URL
+
 /* Define to the version of this package. */
 #undef PACKAGE_VERSION
 
@@ -141,17 +141,17 @@
 #undef X11
 
 /* Define for Solaris 2.5.1 so the uint32_t typedef from <sys/synch.h>,
-   <pthread.h>, or <semaphore.h> is not used. If the typedef was allowed, the
+   <pthread.h>, or <semaphore.h> is not used. If the typedef were allowed, the
    #define below would cause a syntax error. */
 #undef _UINT32_T
 
 /* Define for Solaris 2.5.1 so the uint64_t typedef from <sys/synch.h>,
-   <pthread.h>, or <semaphore.h> is not used. If the typedef was allowed, the
+   <pthread.h>, or <semaphore.h> is not used. If the typedef were allowed, the
    #define below would cause a syntax error. */
 #undef _UINT64_T
 
 /* Define for Solaris 2.5.1 so the uint8_t typedef from <sys/synch.h>,
-   <pthread.h>, or <semaphore.h> is not used. If the typedef was allowed, the
+   <pthread.h>, or <semaphore.h> is not used. If the typedef were allowed, the
    #define below would cause a syntax error. */
 #undef _UINT8_T
 

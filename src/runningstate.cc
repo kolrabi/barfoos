@@ -602,7 +602,7 @@ RunningState::Save() {
 
   FILE *f = createUserFile("game");
   if (f) {
-// TEST    serGame.WriteToFile(f);
+  //  serGame.WriteToFile(f);
     fclose(f);
     f = nullptr;
   }
@@ -623,7 +623,7 @@ RunningState::SaveLevel() {
 
   //std::thread([=](){
     if (f) {
-// TEST      ser.WriteToFile(f);
+  //    ser.WriteToFile(f);
       fclose(f);
     }
   //}).detach();

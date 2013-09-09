@@ -1,0 +1,3 @@
+message TestMessage {
+	required uint32 testValue = 1;
+}

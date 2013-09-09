@@ -151,6 +151,7 @@ World::Draw(Gfx &gfx) {
   if (dirty) {
     PROFILE_NAMED("Vertex Update");
     // world has been changed, recreate vertex buffers
+    //Log("dirty!\n");
 
     this->defaultCell = Cell("default");
 
@@ -198,7 +199,7 @@ World::Draw(Gfx &gfx) {
       if (etex) cell.DrawEmissive(verticesEmissive[etex]);
     }
 
-    if (updateCount) Log("%u cell vertex updates\n", updateCount);
+    //if (updateCount) Log("%u cell vertex updates\n", updateCount);
 
     size_t index = 0;
     this->allVerts.Clear();
@@ -224,6 +225,7 @@ World::Draw(Gfx &gfx) {
     }
 
     dirty = false;
+    //Log("no longer dirty!\n");
   }
 
   gfx.SetShader("default");
@@ -249,6 +251,9 @@ World::Draw(Gfx &gfx) {
   {
     PROFILE_NAMED("Dynamic Draw");
 
+    //static int lastDynVertexCount = 0;
+    //static int lastDynVertexEmissiveCount = 0;
+
     // get vertices for dynamic cells
     std::unordered_map<const Texture *, VertexBuffer> dynVerticesNormal;
     std::unordered_map<const Texture *, VertexBuffer> dynVerticesEmissive;
@@ -258,22 +263,23 @@ World::Draw(Gfx &gfx) {
 
       const Texture *tex = this->cells[i].GetTexture();
       if (tex) {
+        /*
         if (dynVerticesNormal.find(tex) == dynVerticesNormal.end())
             dynVerticesNormal[tex] = std::vector<Vertex>();
-
-        std::vector<Vertex> tmp;
-        this->cells[i].Draw(tmp);
-        dynVerticesNormal[tex].Add(tmp);
+*/
+        this->cells[i].Draw(dynVerticesNormal[tex].GetVerts());
       }
 
       const Texture *etex = this->cells[i].GetEmissiveTexture();
       if (etex) {
-        if (dynVerticesEmissive.find(etex) == dynVerticesEmissive.end())
+ /*       if (dynVerticesEmissive.find(etex) == dynVerticesEmissive.end())
             dynVerticesEmissive[etex] = std::vector<Vertex>();
-
+*/
+        this->cells[i].Draw(dynVerticesEmissive[tex].GetVerts());
+/*
         std::vector<Vertex> tmp;
         this->cells[i].DrawEmissive(tmp);
-        dynVerticesEmissive[etex].Add(tmp);
+        dynVerticesEmissive[etex].Add(tmp);*/
       }
     }
 
@@ -286,21 +292,27 @@ World::Draw(Gfx &gfx) {
     }
 
     gfx.SetBlendAdd();
+    gfx.SetLight(IColor(255,255,255));
     iter = dynVerticesEmissive.begin();
     for (size_t i=0; i<dynVerticesEmissive.size(); i++, iter++) {
       gfx.SetTextureFrame(iter->first);
       gfx.DrawTriangles(iter->second);
     }
+
+    //lastDynVertexCount = dynVerticesNormal.size();
+    //lastDynVertexEmissiveCount = dynVerticesEmissive.size();
   }
 }
 
 void World::MarkForUpdateNeighbours(const Cell *cell) {
 //  cell.UpdateNeighbours();
+  //if (!this->neighbourUpdates.size()) Log("marking cell!\n");
   size_t i = GetCellIndex(cell->GetPosition());
   this->neighbourUpdates.insert(i);
 }
 
 void World::MarkForUpdateNeighbours(size_t i) {
+  //if (!this->neighbourUpdates.size()) Log("marking index!\n");
   this->neighbourUpdates.insert(i);
 }
 

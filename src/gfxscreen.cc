@@ -51,6 +51,7 @@ static InputKey MapKey(int k) {
     case GLFW_KEY_F3:         key = InputKey::DebugWireframe;  break;
     case GLFW_KEY_F4:         key = InputKey::DebugNoclip;     break;
     case GLFW_KEY_F5:         key = InputKey::DebugScreenshot; break;
+    case GLFW_KEY_F6:         key = InputKey::DebugLog;        break;
     default:                  key = InputKey::Invalid;
                               Log("Unknown key: %04x %c\n", k, k);
   }
