@@ -54,7 +54,7 @@ MainMenuGui::MainMenuGui(MainMenuState &state) :
   btnContinue->SetBackground(GuiState::Disabled, npBtnDisabled);
   btnContinue->SetBackground(GuiState::Hover,    npBtnHover);
   btnContinue->SetBackground(GuiState::Active,   npBtnActive);
-  btnContinue->SetEnabled(false);
+  //btnContinue->SetEnabled(false);
   this->AddChild(btnContinue);
 
   Gui *lblTitle = new Gui();

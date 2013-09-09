@@ -85,7 +85,7 @@ CellRender::CellRender(const std::string &type) :
   CellBase(type),
   visibility(0),
   reversedSides(false),
-  verts(0),
+  verts(72),
   texture(nullptr),
   emissiveTexture(nullptr),
   activeTexture(nullptr),
@@ -503,7 +503,10 @@ Cell &
 Cell::SetOrder(bool topReversed, bool bottomReversed) {
   this->shared.reversedTop = topReversed;
   this->shared.reversedBottom = bottomReversed;
-  if (world && !IsDynamic()) world->MarkForUpdateNeighbours(this);
+  if (world && !IsDynamic()) {
+    Log("set order!\n");
+    world->MarkForUpdateNeighbours(this);
+  }
   return *this;
 }
 
@@ -516,11 +519,15 @@ Cell::SetOrder(bool topReversed, bool bottomReversed) {
   */
 Cell &
 Cell::SetYOffsets(float a, float b, float c, float d) {
+  bool change = this->shared.topHeights[0] != a * OffsetScale || 
+                this->shared.topHeights[1] != b * OffsetScale ||
+                this->shared.topHeights[2] != c * OffsetScale ||
+                this->shared.topHeights[3] != d * OffsetScale;
   this->shared.topHeights[0] = a * OffsetScale;
   this->shared.topHeights[1] = b * OffsetScale;
   this->shared.topHeights[2] = c * OffsetScale;
   this->shared.topHeights[3] = d * OffsetScale;
-  world->MarkForUpdateNeighbours(this);
+  if (world && change && !IsDynamic()) world->MarkForUpdateNeighbours(this);
   this->shared.topFlat = a == b && b == c && c == d;
   return *this;
 }
@@ -534,11 +541,15 @@ Cell::SetYOffsets(float a, float b, float c, float d) {
   */
 Cell &
 Cell::SetYOffsetsBottom(float a, float b, float c, float d) {
+  bool change = this->shared.bottomHeights[0] != a * OffsetScale || 
+                this->shared.bottomHeights[1] != b * OffsetScale ||
+                this->shared.bottomHeights[2] != c * OffsetScale ||
+                this->shared.bottomHeights[3] != d * OffsetScale;
   this->shared.bottomHeights[0] = a * OffsetScale;
   this->shared.bottomHeights[1] = b * OffsetScale;
   this->shared.bottomHeights[2] = c * OffsetScale;
   this->shared.bottomHeights[3] = d * OffsetScale;
-  world->MarkForUpdateNeighbours(this);
+  if (world && change && !IsDynamic()) world->MarkForUpdateNeighbours(this);
   this->shared.bottomFlat = a == b && b == c && c == d;
   return *this;
 }

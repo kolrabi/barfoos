@@ -23,7 +23,7 @@ bin_PROGRAMS=barfoos
 barfoos_CXXFLAGS=$(CF) -std=c++11 $(CCMACOSXFLAGS)
 barfoos_CFLAGS=$(CF) -std=c99
 barfoos_LDADD=
-barfoos_LDFLAGS=$(LDWINFLAGS) $(LDMACOSXFLAGS)
+barfoos_LDFLAGS=$(LDWINFLAGS) $(LDMACOSXFLAGS) 
 barfoos_SOURCES=\
   main.cc \
   image.cc image.h \
