@@ -503,10 +503,7 @@ Cell &
 Cell::SetOrder(bool topReversed, bool bottomReversed) {
   this->shared.reversedTop = topReversed;
   this->shared.reversedBottom = bottomReversed;
-  if (world && !IsDynamic()) {
-    Log("set order!\n");
-    world->MarkForUpdateNeighbours(this);
-  }
+  if (world && !IsDynamic()) world->MarkForUpdateNeighbours(this);
   return *this;
 }
 

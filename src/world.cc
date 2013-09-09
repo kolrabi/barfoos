@@ -151,7 +151,6 @@ World::Draw(Gfx &gfx) {
   if (dirty) {
     PROFILE_NAMED("Vertex Update");
     // world has been changed, recreate vertex buffers
-    //Log("dirty!\n");
 
     this->defaultCell = Cell("default");
 
@@ -225,7 +224,6 @@ World::Draw(Gfx &gfx) {
     }
 
     dirty = false;
-    //Log("no longer dirty!\n");
   }
 
   gfx.SetShader("default");
@@ -250,9 +248,6 @@ World::Draw(Gfx &gfx) {
 
   {
     PROFILE_NAMED("Dynamic Draw");
-
-    //static int lastDynVertexCount = 0;
-    //static int lastDynVertexEmissiveCount = 0;
 
     // get vertices for dynamic cells
     std::unordered_map<const Texture *, VertexBuffer> dynVerticesNormal;

@@ -24,7 +24,7 @@ bin_PROGRAMS=barfoos
 barfoos_CXXFLAGS=$(CF)
 barfoos_CFLAGS=$(CF)
 barfoos_LDADD=
-barfoos_LDFLAGS=$(LDWINFLAGS) $(LDMACOSXFLAGS) 
+barfoos_LDFLAGS=
 barfoos_SOURCES=\
   $(PROTOS) \
   main.cc \
