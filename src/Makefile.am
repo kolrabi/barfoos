@@ -7,12 +7,6 @@ CF=$(GL_CFLAGS) -Werror -Wall -Wextra -I$(top_srcdir)/src -DDATA_PATH=\"$(pkgdat
 
 if WINDOOF
 RESFILE=res.rc icon.ico
-LDWINFLAGS=#-mwindows -Wl,-Map=barfoos.map
-endif
-
-if MECKES
-LDMACOSXFLAGS=-framework OpenGL -framework cocoa -framework IOKit -framework OpenAL
-CCMACOSXFLAGS=
 endif
 
 .rc.o:
@@ -20,10 +14,10 @@ endif
 
 bin_PROGRAMS=barfoos
 
-barfoos_CXXFLAGS=$(CF) -std=c++11 $(CCMACOSXFLAGS)
-barfoos_CFLAGS=$(CF) -std=c99
+barfoos_CXXFLAGS=$(CF)
+barfoos_CFLAGS=$(CF)
 barfoos_LDADD=
-barfoos_LDFLAGS=$(LDWINFLAGS) $(LDMACOSXFLAGS)
+barfoos_LDFLAGS=
 barfoos_SOURCES=\
   main.cc \
   image.cc image.h \

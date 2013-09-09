@@ -71,23 +71,23 @@ void GfxView::Rotate(float angle, const Vector3 &p)  {
 
 void GfxView::Billboard(bool flip, bool vertical) {
   Matrix4 &m = this->modelMatrixStack.back();
-  m(0,0) = flip ? -this->right.x : this->right.x;
-  m(0,1) = flip ? -this->right.y : this->right.y;
-  m(0,2) = flip ? -this->right.z : this->right.z;
 
-  if (vertical) {
-    m(1,0) = 0;
-    m(1,1) = 1;
-    m(1,2) = 0;
-  } else {
-    m(1,0) = this->up.x;
-    m(1,1) = this->up.y;
-    m(1,2) = this->up.z;
-  }
+  Vector3 dir   = (m * Vector3()) - this->pos;
+  Vector3 up    = vertical ? Vector3(0,1,0) : this->up;
+  Vector3 right = dir.Normalize().Cross(up).Normalize();
+  Vector3 fwd   = right.Cross(up).Normalize();
 
-  m(2,0) = -this->forward.x;
-  m(2,1) = -this->forward.y;
-  m(2,2) = -this->forward.z;
+  m(0,0) = flip ? -right.x : right.x;
+  m(0,1) = flip ? -right.y : right.y;
+  m(0,2) = flip ? -right.z : right.z;
+
+  m(1,0) = up.x;
+  m(1,1) = up.y;
+  m(1,2) = up.z;
+
+  m(2,0) = fwd.x;
+  m(2,1) = fwd.y;
+  m(2,2) = fwd.z;
 
   m(0,3) = 0.0;
   m(1,3) = 0.0;
@@ -97,11 +97,12 @@ void GfxView::Billboard(bool flip, bool vertical) {
 
 void
 GfxView::AlignY(const Vector3 &axis) {
-  Vector3 up    = axis.Normalize();
-  Vector3 right = this->forward.Cross(up).Normalize();
-  Vector3 fwd   = right.Cross(axis).Normalize();
-
   Matrix4 &m = this->modelMatrixStack.back();
+
+  Vector3 dir   = (m * Vector3()) - this->pos;
+  Vector3 up    = axis.Normalize();
+  Vector3 right = dir.Normalize().Cross(up).Normalize();
+  Vector3 fwd   = right.Cross(axis).Normalize();
 
   m(0,0) = right.x;
   m(0,1) = right.y;

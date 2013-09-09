@@ -520,7 +520,7 @@ Cell::SetYOffsets(float a, float b, float c, float d) {
   this->shared.topHeights[1] = b * OffsetScale;
   this->shared.topHeights[2] = c * OffsetScale;
   this->shared.topHeights[3] = d * OffsetScale;
-  world->MarkForUpdateNeighbours(this);
+  if (this->world) world->MarkForUpdateNeighbours(this);
   this->shared.topFlat = a == b && b == c && c == d;
   return *this;
 }
@@ -538,7 +538,7 @@ Cell::SetYOffsetsBottom(float a, float b, float c, float d) {
   this->shared.bottomHeights[1] = b * OffsetScale;
   this->shared.bottomHeights[2] = c * OffsetScale;
   this->shared.bottomHeights[3] = d * OffsetScale;
-  world->MarkForUpdateNeighbours(this);
+  if (this->world) this->world->MarkForUpdateNeighbours(this);
   this->shared.bottomFlat = a == b && b == c && c == d;
   return *this;
 }

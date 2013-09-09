@@ -331,7 +331,7 @@ World::Update(
 
   if (neighbourCount > 0) {
     this->dirty = true;
-    Log("updated %u neighbours\n", neighbourCount);
+    //Log("updated %u neighbours\n", neighbourCount);
   }
 
   // tick world

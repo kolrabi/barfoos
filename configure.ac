@@ -1,7 +1,7 @@
 #                                               -*- Autoconf -*-
 # Process this file with autoconf to produce a configure script.
 
-AC_PREREQ(2.56)
+AC_PREREQ(2.61)
 AC_INIT(barfoos, 0.1, barfoos@kolrabi.de)
 AC_CONFIG_SRCDIR([src/main.cc])
 AC_CONFIG_HEADER([src/config.h])
@@ -16,6 +16,8 @@ AC_SUBST(VER_BLD, 0)
 AC_PROG_CC
 AM_PROG_CC_C_O
 AC_PROG_CXX
+
+AX_CXX_COMPILE_STDCXX_11()
 
 # Checks for libraries.
 AM_CONDITIONAL([WINDOOF], [test x$OS     = xWindows_NT])
@@ -34,6 +36,9 @@ if test x$OS = xWindows_NT; then
 elif test x$OSTYPE = xdarwin11; then
   AC_MSG_RESULT([MacOS X])
   AC_DEFINE(MACOSX)
+
+  LDFLAGS="$LDFLAGS -framework OpenGL -framework cocoa -framework IOKit -framework OpenAL"
+
 else
   AC_CHECK_LIB(X11,     XOpenDisplay, [
     AC_MSG_RESULT([X11 compatible])
@@ -59,8 +64,7 @@ AC_CHECK_HEADER(pthread.h, [
 ])
 
 AC_CHECK_HEADER(GLFW/glfw3.h, [
-  AC_CHECK_LIB(glfw3, main, [
-  ], [
+  AC_CHECK_LIB(glfw3, main, [], [
     AC_MSG_ERROR([cannot find glfw3 library])
   ])
 ], [
@@ -81,7 +85,6 @@ AC_CHECK_HEADERS([vorbis/vorbisfile.h vorbis/vorbisenc.h], [
 ], [
   AC_MSG_WARN([cannot find ogg vorbis headers. Sound will be disabled.])
 ])
-
 
 AC_CHECK_LIB(z, main)
 AC_CHECK_LIB(png, main)
