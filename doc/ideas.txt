@@ -22,6 +22,12 @@ story:
                 just kill everything	
                 get to next level
 
+- description:  multiplayer space station crawler
+  ideas:        |-
+                plain old futuristic scifi
+                just kill everything (aliens) 
+                get to next level
+
 - description:  find your pet
   ideas:        |-
                 modern times
@@ -29,7 +35,7 @@ story:
                 you follow to find it
                 endboss drops item to level up pet
                 level up pet to fight along you
-                or try to make your way back without leveling it up
+                or try to make your way back without leveling it up (escorting mission)
 
   names:
     - A Journey of Dog
@@ -61,6 +67,7 @@ story:
                 
   names: 
     - Deliver
+    - Pizza Diablo
 
 other:
   - permadeath?
