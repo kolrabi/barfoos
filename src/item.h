@@ -4,6 +4,8 @@
 #include "weighted_map.h"
 #include "itemproperties.h"
 
+#include "entity.pb.h"
+
 class Inventory;
 
 enum class Beatitude : int8_t {
@@ -16,6 +18,7 @@ class Item final {
 public:
 
   Item(const std::string &type);
+  Item(const Item_Proto &proto);
   Item(const Item &) = default;
   virtual ~Item();
 
@@ -34,7 +37,7 @@ public:
   bool UseOnCell(RunningState &state, Mob &user, Cell *cell, Side side);
   bool UseOnNothing(RunningState &state, Mob &user);
 
-  uint32_t GetDurability()              const { return this->durability; }
+  uint32_t GetDurability()              const { return this->proto.durability(); }
   float GetRange()                      const { return this->properties->range * this->effect->range; }
   float GetDamage()                     const { return this->properties->damage * this->effect->damage; }
   Element GetElement()                  const { return this->effect->element; }
@@ -46,31 +49,35 @@ public:
 
   bool IsEquippable(InventorySlot slot) const { return this->properties->equippable & 1<<(size_t)slot; }
   uint32_t GetEquippableSlots()         const { return this->properties->equippable; }
-  bool IsEquipped()                     const { return this->isEquipped; }
+  bool IsEquipped()                     const { return this->proto.is_equipped(); }
 
   void SetEquipped(bool equipped);
-  bool IsCursed()                       const { return this->beatitude == Beatitude::Cursed; }
+  bool IsCursed()                       const { return this->GetBeatitude() == Beatitude::Cursed; }
   bool CanStack(const Item &other)      const;
-  bool IsInited()                       const { return this->initDone; }
+  bool IsInited()                       const { return this->proto.is_init_done(); }
 
   std::string GetDisplayName(bool capitalize = false)          const;
   const std::string &GetType()          const { return this->properties->name; }
   Stats GetDisplayStats()               const;
-  uint32_t GetAmount()                  const { return this->amount; }
-  void DecAmount()                            { if (this->amount > 1) this->amount --; else this->isRemovable = true; }
-  void IncAmount()                            { this->amount ++; }
+  void SetAmount(int amt)                     { this->proto.set_amount(amt); }
+  uint32_t GetAmount()                  const { return this->proto.amount(); }
+  void DecAmount()                            { if (this->GetAmount() >= 1) this->SetAmount(this->GetAmount()-1); }
+  void IncAmount()                            { this->SetAmount(this->GetAmount()+1); }
   void AddAmount(int amt);
-  void SetAmount(int amt)                     { this->amount = amt; }
-  void SetUnlockID(uint32_t id)               { this->unlockID = id; }
-  void SetCharging(bool charging)             { this->charging = charging; if (!charging) this->chargeT = 0.0; }
-  float GetCharge()                     const { return this->charging ? this->chargeT : 0.0; }
+  void SetUnlockID(uint32_t id)               { this->proto.set_unlock_id(id); }
+  void SetCharging(bool charging)             { this->proto.set_is_charging(charging); if (!charging) this->proto.set_charge_time(0.0); }
+  bool IsCharging()                     const { return this->proto.is_charging(); }
+  float GetCharge()                     const { return this->IsCharging() ? this->proto.charge_time() : 0.0; }
 
   bool IsConsumable()                   const { return this->properties->onConsumeEffect != "" || this->properties->onConsumeResult != "" || this->properties->onConsumeTeleport; }
-  bool IsRemovable()                    const { return isRemovable || this->amount == 0; }
+  bool IsRemovable()                    const { return isRemovable || this->GetAmount() == 0; }
   bool NeedsChargeUp()                  const { return this->properties->chargeTime > 0.0; }
+  float GetCooldownFrac()               const { return this->proto.cooldown_frac(); }
 
   const ItemProperties &GetProperties() const { return *this->properties; }
   const EffectProperties &GetEffect()   const { return *this->effect; }
+  int32_t GetModifier()                 const { return this->proto.modifier(); }
+  Beatitude GetBeatitude()              const { return (Beatitude)this->proto.beatitude(); }
 
   std::shared_ptr<Item> Combine(const std::shared_ptr<Item> &other);
   std::shared_ptr<Item> Consume(RunningState &state, Entity &user);
@@ -79,9 +86,11 @@ public:
 
   void ReplaceWith(const std::string &type);
 
+  const Item_Proto &GetProto() const { return this->proto; }
+
 protected:
 
-  bool initDone;
+  Item_Proto proto;
 
   const ItemProperties *properties;
   const EffectProperties *effect;
@@ -92,24 +101,9 @@ protected:
 
   // rendering
   Sprite sprite;
-  float cooldownFrac;
 
   // gameplay
-  float durability;
-  bool isEquipped;
-  float nextUseT;
-
-  bool charging;
-  float chargeT;
-
-  Beatitude beatitude;
-  int modifier;
-
   bool typeIdentified;
-  bool itemIdentified;
-
-  uint32_t amount;
-  uint32_t unlockID;
 
   friend Serializer   &operator << (Serializer &ser, const Item &item);
   friend Deserializer &operator >> (Deserializer &ser, Item *&item);

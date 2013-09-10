@@ -4,7 +4,10 @@
 #include <vector>
 #include <unordered_map>
 
+#include "entity.pb.h"
+
 struct EffectProperties;
+const EffectProperties &getEffect(const std::string &name);
 
 namespace Const {
   static constexpr float WalkSpeedFactorPerAGI   = 0.2f; // double walk speed every 5 agi points
@@ -13,6 +16,25 @@ namespace Const {
   static constexpr float ExpLevelExponent        = 0.4f; //
   static constexpr float ExpLevelSkill           = 3.0f; //
 };
+
+enum class HitType : uint8_t {
+  Miss = 0,
+  Normal = 1,
+  Critical = 2
+};
+
+enum class Element : uint8_t {
+  Physical = 0,
+  Fire,
+  Water,
+  Earth,
+  Wind,
+  Life
+};
+
+namespace std { template<> struct hash<Element> {
+  size_t operator()(const Element &type) const { return (size_t)type; }
+}; }
 
 enum class HealthType : uint8_t {
   Unspecified = 0,
@@ -34,25 +56,6 @@ namespace std { template<> struct hash<HealthType> {
 }; }
 
 static inline bool IsContinuous(HealthType t) { return t == HealthType::Fire || t == HealthType::Lava; }
-
-enum class HitType : uint8_t {
-  Miss = 0,
-  Normal = 1,
-  Critical = 2
-};
-
-enum class Element : uint8_t {
-  Physical = 0,
-  Fire,
-  Water,
-  Earth,
-  Wind,
-  Life
-};
-
-namespace std { template<> struct hash<Element> {
-  size_t operator()(const Element &type) const { return (size_t)type; }
-}; }
 
 struct HealthInfo {
   float       amount;
@@ -86,56 +89,61 @@ struct HealthInfo {
 
 /** A buff/debuff. */
 struct Buff {
-  /** The effect this buff/debuff has. */
-  const EffectProperties *effect;
+  Buff(const std::string &type, float startT) {
+    this->proto.set_effect(type);
+    this->proto.set_start_time(startT);
+  }
 
-  /** Time when the buff/debuff was added. */
-  float startT;
+  Buff(const Buff_Proto &proto) : proto(proto) {}
 
-  friend Serializer &operator << (Serializer &ser, const Buff &buff);
-  friend Deserializer &operator >> (Deserializer &deser, Buff &buff);
+  const EffectProperties &GetEffect()     const { return getEffect(this->proto.effect()); }
+  float                   GetStartTime()  const { return this->proto.start_time(); }
+
+  void                    Extend(float t)       { this->proto.set_start_time(this->proto.start_time() + t); }
+  void                    Restart(float t)      { this->proto.set_start_time(t); }
+
+  Buff_Proto proto;
 };
 
 /** Entity stats. */
 struct Stats {
-  /** Strength, damage done is str * 0.5 * item base damage - def * 0.5. */
-  int str = 0;
+  Stats() {}
+  Stats(const Stats_Proto &proto) : proto(proto) {}
 
-  /** Dexterity, hit chance is dex:agi. */
-  int dex = 0;
+  uint32_t GetStrength()     const { return proto.str();     }
+  uint32_t GetDexterity()    const { return proto.dex();     }
+  uint32_t GetAgility()      const { return proto.agi();     }
+  uint32_t GetDefense()      const { return proto.def();     }
+  uint32_t GetMagicAttack()  const { return proto.matk();    }
+  uint32_t GetMagicDefense() const { return proto.mdef();    }
+  uint32_t GetMaxHealth()    const { return proto.max_hp();  }
 
-  /** Agility. */
-  int agi = 0;
+  void SetStrength(uint32_t v)      { proto.set_str(v);     }
+  void SetDexterity(uint32_t v)     { proto.set_dex(v);     }
+  void SetAgility(uint32_t v)       { proto.set_agi(v);     }
+  void SetDefense(uint32_t v)       { proto.set_def(v);     }
+  void SetMagicAttack(uint32_t v)   { proto.set_matk(v);    }
+  void SetMagicDefense(uint32_t v)  { proto.set_mdef(v);    }
+  void SetMaxHealth(uint32_t v)     { proto.set_max_hp(v);  }
 
-  /** Defense. */
-  int def = 0;
+  float GetExperience() const { return proto.exp();     }
+  uint32_t GetLevel()   const { return Stats::GetLevelForExp(this->GetExperience()); }
+  uint32_t GetSP()      const { return proto.sp();      }
 
-  /** Magical attack. */
-  int matk = 0;
+  float GetWalkSpeed()  const { return proto.walk_speed(); }
+  float GetCoolDown()   const { return proto.cool_down(); }
+  void  SetWalkSpeed(float f) { proto.set_walk_speed(f); }
+  void  SetCoolDown(float f)  { proto.set_cool_down(f); }
 
-  /** Magical defense. */
-  int mdef = 0;
-
-  /** Maximum number of hitpoints. */
-  int maxHealth = 10;
-
-  /** Accumulated experience points. */
-  float exp = 0;
-
-  /** Points available to spend on stats. */
-  uint32_t sp = 0;
-
-  /** Current walkspeed factor. */
-  float walkSpeed = 1.0;
-
-  /** Current cooldown factor. */
-  float cooldown = 1.0;
-
-  std::unordered_map<std::string, uint32_t> skills;
+  uint32_t GetSkill(const std::string &name) const;
+  bool UpgradeSkill(const std::string &name, uint32_t points = 1);
+  std::unordered_map<std::string, uint32_t> GetAllSkills();
 
   bool operator==(const Stats &o);
-  bool AddExp(float exp);
+  bool AddExperience(float exp);
   std::string GetToolTip() const;
+
+  Stats_Proto proto;
 
   static HealthInfo MeleeAttack(const Entity &attacker, const Entity &victim, const Item &item, Random &random);
   static HealthInfo MagicAttack(ID attackerID, const Entity &victim, float damage, Element element);
@@ -146,9 +154,6 @@ struct Stats {
   static size_t GetLevelForExp(float exp);
   static float GetExpForSkillLevel(size_t lvl);
   static size_t GetLevelForSkillExp(float exp);
-
-  friend Serializer &operator << (Serializer &ser, const Stats &stats);
-  friend Deserializer &operator >> (Deserializer &deser, Stats &stats);
 };
 
 #endif

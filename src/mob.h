@@ -9,7 +9,6 @@ class Mob : public Entity {
 public:
 
   Mob(const std::string &type);
-  Mob(const std::string &type, Deserializer &deser);
   Mob(const Mob &that) = delete;
   virtual ~Mob();
   Mob &                     operator=   (const Mob &that) = delete;
@@ -27,8 +26,8 @@ public:
   void                      SetVelocity (const Vector3 &v)                                            { velocity = v; }
   const Vector3 &           GetVelocity ()                                            const           { return velocity; }
 
-  virtual void              Serialize   (Serializer &ser)                             const override;
-  virtual SpawnClass        GetSpawnClass()                                           const override { return SpawnClass::MobClass; }
+  //virtual void              Serialize   (Serializer &ser)                             const override;
+  //virtual SpawnClass        GetSpawnClass()                                           const override { return SpawnClass::MobClass; }
 
   Cell *                    GetSelection(RunningState &state, float range, const std::shared_ptr<Item> &item, Side &selectedCellSide, ID &entityId);
   bool                      HasLearntSpell(const std::string &name) const;

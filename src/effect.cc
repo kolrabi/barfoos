@@ -139,29 +139,29 @@ EffectProperties::ModifyStats(Stats &stats, bool forceEquipped, int modifier, Be
   if (beatitude == Beatitude::Blessed) f *=  1.5;
 
   if (forceEquipped) {
-    stats.str += this->eqAddStr * f;
-    stats.agi += this->eqAddAgi * f;
-    stats.dex += this->eqAddDex * f;
-    stats.def += this->eqAddDef * f;
-    stats.mdef += this->eqAddMDef * f;
-    stats.matk += this->eqAddMAtk * f;
-    stats.maxHealth += this->eqAddHP * f;
+    stats.SetStrength     (stats.GetStrength()      + this->eqAddStr   * f);
+    stats.SetAgility      (stats.GetAgility()       + this->eqAddAgi   * f);
+    stats.SetDexterity    (stats.GetDexterity()     + this->eqAddDex   * f);
+    stats.SetDefense      (stats.GetDefense()       + this->eqAddDef   * f);
+    stats.SetMagicDefense (stats.GetMagicDefense()  + this->eqAddMDef  * f);
+    stats.SetMagicAttack  (stats.GetMagicAttack()   + this->eqAddMAtk  * f);
+    stats.SetMaxHealth    (stats.GetMaxHealth()     + this->eqAddHP    * f);
 
     if (beatitude == Beatitude::Normal) {
-      stats.walkSpeed *= std::pow(this->walkSpeed, modifier*0.25) * this->walkSpeed;
-      stats.cooldown  *= std::pow(this->cooldown,  modifier*0.25) * this->cooldown;
+      stats.SetWalkSpeed  (stats.GetWalkSpeed() * std::pow(this->walkSpeed, modifier*0.25) * this->walkSpeed);
+      stats.SetCoolDown   (stats.GetCoolDown()  * std::pow(this->cooldown,  modifier*0.25) * this->cooldown);
     } else {
-      stats.walkSpeed *= this->walkSpeed * this->walkSpeed;
-      stats.cooldown  *= this->cooldown  * this->cooldown;
+      stats.SetWalkSpeed  (stats.GetWalkSpeed() * this->walkSpeed * this->walkSpeed);
+      stats.SetCoolDown   (stats.GetCoolDown()  * this->cooldown  * this->cooldown);
     }
   } else {
-    stats.str += this->uneqAddStr * f;
-    stats.agi += this->uneqAddAgi * f;
-    stats.dex += this->uneqAddDex * f;
-    stats.def += this->uneqAddDef * f;
-    stats.mdef += this->uneqAddMDef * f;
-    stats.matk += this->uneqAddMAtk * f;
-    stats.maxHealth += this->uneqAddHP * f;
+    stats.SetStrength     (stats.GetStrength()      + this->uneqAddStr   * f);
+    stats.SetAgility      (stats.GetAgility()       + this->uneqAddAgi   * f);
+    stats.SetDexterity    (stats.GetDexterity()     + this->uneqAddDex   * f);
+    stats.SetDefense      (stats.GetDefense()       + this->uneqAddDef   * f);
+    stats.SetMagicDefense (stats.GetMagicDefense()  + this->uneqAddMDef  * f);
+    stats.SetMagicAttack  (stats.GetMagicAttack()   + this->uneqAddMAtk  * f);
+    stats.SetMaxHealth    (stats.GetMaxHealth()     + this->uneqAddHP    * f);
   }
 }
 

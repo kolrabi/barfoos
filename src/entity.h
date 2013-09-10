@@ -16,6 +16,9 @@
 
 #include "properties.h"
 
+#include "entity.pb.h"
+#include <iostream>
+
 enum class SpawnClass : char {
   EntityClass = 'E',
   MobClass    = 'M',
@@ -162,7 +165,7 @@ class Entity : public Triggerable {
 public:
 
   static Entity *Create(const std::string &type);
-  static Entity *Create(const std::string &type, Deserializer &deser);
+  //static Entity *Create(const std::string &type, Deserializer &deser);
 
   Entity(const Entity &that) = delete;
   virtual ~Entity();
@@ -190,25 +193,39 @@ public:
   virtual void OnBuffAdded(RunningState &, const EffectProperties &)      {}
 
   // management
-  ID                        GetId()                           const { return id; }
+  ID                        GetId()                           const { return this->proto.id(); }
   bool                      IsRemovable()                     const { return removable; }
   const EntityProperties *  GetProperties()                   const { return properties; }
   virtual std::string       GetName()                         const { return properties->displayName; }
 
-  ID                        GetOwner()                        const { return ownerId; }
-  void                      SetOwner(const Entity &owner)           { this->ownerId = owner.id; }
+  ID                        GetOwner()                        const { return this->proto.owner_id(); }
+  void                      SetOwner(const Entity &owner)           { this->proto.set_owner_id(owner.GetId()); }
 
   // gameplay
 
   bool                      IsSolid()                         const { return properties->isSolid; }
-  bool                      IsDead()                          const { return this->isDead; }
+  bool                      IsDead()                          const { return this->proto.is_dead(); }
   Inventory &               GetInventory()                          { return this->inventory; }
 
-  void                      SetSpawnPos(const Vector3  &p)          { this->spawnPos = p; }
+  void                      SetSpawnPosition(const Vector3  &p)     { this->proto.mutable_spawn_position()->set_x(p.x); 
+                                                                      this->proto.mutable_spawn_position()->set_y(p.y); 
+                                                                      this->proto.mutable_spawn_position()->set_z(p.z); }
+  Vector3                   GetSpawnPosition()                const { return Vector3(this->proto.spawn_position().x(), 
+                                                                                     this->proto.spawn_position().y(), 
+                                                                                     this->proto.spawn_position().z()); }
 
   void                      SetPosition(const Vector3  &pos)        { this->smoothPosition.SnapTo( this->aabb.center = pos ); }
   void                      SetPosition(const IVector3 &pos)        { this->SetPosition(Vector3(pos) + Vector3(0.5,0.5,0.5)); }
   const Vector3 &           GetPosition()                     const { return this->aabb.center; }
+
+  void                      SetForward(const Vector3  &p)           { this->proto.mutable_forward()->set_x(p.x); 
+                                                                      this->proto.mutable_forward()->set_y(p.y); 
+                                                                      this->proto.mutable_forward()->set_z(p.z); }
+  Vector3                   GetForward()                      const { return Vector3(this->proto.forward().x(), 
+                                                                                     this->proto.forward().y(), 
+                                                                                     this->proto.forward().z()); }
+  Vector3                   GetRight()                        const { return this->GetForward().Cross(Vector3(0,1,0)); }
+
   const Vector3 &           GetSmoothPosition()               const { return this->smoothPosition; }
   const Vector3             GetEyePosition()                  const { return this->GetPosition() + Vector3(0,this->properties->eyeOffset,0); }
   const Vector3             GetSmoothEyePosition()            const { return this->GetSmoothPosition() + Vector3(0,this->properties->eyeOffset,0); }
@@ -217,14 +234,11 @@ public:
   void                      PlaySound(RunningState &state, const std::string &sound);
   void                      PlaySound(const std::string &sound);
 
-  void                      SetForward(const Vector3 &fwd)          { this->forward = fwd; }
-  Vector3                   GetForward()                      const { return this->forward; }
-  Vector3                   GetRight()                        const { return this->forward.Cross(Vector3(0,1,0)); }
 
   const AABB &              GetAABB()                         const { return this->aabb; }
   Stats                     GetEffectiveStats()               const;
   Stats &                   GetBaseStats()                          { return this->baseStats; }
-  float                     GetHealth()                       const { return this->health; }
+  float                     GetHealth()                       const { return this->proto.health(); }
 
   Element                   GetElement()                      const { return this->properties->element; }
 
@@ -241,39 +255,38 @@ public:
   // rendering
   virtual IColor            GetLight()                        const;
 
-  virtual void              Serialize(Serializer &ser)        const;
+  virtual const Entity_Proto &GetProto();
 
-  virtual SpawnClass        GetSpawnClass()                   const { return SpawnClass::EntityClass; }
+  //virtual void              Serialize(Serializer &ser)        const;
+
+  //virtual SpawnClass        GetSpawnClass()                   const { return SpawnClass::EntityClass; }
 
 protected:
 
-  Entity(const std::string &type);
-  Entity(const std::string &type, Deserializer &deser);
+                            Entity(const std::string &type);
+                            Entity(const Entity_Proto &proto);
+
+  float                     GetStartTime()                    const { return this->proto.start_time(); }
+  void                      SetStartTime(float t)                   { this->proto.set_start_time(t); }
+
+  float                     GetDieTime()                      const { return this->proto.die_time(); }
+  void                      SetDieTime(float t)                     { this->proto.set_die_time(t); }
+
+  Entity_Proto proto;
 
   // management
-  ID id, ownerId;
   bool removable;
   const EntityProperties *properties;
-  float nextThinkT, startT;
 
   std::unordered_map<std::string, Regular> regulars;
   std::vector<std::string> queuedSounds;
 
   // gameplay
-  float dieT;
-  bool isDead;
   Smooth<Vector3> smoothPosition = Smooth<Vector3>(30.0);
-  Vector3 lastPos;
-  Vector3 spawnPos;
-  Vector3 forward;
-  Vector3 lastPosition;
 
   Stats baseStats;
   std::vector<Buff> activeBuffs;
-
   AABB aabb;
-
-  float health;
 
   Cell *lastCell;
   IVector3 cellPos;

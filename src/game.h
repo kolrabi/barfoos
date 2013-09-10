@@ -6,6 +6,10 @@
 
 #include "markov.h"
 
+#include "game.pb.h"
+
+#include <iostream>
+
 class GameState;
 
 class Game final {
@@ -27,7 +31,7 @@ public:
   Input  &GetInput()  const { return *this->input;  }
   Random &GetRandom()       { return random;        }
 
-  float   GetTime()   const { return this->lastT;   }
+  float   GetTime()   const { return this->proto.last_time();   }
   float   GetDeltaT() const { return this->deltaT;  }
   float   GetFPS()    const { return this->fps;     }
 
@@ -37,6 +41,9 @@ public:
 
   void HandleEvent(const InputEvent &event);
   void                  SetGui(const std::shared_ptr<Gui> &gui);
+
+  void Serialize(std::ostream &out);
+  void Deserialize(std::istream &in);
 
 private:
 
@@ -51,13 +58,13 @@ private:
   GameState *activeGameState;
   GameState *nextGameState;
 
+  Game_Proto proto;
+
   // --------------------------------------------
 
   std::shared_ptr<Gui> activeGui;
 
   float   startT;
-
-  float   lastT;
   float   deltaT;
 
   size_t  frame, realFrame;
@@ -65,17 +72,15 @@ private:
 
   float   fps;
 
-  std::string seed;
   Random random;
 
   void Render() const;
   void Update(float t, float deltaT);
 
   markov_chain<char> scrollMarkov;
-  std::vector<std::string> identifiedItems;
 
-  friend Serializer &operator << (Serializer &ser, const Game &game);
-  friend Deserializer &operator >> (Deserializer &deser, Game &game);
+  //friend Serializer &operator << (Serializer &ser, const Game &game);
+ //friend Deserializer &operator >> (Deserializer &deser, Game &game);
 };
 
 #endif

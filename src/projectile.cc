@@ -3,9 +3,8 @@
 
 Projectile::Projectile(const std::string &type) :
   Mob(type)
-{}
-
-Projectile::Projectile(const std::string &type, Deserializer &deser) : Mob(type, deser) {
+{
+  this->proto.set_spawn_class(uint32_t(SpawnClass::ProjectileClass));
 }
 
 void Projectile::Start(RunningState &state, uint32_t id) {

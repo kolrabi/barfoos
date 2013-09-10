@@ -36,11 +36,3 @@ void Triggerable::TriggerOff() {
     triggered = false;
   }
 }
-
-Serializer &operator << (Serializer &ser, const Triggerable &trig) {
-  return ser << trig.triggerID << trig.isToggle << trig.triggered;
-}
-
-Deserializer &operator >> (Deserializer &deser, Triggerable &trig) {
-  return deser >> trig.triggerID >> trig.isToggle >> trig.triggered;
-}

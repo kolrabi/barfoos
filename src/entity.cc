@@ -259,7 +259,7 @@ Entity *Entity::Create(const std::string &type) {
   }
   return entity;
 }
-
+/*
 Entity *Entity::Create(const std::string &type, Deserializer &deser) {
   //if (allEntities.find(type) == allEntities.end()) return nullptr;
   const EntityProperties &prop = allEntities[type];
@@ -276,23 +276,13 @@ Entity *Entity::Create(const std::string &type, Deserializer &deser) {
   }
   return entity;
 }
-
+*/
 Entity::Entity(const std::string &type) :
-  id(InvalidID),
-  ownerId(InvalidID),
   removable(false),
   properties(getEntity(type)),
-  nextThinkT(0.0),
-  startT(0.0),
   regulars(),
-  dieT(0.0),
-  isDead(false),
-  lastPos(),
-  spawnPos(),
-  forward(0,0,1),
   baseStats(),
   aabb(this->properties->extents),
-  health(this->properties->maxHealth),
   lastCell(nullptr),
   cellPos(),
   inventory(),
@@ -303,26 +293,7 @@ Entity::Entity(const std::string &type) :
   emitters(this->properties->emitters),
   renderAngle(0.0)
 {
-}
-
-Entity::Entity(const std::string &type, Deserializer &deser) :
-  Entity(type)
-{
-  deser >> (Triggerable&)*this;
-  deser >> ownerId;
-  deser >> nextThinkT;
-  deser >> startT;
-  deser >> lastPos >> spawnPos >> forward;
-
-  deser >> baseStats;
-  deser >> activeBuffs;
-  deser >> aabb;
-
-  deser >> health;
-  deser >> inventory;
-  deser >> lockedID;
-  //deser >> sprite;
-  deser >> renderAngle;
+  this->proto.set_spawn_class(uint32_t(SpawnClass::EntityClass));
 }
 
 Entity::~Entity() {
@@ -333,18 +304,16 @@ Entity::Start(RunningState &state, uint32_t id) {
   Game &game = state.GetGame();
   World &world = state.GetWorld();
 
-  this->id = id;
-  this->nextThinkT = game.GetTime();
-  this->startT = game.GetTime();
-
-  this->PlaySound(state, "start");
+  this->proto.set_id(id);
+  this->proto.set_next_think_time(game.GetTime());
+  this->proto.set_start_time(game.GetTime());
 
   if (this->properties->randomAngle) {
     this->renderAngle = state.GetRandom().Float01() * 360.0;
   }
 
   if (this->properties->lifetime) {
-    this->dieT = game.GetTime() + this->properties->lifetime + state.GetRandom().Float() * this->properties->lifetimeRand;
+    this->SetDieTime(game.GetTime() + this->properties->lifetime + state.GetRandom().Float() * this->properties->lifetimeRand);
   }
 
   float f = 1.0 + state.GetRandom().Float() * this->properties->sizeRand;
@@ -366,14 +335,14 @@ Entity::Start(RunningState &state, uint32_t id) {
   }
 
   // set stats
-  this->baseStats.str = this->properties->str;
-  this->baseStats.dex = this->properties->dex;
-  this->baseStats.agi = this->properties->agi;
-  this->baseStats.def = this->properties->def;
-  this->baseStats.mdef = this->properties->mdef;
-  this->baseStats.matk = this->properties->matk;
-  this->baseStats.maxHealth = this->properties->maxHealth;
-  this->health = this->properties->maxHealth;
+  this->baseStats.SetStrength(this->properties->str);
+  this->baseStats.SetDexterity(this->properties->dex);
+  this->baseStats.SetAgility(this->properties->agi);
+  this->baseStats.SetDefense(this->properties->def);
+  this->baseStats.SetMagicDefense(this->properties->mdef);
+  this->baseStats.SetMagicAttack(this->properties->matk);
+  this->baseStats.SetMaxHealth(this->properties->maxHealth);
+  this->proto.set_health(this->properties->maxHealth);
 
   // resolve initial collision with world
   std::vector<Vector3> verts;
@@ -407,11 +376,27 @@ Entity::Start(RunningState &state, uint32_t id) {
   this->SetPosition(aabb.center + offset);
 
   if (this->properties->lockedChance && state.GetRandom().Chance(this->properties->lockedChance)) state.LockEntity(*this);
+
+  this->PlaySound(state, "start");
 }
 
 void
 Entity::Continue(RunningState &, uint32_t id) {
-  this->id = id;
+  this->proto.set_id(id);
+
+  this->aabb.center = Vector3(this->proto.position().x(), this->proto.position().y(), this->proto.position().z());
+  this->aabb.extents = this->properties->extents;
+
+  this->activeBuffs.clear();
+  for (auto &b : this->proto.active_buffs()) {
+    this->activeBuffs.push_back(Buff(b));
+  }
+
+  this->baseStats = Stats(this->proto.base_stats());
+
+  this->triggerID = this->proto.trigger_id();
+  this->isToggle = this->proto.is_toggle();
+  this->triggered = this->proto.is_triggered();
 }
 
 void
@@ -426,18 +411,17 @@ Entity::Update(RunningState &state) {
     this->PlaySound(state, s);
   this->queuedSounds.clear();
 
-  if (this->dieT && state.GetGame().GetTime() > this->dieT) {
+  if (this->GetDieTime() && state.GetGame().GetTime() > this->GetDieTime()) {
     this->Die(state, HealthInfo());
-    //Log("%s expired %d %u\n", this->properties->name.c_str(), IsDead(), this->sprite.currentAnimation);
   }
 
   // bring out your dead
   if (this->IsDead() && this->sprite.currentAnimation == 0) {
     if (this->properties->respawn) {
       // just respawn
-      this->isDead = false;
-      SetPosition(spawnPos);
-      Start(state, id);
+      this->proto.set_is_dead(false);
+      SetPosition(this->GetSpawnPosition());
+      Start(state, this->GetId());
       Log("respawning %s\n", this->properties->name.c_str());
     } else {
       //Log("marking %s as removable\n", this->properties->name.c_str());
@@ -450,8 +434,8 @@ Entity::Update(RunningState &state) {
   this->sprite.Update(deltaT);
 
   // think, mcfly, think
-  while(properties->thinkInterval && nextThinkT < t) {
-    nextThinkT += properties->thinkInterval;
+  while(properties->thinkInterval && this->proto.next_think_time() < t) {
+    this->proto.set_next_think_time(this->proto.next_think_time() + properties->thinkInterval);
     Think(state);
   }
 
@@ -459,8 +443,12 @@ Entity::Update(RunningState &state) {
   this->smoothPosition.Update(deltaT);
 
   if (!this->IsDead()) {
-    this->health += deltaT * this->properties->heal;
-    if (this->health > GetEffectiveStats().maxHealth) this->health = GetEffectiveStats().maxHealth;
+    this->proto.set_health(
+      std::min(  
+        this->GetHealth() + deltaT * this->properties->heal, 
+        (float)this->GetEffectiveStats().GetMaxHealth()
+      )
+    );
 
     for (auto &e:emitters) {
       e.state += e.rate * deltaT;
@@ -478,18 +466,17 @@ Entity::Update(RunningState &state) {
 
     auto it = this->activeBuffs.begin();
     while(it != this->activeBuffs.end()) {
-      if (t > it->effect->duration + it->startT) {
-        state.GetGame().GetAudio().PlaySound(it->effect->removeSound, this->GetPosition());
+      if (t > it->GetEffect().duration + it->GetStartTime()) {
+        state.GetGame().GetAudio().PlaySound(it->GetEffect().removeSound, this->GetPosition());
         it = this->activeBuffs.erase(it);
       } else {
-        it->effect->Update(state, *this);
-        if (this->isDead) return;
+        it->GetEffect().Update(state, *this);
+        if (this->IsDead()) return;
         it++;
       }
     }
   }
 
-  this->lastPos = this->aabb.center;
   this->cellPos = IVector3(aabb.center.x, aabb.center.y, aabb.center.z);
 
   World &world = state.GetWorld();
@@ -577,9 +564,9 @@ Entity::DrawBoundingBox(Gfx &gfx) const {
 void
 Entity::AddHealth(RunningState &state, const HealthInfo &info) {
   // don't change health of dead or immortal entities
-  if (this->health <= 0 || this->properties->maxHealth == 0) return;
+  if (this->GetHealth() <= 0 || this->properties->maxHealth == 0) return;
 
-  this->health += info.amount;
+  this->proto.set_health(this->GetHealth() + info.amount);
 
   // Log("Entity::AddHealth: %f to %u\n", info.amount, this->GetId());
 
@@ -591,17 +578,17 @@ Entity::AddHealth(RunningState &state, const HealthInfo &info) {
     this->sprite.QueueAnim(0);
   }
 
-  if (this->health <= 0 && info.amount < 0.0) {
-    this->health = 0;
+  if (this->GetHealth() <= 0 && info.amount < 0.0) {
+    this->proto.set_health(0);
     this->Die(state, info);
-  } else if (this->health > this->GetEffectiveStats().maxHealth) {
-    this->health = this->GetEffectiveStats().maxHealth;
+  } else if (this->GetHealth() > this->GetEffectiveStats().GetMaxHealth()) {
+    this->proto.set_health(this->GetEffectiveStats().GetMaxHealth());
   }
 }
 
 void
 Entity::Die(RunningState &state, const HealthInfo &info) {
-  this->isDead = true;
+  this->proto.set_is_dead(true);
 
   // Log("Entity::Die: from %f damage to %u\n", info.amount, this->GetId());
 
@@ -650,39 +637,37 @@ Entity::GetEffectiveStats() const {
   Stats stats = this->baseStats;
   this->inventory.ModifyStats(stats);
   for (auto &b : this->activeBuffs) {
-    b.effect->ModifyStats(stats, true, 0, Beatitude::Normal); // TODO: modifiers for buffs (aka minor, major, ...)
+    b.GetEffect().ModifyStats(stats, true, 0, Beatitude::Normal); // TODO: modifiers for buffs (aka minor, major, ...)
   }
   return stats;
 }
 
 void
 Entity::OnHealthDealt(RunningState &state, Entity &, const HealthInfo &info) {
-  if (this->baseStats.AddExp(info.exp)) this->OnLevelUp(state);
+  if (this->baseStats.AddExperience(info.exp)) this->OnLevelUp(state);
 }
 
 void
 Entity::AddBuff(RunningState &state, const std::string &name) {
   if (name == "") return;
 
-  Buff buff;
-  buff.effect = &getEffect(name);
-  buff.startT = state.GetGame().GetTime();
+  Buff buff(name, state.GetGame().GetTime());
 
-  state.GetGame().GetAudio().PlaySound(buff.effect->addSound, this->GetPosition());
+  state.GetGame().GetAudio().PlaySound(buff.GetEffect().addSound, this->GetPosition());
 
   for (auto &b:this->activeBuffs) {
-    if (b.effect == buff.effect) {
-      if (b.effect->extend) {
-        b.startT += b.effect->duration;
+    if (b.GetEffect() == buff.GetEffect()) {
+      if (b.GetEffect().extend) {
+        b.Extend(b.GetEffect().duration);
       } else {
-        b.startT = buff.startT;
+        b.Restart(state.GetGame().GetTime());
       }
       return;
     }
   }
 
   this->activeBuffs.push_back(buff);
-  this->OnBuffAdded(state, *buff.effect);
+  this->OnBuffAdded(state, buff.GetEffect());
 }
 
 bool
@@ -727,47 +712,32 @@ IColor
 Entity::GetLight() const {
   IColor buffLight;
   for (auto &b : this->activeBuffs) {
-    buffLight = buffLight + b.effect->light;
+    buffLight = buffLight + b.GetEffect().light;
   }
   return this->properties->glow + inventory.GetLight() + buffLight;
 }
 
-void
-Entity::Serialize(Serializer &ser) const {
-  ser << (Triggerable&)*this;
-  ser << ownerId;
-  ser << nextThinkT;
-  ser << startT;
-  ser << lastPos << spawnPos << forward;
+const Entity_Proto &
+Entity::GetProto() {
+  this->proto.mutable_position()->set_x(this->aabb.center.x);
+  this->proto.mutable_position()->set_y(this->aabb.center.y);
+  this->proto.mutable_position()->set_z(this->aabb.center.z);
 
-  ser << baseStats;
-  ser << activeBuffs;
-  ser << aabb;
+  this->proto.clear_active_buffs();
+  for (auto &b : this->activeBuffs) {
+    *this->proto.add_active_buffs() = b.proto;
+  }
 
-  ser << health;
-  ser << inventory;
-  ser << lockedID;
-  //ser << sprite;
-  ser << renderAngle;
-}
+  this->proto.clear_inventory();
+  for (uint8_t i=0; i<(uint8_t)InventorySlot::End; i++) {
+    // TODO
+  }
 
-Serializer &operator << (Serializer &ser, const Entity *entity) {
-  ser << (uint8_t)entity->GetSpawnClass();
-  ser << entity->properties->name;
-  entity->Serialize(ser);
-  return ser;
-}
+  *this->proto.mutable_base_stats() = this->baseStats.proto;
 
-Deserializer &operator >> (Deserializer &deser, Entity *&entity) {
-  Log("deser Entity\n");
+  this->proto.set_trigger_id(this->triggerID);
+  this->proto.set_is_toggle(this->isToggle);
+  this->proto.set_is_triggered(this->triggered);
 
-  uint8_t cl;
-  deser >> cl;
-
-  std::string type;
-  deser >> type;
-
-  entity = Entity::Create(type, deser);
-
-  return deser;
+  return this->proto;
 }

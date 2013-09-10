@@ -785,7 +785,7 @@ Cell::PlaySound(RunningState &state, const std::string &type) {
 }
 
 Serializer &operator << (Serializer &ser, const Cell &cell) {
-  ser << (Triggerable&)cell;
+  //ser << (Triggerable&)cell;
   ser << cell.info->type;
   ser << (cell.texture?cell.texture->name:"") << cell.uscale;
   ser << cell.lastT << cell.tickPhase << cell.lastUseT;
@@ -810,7 +810,7 @@ Serializer &operator << (Serializer &ser, const Cell &cell) {
 }
 
 Deserializer &operator >> (Deserializer &deser, Cell &cell) {
-  deser >> (Triggerable&)cell;
+//  deser >> (Triggerable&)cell;
 
   std::string cellType;
   deser >> cellType;

@@ -65,12 +65,14 @@ Player::Player() :
 
   blink(false)
 {
+  this->proto.set_spawn_class(uint32_t(SpawnClass::PlayerClass));
+
   // TEST:
   this->inventory.Equip(std::make_shared<Item>(Item("sword")), InventorySlot::RightHand);
   this->inventory.Equip(std::make_shared<Item>(Item("torch")), InventorySlot::LeftHand);
   this->inventory.AddToBackpack(std::make_shared<Item>(Item("torch")));
 
-  this->baseStats.skills["magic"] = 10;
+  this->baseStats.UpgradeSkill("magic", 10);
 
   this->LearnSpell("spell.test");
 
@@ -81,7 +83,7 @@ Player::Player() :
   gemSprites[Element::Water]    = Sprite("items/texture/gem.water");
   gemSprites[Element::Life]     = Sprite("items/texture/gem.life");
 }
-
+/*
 Player::Player(Deserializer &deser) : Mob("player", deser),
   // rendering
   crosshairTex      (Texture::Get("gui/crosshair")),
@@ -124,7 +126,7 @@ Player::Player(Deserializer &deser) : Mob("player", deser),
   gemSprites[Element::Water]    = Sprite("items/texture/gem.water");
   gemSprites[Element::Life]     = Sprite("items/texture/gem.life");
 }
-
+*/
 Player::~Player() {
   delete this->bigMessage;
 }
@@ -228,8 +230,11 @@ Player::Update(RunningState &state) {
     } else {
       std::string skill = useItem->GetProperties().useSkill;
       bool result = this->UseItem(state, useItem);
-      if (result && skill != "") this->baseStats.skills[skill]++;
-      // TODO: skill level up message
+      if (result && skill != "") {
+        if (this->baseStats.UpgradeSkill(skill)) {
+          // TODO: skill level up message
+        }
+      }
     }
   } else {
     std::shared_ptr<Item> useItem = this->inventory[InventorySlot::RightHand];
@@ -238,8 +243,11 @@ Player::Update(RunningState &state) {
     if (useItem->NeedsChargeUp() && lastItemActiveLeft) {
       std::string skill = useItem->GetProperties().useSkill;
       bool result = this->UseItem(state, useItem);
-      if (result && skill != "") this->baseStats.skills[skill]++;
-      // TODO: skill level up message
+      if (result && skill != "") {
+        if (this->baseStats.UpgradeSkill(skill)) {
+          // TODO: skill level up message
+        }
+      }
     }
   }
   lastItemActiveLeft = itemActiveLeft;
@@ -252,8 +260,11 @@ Player::Update(RunningState &state) {
     } else {
       std::string skill = useItem->GetProperties().useSkill;
       bool result = this->UseItem(state, useItem);
-      if (result && skill != "") this->baseStats.skills[skill]++;
-      // TODO: skill level up message
+      if (result && skill != "") {
+        if (this->baseStats.UpgradeSkill(skill)) {
+          // TODO: skill level up message
+        }
+      }
     }
   } else {
     std::shared_ptr<Item> useItem = this->inventory[InventorySlot::LeftHand];
@@ -262,8 +273,11 @@ Player::Update(RunningState &state) {
     if (useItem->NeedsChargeUp() && lastItemActiveRight) {
       std::string skill = useItem->GetProperties().useSkill;
       bool result = this->UseItem(state, useItem);
-      if (result && skill != "") this->baseStats.skills[skill]++;
-      // TODO: skill level up message
+      if (result && skill != "") {
+        if (this->baseStats.UpgradeSkill(skill)) {
+          // TODO: skill level up message
+        }
+      }
     }
   }
   lastItemActiveRight = itemActiveRight;
@@ -390,7 +404,7 @@ Player::DrawGUI(Gfx &gfx) const {
     this->leftHand->DrawIcon(gfx, itemPos - Point(36, 0));
   }
 
-  size_t maxElements = Stats::GetLevelForSkillExp(GetEffectiveStats().skills["magic"]);
+  size_t maxElements = GetEffectiveStats().GetSkill("magic");
 
   for (size_t i=0; i<maxElements; i++) {
     if (i >= this->elements.size()) {
@@ -426,14 +440,14 @@ Player::DrawGUI(Gfx &gfx) const {
   // draw health bar
   gfx.SetColor(IColor(255,255,255));
   std::string strHealth;
-  int h = std::ceil(10 * this->health / this->GetEffectiveStats().maxHealth);
+  int h = std::ceil(10 * this->GetHealth() / this->GetEffectiveStats().GetMaxHealth());
   std::string strHeart = u8"\u0081";
   if (h<4 && blink) strHeart = u8"\u0082";
 
   for (int i=0; i<11; i++) {
     if (i<h-1) strHealth += strHeart; else strHealth += " ";
   }
-  RenderString rsHealth(strHealth + " " + ToString(int(this->health)), "big");
+  RenderString rsHealth(strHealth + " " + ToString(int(this->GetHealth())), "big");
   gfx.SetColor(IColor(255, 255-255*this->hpFlashT, 255-255*this->hpFlashT));
   rsHealth.Draw(gfx, 2, vsize.y-4, (int)Align::HorizLeft | (int)Align::VertBottom);
 
@@ -442,21 +456,31 @@ Player::DrawGUI(Gfx &gfx) const {
   char tmp[1024];
   Stats stats = this->GetEffectiveStats();
   snprintf(tmp, sizeof(tmp), "STR: %3d DEX: %3d AGI: %3d DEF: %3d MATK: %3d MDEF: %3d MAX HP: %3d",
-    stats.str, stats.dex, stats.agi, stats.def, stats.matk, stats.mdef, stats.maxHealth
+    stats.GetStrength(), 
+    stats.GetDexterity(), 
+    stats.GetAgility(), 
+    stats.GetDefense(), 
+    stats.GetMagicAttack(), 
+    stats.GetMagicDefense(), 
+    stats.GetMaxHealth()
   );
   RenderString(tmp, "small").Draw(gfx, 4, vsize.y-32);
 
-  snprintf(tmp, sizeof(tmp), "LVL: %3u EXP: %4d / %4d", (unsigned int)Stats::GetLevelForExp(stats.exp), (int)stats.exp, (int)Stats::GetExpForLevel(Stats::GetLevelForExp(stats.exp) + 1));
+  snprintf(tmp, sizeof(tmp), "LVL: %3u EXP: %4d / %4d", 
+    stats.GetLevel(), 
+    (int)stats.GetExperience(), 
+    (int)Stats::GetExpForLevel(stats.GetLevel() + 1)
+  );
   RenderString(tmp, "small").Draw(gfx, 4, vsize.y-32-12);
 
   std::string buffstring;
   for (auto &b:activeBuffs) {
-    buffstring += "\n" + b.effect->displayName;
+    buffstring += "\n" + b.GetEffect().displayName;
   }
   RenderString(buffstring).Draw(gfx, vsize - Point(4,40), int(Align::HorizRight|Align::VertBottom));
 
   std::string skills;
-  for (auto &s:GetEffectiveStats().skills) {
+  for (auto &s:GetEffectiveStats().GetAllSkills()) {
     skills += s.first + ": " + ToString(Stats::GetLevelForSkillExp(s.second));
     skills += " (" + ToString(s.second) + ")\n";
   }
@@ -523,7 +547,7 @@ void
 Player::AddHealth(RunningState &state, const HealthInfo &info) {
   Game &game = state.GetGame();
 
-  int hp = this->health;
+  int hp = this->GetHealth();
   if (info.amount < 0) {
     //if (!IsContinuous(info.type) || game.GetTime() > lastHurtT[(size_t)info.type] + 0.25) {
     //}
@@ -531,7 +555,7 @@ Player::AddHealth(RunningState &state, const HealthInfo &info) {
   }
 
   Mob::AddHealth(state, info);
-  int hp2 = this->health;
+  int hp2 = this->GetHealth();
   if (hp2 < hp) {
     lastHurtT[(size_t)info.type] = game.GetTime();
     this->hpFlashT = 1.0;
@@ -674,7 +698,7 @@ bool Player::UseItem(RunningState &state, const std::shared_ptr<Item> &item) {
 }
 
 void Player::OnLevelUp(RunningState &) {
-  this->health ++;
+  // this->health ++;
   *this->bigMessage = "Level Up!";
   this->bigMessageT = 2.0;
 }
@@ -694,7 +718,7 @@ Player::OnCollide(RunningState &state, Entity &other) {
 
 void
 Player::QueueElement(Element element) {
-  size_t maxElements = Stats::GetLevelForSkillExp(GetEffectiveStats().skills["magic"]);
+  size_t maxElements = GetEffectiveStats().GetSkill("magic");
   size_t elemCount = 1;
   for (Element e:this->elements) if (e == element) elemCount++;
 
@@ -729,7 +753,7 @@ Player::CastSpell(RunningState &state) {
   if (spell.Cast(state, *this)) {
     if (castStart == 0.0) {
       AddMessage("You cast the spell "+spell.displayName);
-      this->baseStats.skills["magic"]++;
+      this->baseStats.UpgradeSkill("magic");
       this->castStart = t;
     }
     this->lastCast = t;
@@ -753,7 +777,7 @@ Player::LearnSpell(const std::string &name) {
   Mob::LearnSpell(name);
   AddMessage("You learn the spell "+getSpell(name).displayName);
 }
-
+/*
 void
 Player::Serialize(Serializer &ser) const {
   Mob::Serialize(ser);
@@ -764,7 +788,7 @@ Player::Serialize(Serializer &ser) const {
   ser << angles;
   ser << elements;
 }
-
+*/
 Player::Message::Message(const std::string &txt, const std::string &font) :
   text(new RenderString(txt, font)),
   messageTime(2)
@@ -773,7 +797,7 @@ Player::Message::Message(const std::string &txt, const std::string &font) :
 Player::Message::~Message() {
   delete text;
 }
-
+/*
 Serializer &operator << (Serializer &ser, const Player::Message *msg) {
   return ser << msg->text->GetText() << msg->text->GetFontName() << msg->messageTime;
 }
@@ -789,3 +813,4 @@ Deserializer &operator >> (Deserializer &deser, Player::Message *&msg) {
   return deser;
 
 }
+*/

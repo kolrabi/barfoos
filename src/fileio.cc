@@ -29,19 +29,21 @@ static std::string getAssetPath(const std::string &name) {
   return "";
 }
 
-static std::string getUserPath(const std::string &name) {
+std::string getUserPath(const std::string &name) {
   std::string base = "./";
 #ifdef WIN32
   TCHAR szPath[MAX_PATH];
   if (SUCCEEDED(SHGetFolderPath(nullptr, CSIDL_LOCAL_APPDATA, nullptr, 0, szPath))) 
     base = szPath;
+
+  for (auto &c:base) if (c == '\\') c = '/';
 #else
   if (getenv("HOME"))
     base = getenv("HOME");
 #endif
   if (base.back() != '/') base += "/";
   
-  Log("%s\n", (base + "." + PACKAGE_NAME + "/" + name).c_str());
+  // Log("%s\n", (base + "." + PACKAGE_NAME + "/" + name).c_str());
 
   return base + "." + PACKAGE_NAME + "/" + name;
 }
@@ -118,7 +120,7 @@ std::vector<std::string> findAssets(const std::string &type) {
   return assets;  
 }
 
-static void makePath(const std::string &path) {
+void makePath(const std::string &path) {
   size_t pos = path.find_last_of('/');
   if (pos == std::string::npos) return;
 
@@ -139,9 +141,16 @@ FILE *createUserFile(const std::string &name) {
   return file;
 }
 
+bool 
+createUserStream(const std::string &name, std::fstream &out) {
+  std::string path = getUserPath(name);
+  makePath(path);
+  out.open(path, std::ios::binary | std::ios::out | std::ios::trunc);
+  return out.is_open();
+}
+
 FILE *openUserFile(const std::string &name) {
   std::string path = getUserPath(name);
-  Log("%s\n", path.c_str());
   FILE *file = fopen(path.c_str(), "rb");
   if (!file) perror(path.c_str());
   return file;

@@ -4,6 +4,8 @@
 #include <png.h>
 #include <zlib.h>
 
+#include <google/protobuf/stubs/common.h>
+
 static std::string credits() {
   std::string str;
 
@@ -27,6 +29,8 @@ static std::string credits() {
 }
 
 int main(int, char **) {
+  GOOGLE_PROTOBUF_VERIFY_VERSION;
+
   std::setlocale(LC_ALL, "en_US.utf8");
 
   Log("%s", credits().c_str());

@@ -19,86 +19,91 @@
 #include "deserializer.h"
 
 Item::Item(const std::string &type) :
-  initDone(false),
   properties(&getItem(type)),
   effect(nullptr),
   durabilityTex(Texture::Get("gui/durability")),
   isRemovable(false),
   sprite(this->properties->sprite),
-  cooldownFrac(0),
-  durability(this->properties->durability),
-  isEquipped(false),
-  nextUseT(0.0),
-  charging(false),
-  chargeT(0.0),
-  beatitude(Beatitude::Normal),
-  modifier(0),
-  typeIdentified(false),
-  itemIdentified(false),
-  amount(1),
-  unlockID(0)
+  typeIdentified(false)
 {
   if (!this->sprite.animations.empty()) this->sprite.StartAnim(0);
+
+  this->proto.set_durability(this->properties->durability);
+}
+
+Item::Item(const Item_Proto &proto) : 
+  proto(proto),
+  properties(&getItem(proto.type())),
+  effect(&getEffect(proto.has_effect()?proto.effect():"")),
+  durabilityTex(Texture::Get("gui/durability")),
+  isRemovable(false),
+  sprite(this->properties->sprite),
+  typeIdentified(proto.is_item_identified())
+{
 }
 
 Item::~Item() {
 }
 
 void Item::ReplaceWith(const std::string &type) {
-  this->initDone = false;
   this->properties = &getItem(type);
   this->isRemovable = false;
   this->sprite = this->properties->sprite;
-  this->cooldownFrac = 0;
-  this->durability = this->properties->durability;
-  this->nextUseT = 0.0;
   this->typeIdentified = false;
-  this->itemIdentified = false;
-  this->charging = false;
-  this->chargeT = false;
+
+  this->proto.set_is_init_done(false);
+  this->proto.set_cooldown_frac(0.0f);
+  this->proto.set_durability(this->properties->durability);
+  this->proto.set_next_use_time(0.0f);
+  this->proto.set_is_item_identified(false);
+  this->proto.set_is_charging(false);
+  this->proto.set_charge_time(0.0f);
+  this->proto.set_amount(1);
+  this->proto.set_unlock_id(0);
+
   if (!this->sprite.animations.empty()) this->sprite.StartAnim(0);
 }
 
 bool Item::CanUse(RunningState &state) const {
-  return (this->durability > 0 || this->properties->durability == 0.0) &&
+  return (this->GetDurability() > 0 || this->properties->durability == 0.0) &&
          this->properties->cooldown >= 0.0 &&
-         this->nextUseT < state.GetGame().GetTime();
+         this->proto.next_use_time() < state.GetGame().GetTime();
 }
 
 void Item::StartCooldown(RunningState &state, Entity &user, bool damage) {
   if (damage) {
-    this->durability -= this->properties->useDurability * this->effect->useDurability;
+    this->proto.set_durability(this->GetDurability() - this->properties->useDurability * this->effect->useDurability);
   }
 
   Stats stats = user.GetEffectiveStats();
-  float cooldown = this->GetCooldown() / (1.0 + Const::AttackSpeedFactorPerAGI*stats.agi);
-  cooldown *= stats.cooldown;
-  this->nextUseT = state.GetGame().GetTime() + cooldown;
+  float cooldown = this->GetCooldown() / (1.0 + Const::AttackSpeedFactorPerAGI*stats.GetAgility());
+  cooldown *= stats.GetCoolDown();
+  this->proto.set_next_use_time(state.GetGame().GetTime() + cooldown);
   if (this->properties->onUseIdentify) {
-    this->itemIdentified = true;
+    this->proto.set_is_item_identified(true);
   }
 
-  this->charging = false;
-  this->chargeT = 0.0;
+  this->proto.set_is_charging(false);
+  this->proto.set_charge_time(0.0f);
 }
 
 void Item::Update(RunningState &state) {
   Game &game = state.GetGame();
 
-  if (!this->initDone) {
-    this->initDone = true;
+  if (!this->proto.is_init_done()) {
+    this->proto.set_is_init_done(true);
 
     if (!this->properties->noModifier) {
-      this->modifier = state.GetRandom().Integer(3) + state.GetRandom().Integer(3) - 2;
+      this->proto.set_modifier(state.GetRandom().Integer(3) + state.GetRandom().Integer(3) - 2);
     }
 
     if (!this->properties->noBeatitude) {
       if (state.GetRandom().Chance(0.01)) {
-        this->beatitude = Beatitude::Cursed;
-        this->modifier = -2;
+        this->proto.set_beatitude(int32_t(Beatitude::Cursed));
+        this->proto.set_modifier(-2);
       } else if (state.GetRandom().Chance(0.1)) {
-        this->beatitude = Beatitude::Blessed;
-        this->modifier = 2;
+        this->proto.set_beatitude(int32_t(Beatitude::Blessed));
+        this->proto.set_modifier(2);
       }
     }
 
@@ -111,11 +116,13 @@ void Item::Update(RunningState &state) {
         effectName = effects[state.GetRandom().Integer(effects.size())];
       }
     }
+
     this->effect = &getEffect(effectName);
-    this->durability *= this->effect->durability;
+    this->proto.set_effect(effectName);
+    this->proto.set_durability(this->proto.durability() * this->effect->durability);
   }
 
-  if (!this->typeIdentified && this->itemIdentified) {
+  if (!this->typeIdentified && this->proto.is_item_identified()) {
     this->typeIdentified = true;
     game.SetIdentified(this->properties->name);
     state.GetPlayer().AddMessage(
@@ -128,9 +135,9 @@ void Item::Update(RunningState &state) {
   }
 
   // reduce durability while equipped
-  if (this->isEquipped) {
+  if (this->IsEquipped()) {
     this->sprite.currentAnimation = this->properties->equipAnim;
-    this->durability -= this->properties->equipDurability * game.GetDeltaT() * this->effect->equipDurability;
+    this->proto.set_durability(this->GetDurability() - this->properties->equipDurability * game.GetDeltaT() * this->effect->equipDurability);
   } else {
     this->sprite.currentAnimation = 0;
   }
@@ -138,38 +145,35 @@ void Item::Update(RunningState &state) {
   this->sprite.Update(game.GetDeltaT());
 
   // when broken, replace or remove
-  if (this->durability <= 0 && this->properties->durability != 0.0) {
+  if (this->GetDurability() <= 0 && this->properties->durability != 0.0) {
     std::string replacement = this->properties->replacement;
     state.GetPlayer().AddMessage("Your "+this->GetDisplayName()+" broke...");
     if (replacement != "") {
       this->ReplaceWith(replacement);
       return;
     } else {
-      if (this->amount > 1) {
-        this->amount--;
-        this->durability = this->properties->durability;
-      } else {
-        this->isRemovable = true;
+      this->DecAmount();
+      if (this->GetAmount() > 0) {
+        this->proto.set_durability(this->properties->durability);
       }
     }
   }
 
   // cooldown fraction: 1.0 full cooldown left, 0.0 cooldown over
-  cooldownFrac = (nextUseT - game.GetTime())/this->properties->cooldown;
-  if (cooldownFrac < 0) cooldownFrac = 0;
+  this->proto.set_cooldown_frac(std::max(0.0f, (this->proto.next_use_time() - game.GetTime())/this->properties->cooldown));
 
-  if (this->charging && this->NeedsChargeUp()) {
-    this->chargeT += game.GetDeltaT() / this->properties->chargeTime;
-    if (this->chargeT > 1.0) this->chargeT = 1.0;
+  if (this->IsCharging() && this->NeedsChargeUp()) {
+    this->proto.set_charge_time(this->proto.charge_time() + game.GetDeltaT() / this->properties->chargeTime);
+    if (this->proto.charge_time() > 1.0) this->proto.set_charge_time(1.0f);
   } else {
-    this->chargeT = 0.0;
+    this->proto.set_charge_time(0.0f);
   }
 }
 
 bool Item::UseOnEntity(RunningState &state, Mob &user, uint32_t id) {
   if (!this->CanUse(state)) return false;
 
-  float charge = this->NeedsChargeUp() ? this->chargeT : 1.0;
+  float charge = this->NeedsChargeUp() ? this->proto.charge_time() : 1.0;
 
   if (this->properties->canUseEntity) {
     Entity *entity = state.GetEntity(id);
@@ -180,14 +184,12 @@ bool Item::UseOnEntity(RunningState &state, Mob &user, uint32_t id) {
     bool result = false;
 
     uint32_t entityLock = entity->GetLockedID();
-    if (entityLock && this->properties->unlockChance > 0.0 && (this->unlockID == entityLock || this->unlockID == 0) && state.GetRandom().Chance(this->properties->unlockChance)) {
+    if (entityLock && this->properties->unlockChance > 0.0 && (this->proto.unlock_id() == entityLock || this->proto.unlock_id() == 0) && state.GetRandom().Chance(this->properties->unlockChance)) {
       entity->Unlock();
       if (this->properties->onUnlockBreak) {
-        if (this->amount > 1) {
-          this->amount--;
-          this->durability = this->properties->durability;
-        } else {
-          this->isRemovable = true;
+        this->DecAmount();
+        if (this->GetAmount() > 0) {
+          this->proto.set_durability(this->properties->durability);
         }
       }
       state.GetPlayer().AddMessage("You unlock the "+entity->GetName());
@@ -208,8 +210,8 @@ bool Item::UseOnEntity(RunningState &state, Mob &user, uint32_t id) {
     } else if (this->properties->damage != 0.0) {
       HealthInfo healthInfo(Stats::MeleeAttack(user, *entity, *this, state.GetRandom()));
 
-      if (entity->GetProperties()->learnEvade && healthInfo.hitType == HitType::Miss && entity->GetSpawnClass() == SpawnClass::PlayerClass) {
-        entity->GetBaseStats().skills["evade"]++;
+      if (entity->GetProperties()->learnEvade && healthInfo.hitType == HitType::Miss) {
+        entity->GetBaseStats().UpgradeSkill("evade");
         // TODO: play item "miss.entity" sound
       } else {
         // TODO: play item "hit.entity" sound
@@ -246,20 +248,18 @@ bool Item::UseOnEntity(RunningState &state, Mob &user, uint32_t id) {
 bool Item::UseOnCell(RunningState &state, Mob &user, Cell *cell, Side) {
   if (!this->CanUse(state)) return false;
 
-  float charge = this->NeedsChargeUp() ? this->chargeT : 1.0;
+  float charge = this->NeedsChargeUp() ? this->proto.charge_time() : 1.0;
 
   if (this->properties->canUseCell) {
     cell->OnUseItem(state, user, *this);
 
     uint32_t cellLock = cell->GetLockedID();
-    if (cellLock && this->properties->unlockChance > 0.0 && (this->unlockID == cellLock || this->unlockID == 0) && state.GetRandom().Chance(this->properties->unlockChance)) {
+    if (cellLock && this->properties->unlockChance > 0.0 && (this->proto.unlock_id() == cellLock || this->proto.unlock_id() == 0) && state.GetRandom().Chance(this->properties->unlockChance)) {
       cell->Unlock();
       if (this->properties->onUnlockBreak) {
-        if (this->amount > 1) {
-          this->amount--;
-          this->durability = this->properties->durability;
-        } else {
-          this->isRemovable = true;
+        this->DecAmount();
+        if (this->GetAmount() > 0) {
+          this->proto.set_durability(this->properties->durability);
         }
       }
       cell->PlaySound(state, "unlock");
@@ -289,7 +289,7 @@ bool Item::UseOnNothing(RunningState &state, Mob &user) {
   if (!this->properties->canUseNothing) return false;
 
   // TODO: play item "use.nothing" sound
-  float charge = this->NeedsChargeUp() ? this->chargeT : 1.0;
+  float charge = this->NeedsChargeUp() ? this->proto.charge_time() : 1.0;
 
   if (this->properties->spawnProjectile != "") {
     Projectile *proj = new Projectile(this->properties->spawnProjectile);
@@ -316,11 +316,11 @@ void Item::Draw(Gfx &gfx, bool left) {
 
   gfx.GetView().Translate(Vector3(1,-1,0));
   switch(properties->useMovement) {
-    case UseMovement::SlashMovement:  gfx.GetView().Rotate(cooldownFrac*60-60, Vector3(0,0,1)); break;
+    case UseMovement::SlashMovement:  gfx.GetView().Rotate(this->GetCooldownFrac()*60-60, Vector3(0,0,1)); break;
     case UseMovement::StabMovement:   gfx.GetView().Rotate(-50, Vector3(0,0,1));
-                                      gfx.GetView().Translate(Vector3(0.5+std::pow(1.0-cooldownFrac,3),0,0)); break;
+                                      gfx.GetView().Translate(Vector3(0.5+std::pow(1.0-this->GetCooldownFrac(),3),0,0)); break;
     case UseMovement::RecoilMovement: gfx.GetView().Rotate(-60, Vector3(0,0,1));
-                                      gfx.GetView().Translate(Vector3(cooldownFrac,0,0)); break;
+                                      gfx.GetView().Translate(Vector3(this->GetCooldownFrac(),0,0)); break;
   }
   gfx.GetView().Translate(Vector3(-1 + this->GetCharge(),1,0));
   gfx.GetView().Scale(Vector3(2,2,2));
@@ -331,15 +331,15 @@ void Item::Draw(Gfx &gfx, bool left) {
 void Item::DrawIcon(Gfx &gfx, const Point &p) const {
   gfx.DrawIcon(this->sprite, p);
 
-  if (this->properties->durability != this->durability) {
-    float dur = this->durability / this->properties->durability;
+  if (this->properties->durability != this->GetDurability()) {
+    float dur = this->GetDurability() / this->properties->durability;
     int frame = 8 * dur;
     gfx.SetTextureFrame(this->durabilityTex, 0, frame, 8);
     gfx.DrawIconQuad(p);
   }
 
-  if (amount > 1)
-    RenderString(ToString(amount), "small").Draw(gfx, p - Point(12, 12));
+  if (this->GetAmount() > 1)
+    RenderString(ToString(this->GetAmount()), "small").Draw(gfx, p - Point(12, 12));
 
 }
 
@@ -350,42 +350,42 @@ Item::DrawSprite(Gfx &gfx, const Vector3 &pos) const {
 
 void
 Item::ModifyStats(Stats &stats, bool forceEquipped) const {
-  float f = 1.0 + 0.75*this->modifier;
-  if (this->beatitude == Beatitude::Blessed) f *=  1.5;
+  float f = 1.0 + 0.75*this->proto.modifier();
+  if (this->GetBeatitude() == Beatitude::Blessed) f *=  1.5;
 
-  if (this->isEquipped || forceEquipped) {
-    stats.str += this->properties->eqAddStr   * f;
-    stats.agi += this->properties->eqAddAgi   * f;
-    stats.dex += this->properties->eqAddDex   * f;
-    stats.def += this->properties->eqAddDef   * f;
-    stats.mdef += this->properties->eqAddMDef * f;
-    stats.matk += this->properties->eqAddMAtk * f;
-    stats.maxHealth += this->properties->eqAddHP * f;
+  if (this->IsEquipped() || forceEquipped) {
+    stats.SetStrength     (stats.GetStrength()      + this->properties->eqAddStr   * f);
+    stats.SetAgility      (stats.GetAgility()       + this->properties->eqAddAgi   * f);
+    stats.SetDexterity    (stats.GetDexterity()     + this->properties->eqAddDex   * f);
+    stats.SetDefense      (stats.GetDefense()       + this->properties->eqAddDef   * f);
+    stats.SetMagicDefense (stats.GetMagicDefense()  + this->properties->eqAddMDef  * f);
+    stats.SetMagicAttack  (stats.GetMagicAttack()   + this->properties->eqAddMAtk  * f);
+    stats.SetMaxHealth    (stats.GetMaxHealth()     + this->properties->eqAddHP    * f);
   } else {
-    stats.str += this->properties->uneqAddStr * f;
-    stats.agi += this->properties->uneqAddAgi * f;
-    stats.dex += this->properties->uneqAddDex * f;
-    stats.def += this->properties->uneqAddDef * f;
-    stats.mdef += this->properties->uneqAddMDef * f;
-    stats.matk += this->properties->uneqAddMAtk * f;
-    stats.maxHealth += this->properties->uneqAddHP * f;
+    stats.SetStrength     (stats.GetStrength()      + this->properties->uneqAddStr   * f);
+    stats.SetAgility      (stats.GetAgility()       + this->properties->uneqAddAgi   * f);
+    stats.SetDexterity    (stats.GetDexterity()     + this->properties->uneqAddDex   * f);
+    stats.SetDefense      (stats.GetDefense()       + this->properties->uneqAddDef   * f);
+    stats.SetMagicDefense (stats.GetMagicDefense()  + this->properties->uneqAddMDef  * f);
+    stats.SetMagicAttack  (stats.GetMagicAttack()   + this->properties->uneqAddMAtk  * f);
+    stats.SetMaxHealth    (stats.GetMaxHealth()     + this->properties->uneqAddHP    * f);
   }
-  if (this->effect) this->effect->ModifyStats(stats, this->isEquipped, this->modifier, this->beatitude);
+  if (this->effect) this->effect->ModifyStats(stats, this->IsEquipped(), this->proto.modifier(), this->GetBeatitude());
 }
 
 std::string
 Item::GetDisplayName(bool capitalize) const {
   std::string amountString;
-  if (this->amount > 1)
-    amountString = u8" \u00d7 " + ToString(this->amount);
+  if (this->GetAmount() > 1)
+    amountString = u8" \u00d7 " + ToString(this->GetAmount());
 
   const char *modifierString = "";
   const char *beatitudeString = "";
   const char *nameString = this->properties->unidentifiedName.c_str();
   const char *effectString = "";
 
-  if (this->itemIdentified || (this->typeIdentified && this->properties->effects.size()==1)) {
-    switch(this->modifier) {
+  if (this->proto.is_item_identified() || (this->typeIdentified && this->properties->effects.size()==1)) {
+    switch(this->proto.modifier()) {
       case -2: modifierString = "terrible "; break;
       case -1: modifierString = "bad "; break;
       case  0: modifierString = ""; break;
@@ -393,13 +393,13 @@ Item::GetDisplayName(bool capitalize) const {
       case  2: modifierString = "excellent "; break;
     }
 
-    if (this->modifier < 0) {
+    if (this->proto.modifier() < 0) {
       Stats statsA = Stats();
       Stats statsB = Stats();
       ModifyStats(statsA);
       if (statsA == statsB) modifierString = "useless ";
     }
-    switch(this->beatitude) {
+    switch(this->GetBeatitude()) {
       case Beatitude::Blessed: beatitudeString = "blessed"; break;
       case Beatitude::Cursed:  beatitudeString = "cursed";  break;
       default: beatitudeString = "";
@@ -408,7 +408,7 @@ Item::GetDisplayName(bool capitalize) const {
     nameString = this->properties->identifiedName.c_str();
   }
 
-  if (this->effect && (this->itemIdentified || (this->typeIdentified && this->properties->effects.size()==1)) ) {
+  if (this->effect && (this->proto.is_item_identified() || (this->typeIdentified && this->properties->effects.size()==1)) ) {
     effectString = this->effect->displayName.c_str();
   }
 
@@ -426,18 +426,14 @@ Item::GetDisplayName(bool capitalize) const {
 Stats
 Item::GetDisplayStats() const {
   Stats stats;
-  stats.str = 0;
-  stats.agi = 0;
-  stats.dex = 0;
-  stats.def = 0;
-  stats.maxHealth = 0;
+  stats.SetMaxHealth(0);
   this->ModifyStats(stats, true);
   return stats;
 }
 
 std::shared_ptr<Item>
 Item::Combine(const std::shared_ptr<Item> &other) {
-  if (this->amount > 1 || other->amount > 1) {
+  if (this->GetAmount() > 1 || other->GetAmount() > 1) {
     // can only combine single items
     return nullptr;
   }
@@ -446,17 +442,20 @@ Item::Combine(const std::shared_ptr<Item> &other) {
 
   if (this->properties->onCombineEffect != "") {
     const EffectProperties &effect = getEffect(this->properties->onCombineEffect);
-    other->modifier += effect.onCombineAddModifier;
-    if (effect.onCombineRemoveCurse && other->IsCursed()) other->beatitude = Beatitude::Normal;
-    if (effect.onCombineIdentify) {
-      other->itemIdentified = true;
+    other->proto.set_modifier(other->proto.modifier() + effect.onCombineAddModifier);
+    if (effect.onCombineRemoveCurse && other->IsCursed()) {
+      other->proto.set_beatitude(int32_t(Beatitude::Normal));
     }
-    this->itemIdentified = true;
+    if (effect.onCombineIdentify) {
+      other->proto.set_is_item_identified(true);
+    }
+    this->proto.set_is_item_identified(true);
     if (this->properties->durability != 0.0) {
-      this->durability -= this->properties->combineDurability;
-      if (this->durability <= 0.0) this->isRemovable = true;
+      this->proto.set_durability(this->GetDurability() - this->properties->combineDurability);
+      if (this->GetDurability() <= 0.0) this->isRemovable = true;
     }
     if (effect.onCombineBreak) {
+      // BUG: if item just identified itself this will prevent the game to notice that
       this->isRemovable = true;
     }
     result = other;
@@ -503,33 +502,35 @@ Item::Consume(RunningState &state, Entity &user) {
 
 void
 Item::SetEquipped(bool equipped) {
-  this->isEquipped = equipped;
+  this->proto.set_is_equipped(equipped);
   if (!equipped) {
-    this->charging = false;
+    this->proto.set_is_charging(false);
   }
 }
 
 void
 Item::AddAmount(int amt) {
   if (amt > 0) {
-    this->amount += amt;
+    this->SetAmount(this->GetAmount() + amt);
     return;
   }
 
-  if (this->amount < (size_t)-amt) {
-    this->amount = 1;
+  if (this->GetAmount() < (size_t)-amt) {
+    this->SetAmount(1);
   } else {
-    this->amount += amt;
+    this->SetAmount(this->GetAmount() + amt);
   }
 }
 
 bool
 Item::CanStack(const Item &other) const {
-  return properties == other.properties && properties->stackable &&
-         durability == other.durability && beatitude == other.beatitude &&
-         modifier == other.modifier;
+  return properties == other.properties && 
+         properties->stackable &&
+         GetDurability() == other.GetDurability() && 
+         GetBeatitude()  == other.GetBeatitude() &&
+         GetModifier()   == other.GetModifier();
 }
-
+/*
 Serializer &operator << (Serializer &ser, const Item &item) {
   ser << item.properties->name;
   ser << (item.effect?item.effect->name:"");
@@ -565,4 +566,4 @@ Deserializer &operator >> (Deserializer &deser, Item *&item) {
 
   return deser;
 }
-
+*/

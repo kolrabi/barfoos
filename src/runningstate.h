@@ -3,6 +3,8 @@
 
 #include "gamestate.h"
 
+#include "runningstate.pb.h"
+
 #include <vector>
 #include <unordered_map>
 
@@ -22,7 +24,7 @@ public:
   void                  ContinueGame();
 
   World  &              GetWorld()                  const { return *this->world;  }
-  int                   GetLevel()                  const { return this->level;   }
+  int                   GetLevel()                  const { return this->proto.level();   }
   bool 	                IsShowingInventory()        const { return this->showInventory; }
 
   // entity management
@@ -47,18 +49,18 @@ public:
 
   void                  TriggerOn(ID id);
   void                  TriggerOff(ID id);
-  ID                    GetNextTriggerId() { return this->nextTriggerId ++; }
+  ID                    GetNextTriggerId();
 
   void                  SaveLevel();
   void                  LoadLevel();
 
 private:
 
-  int32_t level;
+  RunningState_Proto    proto;
+
   World *world;
 
-  ID nextEntityId;
-  ID GetNextEntityId() { return nextEntityId++; }
+  ID GetNextEntityId();
 
   std::unordered_map<ID, Entity*> entities;
   Player *player;
@@ -68,11 +70,8 @@ private:
   bool showInventory;
 
   float lastSaveT;
-  ID nextTriggerId;
 
-  ID nextLockId;
-
-  std::vector<const Entity*> FindLightEntities(const Vector3 &pos, float radius) const;
+ std::vector<const Entity*> FindLightEntities(const Vector3 &pos, float radius) const;
   void BuildWorld();
 
   volatile bool saving;

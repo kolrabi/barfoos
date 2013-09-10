@@ -31,24 +31,9 @@ Mob::Mob(const std::string &propertyName) :
   headCell        (nullptr),
   footCell        (nullptr),
   groundCell      (nullptr)
-{}
-
-Mob::Mob(const std::string &type, Deserializer &deser) : Entity(type, deser),
-  doesWantJump        (false),
-
-  isInLiquid         (false),
-  isSubmerged      (false),
-
-  headCell        (nullptr),
-  footCell        (nullptr),
-  groundCell      (nullptr)
 {
-  deser >> velocity;
-  deser >> lastJumpT;
-  deser >> isOnGround;
-  deser >> isNoclip;
-  deser >> isSneaking;
-  deser >> learntSpells;
+  this->proto.set_spawn_class(uint32_t(SpawnClass::MobClass));
+  this->proto.mutable_mob();
 }
 
 Mob::~Mob() {
@@ -98,7 +83,7 @@ Mob::Update(RunningState &state) {
 
   // clip move speed
   float speed = move.GetMag();
-  float maxSpeed = this->properties->maxSpeed * this->GetMoveModifier() * this->GetEffectiveStats().walkSpeed;
+  float maxSpeed = this->properties->maxSpeed * this->GetMoveModifier() * this->GetEffectiveStats().GetWalkSpeed();
   if (speed > maxSpeed) move = move * (maxSpeed/speed);
 
   float gravity = 3 * 9.81 * deltaT * this->properties->gravity;
@@ -302,7 +287,7 @@ Mob::GetMoveModifier() const {
   float mod = 1.0;
   if (isSneaking) mod *= 0.5;
   if (this->footCell) mod *= this->footCell->GetInfo().speedModifier;
-  return mod * (1.0 + GetEffectiveStats().agi * Const::WalkSpeedFactorPerAGI);
+  return mod * (1.0 + GetEffectiveStats().GetAgility() * Const::WalkSpeedFactorPerAGI);
 }
 
 Cell *
@@ -357,6 +342,7 @@ Mob::LearnSpell(const std::string &name) {
     learntSpells.push_back(name);
 }
 
+/*
 void
 Mob::Serialize(Serializer &ser) const {
   Entity::Serialize(ser);
@@ -368,3 +354,4 @@ Mob::Serialize(Serializer &ser) const {
   ser << isSneaking;
   ser << learntSpells;
 }
+*/

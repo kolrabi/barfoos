@@ -30,22 +30,22 @@ Stats::MeleeAttack(const Entity &attacker, const Entity &victim, const Item &ite
   Stats atkStat = attacker.GetEffectiveStats();
   Stats defStat = victim.GetEffectiveStats();
 
-  uint32_t atkSkillLevel = Stats::GetLevelForSkillExp(atkStat.skills[info.skill]);
-  uint32_t defSkillLevel = Stats::GetLevelForSkillExp(defStat.skills["evade"]);
+  uint32_t atkSkillLevel = atkStat.GetSkill(info.skill);
+  uint32_t defSkillLevel = defStat.GetSkill("evade");
 
   // determine hit
-  int dex = random.Integer(std::max(atkStat.dex + atkSkillLevel, (uint32_t)1));
-  int agi = random.Integer(std::max(defStat.agi + defSkillLevel, (uint32_t)1));
+  int dex = random.Integer(std::max(atkStat.GetDexterity() + atkSkillLevel, (uint32_t)1));
+  int agi = random.Integer(std::max(defStat.GetAgility()   + defSkillLevel, (uint32_t)1));
 
   HitType hit = (dex < agi) ? HitType::Miss : HitType::Normal;
-  if (random.Chance(atkStat.dex*0.001)) hit = HitType::Critical;
+  if (random.Chance(atkStat.GetDexterity()*0.001)) hit = HitType::Critical;
 
   info.hitType = hit;
 
-  int dmg = (atkStat.str * 0.5 * item.GetDamage() + atkSkillLevel*0.5) * charge;
+  int dmg = (atkStat.GetStrength() * 0.5 * item.GetDamage() + atkSkillLevel*0.5) * charge;
   if (dmg < 1) dmg = 1;
 
-  int amount = dmg - defStat.def * 0.1;
+  int amount = dmg - defStat.GetDefense() * 0.1;
   if (amount < 1) amount = 1;
 
   // determine damage
@@ -58,7 +58,7 @@ Stats::MeleeAttack(const Entity &attacker, const Entity &victim, const Item &ite
 
   bool kill = -info.amount > victim.GetHealth();
   float expDmg = kill ? victim.GetHealth() : -info.amount;
-  info.exp = (expDmg / defStat.maxHealth) * 0.5 * victim.GetProperties()->exp + kill ? victim.GetProperties()->exp : 0;
+  info.exp = (expDmg / defStat.GetMaxHealth()) * 0.5 * victim.GetProperties()->exp + kill ? victim.GetProperties()->exp : 0;
 
   return info;
 }
@@ -82,12 +82,12 @@ Stats::MagicAttack(ID attackerID, const Entity &victim, float damage, Element el
   Stats defStat = victim.GetEffectiveStats();
 
   if (damage > 0.0) {
-    info.amount = -(damage - defStat.mdef * 0.5);
+    info.amount = -(damage - defStat.GetMagicDefense() * 0.5);
     if (info.amount > 0.0) info.amount = 0.0;
 
     bool kill = -info.amount > victim.GetHealth();
     float expDmg = kill ? victim.GetHealth() : -info.amount;
-    info.exp = (expDmg / defStat.maxHealth) * 0.5 * victim.GetProperties()->exp + kill ? victim.GetProperties()->exp : 0;
+    info.exp = (expDmg / defStat.GetMaxHealth()) * 0.5 * victim.GetProperties()->exp + kill ? victim.GetProperties()->exp : 0;
   } else {
     info.amount = -damage;
     info.exp = 0.0;
@@ -114,12 +114,12 @@ Stats::ExplosionAttack(ID attackerID, const Entity &victim, float damage, Elemen
   Stats defStat = victim.GetEffectiveStats();
 
   if (damage > 0.0) {
-    info.amount = -(damage - defStat.def * 0.5);
+    info.amount = -(damage - defStat.GetDefense() * 0.5);
     if (info.amount > 0.0) info.amount = 0.0;
 
     bool kill = -info.amount > victim.GetHealth();
     float expDmg = kill ? victim.GetHealth() : -info.amount;
-    info.exp = (expDmg / defStat.maxHealth) * 0.5 * victim.GetProperties()->exp + kill ? victim.GetProperties()->exp : 0;
+    info.exp = (expDmg / defStat.GetMaxHealth()) * 0.5 * victim.GetProperties()->exp + kill ? victim.GetProperties()->exp : 0;
   } else {
     info.amount = -damage;
     info.exp = 0.0;
@@ -145,11 +145,11 @@ Stats::ProjectileAttack(const Entity &projectile, const Entity &victim, float da
   Stats defStat = victim.GetEffectiveStats();
 
   if (damage > 0.0) {
-    info.amount = -(damage - defStat.def * 0.5);
+    info.amount = -(damage - defStat.GetDefense() * 0.5);
     if (info.amount > 0.0) info.amount = 0.0;
     bool kill = -info.amount > victim.GetHealth();
     float expDmg = kill ? victim.GetHealth() : -info.amount;
-    info.exp = (expDmg / defStat.maxHealth) * 0.5 * victim.GetProperties()->exp + kill ? victim.GetProperties()->exp : 0;
+    info.exp = (expDmg / defStat.GetMaxHealth()) * 0.5 * victim.GetProperties()->exp + kill ? victim.GetProperties()->exp : 0;
   } else {
     // just healing
     info.amount = damage;
@@ -162,12 +162,12 @@ Stats::ProjectileAttack(const Entity &projectile, const Entity &victim, float da
  * @return true on level up.
  */
 bool
-Stats::AddExp(float exp) {
-  size_t lvl = Stats::GetLevelForExp(this->exp);
-  this->exp += exp;
-  if (Stats::GetLevelForExp(this->exp) != lvl) {
-    this->sp ++;
-    this->maxHealth ++;
+Stats::AddExperience(float exp) {
+  size_t lvl = Stats::GetLevelForExp(this->GetExperience());
+  this->proto.set_exp(this->proto.exp() + exp);
+  if (Stats::GetLevelForExp(this->GetExperience()) != lvl) {
+    this->proto.set_sp(this->GetSP()+1);
+    this->proto.set_max_hp(this->GetMaxHealth()+1);
     return true;
   }
   return false;
@@ -221,28 +221,28 @@ Stats::GetToolTip() const {
   std::string tooltip;
   char tmp[256];
 
-  if (str) {
-    snprintf(tmp, sizeof(tmp), "str: %+d\n", str);
+  if (this->GetStrength()) {
+    snprintf(tmp, sizeof(tmp), "str: %+d\n", this->GetStrength());
     tooltip += tmp;
   }
 
-  if (agi) {
-    snprintf(tmp, sizeof(tmp), "agi: %+d\n", agi);
+  if (this->GetAgility()) {
+    snprintf(tmp, sizeof(tmp), "agi: %+d\n", this->GetAgility());
     tooltip += tmp;
   }
 
-  if (dex) {
-    snprintf(tmp, sizeof(tmp), "dex: %+d\n", dex);
+  if (this->GetDexterity()) {
+    snprintf(tmp, sizeof(tmp), "dex: %+d\n", this->GetDexterity());
     tooltip += tmp;
   }
 
-  if (def) {
-    snprintf(tmp, sizeof(tmp), "def: %+d\n", def);
+  if (this->GetDefense()) {
+    snprintf(tmp, sizeof(tmp), "def: %+d\n", this->GetDefense());
     tooltip += tmp;
   }
 
-  if (maxHealth) {
-    snprintf(tmp, sizeof(tmp), "hp:  %+d\n", maxHealth);
+  if (this->GetMaxHealth()) {
+    snprintf(tmp, sizeof(tmp), "hp:  %+d\n", this->GetMaxHealth());
     tooltip += tmp;
   }
   return tooltip;
@@ -250,10 +250,57 @@ Stats::GetToolTip() const {
 
 /** Compare two stats. Ignores sp and exp. */
 bool Stats::operator==(const Stats &o) {
-  return str == o.str && dex == o.dex && agi == o.agi && def == o.def &&
-         walkSpeed == o.walkSpeed && maxHealth == o.maxHealth;
+  return 
+    this->GetStrength()         == o.GetStrength()      && 
+    this->GetDexterity()        == o.GetDexterity()     && 
+    this->GetAgility()          == o.GetAgility()       && 
+    this->GetDefense()          == o.GetDefense()       &&
+    this->GetMagicAttack()      == o.GetMagicAttack()   && 
+    this->GetMagicDefense()     == o.GetMagicDefense()  &&
+    this->GetWalkSpeed()        == o.GetWalkSpeed()     &&
+    this->GetCoolDown()         == o.GetCoolDown()      &&
+    this->GetMaxHealth()        == o.GetMaxHealth();
 }
 
+uint32_t 
+Stats::GetSkill(const std::string &name) const {
+  for (auto &s:this->proto.skills()) {
+    if (s.name() == name) {
+      return Stats::GetLevelForSkillExp(s.exp());
+    }
+  }
+  return 0;
+}
+
+bool
+Stats::UpgradeSkill(const std::string &name, uint32_t points) {
+  uint32_t oldLevel = this->GetSkill(name);
+
+  for (auto &s:*this->proto.mutable_skills()) {
+    if (s.name() == name) {
+      s.set_exp(s.exp()+points);
+      return this->GetSkill(name) > oldLevel;
+    }
+  }
+
+  Skill_Proto *s = this->proto.add_skills();
+  s->set_name(name);
+  s->set_exp(points);
+  return this->GetSkill(name) > oldLevel;
+}
+
+std::unordered_map<std::string, uint32_t> 
+Stats::GetAllSkills() {
+  std::unordered_map<std::string, uint32_t> skills;
+
+  for (auto &s:this->proto.skills()) {
+    skills[s.name()] = Stats::GetLevelForSkillExp(s.exp());
+  }
+  return skills;
+}
+
+
+/*
 Serializer &operator << (Serializer &ser, const Stats &stats) {
   ser << stats.str;
   ser << stats.dex << stats.agi << stats.def;
@@ -269,19 +316,4 @@ Deserializer &operator >> (Deserializer &deser, Stats &stats) {
   deser >> stats.skills;
   return deser;
 }
-
-// ==========================================================================
-
-Serializer &operator << (Serializer &ser, const Buff &buff) {
-  ser << buff.effect->name << buff.startT;
-  return ser;
-}
-
-Deserializer &operator >> (Deserializer &deser, Buff &buff) {
-  std::string effectName;
-  deser >> effectName;
-  buff.effect = &getEffect(effectName);
-
-  deser >> buff.startT;
-  return deser;
-}
+*/

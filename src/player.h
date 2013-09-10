@@ -11,7 +11,6 @@ class Player final : public Mob {
 public:
 
   Player();
-  Player(Deserializer &deser);
   Player(const Player &) = delete;
   virtual ~Player();
 
@@ -50,9 +49,6 @@ public:
   void                      SetAngles(const Vector3 &angles)        { this->angles = angles; }
   const Vector3 &           GetAngles()                       const { return this->angles; }
 
-  virtual void              Serialize(Serializer &ser)        const;
-  virtual SpawnClass        GetSpawnClass()                   const override { return SpawnClass::PlayerClass; }
-
 private:
 
   struct Message {
@@ -70,9 +66,6 @@ private:
 
     Message &operator=(const Message &) = default;
   };
-
-  friend Serializer &operator << (Serializer &ser, const Message *msg);
-  friend Deserializer &operator >> (Deserializer &ser, Message *&msg);
 
   // rendering
   const Texture *crosshairTex;

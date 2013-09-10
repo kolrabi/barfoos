@@ -66505,3 +66505,2957 @@ Loading image gui/font.small
 Loading image items/texture/gem.empty
 Loading image gui/maparrow
 setcell!
+ GLFW - An OpenGL framework Version 3.0.2
+   Copyright (c) 2002-2006 Marcus Geelnard
+   Copyright (c) 2006-2010 Camilla Berglund
+
+ GLee (OpenGL Easy Extension library) Version 5.2
+   Copyright (c)2006  Ben Woodhouse  All rights reserved.
+
+ zlib version 1.2.8
+   Copyright (C) 1995-2012 Jean-loup Gailly and Mark Adler
+
+libpng version 1.7.0beta17 - August 22, 2013
+Copyright (c) 1998-2013 Glenn Randers-Pehrson
+Copyright (c) 1996-1997 Andreas Dilger
+Copyright (c) 1995-1996 Guy Eric Schalnat, Group 42, Inc.
+GLFW initialized
+Initializing game
+Initializing GFX
+Loading image gui/font.default
+Loading image gui/button.enabled
+Loading image gui/button.disabled
+Loading image gui/button.hover
+Loading image gui/button.active
+Loading image gui/font.big
+Game object initialized 0000000002ac7610, new game
+entering mainloop
+Texture gui/font.big updated since 0...
+Loading image gui/font.big
+Texture gui/button.hover updated since 0...
+Loading image gui/button.hover
+Texture gui/button.disabled updated since 0...
+Loading image gui/button.disabled
+Texture gui/button.active updated since 0...
+Loading image gui/button.active
+Texture gui/button.enabled updated since 0...
+Loading image gui/button.enabled
+Texture gui/font.default updated since 0...
+Loading image gui/font.default
++RunningState() 0000000000303380 0000000002ac76b8 0000000002ac7610 0000000002ac7610
+Loading cell properties for type 'air'
+Loading cell properties for type 'brick'
+Loading image cells/texture/brickstep
+Loading image cells/texture/brickstep_crack
+Loading image cells/texture/brickstep_mossy
+Loading cell properties for type 'bedrock'
+Loading image cells/texture/bedrock
+Loading cell properties for type 'torch'
+Loading cell properties for type 'carpet.red'
+Loading image cells/texture/carpet.red
+Loading cell properties for type 'default'
+Loading image cells/texture/dirt
+Loading cell properties for type 'dirt'
+Loading cell properties for type 'frozenlava'
+Loading image cells/texture/rock
+Loading cell properties for type 'gate'
+Loading image cells/texture/gate
+Loading cell properties for type 'lava'
+Loading image cells/texture/lava
+Loading cell properties for type 'pillar'
+Loading cell properties for type 'rock'
+Loading cell properties for type 'step'
+Loading image cells/texture/step
+Loading cell properties for type 'brick.secret'
+Loading cell properties for type 'torch2'
+Loading cell properties for type 'torch3'
+Loading cell properties for type 'wood'
+Loading image cells/texture/planks
+Loading cell properties for type 'ice'
+Loading image cells/texture/water
+Loading cell properties for type 'teleport'
+Loading image cells/texture/teleport.off
+Loading cell properties for type 'door.right.closed'
+Loading cell properties for type 'door.right.open'
+Loading cell properties for type 'ladder.right'
+Loading image cells/texture/ladder
+Loading cell properties for type 'shooter'
+Loading image cells/texture/shooter
+Loading cell properties for type 'bars'
+Loading image cells/texture/bars
+Loading cell properties for type 'water'
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Ignoring unknown feature property: mob
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Feature 'start'
+Feature 'bridge'
+Feature 'door'
+Feature 'alcove'
+Feature 'hallway_small'
+Feature 'doorway'
+Feature 'hallway'
+Feature 'hallway.ladder.down'
+Feature 'stairs_short'
+Feature 'doorway_wood'
+Feature 'hallway.ladder.up'
+Feature 'hallway_lava'
+Feature 'living_quarters.0'
+Feature 'mote'
+Loading image entities/texture/chest
+Loading image entities/texture/slime
+Loading image entities/texture/particle.rock
+Loading image entities/texture/torch
+Loading image entities/texture/spider
+Loading image entities/texture/particle.bfw9k
+Line 21: Ignoring 'noclip'
+Loading image entities/texture/particle.bubble
+Loading image entities/texture/particle.teleport
+Line 22: Ignoring 'noclip'
+Loading image entities/texture/wizard
+Loading image entities/texture/wizard.emissive
+Loading image entities/texture/grass
+Loading image entities/texture/hanging_moss.small
+Loading image entities/texture/arrow
+Loading image entities/texture/projectile.bfw9k
+Line 6: ignoring 'eqadddex'
+Loading image items/texture/sword2
+Loading image items/texture/torch
+Loading image items/texture/leather
+Loading image items/texture/fist
+Loading image items/texture/scroll
+Loading image items/texture/gold
+Loading image items/texture/key
+Loading image items/texture/potion.green
+Loading image items/texture/potion.clear
+Loading image items/texture/wand.black
+Loading image items/texture/wand.empty
+Loading image items/texture/potion.red
+Loading image items/texture/potion.empty
+Loading image items/texture/potion.yellow
+Loading image items/texture/lockpick
+Loading image items/texture/gem.earth
+Loading image items/texture/gem.fire
+Loading image items/texture/gem.life
+Loading image items/texture/gem.water
+Loading image items/texture/gem.wind
+Loading image items/texture/ring.gold
+Loading image items/texture/ring.iron
+Loading image items/texture/ring.ruby
+Loading image items/texture/ring.silver
+Loading image items/texture/potion.purple
+loading spell spell.test
+Creating ground...
+Filling ground...
+Building features...
+Loading image gui/durability
+Made a nice world with 694 features and height 30 :) ...
+Carving caves...
+Placing 7 teleports...
+Loading image cells/texture/teleport.on
+Placing 18 traps...
+Spawning feature entities...
+Placing 119 items...
+Placing some decoration (677 of them)...
+Placing 51 enemies...
+Wiping the floor...
+Updating all cells...
+Done!
+Loading image gui/crosshair
+Loading image gui/slot
+Loading image gui/font.small
+Loading image items/texture/gem.empty
+Loading image gui/maparrow
+Shutting down
+Saving...
+×·­@
+1378800730
+j:/\AppData\Local/.barfoos/game
+ser vector<bool>: 1 bits 1 bytes
+ser vector<bool>: 262144 bits 32769 bytes
+j:/\AppData\Local/.barfoos/level.0
+-RunningState()
+Removing 0
+   game.cc  110 bool Game::Frame()                         / 
+    world.cc  318 void World::Update(RunningState&)        / 
+    world.cc  346 Tick                                              2 c,          2 t,          1 t/c
+
+   game.cc  110 bool Game::Frame()                         / 
+     game.cc  176 void Game::Update(float, float)          / 
+  runningstate.cc  155 virtual GameState* RunningState::Update() / 
+  runningstate.cc  215 Entity Update                            / 
+   entity.cc  422 virtual void Entity::Update(RunningState&)     101484 c,     310464 t,          3 t/c
+
+   game.cc  110 bool Game::Frame()                         / 
+     game.cc  176 void Game::Update(float, float)          / 
+  runningstate.cc  155 virtual GameState* RunningState::Update() / 
+    world.cc  318 void World::Update(RunningState&)        / 
+    world.cc  346 Tick                                             83 c,        991 t,         11 t/c
+
+   game.cc  110 bool Game::Frame()                         / 
+     game.cc  176 void Game::Update(float, float)          / 
+  runningstate.cc  155 virtual GameState* RunningState::Update() / 
+  runningstate.cc  215 Entity Update                            / 
+      mob.cc   84 virtual void Mob::Update(RunningState&)       18484 c,     225301 t,         12 t/c
+
+   game.cc  110 bool Game::Frame()                         / 
+     game.cc  176 void Game::Update(float, float)          / 
+  runningstate.cc  155 virtual GameState* RunningState::Update() / 
+  runningstate.cc  223 Remove Entities                                  83 c,       5597 t,         67 t/c
+
+   game.cc  110 bool Game::Frame()                         / 
+     game.cc  176 void Game::Update(float, float)          / 
+  runningstate.cc  155 virtual GameState* RunningState::Update() / 
+  runningstate.cc  189 Entity Collision                                 83 c,      10338 t,        124 t/c
+
+   game.cc  110 bool Game::Frame()                         / 
+     game.cc  161 void Game::Render() const                / 
+  runningstate.cc  110 virtual void RunningState::Render(Gfx&) const / 
+    world.cc  149 void World::Draw(Gfx&)                   / 
+    world.cc  235 Static Draw                                      80 c,      76677 t,        958 t/c
+
+   game.cc  110 bool Game::Frame()                         / 
+     game.cc  161 void Game::Render() const                / 
+  runningstate.cc  110 virtual void RunningState::Render(Gfx&) const / 
+    world.cc 1008 void MiniMap::Draw(Gfx&, const Vector3&, float)         80 c,     184545 t,       2306 t/c
+
+   game.cc  110 bool Game::Frame()                         / 
+     game.cc  176 void Game::Update(float, float)                 888 c,    2431999 t,       2738 t/c
+
+   game.cc  110 bool Game::Frame()                         / 
+     game.cc  176 void Game::Update(float, float)          / 
+  runningstate.cc  155 virtual GameState* RunningState::Update() / 
+    world.cc  318 void World::Update(RunningState&)                83 c,     252288 t,       3039 t/c
+
+   game.cc  110 bool Game::Frame()                         / 
+     game.cc  161 void Game::Render() const                / 
+  runningstate.cc  110 virtual void RunningState::Render(Gfx&) const / 
+    world.cc  149 void World::Draw(Gfx&)                   / 
+    world.cc  250 Dynamic Draw                                     80 c,     278427 t,       3480 t/c
+
+   game.cc  110 bool Game::Frame()                         / 
+     game.cc  161 void Game::Render() const                       859 c,    6284412 t,       7315 t/c
+
+   game.cc  110 bool Game::Frame()                         / 
+     game.cc  161 void Game::Render() const                / 
+  runningstate.cc  110 virtual void RunningState::Render(Gfx&) const / 
+    world.cc  149 void World::Draw(Gfx&)                           80 c,     731982 t,       9149 t/c
+
+   game.cc  110 bool Game::Frame()                         / 
+     game.cc  176 void Game::Update(float, float)          / 
+  runningstate.cc  155 virtual GameState* RunningState::Update() / 
+  runningstate.cc  215 Entity Update                                    83 c,    2151462 t,      25921 t/c
+
+   game.cc  110 bool Game::Frame()                         / 
+     game.cc  176 void Game::Update(float, float)          / 
+  runningstate.cc  155 virtual GameState* RunningState::Update()         83 c,    2427778 t,      29250 t/c
+
+   game.cc  110 bool Game::Frame()                         / 
+     game.cc  161 void Game::Render() const                / 
+  runningstate.cc  110 virtual void RunningState::Render(Gfx&) const         80 c,    2824922 t,      35311 t/c
+
+   game.cc  110 bool Game::Frame()                                859 c,   36781619 t,      42819 t/c
+
+   game.cc  110 bool Game::Frame()                         / 
+     game.cc  161 void Game::Render() const                / 
+  runningstate.cc  110 virtual void RunningState::Render(Gfx&) const / 
+    world.cc  149 void World::Draw(Gfx&)                   / 
+    world.cc  152 Vertex Update                                     2 c,     269514 t,     134757 t/c
+
+   game.cc  110 bool Game::Frame()                         / 
+    world.cc  318 void World::Update(RunningState&)                 2 c,     270820 t,     135410 t/c
+
+runningstate.cc  595 void RunningState::Save()                           1 c,     984645 t,     984645 t/c
+
+
+ GLFW - An OpenGL framework Version 3.0.2
+   Copyright (c) 2002-2006 Marcus Geelnard
+   Copyright (c) 2006-2010 Camilla Berglund
+
+ GLee (OpenGL Easy Extension library) Version 5.2
+   Copyright (c)2006  Ben Woodhouse  All rights reserved.
+
+ zlib version 1.2.8
+   Copyright (C) 1995-2012 Jean-loup Gailly and Mark Adler
+
+libpng version 1.7.0beta17 - August 22, 2013
+Copyright (c) 1998-2013 Glenn Randers-Pehrson
+Copyright (c) 1996-1997 Andreas Dilger
+Copyright (c) 1995-1996 Guy Eric Schalnat, Group 42, Inc.
+GLFW initialized
+Initializing game
+Initializing GFX
+Loading image gui/font.default
+Loading image gui/button.enabled
+Loading image gui/button.disabled
+Loading image gui/button.hover
+Loading image gui/button.active
+Loading image gui/font.big
+Game object initialized 00000000002c7610, new game
+entering mainloop
+Texture gui/font.big updated since 0...
+Loading image gui/font.big
+Texture gui/button.hover updated since 0...
+Loading image gui/button.hover
+Texture gui/button.disabled updated since 0...
+Loading image gui/button.disabled
+Texture gui/button.active updated since 0...
+Loading image gui/button.active
+Texture gui/button.enabled updated since 0...
+Loading image gui/button.enabled
+Texture gui/font.default updated since 0...
+Loading image gui/font.default
++RunningState() 00000000003115e0 00000000002c76b8 00000000002c7610 00000000002c7610
+Loading cell properties for type 'air'
+Loading cell properties for type 'brick'
+Loading image cells/texture/brickstep
+Loading image cells/texture/brickstep_crack
+Loading image cells/texture/brickstep_mossy
+Loading cell properties for type 'bedrock'
+Loading image cells/texture/bedrock
+Loading cell properties for type 'torch'
+Loading cell properties for type 'carpet.red'
+Loading image cells/texture/carpet.red
+Loading cell properties for type 'default'
+Loading image cells/texture/dirt
+Loading cell properties for type 'dirt'
+Loading cell properties for type 'frozenlava'
+Loading image cells/texture/rock
+Loading cell properties for type 'gate'
+Loading image cells/texture/gate
+Loading cell properties for type 'lava'
+Loading image cells/texture/lava
+Loading cell properties for type 'pillar'
+Loading cell properties for type 'rock'
+Loading cell properties for type 'step'
+Loading image cells/texture/step
+Loading cell properties for type 'brick.secret'
+Loading cell properties for type 'torch2'
+Loading cell properties for type 'torch3'
+Loading cell properties for type 'wood'
+Loading image cells/texture/planks
+Loading cell properties for type 'ice'
+Loading image cells/texture/water
+Loading cell properties for type 'teleport'
+Loading image cells/texture/teleport.off
+Loading cell properties for type 'door.right.closed'
+Loading cell properties for type 'door.right.open'
+Loading cell properties for type 'ladder.right'
+Loading image cells/texture/ladder
+Loading cell properties for type 'shooter'
+Loading image cells/texture/shooter
+Loading cell properties for type 'bars'
+Loading image cells/texture/bars
+Loading cell properties for type 'water'
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Ignoring unknown feature property: mob
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Feature 'start'
+Feature 'bridge'
+Feature 'door'
+Feature 'alcove'
+Feature 'hallway_small'
+Feature 'doorway'
+Feature 'hallway'
+Feature 'hallway.ladder.down'
+Feature 'stairs_short'
+Feature 'doorway_wood'
+Feature 'hallway.ladder.up'
+Feature 'hallway_lava'
+Feature 'living_quarters.0'
+Feature 'mote'
+Loading image entities/texture/chest
+Loading image entities/texture/slime
+Loading image entities/texture/particle.rock
+Loading image entities/texture/torch
+Loading image entities/texture/spider
+Loading image entities/texture/particle.bfw9k
+Line 21: Ignoring 'noclip'
+Loading image entities/texture/particle.bubble
+Loading image entities/texture/particle.teleport
+Line 22: Ignoring 'noclip'
+Loading image entities/texture/wizard
+Loading image entities/texture/wizard.emissive
+Loading image entities/texture/grass
+Loading image entities/texture/hanging_moss.small
+Loading image entities/texture/arrow
+Loading image entities/texture/projectile.bfw9k
+Line 6: ignoring 'eqadddex'
+Loading image items/texture/sword2
+Loading image items/texture/torch
+Loading image items/texture/leather
+Loading image items/texture/fist
+Loading image items/texture/scroll
+Loading image items/texture/gold
+Loading image items/texture/key
+Loading image items/texture/potion.green
+Loading image items/texture/potion.clear
+Loading image items/texture/wand.black
+Loading image items/texture/wand.empty
+Loading image items/texture/potion.red
+Loading image items/texture/potion.empty
+Loading image items/texture/potion.yellow
+Loading image items/texture/lockpick
+Loading image items/texture/gem.earth
+Loading image items/texture/gem.fire
+Loading image items/texture/gem.life
+Loading image items/texture/gem.water
+Loading image items/texture/gem.wind
+Loading image items/texture/ring.gold
+Loading image items/texture/ring.iron
+Loading image items/texture/ring.ruby
+Loading image items/texture/ring.silver
+Loading image items/texture/potion.purple
+loading spell spell.test
+Creating ground...
+Filling ground...
+Building features...
+Loading image gui/durability
+Made a nice world with 412 features and height 33 :) ...
+Carving caves...
+Placing 5 teleports...
+Loading image cells/texture/teleport.on
+Placing 15 traps...
+Spawning feature entities...
+Placing 164 items...
+Placing some decoration (587 of them)...
+Placing 107 enemies...
+Wiping the floor...
+Updating all cells...
+Done!
+Loading image gui/crosshair
+Loading image gui/slot
+Loading image gui/font.small
+Loading image items/texture/gem.empty
+Loading image gui/maparrow
+Shutting down
+Saving...
+j:/\AppData\Local/.barfoos/save.game
+j:/\AppData\Local/.barfoos/game
+ser vector<bool>: 1 bits 1 bytes
+ser vector<bool>: 262144 bits 32769 bytes
+j:/\AppData\Local/.barfoos/level.0
+-RunningState()
+Removing 0
+   game.cc  110 bool Game::Frame()                         / 
+    world.cc  318 void World::Update(RunningState&)        / 
+    world.cc  346 Tick                                              2 c,          1 t,          0 t/c
+
+   game.cc  110 bool Game::Frame()                         / 
+     game.cc  176 void Game::Update(float, float)          / 
+  runningstate.cc  156 virtual GameState* RunningState::Update() / 
+  runningstate.cc  216 Entity Update                            / 
+   entity.cc  422 virtual void Entity::Update(RunningState&)      59948 c,     189879 t,          3 t/c
+
+   game.cc  110 bool Game::Frame()                         / 
+     game.cc  176 void Game::Update(float, float)          / 
+  runningstate.cc  156 virtual GameState* RunningState::Update() / 
+  runningstate.cc  216 Entity Update                            / 
+      mob.cc   84 virtual void Mob::Update(RunningState&)       17972 c,     180710 t,         10 t/c
+
+   game.cc  110 bool Game::Frame()                         / 
+     game.cc  176 void Game::Update(float, float)          / 
+  runningstate.cc  156 virtual GameState* RunningState::Update() / 
+    world.cc  318 void World::Update(RunningState&)        / 
+    world.cc  346 Tick                                             53 c,       1186 t,         22 t/c
+
+   game.cc  110 bool Game::Frame()                         / 
+     game.cc  176 void Game::Update(float, float)          / 
+  runningstate.cc  156 virtual GameState* RunningState::Update() / 
+  runningstate.cc  224 Remove Entities                                  53 c,       3452 t,         65 t/c
+
+   game.cc  110 bool Game::Frame()                         / 
+     game.cc  176 void Game::Update(float, float)          / 
+  runningstate.cc  156 virtual GameState* RunningState::Update() / 
+  runningstate.cc  190 Entity Collision                                 53 c,       9527 t,        179 t/c
+
+   game.cc  110 bool Game::Frame()                         / 
+     game.cc  161 void Game::Render() const                / 
+  runningstate.cc  111 virtual void RunningState::Render(Gfx&) const / 
+    world.cc  149 void World::Draw(Gfx&)                   / 
+    world.cc  235 Static Draw                                      51 c,      47522 t,        931 t/c
+
+   game.cc  110 bool Game::Frame()                         / 
+     game.cc  161 void Game::Render() const                / 
+  runningstate.cc  111 virtual void RunningState::Render(Gfx&) const / 
+    world.cc 1008 void MiniMap::Draw(Gfx&, const Vector3&, float)         51 c,      89368 t,       1752 t/c
+
+   game.cc  110 bool Game::Frame()                         / 
+     game.cc  176 void Game::Update(float, float)                 883 c,    1630035 t,       1846 t/c
+
+   game.cc  110 bool Game::Frame()                         / 
+     game.cc  176 void Game::Update(float, float)          / 
+  runningstate.cc  156 virtual GameState* RunningState::Update() / 
+    world.cc  318 void World::Update(RunningState&)                53 c,     199152 t,       3757 t/c
+
+   game.cc  110 bool Game::Frame()                         / 
+     game.cc  161 void Game::Render() const                / 
+  runningstate.cc  111 virtual void RunningState::Render(Gfx&) const / 
+    world.cc  149 void World::Draw(Gfx&)                   / 
+    world.cc  250 Dynamic Draw                                     51 c,     234083 t,       4589 t/c
+
+   game.cc  110 bool Game::Frame()                         / 
+     game.cc  161 void Game::Render() const                       872 c,    5251873 t,       6022 t/c
+
+   game.cc  110 bool Game::Frame()                         / 
+     game.cc  161 void Game::Render() const                / 
+  runningstate.cc  111 virtual void RunningState::Render(Gfx&) const / 
+    world.cc  149 void World::Draw(Gfx&)                           51 c,     547512 t,      10735 t/c
+
+   game.cc  110 bool Game::Frame()                         / 
+     game.cc  176 void Game::Update(float, float)          / 
+  runningstate.cc  156 virtual GameState* RunningState::Update() / 
+  runningstate.cc  216 Entity Update                                    53 c,    1409955 t,      26602 t/c
+
+   game.cc  110 bool Game::Frame()                                872 c,   23487495 t,      26935 t/c
+
+   game.cc  110 bool Game::Frame()                         / 
+     game.cc  176 void Game::Update(float, float)          / 
+  runningstate.cc  156 virtual GameState* RunningState::Update()         53 c,    1626819 t,      30694 t/c
+
+   game.cc  110 bool Game::Frame()                         / 
+     game.cc  161 void Game::Render() const                / 
+  runningstate.cc  111 virtual void RunningState::Render(Gfx&) const         51 c,    1861552 t,      36501 t/c
+
+   game.cc  110 bool Game::Frame()                         / 
+     game.cc  161 void Game::Render() const                / 
+  runningstate.cc  111 virtual void RunningState::Render(Gfx&) const / 
+    world.cc  149 void World::Draw(Gfx&)                   / 
+    world.cc  152 Vertex Update                                     2 c,     193176 t,      96588 t/c
+
+   game.cc  110 bool Game::Frame()                         / 
+    world.cc  318 void World::Update(RunningState&)                 2 c,     255412 t,     127706 t/c
+
+runningstate.cc  596 void RunningState::Save()                           1 c,     569840 t,     569840 t/c
+
+
+ GLFW - An OpenGL framework Version 3.0.2
+   Copyright (c) 2002-2006 Marcus Geelnard
+   Copyright (c) 2006-2010 Camilla Berglund
+
+ GLee (OpenGL Easy Extension library) Version 5.2
+   Copyright (c)2006  Ben Woodhouse  All rights reserved.
+
+ zlib version 1.2.8
+   Copyright (C) 1995-2012 Jean-loup Gailly and Mark Adler
+
+libpng version 1.7.0beta17 - August 22, 2013
+Copyright (c) 1998-2013 Glenn Randers-Pehrson
+Copyright (c) 1996-1997 Andreas Dilger
+Copyright (c) 1995-1996 Guy Eric Schalnat, Group 42, Inc.
+GLFW initialized
+Initializing game
+Initializing GFX
+Loading image gui/font.default
+Loading image gui/button.enabled
+Loading image gui/button.disabled
+Loading image gui/button.hover
+Loading image gui/button.active
+Loading image gui/font.big
+Game object initialized 00000000028b7610, new game
+entering mainloop
+Texture gui/font.big updated since 0...
+Loading image gui/font.big
+Texture gui/button.hover updated since 0...
+Loading image gui/button.hover
+Texture gui/button.disabled updated since 0...
+Loading image gui/button.disabled
+Texture gui/button.active updated since 0...
+Loading image gui/button.active
+Texture gui/button.enabled updated since 0...
+Loading image gui/button.enabled
+Texture gui/font.default updated since 0...
+Loading image gui/font.default
++RunningState() 00000000027215e0 00000000028b76b8 00000000028b7610 00000000028b7610
+Loading cell properties for type 'air'
+Loading cell properties for type 'brick'
+Loading image cells/texture/brickstep
+Loading image cells/texture/brickstep_crack
+Loading image cells/texture/brickstep_mossy
+Loading cell properties for type 'bedrock'
+Loading image cells/texture/bedrock
+Loading cell properties for type 'torch'
+Loading cell properties for type 'carpet.red'
+Loading image cells/texture/carpet.red
+Loading cell properties for type 'default'
+Loading image cells/texture/dirt
+Loading cell properties for type 'dirt'
+Loading cell properties for type 'frozenlava'
+Loading image cells/texture/rock
+Loading cell properties for type 'gate'
+Loading image cells/texture/gate
+Loading cell properties for type 'lava'
+Loading image cells/texture/lava
+Loading cell properties for type 'pillar'
+Loading cell properties for type 'rock'
+Loading cell properties for type 'step'
+Loading image cells/texture/step
+Loading cell properties for type 'brick.secret'
+Loading cell properties for type 'torch2'
+Loading cell properties for type 'torch3'
+Loading cell properties for type 'wood'
+Loading image cells/texture/planks
+Loading cell properties for type 'ice'
+Loading image cells/texture/water
+Loading cell properties for type 'teleport'
+Loading image cells/texture/teleport.off
+Loading cell properties for type 'door.right.closed'
+Loading cell properties for type 'door.right.open'
+Loading cell properties for type 'ladder.right'
+Loading image cells/texture/ladder
+Loading cell properties for type 'shooter'
+Loading image cells/texture/shooter
+Loading cell properties for type 'bars'
+Loading image cells/texture/bars
+Loading cell properties for type 'water'
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Ignoring unknown feature property: mob
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Feature 'start'
+Feature 'bridge'
+Feature 'door'
+Feature 'alcove'
+Feature 'hallway_small'
+Feature 'doorway'
+Feature 'hallway'
+Feature 'hallway.ladder.down'
+Feature 'stairs_short'
+Feature 'doorway_wood'
+Feature 'hallway.ladder.up'
+Feature 'hallway_lava'
+Feature 'living_quarters.0'
+Feature 'mote'
+Loading image entities/texture/chest
+Loading image entities/texture/slime
+Loading image entities/texture/particle.rock
+Loading image entities/texture/torch
+Loading image entities/texture/spider
+Loading image entities/texture/particle.bfw9k
+Line 21: Ignoring 'noclip'
+Loading image entities/texture/particle.bubble
+Loading image entities/texture/particle.teleport
+Line 22: Ignoring 'noclip'
+Loading image entities/texture/wizard
+Loading image entities/texture/wizard.emissive
+Loading image entities/texture/grass
+Loading image entities/texture/hanging_moss.small
+Loading image entities/texture/arrow
+Loading image entities/texture/projectile.bfw9k
+Line 6: ignoring 'eqadddex'
+Loading image items/texture/sword2
+Loading image items/texture/torch
+Loading image items/texture/leather
+Loading image items/texture/fist
+Loading image items/texture/scroll
+Loading image items/texture/gold
+Loading image items/texture/key
+Loading image items/texture/potion.green
+Loading image items/texture/potion.clear
+Loading image items/texture/wand.black
+Loading image items/texture/wand.empty
+Loading image items/texture/potion.red
+Loading image items/texture/potion.empty
+Loading image items/texture/potion.yellow
+Loading image items/texture/lockpick
+Loading image items/texture/gem.earth
+Loading image items/texture/gem.fire
+Loading image items/texture/gem.life
+Loading image items/texture/gem.water
+Loading image items/texture/gem.wind
+Loading image items/texture/ring.gold
+Loading image items/texture/ring.iron
+Loading image items/texture/ring.ruby
+Loading image items/texture/ring.silver
+Loading image items/texture/potion.purple
+loading spell spell.test
+Creating ground...
+Filling ground...
+Building features...
+Loading image gui/durability
+Made a nice world with 559 features and height 36 :) ...
+Carving caves...
+Placing 11 teleports...
+Loading image cells/texture/teleport.on
+Placing 15 traps...
+Spawning feature entities...
+Placing 217 items...
+Placing some decoration (625 of them)...
+Placing 104 enemies...
+Wiping the floor...
+Updating all cells...
+Done!
+Loading image gui/crosshair
+Loading image gui/slot
+Loading image gui/font.small
+Loading image items/texture/gem.empty
+Loading image gui/maparrow
+Shutting down
+Saving...
+j:/\AppData\Local/.barfoos/save.game
+could not open save.game file
+j:/\AppData\Local/.barfoos/game
+ser vector<bool>: 1 bits 1 bytes
+ser vector<bool>: 262144 bits 32769 bytes
+j:/\AppData\Local/.barfoos/level.0
+-RunningState()
+Removing 0
+   game.cc  110 bool Game::Frame()                         / 
+    world.cc  318 void World::Update(RunningState&)        / 
+    world.cc  346 Tick                                              2 c,          2 t,          1 t/c
+
+   game.cc  110 bool Game::Frame()                         / 
+     game.cc  176 void Game::Update(float, float)          / 
+  runningstate.cc  156 virtual GameState* RunningState::Update() / 
+  runningstate.cc  216 Entity Update                            / 
+   entity.cc  422 virtual void Entity::Update(RunningState&)      83371 c,     271615 t,          3 t/c
+
+   game.cc  110 bool Game::Frame()                         / 
+     game.cc  176 void Game::Update(float, float)          / 
+  runningstate.cc  156 virtual GameState* RunningState::Update() / 
+  runningstate.cc  216 Entity Update                            / 
+      mob.cc   84 virtual void Mob::Update(RunningState&)       25474 c,     246673 t,          9 t/c
+
+   game.cc  110 bool Game::Frame()                         / 
+     game.cc  176 void Game::Update(float, float)          / 
+  runningstate.cc  156 virtual GameState* RunningState::Update() / 
+    world.cc  318 void World::Update(RunningState&)        / 
+    world.cc  346 Tick                                             63 c,       1390 t,         22 t/c
+
+   game.cc  110 bool Game::Frame()                         / 
+     game.cc  176 void Game::Update(float, float)          / 
+  runningstate.cc  156 virtual GameState* RunningState::Update() / 
+  runningstate.cc  224 Remove Entities                                  63 c,       4869 t,         77 t/c
+
+   game.cc  110 bool Game::Frame()                         / 
+     game.cc  176 void Game::Update(float, float)          / 
+  runningstate.cc  156 virtual GameState* RunningState::Update() / 
+  runningstate.cc  190 Entity Collision                                 63 c,      13254 t,        210 t/c
+
+   game.cc  110 bool Game::Frame()                         / 
+     game.cc  161 void Game::Render() const                / 
+  runningstate.cc  111 virtual void RunningState::Render(Gfx&) const / 
+    world.cc  149 void World::Draw(Gfx&)                   / 
+    world.cc  235 Static Draw                                      60 c,      73041 t,       1217 t/c
+
+   game.cc  110 bool Game::Frame()                         / 
+     game.cc  161 void Game::Render() const                / 
+  runningstate.cc  111 virtual void RunningState::Render(Gfx&) const / 
+    world.cc 1008 void MiniMap::Draw(Gfx&, const Vector3&, float)         60 c,      99987 t,       1666 t/c
+
+   game.cc  110 bool Game::Frame()                         / 
+     game.cc  176 void Game::Update(float, float)                 914 c,    2236551 t,       2446 t/c
+
+   game.cc  110 bool Game::Frame()                         / 
+     game.cc  176 void Game::Update(float, float)          / 
+  runningstate.cc  156 virtual GameState* RunningState::Update() / 
+    world.cc  318 void World::Update(RunningState&)                63 c,     217214 t,       3447 t/c
+
+   game.cc  110 bool Game::Frame()                         / 
+     game.cc  161 void Game::Render() const                / 
+  runningstate.cc  111 virtual void RunningState::Render(Gfx&) const / 
+    world.cc  149 void World::Draw(Gfx&)                   / 
+    world.cc  250 Dynamic Draw                                     60 c,     258490 t,       4308 t/c
+
+   game.cc  110 bool Game::Frame()                         / 
+     game.cc  161 void Game::Render() const                       899 c,    5801822 t,       6453 t/c
+
+   game.cc  110 bool Game::Frame()                         / 
+     game.cc  161 void Game::Render() const                / 
+  runningstate.cc  111 virtual void RunningState::Render(Gfx&) const / 
+    world.cc  149 void World::Draw(Gfx&)                           60 c,     617125 t,      10285 t/c
+
+   game.cc  110 bool Game::Frame()                                899 c,   27824049 t,      30949 t/c
+
+   game.cc  110 bool Game::Frame()                         / 
+     game.cc  176 void Game::Update(float, float)          / 
+  runningstate.cc  156 virtual GameState* RunningState::Update() / 
+  runningstate.cc  216 Entity Update                                    63 c,    1991412 t,      31609 t/c
+
+   game.cc  110 bool Game::Frame()                         / 
+     game.cc  176 void Game::Update(float, float)          / 
+  runningstate.cc  156 virtual GameState* RunningState::Update()         63 c,    2232688 t,      35439 t/c
+
+   game.cc  110 bool Game::Frame()                         / 
+     game.cc  161 void Game::Render() const                / 
+  runningstate.cc  111 virtual void RunningState::Render(Gfx&) const         60 c,    2370395 t,      39506 t/c
+
+   game.cc  110 bool Game::Frame()                         / 
+     game.cc  161 void Game::Render() const                / 
+  runningstate.cc  111 virtual void RunningState::Render(Gfx&) const / 
+    world.cc  149 void World::Draw(Gfx&)                   / 
+    world.cc  152 Vertex Update                                     2 c,     215087 t,     107543 t/c
+
+   game.cc  110 bool Game::Frame()                         / 
+    world.cc  318 void World::Update(RunningState&)                 2 c,     267523 t,     133761 t/c
+
+runningstate.cc  596 void RunningState::Save()                           1 c,     641022 t,     641022 t/c
+
+
+ GLFW - An OpenGL framework Version 3.0.2
+   Copyright (c) 2002-2006 Marcus Geelnard
+   Copyright (c) 2006-2010 Camilla Berglund
+
+ GLee (OpenGL Easy Extension library) Version 5.2
+   Copyright (c)2006  Ben Woodhouse  All rights reserved.
+
+ zlib version 1.2.8
+   Copyright (C) 1995-2012 Jean-loup Gailly and Mark Adler
+
+libpng version 1.7.0beta17 - August 22, 2013
+Copyright (c) 1998-2013 Glenn Randers-Pehrson
+Copyright (c) 1996-1997 Andreas Dilger
+Copyright (c) 1995-1996 Guy Eric Schalnat, Group 42, Inc.
+GLFW initialized
+Initializing game
+Initializing GFX
+Loading image gui/font.default
+Loading image gui/button.enabled
+Loading image gui/button.disabled
+Loading image gui/button.hover
+Loading image gui/button.active
+Loading image gui/font.big
+Game object initialized 0000000002817610, new game
+entering mainloop
+Texture gui/font.big updated since 0...
+Loading image gui/font.big
+Texture gui/button.hover updated since 0...
+Loading image gui/button.hover
+Texture gui/button.disabled updated since 0...
+Loading image gui/button.disabled
+Texture gui/button.active updated since 0...
+Loading image gui/button.active
+Texture gui/button.enabled updated since 0...
+Loading image gui/button.enabled
+Texture gui/font.default updated since 0...
+Loading image gui/font.default
++RunningState() 00000000027215e0 00000000028176b8 0000000002817610 0000000002817610
+Loading cell properties for type 'air'
+Loading cell properties for type 'brick'
+Loading image cells/texture/brickstep
+Loading image cells/texture/brickstep_crack
+Loading image cells/texture/brickstep_mossy
+Loading cell properties for type 'bedrock'
+Loading image cells/texture/bedrock
+Loading cell properties for type 'torch'
+Loading cell properties for type 'carpet.red'
+Loading image cells/texture/carpet.red
+Loading cell properties for type 'default'
+Loading image cells/texture/dirt
+Loading cell properties for type 'dirt'
+Loading cell properties for type 'frozenlava'
+Loading image cells/texture/rock
+Loading cell properties for type 'gate'
+Loading image cells/texture/gate
+Loading cell properties for type 'lava'
+Loading image cells/texture/lava
+Loading cell properties for type 'pillar'
+Loading cell properties for type 'rock'
+Loading cell properties for type 'step'
+Loading image cells/texture/step
+Loading cell properties for type 'brick.secret'
+Loading cell properties for type 'torch2'
+Loading cell properties for type 'torch3'
+Loading cell properties for type 'wood'
+Loading image cells/texture/planks
+Loading cell properties for type 'ice'
+Loading image cells/texture/water
+Loading cell properties for type 'teleport'
+Loading image cells/texture/teleport.off
+Loading cell properties for type 'door.right.closed'
+Loading cell properties for type 'door.right.open'
+Loading cell properties for type 'ladder.right'
+Loading image cells/texture/ladder
+Loading cell properties for type 'shooter'
+Loading image cells/texture/shooter
+Loading cell properties for type 'bars'
+Loading image cells/texture/bars
+Loading cell properties for type 'water'
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Ignoring unknown feature property: mob
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Feature 'start'
+Feature 'bridge'
+Feature 'door'
+Feature 'alcove'
+Feature 'hallway_small'
+Feature 'doorway'
+Feature 'hallway'
+Feature 'hallway.ladder.down'
+Feature 'stairs_short'
+Feature 'doorway_wood'
+Feature 'hallway.ladder.up'
+Feature 'hallway_lava'
+Feature 'living_quarters.0'
+Feature 'mote'
+Loading image entities/texture/chest
+Loading image entities/texture/slime
+Loading image entities/texture/particle.rock
+Loading image entities/texture/torch
+Loading image entities/texture/spider
+Loading image entities/texture/particle.bfw9k
+Line 21: Ignoring 'noclip'
+Loading image entities/texture/particle.bubble
+Loading image entities/texture/particle.teleport
+Line 22: Ignoring 'noclip'
+Loading image entities/texture/wizard
+Loading image entities/texture/wizard.emissive
+Loading image entities/texture/grass
+Loading image entities/texture/hanging_moss.small
+Loading image entities/texture/arrow
+Loading image entities/texture/projectile.bfw9k
+Line 6: ignoring 'eqadddex'
+Loading image items/texture/sword2
+Loading image items/texture/torch
+Loading image items/texture/leather
+Loading image items/texture/fist
+Loading image items/texture/scroll
+Loading image items/texture/gold
+Loading image items/texture/key
+Loading image items/texture/potion.green
+Loading image items/texture/potion.clear
+Loading image items/texture/wand.black
+Loading image items/texture/wand.empty
+Loading image items/texture/potion.red
+Loading image items/texture/potion.empty
+Loading image items/texture/potion.yellow
+Loading image items/texture/lockpick
+Loading image items/texture/gem.earth
+Loading image items/texture/gem.fire
+Loading image items/texture/gem.life
+Loading image items/texture/gem.water
+Loading image items/texture/gem.wind
+Loading image items/texture/ring.gold
+Loading image items/texture/ring.iron
+Loading image items/texture/ring.ruby
+Loading image items/texture/ring.silver
+Loading image items/texture/potion.purple
+loading spell spell.test
+Creating ground...
+Filling ground...
+Building features...
+Loading image gui/durability
+Made a nice world with 548 features and height 27 :) ...
+Carving caves...
+Placing 7 teleports...
+Loading image cells/texture/teleport.on
+Placing 15 traps...
+Spawning feature entities...
+Placing 217 items...
+Placing some decoration (501 of them)...
+Placing 54 enemies...
+Wiping the floor...
+Updating all cells...
+Done!
+Loading image gui/crosshair
+Loading image gui/slot
+Loading image gui/font.small
+Loading image items/texture/gem.empty
+Loading image gui/maparrow
+Shutting down
+Saving...
+j://AppData/Local/.barfoos/save.game
+could not open save.game file
+j://AppData/Local/.barfoos/game
+ser vector<bool>: 1 bits 1 bytes
+ser vector<bool>: 262144 bits 32769 bytes
+j://AppData/Local/.barfoos/level.0
+-RunningState()
+Removing 0
+   game.cc  110 bool Game::Frame()                         / 
+    world.cc  318 void World::Update(RunningState&)        / 
+    world.cc  346 Tick                                              2 c,          1 t,          0 t/c
+
+   game.cc  110 bool Game::Frame()                         / 
+     game.cc  176 void Game::Update(float, float)          / 
+  runningstate.cc  156 virtual GameState* RunningState::Update() / 
+  runningstate.cc  216 Entity Update                            / 
+   entity.cc  422 virtual void Entity::Update(RunningState&)     166510 c,     451431 t,          2 t/c
+
+   game.cc  110 bool Game::Frame()                         / 
+     game.cc  176 void Game::Update(float, float)          / 
+  runningstate.cc  156 virtual GameState* RunningState::Update() / 
+  runningstate.cc  216 Entity Update                            / 
+      mob.cc   84 virtual void Mob::Update(RunningState&)       44362 c,     421260 t,          9 t/c
+
+   game.cc  110 bool Game::Frame()                         / 
+     game.cc  176 void Game::Update(float, float)          / 
+  runningstate.cc  156 virtual GameState* RunningState::Update() / 
+    world.cc  318 void World::Update(RunningState&)        / 
+    world.cc  346 Tick                                            156 c,       2764 t,         17 t/c
+
+   game.cc  110 bool Game::Frame()                         / 
+     game.cc  176 void Game::Update(float, float)          / 
+  runningstate.cc  156 virtual GameState* RunningState::Update() / 
+  runningstate.cc  224 Remove Entities                                 156 c,       8874 t,         56 t/c
+
+   game.cc  110 bool Game::Frame()                         / 
+     game.cc  176 void Game::Update(float, float)          / 
+  runningstate.cc  156 virtual GameState* RunningState::Update() / 
+  runningstate.cc  190 Entity Collision                                156 c,      18231 t,        116 t/c
+
+   game.cc  110 bool Game::Frame()                         / 
+     game.cc  161 void Game::Render() const                / 
+  runningstate.cc  111 virtual void RunningState::Render(Gfx&) const / 
+    world.cc  149 void World::Draw(Gfx&)                   / 
+    world.cc  235 Static Draw                                     153 c,      79601 t,        520 t/c
+
+   game.cc  110 bool Game::Frame()                         / 
+     game.cc  161 void Game::Render() const                / 
+  runningstate.cc  111 virtual void RunningState::Render(Gfx&) const / 
+    world.cc 1008 void MiniMap::Draw(Gfx&, const Vector3&, float)        153 c,     104278 t,        681 t/c
+
+   game.cc  110 bool Game::Frame()                         / 
+     game.cc  176 void Game::Update(float, float)          / 
+  runningstate.cc  156 virtual GameState* RunningState::Update() / 
+    world.cc  318 void World::Update(RunningState&)               156 c,     263780 t,       1690 t/c
+
+   game.cc  110 bool Game::Frame()                         / 
+     game.cc  161 void Game::Render() const                / 
+  runningstate.cc  111 virtual void RunningState::Render(Gfx&) const / 
+    world.cc  149 void World::Draw(Gfx&)                   / 
+    world.cc  250 Dynamic Draw                                    153 c,     619496 t,       4048 t/c
+
+   game.cc  110 bool Game::Frame()                         / 
+     game.cc  176 void Game::Update(float, float)                 976 c,    4028948 t,       4128 t/c
+
+   game.cc  110 bool Game::Frame()                         / 
+     game.cc  161 void Game::Render() const                / 
+  runningstate.cc  111 virtual void RunningState::Render(Gfx&) const / 
+    world.cc  149 void World::Draw(Gfx&)                          153 c,    1001231 t,       6543 t/c
+
+   game.cc  110 bool Game::Frame()                         / 
+     game.cc  161 void Game::Render() const                       958 c,    7580556 t,       7912 t/c
+
+   game.cc  110 bool Game::Frame()                         / 
+     game.cc  176 void Game::Update(float, float)          / 
+  runningstate.cc  156 virtual GameState* RunningState::Update() / 
+  runningstate.cc  216 Entity Update                                   156 c,    3717625 t,      23830 t/c
+
+   game.cc  110 bool Game::Frame()                         / 
+     game.cc  176 void Game::Update(float, float)          / 
+  runningstate.cc  156 virtual GameState* RunningState::Update()        156 c,    4022883 t,      25787 t/c
+
+   game.cc  110 bool Game::Frame()                         / 
+     game.cc  161 void Game::Render() const                / 
+  runningstate.cc  111 virtual void RunningState::Render(Gfx&) const        153 c,    4251159 t,      27785 t/c
+
+   game.cc  110 bool Game::Frame()                                958 c,   32236426 t,      33649 t/c
+
+   game.cc  110 bool Game::Frame()                         / 
+     game.cc  161 void Game::Render() const                / 
+  runningstate.cc  111 virtual void RunningState::Render(Gfx&) const / 
+    world.cc  149 void World::Draw(Gfx&)                   / 
+    world.cc  152 Vertex Update                                     2 c,     222427 t,     111213 t/c
+
+   game.cc  110 bool Game::Frame()                         / 
+    world.cc  318 void World::Update(RunningState&)                 2 c,     253298 t,     126649 t/c
+
+runningstate.cc  596 void RunningState::Save()                           1 c,     646839 t,     646839 t/c
+
+
+ GLFW - An OpenGL framework Version 3.0.2
+   Copyright (c) 2002-2006 Marcus Geelnard
+   Copyright (c) 2006-2010 Camilla Berglund
+
+ GLee (OpenGL Easy Extension library) Version 5.2
+   Copyright (c)2006  Ben Woodhouse  All rights reserved.
+
+ zlib version 1.2.8
+   Copyright (C) 1995-2012 Jean-loup Gailly and Mark Adler
+
+libpng version 1.7.0beta17 - August 22, 2013
+Copyright (c) 1998-2013 Glenn Randers-Pehrson
+Copyright (c) 1996-1997 Andreas Dilger
+Copyright (c) 1995-1996 Guy Eric Schalnat, Group 42, Inc.
+GLFW initialized
+Initializing game
+Initializing GFX
+Loading image gui/font.default
+Loading image gui/button.enabled
+Loading image gui/button.disabled
+Loading image gui/button.hover
+Loading image gui/button.active
+Loading image gui/font.big
+Game object initialized 00000000028a7610, new game
+entering mainloop
+Texture gui/font.big updated since 0...
+Loading image gui/font.big
+Texture gui/button.hover updated since 0...
+Loading image gui/button.hover
+Texture gui/button.disabled updated since 0...
+Loading image gui/button.disabled
+Texture gui/button.active updated since 0...
+Loading image gui/button.active
+Texture gui/button.enabled updated since 0...
+Loading image gui/button.enabled
+Texture gui/font.default updated since 0...
+Loading image gui/font.default
++RunningState() 000000000272f9a0 00000000028a76b8 00000000028a7610 00000000028a7610
+Loading cell properties for type 'air'
+Loading cell properties for type 'brick'
+Loading image cells/texture/brickstep
+Loading image cells/texture/brickstep_crack
+Loading image cells/texture/brickstep_mossy
+Loading cell properties for type 'bedrock'
+Loading image cells/texture/bedrock
+Loading cell properties for type 'torch'
+Loading cell properties for type 'carpet.red'
+Loading image cells/texture/carpet.red
+Loading cell properties for type 'default'
+Loading image cells/texture/dirt
+Loading cell properties for type 'dirt'
+Loading cell properties for type 'frozenlava'
+Loading image cells/texture/rock
+Loading cell properties for type 'gate'
+Loading image cells/texture/gate
+Loading cell properties for type 'lava'
+Loading image cells/texture/lava
+Loading cell properties for type 'pillar'
+Loading cell properties for type 'rock'
+Loading cell properties for type 'step'
+Loading image cells/texture/step
+Loading cell properties for type 'brick.secret'
+Loading cell properties for type 'torch2'
+Loading cell properties for type 'torch3'
+Loading cell properties for type 'wood'
+Loading image cells/texture/planks
+Loading cell properties for type 'ice'
+Loading image cells/texture/water
+Loading cell properties for type 'teleport'
+Loading image cells/texture/teleport.off
+Loading cell properties for type 'door.right.closed'
+Loading cell properties for type 'door.right.open'
+Loading cell properties for type 'ladder.right'
+Loading image cells/texture/ladder
+Loading cell properties for type 'shooter'
+Loading image cells/texture/shooter
+Loading cell properties for type 'bars'
+Loading image cells/texture/bars
+Loading cell properties for type 'water'
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Ignoring unknown feature property: mob
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Feature 'start'
+Feature 'bridge'
+Feature 'door'
+Feature 'alcove'
+Feature 'hallway_small'
+Feature 'doorway'
+Feature 'hallway'
+Feature 'hallway.ladder.down'
+Feature 'stairs_short'
+Feature 'doorway_wood'
+Feature 'hallway.ladder.up'
+Feature 'hallway_lava'
+Feature 'living_quarters.0'
+Feature 'mote'
+Loading image entities/texture/chest
+Loading image entities/texture/slime
+Loading image entities/texture/particle.rock
+Loading image entities/texture/torch
+Loading image entities/texture/spider
+Loading image entities/texture/particle.bfw9k
+Line 21: Ignoring 'noclip'
+Loading image entities/texture/particle.bubble
+Loading image entities/texture/particle.teleport
+Line 22: Ignoring 'noclip'
+Loading image entities/texture/wizard
+Loading image entities/texture/wizard.emissive
+Loading image entities/texture/grass
+Loading image entities/texture/hanging_moss.small
+Loading image entities/texture/arrow
+Loading image entities/texture/projectile.bfw9k
+Line 6: ignoring 'eqadddex'
+Loading image items/texture/sword2
+Loading image items/texture/torch
+Loading image items/texture/leather
+Loading image items/texture/fist
+Loading image items/texture/scroll
+Loading image items/texture/gold
+Loading image items/texture/key
+Loading image items/texture/potion.green
+Loading image items/texture/potion.clear
+Loading image items/texture/wand.black
+Loading image items/texture/wand.empty
+Loading image items/texture/potion.red
+Loading image items/texture/potion.empty
+Loading image items/texture/potion.yellow
+Loading image items/texture/lockpick
+Loading image items/texture/gem.earth
+Loading image items/texture/gem.fire
+Loading image items/texture/gem.life
+Loading image items/texture/gem.water
+Loading image items/texture/gem.wind
+Loading image items/texture/ring.gold
+Loading image items/texture/ring.iron
+Loading image items/texture/ring.ruby
+Loading image items/texture/ring.silver
+Loading image items/texture/potion.purple
+loading spell spell.test
+Creating ground...
+Filling ground...
+Building features...
+Loading image gui/durability
+Made a nice world with 464 features and height 30 :) ...
+Carving caves...
+Placing 8 teleports...
+Loading image cells/texture/teleport.on
+Placing 11 traps...
+Spawning feature entities...
+Placing 199 items...
+Placing some decoration (506 of them)...
+Placing 89 enemies...
+Wiping the floor...
+Updating all cells...
+Done!
+Loading image gui/crosshair
+Loading image gui/slot
+Loading image gui/font.small
+Loading image items/texture/gem.empty
+Loading image gui/maparrow
+Shutting down
+Saving...
+j:/.barfoos/save.game
+could not open save.game file
+j:/.barfoos/game
+ser vector<bool>: 1 bits 1 bytes
+ser vector<bool>: 262144 bits 32769 bytes
+j:/.barfoos/level.0
+-RunningState()
+Removing 0
+   game.cc  110 bool Game::Frame()                         / 
+    world.cc  318 void World::Update(RunningState&)        / 
+    world.cc  346 Tick                                              2 c,          2 t,          1 t/c
+
+   game.cc  110 bool Game::Frame()                         / 
+     game.cc  176 void Game::Update(float, float)          / 
+  runningstate.cc  156 virtual GameState* RunningState::Update() / 
+  runningstate.cc  216 Entity Update                            / 
+   entity.cc  422 virtual void Entity::Update(RunningState&)      85680 c,     215640 t,          2 t/c
+
+   game.cc  110 bool Game::Frame()                         / 
+     game.cc  176 void Game::Update(float, float)          / 
+  runningstate.cc  156 virtual GameState* RunningState::Update() / 
+  runningstate.cc  216 Entity Update                            / 
+      mob.cc   84 virtual void Mob::Update(RunningState&)       23600 c,     223080 t,          9 t/c
+
+   game.cc  110 bool Game::Frame()                         / 
+     game.cc  176 void Game::Update(float, float)          / 
+  runningstate.cc  156 virtual GameState* RunningState::Update() / 
+    world.cc  318 void World::Update(RunningState&)        / 
+    world.cc  346 Tick                                             80 c,       1224 t,         15 t/c
+
+   game.cc  110 bool Game::Frame()                         / 
+     game.cc  176 void Game::Update(float, float)          / 
+  runningstate.cc  156 virtual GameState* RunningState::Update() / 
+  runningstate.cc  224 Remove Entities                                  80 c,       2453 t,         30 t/c
+
+   game.cc  110 bool Game::Frame()                         / 
+     game.cc  176 void Game::Update(float, float)          / 
+  runningstate.cc  156 virtual GameState* RunningState::Update() / 
+  runningstate.cc  190 Entity Collision                                 80 c,       9499 t,        118 t/c
+
+   game.cc  110 bool Game::Frame()                         / 
+     game.cc  176 void Game::Update(float, float)                8004 c,    2130538 t,        266 t/c
+
+   game.cc  110 bool Game::Frame()                         / 
+     game.cc  161 void Game::Render() const                / 
+  runningstate.cc  111 virtual void RunningState::Render(Gfx&) const / 
+    world.cc  149 void World::Draw(Gfx&)                   / 
+    world.cc  235 Static Draw                                      78 c,      59051 t,        757 t/c
+
+   game.cc  110 bool Game::Frame()                         / 
+     game.cc  161 void Game::Render() const                      7995 c,    6080042 t,        760 t/c
+
+   game.cc  110 bool Game::Frame()                         / 
+     game.cc  161 void Game::Render() const                / 
+  runningstate.cc  111 virtual void RunningState::Render(Gfx&) const / 
+    world.cc 1008 void MiniMap::Draw(Gfx&, const Vector3&, float)         78 c,     102617 t,       1315 t/c
+
+   game.cc  110 bool Game::Frame()                         / 
+     game.cc  176 void Game::Update(float, float)          / 
+  runningstate.cc  156 virtual GameState* RunningState::Update() / 
+    world.cc  318 void World::Update(RunningState&)                80 c,     183098 t,       2288 t/c
+
+   game.cc  110 bool Game::Frame()                         / 
+     game.cc  161 void Game::Render() const                / 
+  runningstate.cc  111 virtual void RunningState::Render(Gfx&) const / 
+    world.cc  149 void World::Draw(Gfx&)                   / 
+    world.cc  250 Dynamic Draw                                     78 c,     256539 t,       3288 t/c
+
+   game.cc  110 bool Game::Frame()                               7995 c,   28055950 t,       3509 t/c
+
+   game.cc  110 bool Game::Frame()                         / 
+     game.cc  161 void Game::Render() const                / 
+  runningstate.cc  111 virtual void RunningState::Render(Gfx&) const / 
+    world.cc  149 void World::Draw(Gfx&)                           78 c,     576148 t,       7386 t/c
+
+   game.cc  110 bool Game::Frame()                         / 
+     game.cc  176 void Game::Update(float, float)          / 
+  runningstate.cc  156 virtual GameState* RunningState::Update() / 
+  runningstate.cc  216 Entity Update                                    80 c,    1916001 t,      23950 t/c
+
+   game.cc  110 bool Game::Frame()                         / 
+     game.cc  176 void Game::Update(float, float)          / 
+  runningstate.cc  156 virtual GameState* RunningState::Update()         80 c,    2117876 t,      26473 t/c
+
+   game.cc  110 bool Game::Frame()                         / 
+     game.cc  161 void Game::Render() const                / 
+  runningstate.cc  111 virtual void RunningState::Render(Gfx&) const         78 c,    2210246 t,      28336 t/c
+
+   game.cc  110 bool Game::Frame()                         / 
+     game.cc  161 void Game::Render() const                / 
+  runningstate.cc  111 virtual void RunningState::Render(Gfx&) const / 
+    world.cc  149 void World::Draw(Gfx&)                   / 
+    world.cc  152 Vertex Update                                     2 c,     183550 t,      91775 t/c
+
+   game.cc  110 bool Game::Frame()                         / 
+    world.cc  318 void World::Update(RunningState&)                 2 c,     237009 t,     118504 t/c
+
+runningstate.cc  596 void RunningState::Save()                           1 c,    1500300 t,    1500300 t/c
+
+
+ GLFW - An OpenGL framework Version 3.0.2
+   Copyright (c) 2002-2006 Marcus Geelnard
+   Copyright (c) 2006-2010 Camilla Berglund
+
+ GLee (OpenGL Easy Extension library) Version 5.2
+   Copyright (c)2006  Ben Woodhouse  All rights reserved.
+
+ zlib version 1.2.8
+   Copyright (C) 1995-2012 Jean-loup Gailly and Mark Adler
+
+libpng version 1.7.0beta17 - August 22, 2013
+Copyright (c) 1998-2013 Glenn Randers-Pehrson
+Copyright (c) 1996-1997 Andreas Dilger
+Copyright (c) 1995-1996 Guy Eric Schalnat, Group 42, Inc.
+GLFW initialized
+Initializing game
+Initializing GFX
+Loading image gui/font.default
+Loading image gui/button.enabled
+Loading image gui/button.disabled
+Loading image gui/button.hover
+Loading image gui/button.active
+Loading image gui/font.big
+Game object initialized 0000000000367610, new game
+entering mainloop
+Texture gui/font.big updated since 0...
+Loading image gui/font.big
+Texture gui/button.hover updated since 0...
+Loading image gui/button.hover
+Texture gui/button.disabled updated since 0...
+Loading image gui/button.disabled
+Texture gui/button.active updated since 0...
+Loading image gui/button.active
+Texture gui/button.enabled updated since 0...
+Loading image gui/button.enabled
+Texture gui/font.default updated since 0...
+Loading image gui/font.default
++RunningState() 000000000272f9a0 00000000003676b8 0000000000367610 0000000000367610
+Loading cell properties for type 'air'
+Loading cell properties for type 'brick'
+Loading image cells/texture/brickstep
+Loading image cells/texture/brickstep_crack
+Loading image cells/texture/brickstep_mossy
+Loading cell properties for type 'bedrock'
+Loading image cells/texture/bedrock
+Loading cell properties for type 'torch'
+Loading cell properties for type 'carpet.red'
+Loading image cells/texture/carpet.red
+Loading cell properties for type 'default'
+Loading image cells/texture/dirt
+Loading cell properties for type 'dirt'
+Loading cell properties for type 'frozenlava'
+Loading image cells/texture/rock
+Loading cell properties for type 'gate'
+Loading image cells/texture/gate
+Loading cell properties for type 'lava'
+Loading image cells/texture/lava
+Loading cell properties for type 'pillar'
+Loading cell properties for type 'rock'
+Loading cell properties for type 'step'
+Loading image cells/texture/step
+Loading cell properties for type 'brick.secret'
+Loading cell properties for type 'torch2'
+Loading cell properties for type 'torch3'
+Loading cell properties for type 'wood'
+Loading image cells/texture/planks
+Loading cell properties for type 'ice'
+Loading image cells/texture/water
+Loading cell properties for type 'teleport'
+Loading image cells/texture/teleport.off
+Loading cell properties for type 'door.right.closed'
+Loading cell properties for type 'door.right.open'
+Loading cell properties for type 'ladder.right'
+Loading image cells/texture/ladder
+Loading cell properties for type 'shooter'
+Loading image cells/texture/shooter
+Loading cell properties for type 'bars'
+Loading image cells/texture/bars
+Loading cell properties for type 'water'
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Ignoring unknown feature property: mob
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Feature 'start'
+Feature 'bridge'
+Feature 'door'
+Feature 'alcove'
+Feature 'hallway_small'
+Feature 'doorway'
+Feature 'hallway'
+Feature 'hallway.ladder.down'
+Feature 'stairs_short'
+Feature 'doorway_wood'
+Feature 'hallway.ladder.up'
+Feature 'hallway_lava'
+Feature 'living_quarters.0'
+Feature 'mote'
+Loading image entities/texture/chest
+Loading image entities/texture/slime
+Loading image entities/texture/particle.rock
+Loading image entities/texture/torch
+Loading image entities/texture/spider
+Loading image entities/texture/particle.bfw9k
+Line 21: Ignoring 'noclip'
+Loading image entities/texture/particle.bubble
+Loading image entities/texture/particle.teleport
+Line 22: Ignoring 'noclip'
+Loading image entities/texture/wizard
+Loading image entities/texture/wizard.emissive
+Loading image entities/texture/grass
+Loading image entities/texture/hanging_moss.small
+Loading image entities/texture/arrow
+Loading image entities/texture/projectile.bfw9k
+Line 6: ignoring 'eqadddex'
+Loading image items/texture/sword2
+Loading image items/texture/torch
+Loading image items/texture/leather
+Loading image items/texture/fist
+Loading image items/texture/scroll
+Loading image items/texture/gold
+Loading image items/texture/key
+Loading image items/texture/potion.green
+Loading image items/texture/potion.clear
+Loading image items/texture/wand.black
+Loading image items/texture/wand.empty
+Loading image items/texture/potion.red
+Loading image items/texture/potion.empty
+Loading image items/texture/potion.yellow
+Loading image items/texture/lockpick
+Loading image items/texture/gem.earth
+Loading image items/texture/gem.fire
+Loading image items/texture/gem.life
+Loading image items/texture/gem.water
+Loading image items/texture/gem.wind
+Loading image items/texture/ring.gold
+Loading image items/texture/ring.iron
+Loading image items/texture/ring.ruby
+Loading image items/texture/ring.silver
+Loading image items/texture/potion.purple
+loading spell spell.test
+Creating ground...
+Filling ground...
+Building features...
+Discarding boring world with 268 features and height 7 :( ...
+Filling ground...
+Building features...
+Loading image gui/durability
+Made a nice world with 645 features and height 46 :) ...
+Carving caves...
+Placing 3 teleports...
+Loading image cells/texture/teleport.on
+Placing 10 traps...
+Spawning feature entities...
+Placing 203 items...
+Placing some decoration (688 of them)...
+Placing 101 enemies...
+Wiping the floor...
+Updating all cells...
+Done!
+Loading image gui/crosshair
+Loading image gui/slot
+Loading image gui/font.small
+Loading image items/texture/gem.empty
+Loading image gui/maparrow
+Shutting down
+Saving...
+j:/.barfoos/save.game
+j:/.barfoos/game
+ser vector<bool>: 1 bits 1 bytes
+ser vector<bool>: 262144 bits 32769 bytes
+j:/.barfoos/level.0
+-RunningState()
+Removing 0
+   game.cc  110 bool Game::Frame()                         / 
+    world.cc  318 void World::Update(RunningState&)        / 
+    world.cc  346 Tick                                              2 c,          1 t,          0 t/c
+
+   game.cc  110 bool Game::Frame()                         / 
+     game.cc  176 void Game::Update(float, float)          / 
+  runningstate.cc  156 virtual GameState* RunningState::Update() / 
+  runningstate.cc  216 Entity Update                            / 
+   entity.cc  422 virtual void Entity::Update(RunningState&)      83215 c,     320390 t,          3 t/c
+
+   game.cc  110 bool Game::Frame()                         / 
+     game.cc  176 void Game::Update(float, float)          / 
+  runningstate.cc  156 virtual GameState* RunningState::Update() / 
+  runningstate.cc  216 Entity Update                            / 
+      mob.cc   84 virtual void Mob::Update(RunningState&)       20490 c,     208278 t,         10 t/c
+
+   game.cc  110 bool Game::Frame()                         / 
+     game.cc  176 void Game::Update(float, float)          / 
+  runningstate.cc  156 virtual GameState* RunningState::Update() / 
+    world.cc  318 void World::Update(RunningState&)        / 
+    world.cc  346 Tick                                             65 c,       1025 t,         15 t/c
+
+   game.cc  110 bool Game::Frame()                         / 
+     game.cc  176 void Game::Update(float, float)          / 
+  runningstate.cc  156 virtual GameState* RunningState::Update() / 
+  runningstate.cc  224 Remove Entities                                  65 c,       3683 t,         56 t/c
+
+   game.cc  110 bool Game::Frame()                         / 
+     game.cc  176 void Game::Update(float, float)          / 
+  runningstate.cc  156 virtual GameState* RunningState::Update() / 
+  runningstate.cc  190 Entity Collision                                 65 c,      10106 t,        155 t/c
+
+   game.cc  110 bool Game::Frame()                         / 
+     game.cc  176 void Game::Update(float, float)                3173 c,    2170245 t,        683 t/c
+
+   game.cc  110 bool Game::Frame()                         / 
+     game.cc  161 void Game::Render() const                      3136 c,    4243862 t,       1353 t/c
+
+   game.cc  110 bool Game::Frame()                         / 
+     game.cc  161 void Game::Render() const                / 
+  runningstate.cc  111 virtual void RunningState::Render(Gfx&) const / 
+    world.cc 1008 void MiniMap::Draw(Gfx&, const Vector3&, float)         62 c,     127259 t,       2052 t/c
+
+   game.cc  110 bool Game::Frame()                         / 
+     game.cc  161 void Game::Render() const                / 
+  runningstate.cc  111 virtual void RunningState::Render(Gfx&) const / 
+    world.cc  149 void World::Draw(Gfx&)                   / 
+    world.cc  235 Static Draw                                      62 c,     130351 t,       2102 t/c
+
+   game.cc  110 bool Game::Frame()                         / 
+     game.cc  161 void Game::Render() const                / 
+  runningstate.cc  111 virtual void RunningState::Render(Gfx&) const / 
+    world.cc  149 void World::Draw(Gfx&)                   / 
+    world.cc  250 Dynamic Draw                                     62 c,     131103 t,       2114 t/c
+
+   game.cc  110 bool Game::Frame()                         / 
+     game.cc  176 void Game::Update(float, float)          / 
+  runningstate.cc  156 virtual GameState* RunningState::Update() / 
+    world.cc  318 void World::Update(RunningState&)                65 c,     237419 t,       3652 t/c
+
+   game.cc  110 bool Game::Frame()                         / 
+     game.cc  161 void Game::Render() const                / 
+  runningstate.cc  111 virtual void RunningState::Render(Gfx&) const / 
+    world.cc  149 void World::Draw(Gfx&)                           62 c,     587540 t,       9476 t/c
+
+   game.cc  110 bool Game::Frame()                               3136 c,   34243574 t,      10919 t/c
+
+   game.cc  110 bool Game::Frame()                         / 
+     game.cc  176 void Game::Update(float, float)          / 
+  runningstate.cc  156 virtual GameState* RunningState::Update() / 
+  runningstate.cc  216 Entity Update                                    65 c,    1904196 t,      29295 t/c
+
+   game.cc  110 bool Game::Frame()                         / 
+     game.cc  176 void Game::Update(float, float)          / 
+  runningstate.cc  156 virtual GameState* RunningState::Update()         65 c,    2161082 t,      33247 t/c
+
+   game.cc  110 bool Game::Frame()                         / 
+     game.cc  161 void Game::Render() const                / 
+  runningstate.cc  111 virtual void RunningState::Render(Gfx&) const         62 c,    3086005 t,      49774 t/c
+
+   game.cc  110 bool Game::Frame()                         / 
+     game.cc  161 void Game::Render() const                / 
+  runningstate.cc  111 virtual void RunningState::Render(Gfx&) const / 
+    world.cc  149 void World::Draw(Gfx&)                   / 
+    world.cc  152 Vertex Update                                     2 c,     254938 t,     127469 t/c
+
+   game.cc  110 bool Game::Frame()                         / 
+    world.cc  318 void World::Update(RunningState&)                 2 c,     262999 t,     131499 t/c
+
+runningstate.cc  596 void RunningState::Save()                           1 c,    1089975 t,    1089975 t/c
+
+
+ GLFW - An OpenGL framework Version 3.0.2
+   Copyright (c) 2002-2006 Marcus Geelnard
+   Copyright (c) 2006-2010 Camilla Berglund
+
+ GLee (OpenGL Easy Extension library) Version 5.2
+   Copyright (c)2006  Ben Woodhouse  All rights reserved.
+
+ zlib version 1.2.8
+   Copyright (C) 1995-2012 Jean-loup Gailly and Mark Adler
+
+libpng version 1.7.0beta17 - August 22, 2013
+Copyright (c) 1998-2013 Glenn Randers-Pehrson
+Copyright (c) 1996-1997 Andreas Dilger
+Copyright (c) 1995-1996 Guy Eric Schalnat, Group 42, Inc.
+GLFW initialized
+Initializing game
+Initializing GFX
+Loading image gui/font.default
+Loading image gui/button.enabled
+Loading image gui/button.disabled
+Loading image gui/button.hover
+Loading image gui/button.active
+Loading image gui/font.big
+Game object initialized 00000000002d7610, new game
+entering mainloop
+Texture gui/font.big updated since 0...
+Loading image gui/font.big
+Texture gui/button.hover updated since 0...
+Loading image gui/button.hover
+Texture gui/button.disabled updated since 0...
+Loading image gui/button.disabled
+Texture gui/button.active updated since 0...
+Loading image gui/button.active
+Texture gui/button.enabled updated since 0...
+Loading image gui/button.enabled
+Texture gui/font.default updated since 0...
+Loading image gui/font.default
++RunningState() 00000000003215e0 00000000002d76b8 00000000002d7610 00000000002d7610
+Loading cell properties for type 'air'
+Loading cell properties for type 'brick'
+Loading image cells/texture/brickstep
+Loading image cells/texture/brickstep_crack
+Loading image cells/texture/brickstep_mossy
+Loading cell properties for type 'bedrock'
+Loading image cells/texture/bedrock
+Loading cell properties for type 'torch'
+Loading cell properties for type 'carpet.red'
+Loading image cells/texture/carpet.red
+Loading cell properties for type 'default'
+Loading image cells/texture/dirt
+Loading cell properties for type 'dirt'
+Loading cell properties for type 'frozenlava'
+Loading image cells/texture/rock
+Loading cell properties for type 'gate'
+Loading image cells/texture/gate
+Loading cell properties for type 'lava'
+Loading image cells/texture/lava
+Loading cell properties for type 'pillar'
+Loading cell properties for type 'rock'
+Loading cell properties for type 'step'
+Loading image cells/texture/step
+Loading cell properties for type 'brick.secret'
+Loading cell properties for type 'torch2'
+Loading cell properties for type 'torch3'
+Loading cell properties for type 'wood'
+Loading image cells/texture/planks
+Loading cell properties for type 'ice'
+Loading image cells/texture/water
+Loading cell properties for type 'teleport'
+Loading image cells/texture/teleport.off
+Loading cell properties for type 'door.right.closed'
+Loading cell properties for type 'door.right.open'
+Loading cell properties for type 'ladder.right'
+Loading image cells/texture/ladder
+Loading cell properties for type 'shooter'
+Loading image cells/texture/shooter
+Loading cell properties for type 'bars'
+Loading image cells/texture/bars
+Loading cell properties for type 'water'
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Ignoring unknown feature property: mob
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Feature 'start'
+Feature 'bridge'
+Feature 'door'
+Feature 'alcove'
+Feature 'hallway_small'
+Feature 'doorway'
+Feature 'hallway'
+Feature 'hallway.ladder.down'
+Feature 'stairs_short'
+Feature 'doorway_wood'
+Feature 'hallway.ladder.up'
+Feature 'hallway_lava'
+Feature 'living_quarters.0'
+Feature 'mote'
+Loading image entities/texture/chest
+Loading image entities/texture/slime
+Loading image entities/texture/particle.rock
+Loading image entities/texture/torch
+Loading image entities/texture/spider
+Loading image entities/texture/particle.bfw9k
+Line 21: Ignoring 'noclip'
+Loading image entities/texture/particle.bubble
+Loading image entities/texture/particle.teleport
+Line 22: Ignoring 'noclip'
+Loading image entities/texture/wizard
+Loading image entities/texture/wizard.emissive
+Loading image entities/texture/grass
+Loading image entities/texture/hanging_moss.small
+Loading image entities/texture/arrow
+Loading image entities/texture/projectile.bfw9k
+Line 6: ignoring 'eqadddex'
+Loading image items/texture/sword2
+Loading image items/texture/torch
+Loading image items/texture/leather
+Loading image items/texture/fist
+Loading image items/texture/scroll
+Loading image items/texture/gold
+Loading image items/texture/key
+Loading image items/texture/potion.green
+Loading image items/texture/potion.clear
+Loading image items/texture/wand.black
+Loading image items/texture/wand.empty
+Loading image items/texture/potion.red
+Loading image items/texture/potion.empty
+Loading image items/texture/potion.yellow
+Loading image items/texture/lockpick
+Loading image items/texture/gem.earth
+Loading image items/texture/gem.fire
+Loading image items/texture/gem.life
+Loading image items/texture/gem.water
+Loading image items/texture/gem.wind
+Loading image items/texture/ring.gold
+Loading image items/texture/ring.iron
+Loading image items/texture/ring.ruby
+Loading image items/texture/ring.silver
+Loading image items/texture/potion.purple
+loading spell spell.test
+Creating ground...
+Filling ground...
+Building features...
+Loading image gui/durability
+Made a nice world with 530 features and height 33 :) ...
+Carving caves...
+Placing 3 teleports...
+Loading image cells/texture/teleport.on
+Placing 13 traps...
+Spawning feature entities...
+Placing 109 items...
+Placing some decoration (501 of them)...
+Placing 120 enemies...
+Wiping the floor...
+Updating all cells...
+Done!
+Loading image gui/crosshair
+Loading image gui/slot
+Loading image gui/font.small
+Loading image items/texture/gem.empty
+Loading image gui/maparrow
+Shutting down
+Saving...
+j://AppData/Local/.barfoos/save.game
+j://AppData/Local/.barfoos/game
+ser vector<bool>: 1 bits 1 bytes
+ser vector<bool>: 262144 bits 32769 bytes
+j://AppData/Local/.barfoos/level.0
+-RunningState()
+Removing 0
+   game.cc  110 bool Game::Frame()                         / 
+    world.cc  318 void World::Update(RunningState&)        / 
+    world.cc  346 Tick                                              2 c,          1 t,          0 t/c
+
+   game.cc  110 bool Game::Frame()                         / 
+     game.cc  176 void Game::Update(float, float)          / 
+  runningstate.cc  156 virtual GameState* RunningState::Update() / 
+  runningstate.cc  216 Entity Update                            / 
+   entity.cc  422 virtual void Entity::Update(RunningState&)      85036 c,     282914 t,          3 t/c
+
+   game.cc  110 bool Game::Frame()                         / 
+     game.cc  176 void Game::Update(float, float)          / 
+  runningstate.cc  156 virtual GameState* RunningState::Update() / 
+    world.cc  318 void World::Update(RunningState&)        / 
+    world.cc  346 Tick                                             81 c,        639 t,          7 t/c
+
+   game.cc  110 bool Game::Frame()                         / 
+     game.cc  176 void Game::Update(float, float)          / 
+  runningstate.cc  156 virtual GameState* RunningState::Update() / 
+  runningstate.cc  216 Entity Update                            / 
+      mob.cc   84 virtual void Mob::Update(RunningState&)       23962 c,     261342 t,         10 t/c
+
+   game.cc  110 bool Game::Frame()                         / 
+     game.cc  176 void Game::Update(float, float)          / 
+  runningstate.cc  156 virtual GameState* RunningState::Update() / 
+  runningstate.cc  224 Remove Entities                                  81 c,       4380 t,         54 t/c
+
+   game.cc  110 bool Game::Frame()                         / 
+     game.cc  176 void Game::Update(float, float)          / 
+  runningstate.cc  156 virtual GameState* RunningState::Update() / 
+  runningstate.cc  190 Entity Collision                                 81 c,      13633 t,        168 t/c
+
+   game.cc  110 bool Game::Frame()                         / 
+     game.cc  176 void Game::Update(float, float)                2081 c,    2220044 t,       1066 t/c
+
+   game.cc  110 bool Game::Frame()                         / 
+     game.cc  161 void Game::Render() const                / 
+  runningstate.cc  111 virtual void RunningState::Render(Gfx&) const / 
+    world.cc 1008 void MiniMap::Draw(Gfx&, const Vector3&, float)         79 c,      98235 t,       1243 t/c
+
+   game.cc  110 bool Game::Frame()                         / 
+     game.cc  161 void Game::Render() const                / 
+  runningstate.cc  111 virtual void RunningState::Render(Gfx&) const / 
+    world.cc  149 void World::Draw(Gfx&)                   / 
+    world.cc  250 Dynamic Draw                                     79 c,     115214 t,       1458 t/c
+
+   game.cc  110 bool Game::Frame()                         / 
+     game.cc  161 void Game::Render() const                / 
+  runningstate.cc  111 virtual void RunningState::Render(Gfx&) const / 
+    world.cc  149 void World::Draw(Gfx&)                   / 
+    world.cc  235 Static Draw                                      79 c,     133618 t,       1691 t/c
+
+   game.cc  110 bool Game::Frame()                         / 
+     game.cc  161 void Game::Render() const                      2066 c,    4182009 t,       2024 t/c
+
+   game.cc  110 bool Game::Frame()                         / 
+     game.cc  176 void Game::Update(float, float)          / 
+  runningstate.cc  156 virtual GameState* RunningState::Update() / 
+    world.cc  318 void World::Update(RunningState&)                81 c,     188741 t,       2330 t/c
+
+   game.cc  110 bool Game::Frame()                         / 
+     game.cc  161 void Game::Render() const                / 
+  runningstate.cc  111 virtual void RunningState::Render(Gfx&) const / 
+    world.cc  149 void World::Draw(Gfx&)                           79 c,     510985 t,       6468 t/c
+
+   game.cc  110 bool Game::Frame()                               2066 c,   25839255 t,      12506 t/c
+
+   game.cc  110 bool Game::Frame()                         / 
+     game.cc  176 void Game::Update(float, float)          / 
+  runningstate.cc  156 virtual GameState* RunningState::Update() / 
+  runningstate.cc  216 Entity Update                                    81 c,    1999958 t,      24690 t/c
+
+   game.cc  110 bool Game::Frame()                         / 
+     game.cc  176 void Game::Update(float, float)          / 
+  runningstate.cc  156 virtual GameState* RunningState::Update()         81 c,    2213678 t,      27329 t/c
+
+   game.cc  110 bool Game::Frame()                         / 
+     game.cc  161 void Game::Render() const                / 
+  runningstate.cc  111 virtual void RunningState::Render(Gfx&) const         79 c,    3360952 t,      42543 t/c
+
+   game.cc  110 bool Game::Frame()                         / 
+     game.cc  161 void Game::Render() const                / 
+  runningstate.cc  111 virtual void RunningState::Render(Gfx&) const / 
+    world.cc  149 void World::Draw(Gfx&)                   / 
+    world.cc  152 Vertex Update                                     2 c,     189408 t,      94704 t/c
+
+   game.cc  110 bool Game::Frame()                         / 
+    world.cc  318 void World::Update(RunningState&)                 2 c,     269941 t,     134970 t/c
+
+runningstate.cc  596 void RunningState::Save()                           1 c,    1366208 t,    1366208 t/c
+
+
+ GLFW - An OpenGL framework Version 3.0.2
+   Copyright (c) 2002-2006 Marcus Geelnard
+   Copyright (c) 2006-2010 Camilla Berglund
+
+ GLee (OpenGL Easy Extension library) Version 5.2
+   Copyright (c)2006  Ben Woodhouse  All rights reserved.
+
+ zlib version 1.2.8
+   Copyright (C) 1995-2012 Jean-loup Gailly and Mark Adler
+
+libpng version 1.7.0beta17 - August 22, 2013
+Copyright (c) 1998-2013 Glenn Randers-Pehrson
+Copyright (c) 1996-1997 Andreas Dilger
+Copyright (c) 1995-1996 Guy Eric Schalnat, Group 42, Inc.
+GLFW initialized
+Initializing game
+Initializing GFX
+Loading image gui/font.default
+Loading image gui/button.enabled
+Loading image gui/button.disabled
+Loading image gui/button.hover
+Loading image gui/button.active
+Loading image gui/font.big
+Game object initialized 00000000002fe9c0, new game
+entering mainloop
+Texture gui/font.big updated since 0...
+Loading image gui/font.big
+Texture gui/button.hover updated since 0...
+Loading image gui/button.hover
+Texture gui/button.disabled updated since 0...
+Loading image gui/button.disabled
+Texture gui/button.active updated since 0...
+Loading image gui/button.active
+Texture gui/button.enabled updated since 0...
+Loading image gui/button.enabled
+Texture gui/font.default updated since 0...
+Loading image gui/font.default
++RunningState() 00000000002fb270 00000000002fea68 00000000002fe9c0 00000000002fe9c0
+Loading cell properties for type 'air'
+Loading cell properties for type 'brick'
+Loading image cells/texture/brickstep
+Loading image cells/texture/brickstep_crack
+Loading image cells/texture/brickstep_mossy
+Loading cell properties for type 'bedrock'
+Loading image cells/texture/bedrock
+Loading cell properties for type 'torch'
+Loading cell properties for type 'carpet.red'
+Loading image cells/texture/carpet.red
+Loading cell properties for type 'default'
+Loading image cells/texture/dirt
+Loading cell properties for type 'dirt'
+Loading cell properties for type 'frozenlava'
+Loading image cells/texture/rock
+Loading cell properties for type 'gate'
+Loading image cells/texture/gate
+Loading cell properties for type 'lava'
+Loading image cells/texture/lava
+Loading cell properties for type 'pillar'
+Loading cell properties for type 'rock'
+Loading cell properties for type 'step'
+Loading image cells/texture/step
+Loading cell properties for type 'brick.secret'
+Loading cell properties for type 'torch2'
+Loading cell properties for type 'torch3'
+Loading cell properties for type 'wood'
+Loading image cells/texture/planks
+Loading cell properties for type 'ice'
+Loading image cells/texture/water
+Loading cell properties for type 'teleport'
+Loading image cells/texture/teleport.off
+Loading cell properties for type 'door.right.closed'
+Loading cell properties for type 'door.right.open'
+Loading cell properties for type 'ladder.right'
+Loading image cells/texture/ladder
+Loading cell properties for type 'shooter'
+Loading image cells/texture/shooter
+Loading cell properties for type 'bars'
+Loading image cells/texture/bars
+Loading cell properties for type 'water'
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Ignoring unknown feature property: mob
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Feature 'start'
+Feature 'bridge'
+Feature 'door'
+Feature 'alcove'
+Feature 'hallway_small'
+Feature 'doorway'
+Feature 'hallway'
+Feature 'hallway.ladder.down'
+Feature 'stairs_short'
+Feature 'doorway_wood'
+Feature 'hallway.ladder.up'
+Feature 'hallway_lava'
+Feature 'living_quarters.0'
+Feature 'mote'
+Loading image entities/texture/chest
+Loading image entities/texture/slime
+Loading image entities/texture/particle.rock
+Loading image entities/texture/torch
+Loading image entities/texture/spider
+Loading image entities/texture/particle.bfw9k
+Line 21: Ignoring 'noclip'
+Loading image entities/texture/particle.bubble
+Loading image entities/texture/particle.teleport
+Line 22: Ignoring 'noclip'
+Loading image entities/texture/wizard
+Loading image entities/texture/wizard.emissive
+Loading image entities/texture/grass
+Loading image entities/texture/hanging_moss.small
+Loading image entities/texture/arrow
+Loading image entities/texture/projectile.bfw9k
+Line 6: ignoring 'eqadddex'
+Loading image items/texture/sword2
+Loading image items/texture/torch
+Loading image items/texture/leather
+Loading image items/texture/fist
+Loading image items/texture/scroll
+Loading image items/texture/gold
+Loading image items/texture/key
+Loading image items/texture/potion.green
+Loading image items/texture/potion.clear
+Loading image items/texture/wand.black
+Loading image items/texture/wand.empty
+Loading image items/texture/potion.red
+Loading image items/texture/potion.empty
+Loading image items/texture/potion.yellow
+Loading image items/texture/lockpick
+Loading image items/texture/gem.earth
+Loading image items/texture/gem.fire
+Loading image items/texture/gem.life
+Loading image items/texture/gem.water
+Loading image items/texture/gem.wind
+Loading image items/texture/ring.gold
+Loading image items/texture/ring.iron
+Loading image items/texture/ring.ruby
+Loading image items/texture/ring.silver
+Loading image items/texture/potion.purple
+loading spell spell.test
+Creating ground...
+Filling ground...
+Building features...
+Loading image gui/durability
+Made a nice world with 761 features and height 38 :) ...
+Carving caves...
+Placing 10 teleports...
+Loading image cells/texture/teleport.on
+Placing 15 traps...
+Spawning feature entities...
+Placing 153 items...
+Placing some decoration (602 of them)...
+Placing 119 enemies...
+Wiping the floor...
+Updating all cells...
+Done!
+Loading image gui/crosshair
+Loading image gui/slot
+Loading image gui/font.small
+Loading image items/texture/gem.empty
+640 480 -> 640 480
+Loading image gui/maparrow
+Shutting down
+Saving...
+-RunningState()
+Removing 0
+   game.cc  110 bool Game::Frame()                         / 
+    world.cc  318 void World::Update(RunningState&)        / 
+    world.cc  346 Tick                                              2 c,          1 t,          0 t/c
+
+   game.cc  110 bool Game::Frame()                         / 
+     game.cc  176 void Game::Update(float, float)          / 
+  runningstate.cc  155 virtual GameState* RunningState::Update() / 
+  runningstate.cc  215 Entity Update                            / 
+   entity.cc  421 virtual void Entity::Update(RunningState&)      59310 c,     278166 t,          4 t/c
+
+   game.cc  110 bool Game::Frame()                         / 
+     game.cc  176 void Game::Update(float, float)          / 
+  runningstate.cc  155 virtual GameState* RunningState::Update() / 
+  runningstate.cc  215 Entity Update                            / 
+      mob.cc   69 virtual void Mob::Update(RunningState&)       12825 c,     143131 t,         11 t/c
+
+   game.cc  110 bool Game::Frame()                         / 
+     game.cc  176 void Game::Update(float, float)          / 
+  runningstate.cc  155 virtual GameState* RunningState::Update() / 
+    world.cc  318 void World::Update(RunningState&)        / 
+    world.cc  346 Tick                                             45 c,       1319 t,         29 t/c
+
+   game.cc  110 bool Game::Frame()                         / 
+     game.cc  176 void Game::Update(float, float)          / 
+  runningstate.cc  155 virtual GameState* RunningState::Update() / 
+  runningstate.cc  223 Remove Entities                                  45 c,       1716 t,         38 t/c
+
+   game.cc  110 bool Game::Frame()                         / 
+     game.cc  176 void Game::Update(float, float)          / 
+  runningstate.cc  155 virtual GameState* RunningState::Update() / 
+  runningstate.cc  189 Entity Collision                                 45 c,       8960 t,        199 t/c
+
+   game.cc  110 bool Game::Frame()                         / 
+     game.cc  176 void Game::Update(float, float)                5153 c,    1667376 t,        323 t/c
+
+   game.cc  110 bool Game::Frame()                         / 
+     game.cc  161 void Game::Render() const                      5130 c,    4399395 t,        857 t/c
+
+   game.cc  110 bool Game::Frame()                         / 
+     game.cc  161 void Game::Render() const                / 
+  runningstate.cc  110 virtual void RunningState::Render(Gfx&) const / 
+    world.cc  149 void World::Draw(Gfx&)                   / 
+    world.cc  235 Static Draw                                      43 c,      95023 t,       2209 t/c
+
+   game.cc  110 bool Game::Frame()                         / 
+     game.cc  161 void Game::Render() const                / 
+  runningstate.cc  110 virtual void RunningState::Render(Gfx&) const / 
+    world.cc 1008 void MiniMap::Draw(Gfx&, const Vector3&, float)         43 c,     113166 t,       2631 t/c
+
+   game.cc  110 bool Game::Frame()                         / 
+     game.cc  161 void Game::Render() const                / 
+  runningstate.cc  110 virtual void RunningState::Render(Gfx&) const / 
+    world.cc  149 void World::Draw(Gfx&)                   / 
+    world.cc  250 Dynamic Draw                                     43 c,     221360 t,       5147 t/c
+
+   game.cc  110 bool Game::Frame()                               5130 c,   28393381 t,       5534 t/c
+
+   game.cc  110 bool Game::Frame()                         / 
+     game.cc  176 void Game::Update(float, float)          / 
+  runningstate.cc  155 virtual GameState* RunningState::Update() / 
+    world.cc  318 void World::Update(RunningState&)                45 c,     256886 t,       5708 t/c
+
+   game.cc  110 bool Game::Frame()                         / 
+     game.cc  161 void Game::Render() const                / 
+  runningstate.cc  110 virtual void RunningState::Render(Gfx&) const / 
+    world.cc  149 void World::Draw(Gfx&)                           43 c,     725051 t,      16861 t/c
+
+   game.cc  110 bool Game::Frame()                         / 
+     game.cc  176 void Game::Update(float, float)          / 
+  runningstate.cc  155 virtual GameState* RunningState::Update() / 
+  runningstate.cc  215 Entity Update                                    45 c,    1387059 t,      30823 t/c
+
+   game.cc  110 bool Game::Frame()                         / 
+     game.cc  176 void Game::Update(float, float)          / 
+  runningstate.cc  155 virtual GameState* RunningState::Update()         45 c,    1658833 t,      36862 t/c
+
+   game.cc  110 bool Game::Frame()                         / 
+     game.cc  161 void Game::Render() const                / 
+  runningstate.cc  110 virtual void RunningState::Render(Gfx&) const         43 c,    1826402 t,      42474 t/c
+
+   game.cc  110 bool Game::Frame()                         / 
+    world.cc  318 void World::Update(RunningState&)                 2 c,     265958 t,     132979 t/c
+
+   game.cc  110 bool Game::Frame()                         / 
+     game.cc  161 void Game::Render() const                / 
+  runningstate.cc  110 virtual void RunningState::Render(Gfx&) const / 
+    world.cc  149 void World::Draw(Gfx&)                   / 
+    world.cc  152 Vertex Update                                     2 c,     304251 t,     152125 t/c
+
+runningstate.cc  613 void RunningState::Save()                           1 c,     824137 t,     824137 t/c
+
+
+ GLFW - An OpenGL framework Version 3.0.2
+   Copyright (c) 2002-2006 Marcus Geelnard
+   Copyright (c) 2006-2010 Camilla Berglund
+
+ GLee (OpenGL Easy Extension library) Version 5.2
+   Copyright (c)2006  Ben Woodhouse  All rights reserved.
+
+ zlib version 1.2.8
+   Copyright (C) 1995-2012 Jean-loup Gailly and Mark Adler
+
+libpng version 1.7.0beta17 - August 22, 2013
+Copyright (c) 1998-2013 Glenn Randers-Pehrson
+Copyright (c) 1996-1997 Andreas Dilger
+Copyright (c) 1995-1996 Guy Eric Schalnat, Group 42, Inc.
+GLFW initialized
+Initializing game
+Initializing GFX
+Loading image gui/font.default
+Loading image gui/button.enabled
+Loading image gui/button.disabled
+Loading image gui/button.hover
+Loading image gui/button.active
+Loading image gui/font.big
+Game object initialized 000000000286e9c0, new game
+entering mainloop
+Texture gui/font.big updated since 0...
+Loading image gui/font.big
+Texture gui/button.hover updated since 0...
+Loading image gui/button.hover
+Texture gui/button.disabled updated since 0...
+Loading image gui/button.disabled
+Texture gui/button.active updated since 0...
+Loading image gui/button.active
+Texture gui/button.enabled updated since 0...
+Loading image gui/button.enabled
+Texture gui/font.default updated since 0...
+Loading image gui/font.default
+ GLFW - An OpenGL framework Version 3.0.2
+   Copyright (c) 2002-2006 Marcus Geelnard
+   Copyright (c) 2006-2010 Camilla Berglund
+
+ GLee (OpenGL Easy Extension library) Version 5.2
+   Copyright (c)2006  Ben Woodhouse  All rights reserved.
+
+ zlib version 1.2.8
+   Copyright (C) 1995-2012 Jean-loup Gailly and Mark Adler
+
+libpng version 1.7.0beta17 - August 22, 2013
+Copyright (c) 1998-2013 Glenn Randers-Pehrson
+Copyright (c) 1996-1997 Andreas Dilger
+Copyright (c) 1995-1996 Guy Eric Schalnat, Group 42, Inc.
+GLFW initialized
+Initializing game
+Initializing GFX
+Loading image gui/font.default
+Loading image gui/button.enabled
+Loading image gui/button.disabled
+Loading image gui/button.hover
+Loading image gui/button.active
+Loading image gui/font.big
+Game object initialized 00000000027ff9c0, new game
+entering mainloop
+Texture gui/font.big updated since 0...
+Loading image gui/font.big
+Texture gui/button.hover updated since 0...
+Loading image gui/button.hover
+Texture gui/button.disabled updated since 0...
+Loading image gui/button.disabled
+Texture gui/button.active updated since 0...
+Loading image gui/button.active
+Texture gui/button.enabled updated since 0...
+Loading image gui/button.enabled
+Texture gui/font.default updated since 0...
+Loading image gui/font.default
++RunningState() 00000000027fb270 00000000027ffa68 00000000027ff9c0 00000000027ff9c0
+Loading cell properties for type 'air'
+Loading cell properties for type 'brick'
+Loading image cells/texture/brickstep
+Loading image cells/texture/brickstep_crack
+Loading image cells/texture/brickstep_mossy
+Loading cell properties for type 'bedrock'
+Loading image cells/texture/bedrock
+Loading cell properties for type 'torch'
+Loading cell properties for type 'carpet.red'
+Loading image cells/texture/carpet.red
+Loading cell properties for type 'default'
+Loading image cells/texture/dirt
+Loading cell properties for type 'dirt'
+Loading cell properties for type 'frozenlava'
+Loading image cells/texture/rock
+Loading cell properties for type 'gate'
+Loading image cells/texture/gate
+Loading cell properties for type 'lava'
+Loading image cells/texture/lava
+Loading cell properties for type 'pillar'
+Loading cell properties for type 'rock'
+Loading cell properties for type 'step'
+Loading image cells/texture/step
+Loading cell properties for type 'brick.secret'
+Loading cell properties for type 'torch2'
+Loading cell properties for type 'torch3'
+Loading cell properties for type 'wood'
+Loading image cells/texture/planks
+Loading cell properties for type 'ice'
+Loading image cells/texture/water
+Loading cell properties for type 'teleport'
+Loading image cells/texture/teleport.off
+Loading cell properties for type 'door.right.closed'
+Loading cell properties for type 'door.right.open'
+Loading cell properties for type 'ladder.right'
+Loading image cells/texture/ladder
+Loading cell properties for type 'shooter'
+Loading image cells/texture/shooter
+Loading cell properties for type 'bars'
+Loading image cells/texture/bars
+Loading cell properties for type 'water'
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Ignoring unknown feature property: mob
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Use of deprecated 'cell' property. Use extended 'def' instead!
+Feature 'start'
+Feature 'bridge'
+Feature 'door'
+Feature 'alcove'
+Feature 'hallway_small'
+Feature 'doorway'
+Feature 'hallway'
+Feature 'hallway.ladder.down'
+Feature 'stairs_short'
+Feature 'doorway_wood'
+Feature 'hallway.ladder.up'
+Feature 'hallway_lava'
+Feature 'living_quarters.0'
+Feature 'mote'
+Loading image entities/texture/chest
+Loading image entities/texture/slime
+Loading image entities/texture/particle.rock
+Loading image entities/texture/torch
+Loading image entities/texture/spider
+Loading image entities/texture/particle.bfw9k
+Line 21: Ignoring 'noclip'
+Loading image entities/texture/particle.bubble
+Loading image entities/texture/particle.teleport
+Line 22: Ignoring 'noclip'
+Loading image entities/texture/wizard
+Loading image entities/texture/wizard.emissive
+Loading image entities/texture/grass
+Loading image entities/texture/hanging_moss.small
+Loading image entities/texture/arrow
+Loading image entities/texture/projectile.bfw9k
+Line 6: ignoring 'eqadddex'
+Loading image items/texture/sword2
+Loading image items/texture/torch
+Loading image items/texture/leather
+Loading image items/texture/fist
+Loading image items/texture/scroll
+Loading image items/texture/gold
+Loading image items/texture/key
+Loading image items/texture/potion.green
+Loading image items/texture/potion.clear
+Loading image items/texture/wand.black
+Loading image items/texture/wand.empty
+Loading image items/texture/potion.red
+Loading image items/texture/potion.empty
+Loading image items/texture/potion.yellow
+Loading image items/texture/lockpick
+Loading image items/texture/gem.earth
+Loading image items/texture/gem.fire
+Loading image items/texture/gem.life
+Loading image items/texture/gem.water
+Loading image items/texture/gem.wind
+Loading image items/texture/ring.gold
+Loading image items/texture/ring.iron
+Loading image items/texture/ring.ruby
+Loading image items/texture/ring.silver
+Loading image items/texture/potion.purple
+loading spell spell.test
+Creating ground...
+Filling ground...
+Building features...
+Loading image gui/durability
+Made a nice world with 675 features and height 33 :) ...
+Carving caves...
+Placing 7 teleports...
+Loading image cells/texture/teleport.on
+Placing 13 traps...
+Spawning feature entities...
+Placing 193 items...
+Placing some decoration (537 of them)...
+Placing 84 enemies...
+Wiping the floor...
+Updating all cells...
+Done!
+Loading image gui/crosshair
+Loading image gui/slot
+Loading image gui/font.small
+Loading image items/texture/gem.empty
+Loading image gui/maparrow
+Loading image gui/button
+Loading image gui/slot.amulet
+Loading image gui/slot.helmet
+Loading image gui/slot.ring
+Loading image gui/slot.armor
+Loading image gui/slot.hand
+Loading image gui/slot.pants
+Loading image gui/slot.boots
+Shutting down
+Saving...
+-RunningState()
+Removing 0
+   game.cc  110 bool Game::Frame()                         / 
+    world.cc  318 void World::Update(RunningState&)        / 
+    world.cc  346 Tick                                              2 c,          2 t,          1 t/c
+
+   game.cc  110 bool Game::Frame()                         / 
+     game.cc  176 void Game::Update(float, float)          / 
+  runningstate.cc  155 virtual GameState* RunningState::Update() / 
+  runningstate.cc  215 Entity Update                            / 
+   entity.cc  401 virtual void Entity::Update(RunningState&)     410074 c,    1139911 t,          2 t/c
+
+   game.cc  110 bool Game::Frame()                         / 
+     game.cc  176 void Game::Update(float, float)          / 
+  runningstate.cc  155 virtual GameState* RunningState::Update() / 
+    world.cc  318 void World::Update(RunningState&)        / 
+    world.cc  346 Tick                                            339 c,       3236 t,          9 t/c
+
+   game.cc  110 bool Game::Frame()                         / 
+     game.cc  176 void Game::Update(float, float)          / 
+  runningstate.cc  155 virtual GameState* RunningState::Update() / 
+  runningstate.cc  215 Entity Update                            / 
+      mob.cc   69 virtual void Mob::Update(RunningState&)      106669 c,    1167381 t,         10 t/c
+
+   game.cc  110 bool Game::Frame()                         / 
+     game.cc  176 void Game::Update(float, float)          / 
+  runningstate.cc  155 virtual GameState* RunningState::Update() / 
+  runningstate.cc  223 Remove Entities                                 339 c,      25086 t,         74 t/c
+
+   game.cc  110 bool Game::Frame()                         / 
+     game.cc  176 void Game::Update(float, float)          / 
+  runningstate.cc  155 virtual GameState* RunningState::Update() / 
+  runningstate.cc  189 Entity Collision                                339 c,      51743 t,        152 t/c
+
+   game.cc  110 bool Game::Frame()                         / 
+     game.cc  161 void Game::Render() const                / 
+  runningstate.cc  110 virtual void RunningState::Render(Gfx&) const / 
+    world.cc 1008 void MiniMap::Draw(Gfx&, const Vector3&, float)        333 c,     106111 t,        318 t/c
+
+   game.cc  110 bool Game::Frame()                         / 
+     game.cc  161 void Game::Render() const                / 
+  runningstate.cc  110 virtual void RunningState::Render(Gfx&) const / 
+    world.cc  149 void World::Draw(Gfx&)                   / 
+    world.cc  235 Static Draw                                     333 c,     107864 t,        323 t/c
+
+   game.cc  110 bool Game::Frame()                         / 
+     game.cc  176 void Game::Update(float, float)          / 
+  runningstate.cc  155 virtual GameState* RunningState::Update() / 
+    world.cc  318 void World::Update(RunningState&)               339 c,     291545 t,        860 t/c
+
+   game.cc  110 bool Game::Frame()                         / 
+     game.cc  161 void Game::Render() const                / 
+  runningstate.cc  110 virtual void RunningState::Render(Gfx&) const / 
+    world.cc  149 void World::Draw(Gfx&)                   / 
+    world.cc  250 Dynamic Draw                                    333 c,     851851 t,       2558 t/c
+
+   game.cc  110 bool Game::Frame()                         / 
+     game.cc  161 void Game::Render() const                / 
+  runningstate.cc  110 virtual void RunningState::Render(Gfx&) const / 
+    world.cc  149 void World::Draw(Gfx&)                          333 c,    1332120 t,       4000 t/c
+
+   game.cc  110 bool Game::Frame()                         / 
+     game.cc  176 void Game::Update(float, float)                1521 c,   10204405 t,       6709 t/c
+
+   game.cc  110 bool Game::Frame()                         / 
+     game.cc  161 void Game::Render() const                      1499 c,   12535847 t,       8362 t/c
+
+   game.cc  110 bool Game::Frame()                         / 
+     game.cc  176 void Game::Update(float, float)          / 
+  runningstate.cc  155 virtual GameState* RunningState::Update() / 
+  runningstate.cc  215 Entity Update                                   339 c,    9361380 t,      27614 t/c
+
+   game.cc  110 bool Game::Frame()                         / 
+     game.cc  161 void Game::Render() const                / 
+  runningstate.cc  110 virtual void RunningState::Render(Gfx&) const        333 c,    9387973 t,      28192 t/c
+
+   game.cc  110 bool Game::Frame()                         / 
+     game.cc  176 void Game::Update(float, float)          / 
+  runningstate.cc  155 virtual GameState* RunningState::Update()        339 c,   10191542 t,      30063 t/c
+
+   game.cc  110 bool Game::Frame()                               1499 c,   45382079 t,      30274 t/c
+
+   game.cc  110 bool Game::Frame()                         / 
+    world.cc  318 void World::Update(RunningState&)                 2 c,     260963 t,     130481 t/c
+
+   game.cc  110 bool Game::Frame()                         / 
+     game.cc  161 void Game::Render() const                / 
+  runningstate.cc  110 virtual void RunningState::Render(Gfx&) const / 
+    world.cc  149 void World::Draw(Gfx&)                   / 
+    world.cc  152 Vertex Update                                     2 c,     263901 t,     131950 t/c
+
+runningstate.cc  613 void RunningState::Save()                           1 c,    1237097 t,    1237097 t/c
+
+
+ GLFW - An OpenGL framework Version 3.0.2
+   Copyright (c) 2002-2006 Marcus Geelnard
+   Copyright (c) 2006-2010 Camilla Berglund
+
+ GLee (OpenGL Easy Extension library) Version 5.2
+   Copyright (c)2006  Ben Woodhouse  All rights reserved.
+
+ zlib version 1.2.8
+   Copyright (C) 1995-2012 Jean-loup Gailly and Mark Adler
+
+libpng version 1.7.0beta17 - August 22, 2013
+Copyright (c) 1998-2013 Glenn Randers-Pehrson
+Copyright (c) 1996-1997 Andreas Dilger
+Copyright (c) 1995-1996 Guy Eric Schalnat, Group 42, Inc.
+GLFW initialized
+Initializing game
+Initializing GFX
+Loading image gui/font.default
+Loading image gui/button.enabled
+Loading image gui/button.disabled
+Loading image gui/button.hover
+Loading image gui/button.active
+Loading image gui/font.big
+Game object initialized 0000000002c27340, new game
+entering mainloop
+Texture gui/font.big updated since 0...
+Loading image gui/font.big
+Texture gui/button.hover updated since 0...
+Loading image gui/button.hover
+Texture gui/button.disabled updated since 0...
+Loading image gui/button.disabled
+Texture gui/button.active updated since 0...
+Loading image gui/button.active
+Texture gui/button.enabled updated since 0...
+Loading image gui/button.enabled
+Texture gui/font.default updated since 0...
+Loading image gui/font.default
++RunningState() 00000000002faf00 0000000002c273e8 0000000002c27340 0000000002c27340
+Loading cell properties for type 'air'
+Loading cell properties for type 'brick'

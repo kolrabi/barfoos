@@ -26,17 +26,14 @@
 
 #include <algorithm>
 #include <sys/time.h>
+#include <fstream>
 
 RunningState::RunningState(Game &game) :
   GameState(game),
-  level(0),
   world(nullptr),
-  nextEntityId(1),
   player(nullptr),
   showInventory(false),
   lastSaveT(0.0),
-  nextTriggerId(1),
-  nextLockId(1),
   saving(false)
 {
   Log("+RunningState() %p %p %p %p\n", this, &GetRandom(), &game, &GetGame());
@@ -61,7 +58,10 @@ RunningState::Leave(GameState *) {
 
 void
 RunningState::NewGame() {
-  this->level = 0;
+  this->proto.set_level(0);
+  this->proto.set_next_entity_id(1);
+  this->proto.set_next_lock_id(1);
+  this->proto.set_next_trigger_id(1);
 
   std::string seed = ToString(time(nullptr));
   GetGame().NewGame(seed);
@@ -91,7 +91,7 @@ RunningState::NewGame() {
   Entity *player = Entity::Create("player");
   if (player) {
     player->SetPosition(IVector3(32,32,32));
-    player->SetSpawnPos(IVector3(32,32,32));
+    player->SetSpawnPosition(IVector3(32,32,32));
     this->AddEntity(player);
   }
 
@@ -259,6 +259,7 @@ RunningState::AddEntity(Entity *entity) {
     this->player = dynamic_cast<Player*>(entity);
     GetGame().GetGfx().SetPlayer(player);
     GetGame().GetAudio().SetPlayer(player);
+    this->proto.set_player_id(entityId);
   }
   return entityId;
 }
@@ -279,6 +280,7 @@ RunningState::RemoveEntity(ID entityId) {
     this->player = nullptr;
     GetGame().GetGfx().SetPlayer(nullptr);
     GetGame().GetAudio().SetPlayer(nullptr);
+    this->proto.set_player_id(0);
   }
 
   auto solidIter = std::find(this->solidEntities.begin(), this->solidEntities.end(), iter->second);
@@ -477,7 +479,7 @@ RunningState::Explosion(Entity &entity, const Vector3 &pos, size_t radius, float
 
   if (owner) {
     Stats stats = owner->GetEffectiveStats();
-    damageFactor += 0.2 * (stats.matk + Stats::GetLevelForSkillExp(stats.skills["magic"]));
+    damageFactor += 0.2 * (stats.GetMagicAttack() + stats.GetSkill("magic")); //Stats::GetLevelForSkillExp(stats.skills["magic"]));
   }
 
   std::vector<ID> entIDs = this->FindEntities(pos, radius);
@@ -533,7 +535,8 @@ RunningState::SpawnInAABB(
 void RunningState::LockCell(Cell &cell) {
   if (cell.GetLockedID()) return;
 
-  ID id = nextLockId ++;
+  ID id = this->proto.next_lock_id();
+  this->proto.set_next_lock_id(id + 1);
   cell.Lock(id);
 
   if (GetRandom().Chance(0.8)) {
@@ -556,7 +559,8 @@ void RunningState::LockCell(Cell &cell) {
 void RunningState::LockEntity(Entity &ent) {
   if (ent.GetLockedID()) return;
 
-  ID id = nextLockId ++;
+  ID id = this->proto.next_lock_id();
+  this->proto.set_next_lock_id(id + 1);
   ent.Lock(id);
 
   if (GetRandom().Chance(0.8)) {
@@ -590,21 +594,32 @@ void RunningState::TriggerOff(ID id) {
   this->GetWorld().TriggerOff(id);
 }
 
+ID
+RunningState::GetNextTriggerId() { 
+  ID id = this->proto.next_trigger_id();
+  this->proto.set_next_trigger_id(id + 1); 
+  return id;
+}
+
+ID
+RunningState::GetNextEntityId() { 
+  ID id = this->proto.next_entity_id();
+  this->proto.set_next_entity_id(id + 1); 
+  return id;
+}
+
 void
 RunningState::Save() {
   PROFILE();
   Log("Saving...\n");
   this->saving = true;
 
-  Serializer serGame("GAME");
-  serGame << GetGame();
-  serGame << self;
-
-  FILE *f = createUserFile("game");
-  if (f) {
-  //  serGame.WriteToFile(f);
-    fclose(f);
-    f = nullptr;
+  std::fstream out;
+  if (createUserStream("save.game", out)) {
+    this->GetGame().Serialize(out);
+    this->proto.SerializeToOstream(&out);
+  } else {
+    Log("could not open save.game file\n");
   }
 
   SaveLevel();
@@ -614,12 +629,23 @@ RunningState::Save() {
 
 void
 RunningState::SaveLevel() {
+  std::fstream out;
+  if (createUserStream("save.level."+ToString(this->GetLevel()), out)) {
+    ::EntityList_Proto entityList;
+    for (auto &e:this->entities) {
+      if (e.second) *entityList.add_entities() = e.second->GetProto();
+    }
+    entityList.SerializeToOstream(&out);
+  } else {
+    Log("could not open level save file\n");
+  }
+  /*
   Serializer ser("LEVL");
   ser << *world;
   ser << (uint32_t)this->player->GetId();
   ser << this->entities;
 
-  FILE *f = createUserFile("level." + ToString(level));
+  FILE *f = createUserFile("level." + ToString(this->proto.level()));
 
   //std::thread([=](){
     if (f) {
@@ -627,11 +653,13 @@ RunningState::SaveLevel() {
       fclose(f);
     }
   //}).detach();
+  */
 }
 
 void
 RunningState::LoadLevel() {
-  FILE *f = openUserFile("level." + ToString(level));
+  /*
+  FILE *f = openUserFile("level." + ToString(this->proto.level()));
 
   Deserializer deser;
   deser.LoadFromFile(f, "LEVL");
@@ -649,21 +677,13 @@ RunningState::LoadLevel() {
 
   for (auto &e:this->entities) {
     e.second->Continue(*this, e.first);
-  }
-
-}
-
-Serializer &operator << (Serializer &ser, const RunningState &state) {
-  ser << state.level;
-  ser << state.nextEntityId;
-  ser << state.nextTriggerId;
-  ser << state.nextLockId;
-  return ser;
+  }*/
 }
 
 void
 RunningState::Load() {
   PROFILE();
+  /*
   Log("Loading...\n");
 
   Deserializer deser;
@@ -671,18 +691,11 @@ RunningState::Load() {
   deser.LoadFromFile(f, "GAME");
 
   Log("game %08x\n", deser.GetPos());
-  deser >> GetGame();
+  //deser >> GetGame();
 
   Log("runningstate %08x\n", deser.GetPos());
-  deser >> self;
+  //deser >> self;
 
   LoadLevel();
-}
-
-Deserializer &operator >> (Deserializer &deser, RunningState &state) {
-  deser >> state.level;
-  deser >> state.nextEntityId;
-  deser >> state.nextTriggerId;
-  deser >> state.nextLockId;
-  return deser;
+  */
 }

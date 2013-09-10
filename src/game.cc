@@ -41,13 +41,11 @@ Game::Game(const Point &screenSize) :
   nextGameState(nullptr),
   activeGui     (nullptr),
   startT        (0.0),
-  lastT         (0.0),
   deltaT        (0.0),
   frame         (0),
   realFrame     (0),
   lastFPST      (0.0),
   fps           (0.0),
-  seed          (""),
   random        ("")
 {
 }
@@ -71,7 +69,10 @@ Game::Init() {
   if (!this->gfx->Init(*this)) return false;
   if (!this->audio->Init()) return false;
 
-  this->lastT     = 0;
+  this->proto.set_last_time(0.0f);
+  this->proto.set_seed("");
+  this->proto.clear_identified_items();
+
   this->deltaT    = 0;
   this->frame     = 0;
   this->realFrame = 0;
@@ -88,7 +89,7 @@ Game::Init() {
 
 void
 Game::NewGame(const std::string &seed) {
-  this->seed = seed;
+  this->proto.set_seed(seed);
   this->random.Seed(seed, 0);
 
   std::string scrolls = loadAssetAsString("text/scrolls");
@@ -104,7 +105,8 @@ Game::NewGame(const std::string &seed) {
   this->startT = this->gfx->GetTime();
 }
 
-bool Game::Frame() {
+bool 
+Game::Frame() {
   PROFILE();
 
   if (nextGameState != activeGameState) {
@@ -117,14 +119,14 @@ bool Game::Frame() {
 
   // update game (at most 0.1s at a time)
   float t = this->gfx->GetTime() - this->startT;
-  while(t - this->lastT > 0.1) {
-    this->lastT += 0.1;
-    this->Update(lastT, 0.1);
+  while(t - this->proto.last_time() > 0.1) {
+    this->proto.set_last_time(this->proto.last_time() + 0.1f);
+    this->Update(this->proto.last_time(), 0.1);
     this->input->Update();
   }
 
-  this->Update(t, t - this->lastT);
-  this->lastT = t;
+  this->Update(t, t - this->proto.last_time());
+  this->proto.set_last_time(t);
 
   // render game
   this->Render();
@@ -170,10 +172,9 @@ Game::Render() const {
 }
 
 void
-Game::Update(float t, float deltaT) {
+Game::Update(float, float deltaT) {
   PROFILE();
 
-  this->lastT = t;
   this->deltaT = deltaT;
 
   if (activeGameState) {
@@ -210,13 +211,15 @@ Game::GetScrollName() {
   return name;
 }
 
-void Game::SetIdentified(const std::string &name) {
+void 
+Game::SetIdentified(const std::string &name) {
   if (this->IsIdentified(name)) return;
-  this->identifiedItems.push_back(name);
+  this->proto.add_identified_items(name);
 }
 
-bool Game::IsIdentified(const std::string &name) const {
-  for (auto &i:this->identifiedItems) {
+bool 
+Game::IsIdentified(const std::string &name) const {
+  for (auto &i:this->proto.identified_items()) {
     if (i == name) return true;
   }
   return false;
@@ -235,34 +238,25 @@ Game::SetGui(const std::shared_ptr<Gui> &gui) {
   }
 }
 
-Serializer &operator << (Serializer &ser, const Game &game) {
-  ser << game.lastT;
-  ser << game.seed;
-  ser << game.identifiedItems;
-  return ser;
+void
+Game::Serialize(std::ostream &out) {
+  this->proto.SerializeToOstream(&out);
 }
 
-Deserializer &operator >> (Deserializer &deser, Game &game) {
-  Log("lastt %08x\n", deser.GetPos());
-  deser >> game.lastT;
-  Log("seed %08x\n", deser.GetPos());
-  deser >> game.seed;
-  Log("iditems %08x\n", deser.GetPos());
-  deser >> game.identifiedItems;
-  Log("-- %08x\n", deser.GetPos());
+void
+Game::Deserialize(std::istream &in) {
+  this->proto.ParseFromIstream(&in);
 
-  game.startT = game.GetGfx().GetTime()-game.lastT;
-  game.random.Seed(game.seed, 0);
+  this->startT = this->GetGfx().GetTime()-this->GetTime();
+  this->random.Seed(this->proto.seed(), 0);
 
   std::string scrolls = loadAssetAsString("text/scrolls");
-  game.scrollMarkov.clear();
-  game.scrollMarkov.add(0, scrolls.begin(), scrolls.end());
+  this->scrollMarkov.clear();
+  this->scrollMarkov.add(0, scrolls.begin(), scrolls.end());
 
   LoadCells();
   LoadFeatures();
   LoadEntities();
   LoadEffects();
-  LoadItems(game);
-
-  return deser;
+  LoadItems(*this);
 }

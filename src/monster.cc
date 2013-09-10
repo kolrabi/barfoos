@@ -21,13 +21,17 @@ Monster::Monster(const std::string &propertyName) :
 
   attackTarget    (InvalidID),
   nextAttackT     (0.0)
-{}
-
+{
+  this->proto.set_spawn_class(uint32_t(SpawnClass::MobClass));
+  this->proto.mutable_monster();
+}
+/*
 Monster::Monster(const std::string &type, Deserializer &deser) :
   Mob             (type, deser) {
   deser >> nextMoveT >> moveTarget >> isMoveTargetValid;
   deser >> attackTarget >> nextAttackT;
 }
+*/
 
 Monster::~Monster() {
 }
@@ -180,7 +184,7 @@ Monster::Think(RunningState &state) {
       isMoveTargetValid = false;
 
     } else {
-      forward = (moveTarget-aabb.center).Normalize();
+      this->SetForward((moveTarget-aabb.center).Normalize());
     }
 
     if (isMoveTargetValid) move = tmove.Normalize() * this->properties->maxSpeed;
@@ -219,7 +223,7 @@ Monster::AddHealth(RunningState &state, const HealthInfo &info) {
     this->attackTarget = info.dealerId;
   }
 }
-
+/*
 void
 Monster::Serialize(Serializer &ser) const {
   Mob::Serialize(ser);
@@ -227,3 +231,4 @@ Monster::Serialize(Serializer &ser) const {
   ser << nextMoveT << moveTarget << isMoveTargetValid;
   ser << attackTarget << nextAttackT;
 }
+*/

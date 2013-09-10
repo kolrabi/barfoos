@@ -116,7 +116,7 @@ Spell::Cast(RunningState &state, Mob &user) const {
     }
 
     if (onCastDamageAOE) {
-      float damage = this->onCastDamageAOE * 0.5 * (stats.matk + stats.skills["magic"]);
+      float damage = this->onCastDamageAOE * 0.5 * (stats.GetMagicAttack() + stats.GetSkill("magic"));
       for (ID e:entIDs) {
         Entity *ent = state.GetEntity(e);
         if (!ent) continue;
@@ -126,7 +126,7 @@ Spell::Cast(RunningState &state, Mob &user) const {
   }
 
   if (this->onCastDamageCaster) {
-    float damage = this->onCastDamageCaster * 0.5 * (stats.matk + stats.skills["magic"]);
+    float damage = this->onCastDamageCaster * 0.5 * (stats.GetMagicAttack() + stats.GetSkill("magic"));
     user.AddHealth(state, Stats::MagicAttack(user.GetId(), user, damage, this->element));
   }
 
@@ -135,7 +135,7 @@ Spell::Cast(RunningState &state, Mob &user) const {
       target->AddBuff(state, this->onCastAddBuffTarget);
     }
     if (this->onCastDamageTarget) {
-      float damage = this->onCastDamageTarget * 0.5 * (stats.matk + stats.skills["magic"]);
+      float damage = this->onCastDamageTarget * 0.5 * (stats.GetMagicAttack() + stats.GetSkill("magic"));
       target->AddHealth(state, Stats::MagicAttack(user.GetId(), *target, damage, this->element));
     }
   }
