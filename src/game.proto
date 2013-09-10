@@ -1,0 +1,5 @@
+message Game_Proto {
+	required float 	last_time 				= 1 [default = 0.0];
+    required string seed 					= 2;
+    repeated string identified_items 		= 3;
+}
