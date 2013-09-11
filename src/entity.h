@@ -198,7 +198,7 @@ public:
   const EntityProperties *  GetProperties()                   const { return properties; }
   virtual std::string       GetName()                         const { return properties->displayName; }
 
-  ID                        GetOwner()                        const { return this->proto.owner_id(); }
+  ID                        GetOwner()                        const { return this->proto.has_owner_id() ? this->proto.owner_id() : InvalidID; }
   void                      SetOwner(const Entity &owner)           { this->proto.set_owner_id(owner.GetId()); }
 
   // gameplay
@@ -245,10 +245,10 @@ public:
   bool                      CanSee(RunningState &state, const Vector3 &pos);
 
   void                      AddBuff(RunningState &state, const std::string &name);
-  void                      Lock(ID id)                             { this->lockedID = id; }
-  void                      Unlock()                                { this->lockedID = 0; }
-  ID                        GetLockedID()                     const { return this->lockedID; }
-  bool                      CanOpenInventory()                const { return this->properties->openInventory && this->lockedID == 0; }
+  void                      Lock(ID id)                             { this->proto.set_locked_id(id); }
+  void                      Unlock()                                { this->proto.set_locked_id(0); }
+  ID                        GetLockedID()                     const { return this->proto.locked_id(); }
+  bool                      CanOpenInventory()                const { return this->properties->openInventory && this->GetLockedID() == 0; }
   uint32_t                  GetGold()                         const { return this->inventory.GetGold(); };
   uint32_t                  GetGems(Element element)          const { return this->inventory.GetGems(element); };
 
@@ -291,17 +291,12 @@ protected:
   Cell *lastCell;
   IVector3 cellPos;
   Inventory inventory;
-  ID lockedID;
 
   // rendering
   Sprite sprite;
   bool drawAABB;
   IColor cellLight;
   std::vector<ParticleEmitter> emitters = std::vector<ParticleEmitter>(0);
-  float renderAngle;
-
-  friend Serializer &operator << (Serializer &ser, const Entity *entity);
-  friend Deserializer &operator >> (Deserializer &deser, Entity *&entity);
 };
 
 #endif

@@ -43,6 +43,7 @@ RunningState::~RunningState() {
   for (auto entity : this->entities) {
     delete entity.second;
   }
+  this->entities.clear();
 
   Log("-RunningState()\n");
 }
@@ -88,6 +89,7 @@ RunningState::NewGame() {
   WorldBuilder builder(*this->world);
   builder.Build(*this, theme);
 
+  Log("adding player\n");
   Entity *player = Entity::Create("player");
   if (player) {
     player->SetPosition(IVector3(32,32,32));
@@ -95,6 +97,7 @@ RunningState::NewGame() {
     this->AddEntity(player);
   }
 
+  Log("adding box\n");
   Entity *entity = Entity::Create("box");
   entity->SetPosition(IVector3(32,24,32));
   this->AddEntity(entity);
@@ -132,7 +135,7 @@ RunningState::Render(Gfx &gfx) const {
 
   // draw all entities
   for (auto entity : this->entities) {
-    entity.second->Draw(gfx);
+    if (entity.second) entity.second->Draw(gfx);
   }
 
   gfx.ClearDepth(1.0);
@@ -141,7 +144,7 @@ RunningState::Render(Gfx &gfx) const {
   Point vscreen = gfx.GetScreen().GetSize();
   gfx.GetScreen().Viewport(Rect(Point(vscreen.x-128, 0), Point(128, 128)));
   player->MapView(gfx);
-  world->GetMap().Draw(gfx, player->GetSmoothPosition(), player->GetAngles().x * Const::rad2deg);
+  world->GetMap().Draw(gfx, player->GetSmoothPosition(), player->GetYaw() * Const::rad2deg);
   gfx.GetScreen().Viewport(Rect());
 
   // next draw gui stuff
@@ -154,6 +157,20 @@ GameState *
 RunningState::Update() {
   PROFILE();
 
+  // remove removable entities
+  {
+    PROFILE_NAMED("Remove Entities");
+    auto entityIter = this->entities.begin();
+    while(entityIter != this->entities.end()) {
+      if (!entityIter->second || entityIter->second->IsRemovable()) {
+        delete entityIter->second;
+        entityIter = this->entities.erase(entityIter);
+      } else {
+        entityIter++;
+      }
+    }
+  }
+
   // show or hide inventory
   if (GetGame().GetInput().IsKeyDown(InputKey::Inventory)) {
     if (!this->showInventory) {
@@ -162,14 +179,16 @@ RunningState::Update() {
       // TODO: get range
       this->player->GetSelection(*this, 5.0, nullptr, cellSide, entityID);
 
-      if (entityID == InvalidID || !entities[entityID]->GetProperties()->openInventory) {
+      Entity *entity = this->GetEntity(entityID);
+
+      if (!entity || !entity->GetProperties()->openInventory) {
         GetGame().SetGui(std::shared_ptr<Gui>(new InventoryGui(*this, *player)));
         this->showInventory = true;
       } else {
         if (entities[entityID]->GetLockedID()) {
-          this->player->AddMessage("The "+entities[entityID]->GetName()+" is locked.");
+          this->player->AddMessage("The "+entity->GetName()+" is locked.");
         } else {
-          GetGame().SetGui(std::shared_ptr<Gui>(new InventoryGui(*this, *player, *entities[entityID])));
+          GetGame().SetGui(std::shared_ptr<Gui>(new InventoryGui(*this, *player, *entity)));
           this->showInventory = true;
         }
       }
@@ -189,6 +208,7 @@ RunningState::Update() {
     PROFILE_NAMED("Entity Collision");
     std::vector<Entity*> collideEntities;
     for (auto entity : this->entities) {
+      if (!entity.second) continue;
       if (entity.second->GetProperties()->nocollideEntity) continue;
       if (entity.second->IsDead()) continue;
       collideEntities.push_back(entity.second);
@@ -213,21 +233,11 @@ RunningState::Update() {
   // update all entities
   {
     PROFILE_NAMED("Entity Update");
-    for (auto entity : this->entities) {
-      if (entity.second) entity.second->Update(*this);
-    }
-  }
-
-  // remove removable entities
-  {
-    PROFILE_NAMED("Remove Entities");
-    auto entityIter = this->entities.begin();
-    while(entityIter != this->entities.end()) {
-      if (!entityIter->second || entityIter->second->IsRemovable()) {
-        delete entityIter->second;
-        entityIter = this->entities.erase(entityIter);
+    for (auto &entity : this->entities) {
+      if (entity.second) {
+        entity.second->Update(*this);
       } else {
-        entityIter++;
+        Log("Entity %u is null!\n", entity.first);
       }
     }
   }
@@ -474,7 +484,7 @@ RunningState::Explosion(Entity &entity, const Vector3 &pos, size_t radius, float
   ID ownerID = entity.GetOwner();
   if (ownerID == InvalidID) ownerID = entity.GetId();
 
-  Entity *owner = this->entities[ownerID];
+  Entity *owner = this->GetEntity(ownerID);
   float damageFactor = 1.0;
 
   if (owner) {
@@ -582,14 +592,14 @@ void RunningState::LockEntity(Entity &ent) {
 
 void RunningState::TriggerOn(ID id) {
   for (auto &entity : this->entities) {
-    if (entity.second->GetTriggerId() == id) entity.second->TriggerOn();
+    if (entity.second && entity.second->GetTriggerId() == id) entity.second->TriggerOn();
   }
   this->GetWorld().TriggerOn(id);
 }
 
 void RunningState::TriggerOff(ID id) {
   for (auto &entity : this->entities) {
-    if (entity.second->GetTriggerId() == id) entity.second->TriggerOff();
+    if (entity.second && entity.second->GetTriggerId() == id) entity.second->TriggerOff();
   }
   this->GetWorld().TriggerOff(id);
 }

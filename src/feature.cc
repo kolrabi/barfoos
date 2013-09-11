@@ -378,16 +378,19 @@ void FeatureConnection::Resolve() {
 
     auto iter = nextFeatures.begin();
     while(iter != nextFeatures.end()) {   
+      //Log("%s\n", iter->first.c_str());
       if (iter->first[0] == '$') {
         std::string group = iter->first.substr(1);
         float prob = iter->second;
         iter = nextFeatures.erase(iter);
-        for (auto f : allFeatures) {
+        for (auto &f : allFeatures) {
+          //Log("getting groups for %s\n", f.first.c_str());
           const std::vector<std::string> &groups = f.second.GetGroups();
           auto groupIter = groups.begin();
           while (groupIter != groups.end() && *groupIter != group) 
             groupIter++;
 
+          //Log("found %u\n", groups.size());
           if (groupIter != groups.end()) {
             if (nextFeatures.find(f.first) != nextFeatures.end()) {
               nextFeatures[f.first] *= prob;
@@ -449,10 +452,12 @@ Feature::GetRandomConnection(
 
 void
 Feature::ResolveConnections() {
+  //Log("resolving connections...\n");
   for (FeatureConnection &conn : conns) {
     conn.Resolve();
   }
   
+  //Log("resolving connections for variants...\n");
   for (auto &v:variants) {
     v.ResolveConnections();
   }

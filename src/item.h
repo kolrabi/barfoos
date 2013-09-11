@@ -37,7 +37,7 @@ public:
   bool UseOnCell(RunningState &state, Mob &user, Cell *cell, Side side);
   bool UseOnNothing(RunningState &state, Mob &user);
 
-  uint32_t GetDurability()              const { return this->proto.durability(); }
+  float GetDurability()                 const { return this->proto.durability(); }
   float GetRange()                      const { return this->properties->range * this->effect->range; }
   float GetDamage()                     const { return this->properties->damage * this->effect->damage; }
   Element GetElement()                  const { return this->effect->element; }

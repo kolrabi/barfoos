@@ -37,13 +37,15 @@ message Mob_Proto {
     required bool is_noclip         = 4;
     required bool is_sneaking       = 5;
     repeated string learnt_spells   = 6;
+    required bool is_in_liquid      = 7;
+    required bool is_submerged      = 8;
 }
 
 message Monster_Proto {
     required float next_move_time   = 1;
     optional Vec3_Proto move_target = 2;
     optional uint32 attack_target   = 3;
-    optional float next_attack_time       = 4;
+    required float next_attack_time       = 4;
 }
 
 message PlayerMessage_Proto {
@@ -52,22 +54,22 @@ message PlayerMessage_Proto {
     required float  time                = 3;
 }
 
-message PlayerLastHurt_Proto {
-    required string type                = 1;
-    required float  time                = 2;
-}
-
 message Player_Proto {
+    required float bob_phase            = 8;
+    required float bob_amplitude        = 9;
     repeated PlayerMessage_Proto messages = 1;
     required float message_y            = 2;
     required float message_vy           = 3;
 
     required float  pain                = 4;
+    required float  hp_flash_time       = 5;
 
-    repeated PlayerLastHurt_Proto last_hurts = 5;
-    required Vec3_Proto angles          = 6;
+    required float yaw          = 6;
+    required float pitch        = 10;
 
-    repeated string elements            = 7;
+    repeated uint32 elements            = 7;
+    optional float cast_start_time = 11;
+    required float last_cast_time = 12;
 }
 
 message Item_Proto {
@@ -118,7 +120,7 @@ message Entity_Proto {
 
     required float      health          = 15;
     required float      render_angle    = 16;
-    optional uint32     locked_id       = 17;
+    required uint32     locked_id       = 17;
 
     repeated Inventory_Proto inventory  = 18;
 

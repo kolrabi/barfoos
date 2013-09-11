@@ -1,7 +1,6 @@
 #ifndef BARFOOS_PLAYER_H
 #define BARFOOS_PLAYER_H
 
-#include "common.h"
 #include "mob.h"
 
 #include <unordered_map>
@@ -11,6 +10,7 @@ class Player final : public Mob {
 public:
 
   Player();
+  Player(const Entity_Proto &proto);
   Player(const Player &) = delete;
   virtual ~Player();
 
@@ -42,12 +42,40 @@ public:
   virtual void              LearnSpell(const std::string &name) override;
 
   virtual std::string       GetName()                         const;
-  float                     GetPain()                         const { return this->pain; }
 
   void                      SetUniforms(const std::shared_ptr<Shader> &shader) const;
 
-  void                      SetAngles(const Vector3 &angles)        { this->angles = angles; }
-  const Vector3 &           GetAngles()                       const { return this->angles; }
+  virtual const Entity_Proto &GetProto() override;
+
+  void                      SetBobPhase(float f)                    { this->proto.mutable_player()->set_bob_phase(f); }
+  float                     GetBobPhase()                     const { return this->proto.player().bob_phase(); }
+
+  void                      SetBobAmplitude(float f)                { this->proto.mutable_player()->set_bob_amplitude(f); }
+  float                     GetBobAmplitude()                 const { return this->proto.player().bob_amplitude(); }
+
+  void                      SetMessageY(float f)                    { this->proto.mutable_player()->set_message_y(f); }
+  float                     GetMessageY()                     const { return this->proto.player().message_y(); }
+
+  void                      SetMessageVY(float f)                   { this->proto.mutable_player()->set_message_vy(f); }
+  float                     GetMessageVY()                    const { return this->proto.player().message_vy(); }
+
+  void                      SetPain(float f)                        { this->proto.mutable_player()->set_pain(f); }
+  float                     GetPain()                         const { return this->proto.player().pain(); }
+
+  void                      SetHPFlashTime(float f)                 { this->proto.mutable_player()->set_hp_flash_time(f); }
+  float                     GetHPFlashTime()                  const { return this->proto.player().hp_flash_time(); }
+
+  void                      SetYaw(float f)                         { this->proto.mutable_player()->set_yaw(f); }
+  float                     GetYaw()                          const { return this->proto.player().yaw(); }
+
+  void                      SetPitch(float f)                       { this->proto.mutable_player()->set_pitch(f); }
+  float                     GetPitch()                        const { return this->proto.player().pitch(); }
+
+  void                      SetCastStartTime(float f)               { this->proto.mutable_player()->set_cast_start_time(f); }
+  float                     GetCastStartTime()                const { return this->proto.player().cast_start_time(); }
+
+  void                      SetLastCastTime(float f)                { this->proto.mutable_player()->set_last_cast_time(f); }
+  float                     GetLastCastTime()                 const { return this->proto.player().last_cast_time(); }
 
 private:
 
@@ -70,28 +98,20 @@ private:
   // rendering
   const Texture *crosshairTex;
   const Texture *slotTex;
-  float bobPhase;
-  float bobAmplitude;
 
   std::unordered_map<Element, Sprite> gemSprites;
 
   // gameplay
   bool itemActiveLeft, itemActiveRight;
   bool lastItemActiveLeft, lastItemActiveRight;
-  Vector3 angles;
-
-  std::unordered_map<uint32_t, float> lastHurtT;
-  float pain;
-  float hpFlashT;
 
   std::vector<Element> elements;
-  float castStart;
-  float lastCast;
 
   // display
   std::list<Message*> messages;
-  float messageY, messageVY;
   float fps;
+
+  // TODO: add to proto
   RenderString *bigMessage;
   float bigMessageT;
 

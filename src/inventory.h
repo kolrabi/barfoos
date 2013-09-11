@@ -63,16 +63,16 @@ public:
 
   Inventory();
 
-  void Update(RunningState &state, Entity &owner);
+  void                    Update(RunningState &state, Entity &owner);
 
-  std::shared_ptr<Item> &operator[](InventorySlot slot);
-  std::shared_ptr<Item> operator[](InventorySlot slot) const;
+  std::shared_ptr<Item> & operator[](InventorySlot slot);
+  std::shared_ptr<Item>   operator[](InventorySlot slot) const;
 
-  bool AddToBackpack(const std::shared_ptr<Item> &item);
-  void AddToInventory(const std::shared_ptr<Item> &item, InventorySlot slot);
-  void Equip(const std::shared_ptr<Item> &item, InventorySlot slot);
+  bool                    AddToBackpack(const std::shared_ptr<Item> &item);
+  void                    AddToInventory(const std::shared_ptr<Item> &item, InventorySlot slot);
+  void                    Equip(const std::shared_ptr<Item> &item, InventorySlot slot);
 
-  void Drop(RunningState &state, Entity &owner);
+  void                    Drop(RunningState &state, Entity &owner);
   void DropItem(const std::shared_ptr<Item> &item);
   void ConsumeItem(InventorySlot slot, Entity &user);
 
@@ -82,6 +82,8 @@ public:
   void                      RemoveGem(Element e);
 
   void ModifyStats(Stats &stats) const;
+
+  void Clear() { this->inventory.clear(); }
 
 private:
 
@@ -95,9 +97,6 @@ private:
   std::vector<std::pair<InventorySlot, size_t>> consumed;
 
   float lastT;
-
-  friend Serializer &operator << (Serializer &ser, const Inventory &inventory);
-  friend Deserializer &operator >> (Deserializer &ser, Inventory &inventory);
 };
 
 #endif

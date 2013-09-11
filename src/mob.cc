@@ -15,18 +15,8 @@
 Mob::Mob(const std::string &propertyName) :
   Entity          (propertyName),
 
-  lastKnownGoodPos(0, 0, 0),
-  velocity        (0, 0, 0),
   move            (0, 0, 0),
-
   doesWantJump        (false),
-  lastJumpT       (0.0),
-
-  isOnGround        (false),
-  isInLiquid         (false),
-  isSubmerged      (false),
-  isNoclip          (false),
-  isSneaking           (false),
 
   headCell        (nullptr),
   footCell        (nullptr),
@@ -34,6 +24,18 @@ Mob::Mob(const std::string &propertyName) :
 {
   this->proto.set_spawn_class(uint32_t(SpawnClass::MobClass));
   this->proto.mutable_mob();
+}
+
+Mob::Mob(const Entity_Proto &proto) :
+  Entity          (proto),
+
+  move            (0, 0, 0),
+  doesWantJump        (false),
+
+  headCell        (nullptr),
+  footCell        (nullptr),
+  groundCell      (nullptr)
+{
 }
 
 Mob::~Mob() {
@@ -66,6 +68,7 @@ Mob::Continue(RunningState &state, ID id) {
 void
 Mob::Update(RunningState &state) {
   Entity::Update(state);
+
   PROFILE();
 
   Game &game = state.GetGame();
@@ -73,12 +76,6 @@ Mob::Update(RunningState &state) {
 
   if (this->IsDead()) {
     this->move = Vector3();
-  }
-
-  if (state.GetWorld().IsAABBSolid(this->aabb)) {
-    //if (!this->isNoclip) this->aabb.center = this->lastKnownGoodPos;
-  } else {
-    this->lastKnownGoodPos = this->aabb.center;
   }
 
   // clip move speed
@@ -91,21 +88,23 @@ Mob::Update(RunningState &state) {
   float groundFriction = this->groundCell ? this->groundCell->GetInfo().friction : 0.1;
   float friction = 1.0 / (1.0+deltaT * 10 * footFriction * groundFriction);
 
+  Vector3 velocity = this->GetVelocity();
+
   float tvx = std::abs(move.x) > std::abs(velocity.x) ? move.x : velocity.x;
   float tvy = velocity.y;
   float tvz = std::abs(move.z) > std::abs(velocity.z) ? move.z : velocity.z;
 
-  if (isNoclip) {
+  if (this->IsNoclip()) {
     if (doesWantJump) {
       tvy = 3;
       doesWantJump = false;
-    } else if (isSneaking) {
+    } else if (this->IsSneaking()) {
       tvy = -3;
-      isSneaking = false;
+      SetSneaking(false);
     } else {
       tvy = 0;
     }
-  } else if (isInLiquid) {
+  } else if (this->IsInLiquid()) {
     if (doesWantJump || properties->swim) {
       tvy = 3 * friction;
       doesWantJump = false;
@@ -114,11 +113,11 @@ Mob::Update(RunningState &state) {
     }
   } else {
     tvy = velocity.y -= gravity;
-    if (doesWantJump && isOnGround) {
-      if (game.GetTime() - lastJumpT > 0.5) {
+    if (doesWantJump && this->IsOnGround()) {
+      if (game.GetTime() - this->GetLastJumpTime() > 0.5) {
         tvy = velocity.y = properties->jumpSpeed;
         this->PlaySound(state, "jump");
-        lastJumpT = game.GetTime();
+        this->SetLastJumpTime(game.GetTime());
       }
     }
     doesWantJump = false;
@@ -130,7 +129,7 @@ Mob::Update(RunningState &state) {
 
   if (!this->properties->noFriction) {
     velocity.x = velocity.x * friction;
-    if (this->isInLiquid) velocity.y = velocity.y * friction;
+    if (this->IsInLiquid()) velocity.y = velocity.y * friction;
     velocity.z = velocity.z * friction;
   }
 
@@ -141,7 +140,7 @@ Mob::Update(RunningState &state) {
   Cell *cell = nullptr;
   Side side;
 
-  if (isNoclip) {
+  if (this->IsNoclip()) {
     aabb.center = aabb.center + velocity * deltaT;
   } else if (isMovingDown) {
     Vector3 oldCenter = aabb.center;
@@ -149,21 +148,21 @@ Mob::Update(RunningState &state) {
     uint8_t axesForward = 0, axesDown = 0;
 
     // when moving down and pushing use step height
-    Vector3 step(0, (move.GetMag()!=0 && !isSneaking) ? this->properties->stepHeight : 0, 0);
+    Vector3 step(0, (move.GetMag()!=0 && !this->IsSneaking()) ? this->properties->stepHeight : 0, 0);
 
     // move up, forward, down
     aabb.center = world.MoveAABB(aabb, aabb.center + step);
-    aabb.center = world.MoveAABB(aabb, aabb.center + velocity.Horiz()*deltaT, axesForward, &cell, &side, isSneaking && isOnGround);
+    aabb.center = world.MoveAABB(aabb, aabb.center + velocity.Horiz()*deltaT, axesForward, &cell, &side, this->IsSneaking() && this->IsOnGround());
     aabb.center = world.MoveAABB(aabb, aabb.center - step*1.25 + velocity.Vert()*deltaT, axesDown, cell ? nullptr : &cell, &side);
 
     axesTotal |= axesForward | axesDown;
 
     bool didHitFloor = axesDown & Axis::Y;
 
-    isOnGround = didHitFloor;
+    this->SetOnGround(didHitFloor);
 
     org.y = aabb.center.y;
-    aabb.center = world.MoveAABB(aabb, org, axesDown, nullptr, nullptr, isSneaking && isOnGround);
+    aabb.center = world.MoveAABB(aabb, org, axesDown, nullptr, nullptr, this->IsSneaking() && this->IsOnGround());
     axesTotal |= axesDown;
 
     if (!didHitFloor) aabb.center = aabb.center + step*0.25;
@@ -176,7 +175,7 @@ Mob::Update(RunningState &state) {
     axesTotal |= axesEntities;
   } else {
     // moving up
-    isOnGround = false;
+    this->SetOnGround(false);
     uint8_t axesWorld = 0, axesEntities = 0;
     Vector3 newCenter = world.MoveAABB(aabb, aabb.center + velocity*deltaT, axesWorld, &cell, &side);
     aabb.center = state.MoveAABB(aabb, newCenter, axesEntities);
@@ -195,7 +194,7 @@ Mob::Update(RunningState &state) {
   }
 
   // jump out of water
-  if (didCollideHorizontal && isInLiquid && move.GetMag() != 0 && !isNoclip && !isSneaking) {
+  if (didCollideHorizontal && this->IsInLiquid() && move.GetMag() != 0 && !this->IsNoclip() && !this->IsSneaking()) {
     doesWantJump = true;
   }
 
@@ -214,8 +213,10 @@ Mob::Update(RunningState &state) {
       AddHealth(state, HealthInfo( (velocity.y+15)/5, HealthType::Falling));
     }
     velocity.y = 0;
-    isOnGround |= isMovingDown;
+    this->SetOnGround(this->IsOnGround() || isMovingDown);
   }
+
+  this->SetVelocity(velocity);
 
   IVector3 footPos(aabb.center.x, aabb.center.y - aabb.extents.y, aabb.center.z);
   IVector3 headPos(aabb.center.x, aabb.center.y + aabb.extents.y, aabb.center.z);
@@ -224,7 +225,7 @@ Mob::Update(RunningState &state) {
   headCell = &world.GetCell(headPos);
 
   Cell *newGroundCell = nullptr;
-  if (isOnGround) {
+  if (this->IsOnGround()) {
     newGroundCell = &world.GetCell(footPos[Side::Down]);
   }
 
@@ -234,8 +235,8 @@ Mob::Update(RunningState &state) {
     if (groundCell && !properties->noStep) groundCell->OnStepOn(state, *this);
   }
 
-  isSubmerged = headCell->IsLiquid();
-  if (!isNoclip) this->SetInLiquid(footCell->GetInfo().flags & (CellFlags::Liquid | CellFlags::Ladder));
+  this->SetSubmerged(headCell->IsLiquid());
+  if (!this->IsNoclip()) this->SetInLiquid(footCell->GetInfo().flags & (CellFlags::Liquid | CellFlags::Ladder));
 
   if (footCell->GetInfo().lavaDamage) {
     this->AddHealth(state, HealthInfo( -footCell->GetInfo().lavaDamage * deltaT, HealthType::Lava));
@@ -257,8 +258,8 @@ Mob::Think(RunningState &state) {
 
 void
 Mob::SetInLiquid(bool inLiquid) {
-  if (inLiquid == this->isInLiquid) return;
-  this->isInLiquid = inLiquid;
+  if (inLiquid == this->IsInLiquid()) return;
+  this->proto.mutable_mob()->set_is_in_liquid(inLiquid);
   /*
   if (inLiquid) {
     // play splash sound
@@ -279,13 +280,13 @@ Mob::OnCollide(RunningState &state, Entity &other) {
 
 void
 Mob::ApplyForce(RunningState &state, const Vector3 &f) {
-  velocity = velocity + f * (state.GetGame().GetDeltaT() / this->properties->mass);
+  this->AddImpulse(f * state.GetGame().GetDeltaT());
 }
 
 float
 Mob::GetMoveModifier() const {
   float mod = 1.0;
-  if (isSneaking) mod *= 0.5;
+  if (this->IsSneaking()) mod *= 0.5;
   if (this->footCell) mod *= this->footCell->GetInfo().speedModifier;
   return mod * (1.0 + GetEffectiveStats().GetAgility() * Const::WalkSpeedFactorPerAGI);
 }
@@ -333,25 +334,16 @@ Mob::GetSelection(RunningState &state, float range, const std::shared_ptr<Item> 
 
 bool
 Mob::HasLearntSpell(const std::string &name) const {
-  return std::find(learntSpells.begin(), learntSpells.end(), name) != learntSpells.end();
+  return std::find(
+    this->proto.mob().learnt_spells().begin(), 
+    this->proto.mob().learnt_spells().end(), 
+    name
+  ) != this->proto.mob().learnt_spells().end();
 }
 
 void
 Mob::LearnSpell(const std::string &name) {
   if (!HasLearntSpell(name))
-    learntSpells.push_back(name);
+    *this->proto.mutable_mob()->add_learnt_spells() = name;
 }
 
-/*
-void
-Mob::Serialize(Serializer &ser) const {
-  Entity::Serialize(ser);
-
-  ser << velocity;
-  ser << lastJumpT;
-  ser << isOnGround;
-  ser << isNoclip;
-  ser << isSneaking;
-  ser << learntSpells;
-}
-*/

@@ -286,14 +286,29 @@ Entity::Entity(const std::string &type) :
   lastCell(nullptr),
   cellPos(),
   inventory(),
-  lockedID(0),
   sprite(this->properties->sprite),
   drawAABB(false),
   cellLight(0,0,0),
-  emitters(this->properties->emitters),
-  renderAngle(0.0)
+  emitters(this->properties->emitters)
 {
   this->proto.set_spawn_class(uint32_t(SpawnClass::EntityClass));
+}
+
+Entity::Entity(const Entity_Proto &proto) :
+  proto(proto),
+  removable(false),
+  properties(getEntity(proto.type())),
+  regulars(),
+  baseStats(),
+  aabb(this->properties->extents),
+  lastCell(nullptr),
+  cellPos(),
+  inventory(),
+  sprite(this->properties->sprite),
+  drawAABB(false),
+  cellLight(0,0,0),
+  emitters(this->properties->emitters)
+{
 }
 
 Entity::~Entity() {
@@ -309,7 +324,7 @@ Entity::Start(RunningState &state, uint32_t id) {
   this->proto.set_start_time(game.GetTime());
 
   if (this->properties->randomAngle) {
-    this->renderAngle = state.GetRandom().Float01() * 360.0;
+    this->proto.set_render_angle(state.GetRandom().Float01() * 360.0);
   }
 
   if (this->properties->lifetime) {
@@ -397,6 +412,11 @@ Entity::Continue(RunningState &, uint32_t id) {
   this->triggerID = this->proto.trigger_id();
   this->isToggle = this->proto.is_toggle();
   this->triggered = this->proto.is_triggered();
+
+  this->inventory.Clear();
+  for (auto &i:this->proto.inventory()) {
+    this->inventory[InventorySlot(i.slot())] = std::shared_ptr<Item>(new Item(i.item()));
+  }
 }
 
 void
@@ -528,7 +548,7 @@ Entity::Draw(Gfx &gfx) const {
 
   if (this->properties->isBox) {
     gfx.GetView().Push();
-    gfx.GetView().Rotate(this->renderAngle, Vector3(0,1,0));
+    gfx.GetView().Rotate(this->proto.render_angle(), Vector3(0,1,0));
     if (this->properties->sprite.texture) {
       gfx.SetTextureFrame(this->properties->sprite.texture,0,0,8);
       gfx.DrawAABB(this->aabb);
@@ -545,7 +565,7 @@ Entity::Draw(Gfx &gfx) const {
     if (this->properties->alignYForward) {
       gfx.DrawSprite(this->sprite, this->aabb.center, this->GetForward());
     } else {
-      gfx.DrawSprite(this->sprite, this->aabb.center, this->properties->flipLeft && gfx.GetView().GetRight().Dot(GetForward())<0, !this->properties->isQuad, this->renderAngle);
+      gfx.DrawSprite(this->sprite, this->aabb.center, this->properties->flipLeft && gfx.GetView().GetRight().Dot(GetForward())<0, !this->properties->isQuad, this->proto.render_angle());
     }
   }
 
@@ -729,8 +749,12 @@ Entity::GetProto() {
   }
 
   this->proto.clear_inventory();
-  for (uint8_t i=0; i<(uint8_t)InventorySlot::End; i++) {
-    // TODO
+  for (uint8_t s=0; s<uint8_t(InventorySlot::End); s++) {
+    if (this->inventory[InventorySlot(s)]) {
+      Inventory_Proto *p = this->proto.add_inventory();
+      p->set_slot(s);
+      *p->mutable_item() = this->inventory[InventorySlot(s)]->GetProto();
+    }
   }
 
   *this->proto.mutable_base_stats() = this->baseStats.proto;

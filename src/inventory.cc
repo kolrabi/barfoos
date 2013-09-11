@@ -310,6 +310,7 @@ Inventory::Stack(InventorySlot slot, const std::shared_ptr<Item> &item) {
     self[slot] = item;
   }
 }
+
 /*
 Serializer &operator << (Serializer &ser, const Inventory &inventory) {
   uint32_t count = 0;

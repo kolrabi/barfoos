@@ -11,6 +11,7 @@ ItemEntity::ItemEntity(const std::string &itemName) :
   item(new Item(itemName)),
   yoffset(0.5)  {
   this->proto.set_spawn_class(uint32_t(SpawnClass::ItemEntityClass));
+  this->proto.mutable_item();
 }
 
 ItemEntity::ItemEntity(const std::shared_ptr<Item> &item) : 
@@ -18,6 +19,13 @@ ItemEntity::ItemEntity(const std::shared_ptr<Item> &item) :
   item(item),
   yoffset(0.5) {
   this->proto.set_spawn_class(uint32_t(SpawnClass::ItemEntityClass));
+  this->proto.mutable_item();
+}
+
+ItemEntity::ItemEntity(const Entity_Proto &proto) : 
+  Mob(proto),
+  yoffset(0.5) {
+  this->item = std::shared_ptr<Item>(new Item(proto.item()));
 }
 
 ItemEntity::~ItemEntity() {

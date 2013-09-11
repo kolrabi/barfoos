@@ -110,16 +110,34 @@ Game::Frame() {
   PROFILE();
 
   if (nextGameState != activeGameState) {
-    if (activeGameState) activeGameState->Leave(nextGameState);
+    if (activeGameState) {
+      Log("leaving %s gamestate\n", typeid(*activeGameState).name());
+      activeGameState->Leave(nextGameState);
+    }
     activeGameState = nextGameState;
-    if (activeGameState) activeGameState->Enter();
+    if (activeGameState) {
+      Log("entering %s gamestate\n", typeid(*activeGameState).name());
+      activeGameState->Enter();
+    }
+    Log("changed gamestate\n");
   }
 
 //  float t = lastT + 1.0/25.0;
 
   // update game (at most 0.1s at a time)
   float t = this->gfx->GetTime() - this->startT;
+
+  // if too laggy, skip ahead
+  if (t - this->proto.last_time() > 0.5) {
+    float skip = t - this->proto.last_time() - 0.1;
+    Log("update is too slow, skipping %f seconds\n", skip);
+    this->startT += skip;
+    t = this->gfx->GetTime() - this->startT;
+  }
+
+  // while only a little laggy, catch up
   while(t - this->proto.last_time() > 0.1) {
+    Log("update is slow, %fs (%f)\n", t - this->proto.last_time(), t);
     this->proto.set_last_time(this->proto.last_time() + 0.1f);
     this->Update(this->proto.last_time(), 0.1);
     this->input->Update();

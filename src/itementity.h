@@ -12,6 +12,7 @@ public:
 
   ItemEntity(const std::string &itemName);
   ItemEntity(const std::shared_ptr<Item> &item);
+  ItemEntity(const Entity_Proto &proto);
   virtual ~ItemEntity();
 
   virtual void Draw(Gfx &gfx) const override;

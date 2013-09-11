@@ -13,25 +13,16 @@
 #include <cmath>
 
 Monster::Monster(const std::string &propertyName) :
-  Mob             (propertyName),
-
-  nextMoveT       (0.0),
-  moveTarget      (0, 0, 0),
-  isMoveTargetValid (false),
-
-  attackTarget    (InvalidID),
-  nextAttackT     (0.0)
+  Mob             (propertyName)
 {
-  this->proto.set_spawn_class(uint32_t(SpawnClass::MobClass));
+  this->proto.set_spawn_class(uint32_t(SpawnClass::MonsterClass));
   this->proto.mutable_monster();
 }
-/*
-Monster::Monster(const std::string &type, Deserializer &deser) :
-  Mob             (type, deser) {
-  deser >> nextMoveT >> moveTarget >> isMoveTargetValid;
-  deser >> attackTarget >> nextAttackT;
+
+Monster::Monster(const Entity_Proto &proto) :
+  Mob             (proto)
+{
 }
-*/
 
 Monster::~Monster() {
 }
@@ -61,7 +52,6 @@ Monster::Update(RunningState &state) {
   Mob::Update(state);
 
   if (this->IsDead()) return;
-
   if (this->attackItem) this->attackItem->Update(state);
 }
 
@@ -70,16 +60,14 @@ Monster::Think(RunningState &state) {
   Mob::Think(state);
 
   if (this->IsDead()) {
-    isMoveTargetValid = false;
+    this->ClearMoveTarget();
     return;
   }
 
   //Log("Monster::Think: %u %s\n", this->GetId(), this->GetName().c_str());
 
-  if (this->attackTarget != InvalidID) {
-    //Log("  I have a target %u\n", this->attackTarget);
-
-    Entity *enemy = state.GetEntity(this->attackTarget);
+  if (this->IsAttackTargetValid()) {
+    Entity *enemy = state.GetEntity(this->GetAttackTarget());
 
     if (enemy) {
       //Log("  It is valid: %p (%s)\n", enemy, enemy->GetName().c_str());
@@ -88,20 +76,14 @@ Monster::Think(RunningState &state) {
 
       if (dist > this->properties->aggroRangeFar) {
         // out of range? -> unset attack target
-        this->attackTarget = InvalidID;
-
-        //Log("  It is out of range, bummer...\n");
-
+        this->ClearAttackTarget();
       } else if (!CanSee(state, enemy->GetPosition())) {
         // not visible? -> set move target to last known location, unset attack target
-        this->isMoveTargetValid = true;
-        this->moveTarget = enemy->GetPosition();
-        this->attackTarget = InvalidID;
-
-        //Log("  I can not see it...\n");
+        this->SetMoveTarget(enemy->GetPosition());
+        this->ClearAttackTarget();
       } else if (dist < this->properties->meleeAttackRange &&
                  dist >= this->properties->keepDistance &&
-                 state.GetGame().GetTime() > nextAttackT) {
+                 state.GetGame().GetTime() > this->GetNextAttackTime()) {
         //Log("  I chose to attack it...\n");
         this->sprite.StartAnim(this->properties->attackAnim);
 
@@ -110,21 +92,20 @@ Monster::Think(RunningState &state) {
         }
 
         if (this->attackItem) {
-          this->attackItem->UseOnEntity(state, *this, this->attackTarget);
+          this->attackItem->UseOnEntity(state, *this, this->GetAttackTarget());
         }
 
-        this->velocity.y += this->properties->attackJump;
-        nextAttackT = state.GetGame().GetTime() + this->properties->attackInterval;
+        this->AddVelocity(Vector3(0, this->properties->attackJump, 0));
+        this->SetNextAttackTime(state.GetGame().GetTime() + this->properties->attackInterval);
         this->PlaySound(state, "attack");
       }
 
     } else {
-      //Log("  It is invalid...\n");
-      this->attackTarget = InvalidID;
+      this->ClearAttackTarget();
     }
   }
 
-  if (this->attackTarget == InvalidID && this->properties->aggressive) {
+  if (!this->IsAttackTargetValid() && this->properties->aggressive) {
     // Log("  I don't have a target, but I am aggressive and looking for one...\n");
     // find enitites in aggroRange
     std::vector<ID> ents = state.FindEntities(aabb.center, this->properties->aggroRangeNear);
@@ -145,13 +126,13 @@ Monster::Think(RunningState &state) {
     }
 
     if (enemy) {
-      this->attackTarget = enemy->GetId();
+      this->SetAttackTarget(enemy->GetId());
     }
   }
 
-  if (this->attackTarget != InvalidID) {
+  if (this->IsAttackTargetValid()) {
     // walk toward enemy
-    Entity *enemy = state.GetEntity(this->attackTarget);
+    Entity *enemy = state.GetEntity(this->GetAttackTarget());
 
     if (enemy) {
       Vector3 dir    = enemy->GetPosition() - GetPosition();
@@ -167,29 +148,26 @@ Monster::Think(RunningState &state) {
       move = dhoriz.Normalize() * this->properties->maxSpeed;
 
     } else {
-      this->attackTarget = InvalidID;
+      this->ClearAttackTarget();
     }
 
-  } else if (this->attackTarget == InvalidID && this->properties->moveInterval != 0) {
+  } else if (!this->IsAttackTargetValid() && this->properties->moveInterval != 0) {
     // walk around a bit
-    if (state.GetGame().GetTime() > nextMoveT) {
-      nextMoveT += this->properties->moveInterval;
-      moveTarget = aabb.center + (Vector3(state.GetRandom().Float(), state.GetRandom().Float(), state.GetRandom().Float())) * 4.0;
-      isMoveTargetValid = true;
+    if (state.GetGame().GetTime() > this->GetNextMoveTime()) {
+      this->SetNextMoveTime(this->GetNextMoveTime() + this->properties->moveInterval);
+      this->SetMoveTarget(aabb.center + (Vector3(state.GetRandom().Float(), state.GetRandom().Float(), state.GetRandom().Float())) * 4.0);
     }
 
-    Vector3 tmove = (moveTarget - aabb.center).Horiz();
+    if (this->IsMoveTargetValid()) {
+      Vector3 tmove = (this->GetMoveTarget() - aabb.center).Horiz();
 
-    if (tmove.GetMag() < 0.1) {
-      isMoveTargetValid = false;
-
-    } else {
-      this->SetForward((moveTarget-aabb.center).Normalize());
+      if (tmove.GetMag() < 0.1) {
+        this->ClearMoveTarget();
+      } else {
+        this->SetForward((this->GetMoveTarget()-aabb.center).Normalize());
+        this->move = tmove.Normalize() * this->properties->maxSpeed;
+      }
     }
-
-    if (isMoveTargetValid) move = tmove.Normalize() * this->properties->maxSpeed;
-
-    //Log("  Moving toward %f %f %f...\n", moveTarget.x, moveTarget.y, moveTarget.z);
   }
 }
 
@@ -199,7 +177,7 @@ Monster::OnCollide(RunningState &state, Entity &other) {
 
   if (this->IsSolid()) return;
 
-  if (this->properties->attackForwardStep && other.GetId() == this->attackTarget) {
+  if (this->properties->attackForwardStep && this->IsAttackTargetValid() && other.GetId() == this->GetAttackTarget()) {
     this->AddVelocity(-(other.GetPosition() - GetPosition()).Horiz().Normalize() * this->properties->attackForwardStep);
 
     // TODO: if can use on entity
@@ -220,15 +198,6 @@ Monster::AddHealth(RunningState &state, const HealthInfo &info) {
       info.dealerId != InvalidID &&
       info.dealerId != this->GetId() &&
       (this->properties->aggressive || this->properties->retaliate)) {
-    this->attackTarget = info.dealerId;
+    this->SetAttackTarget(info.dealerId);
   }
 }
-/*
-void
-Monster::Serialize(Serializer &ser) const {
-  Mob::Serialize(ser);
-
-  ser << nextMoveT << moveTarget << isMoveTargetValid;
-  ser << attackTarget << nextAttackT;
-}
-*/

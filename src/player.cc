@@ -30,28 +30,14 @@ Player::Player() :
   crosshairTex      (Texture::Get("gui/crosshair")),
   slotTex           (Texture::Get("gui/slot")),
 
-  bobPhase          (0.0),
-  bobAmplitude      (0.0),
-
   // gameplay
   itemActiveLeft    (false),
   itemActiveRight   (false),
   lastItemActiveLeft (false),
   lastItemActiveRight(false),
 
-  angles            (0,0,0),
-
-  lastHurtT         (),
-  pain              (0.0),
-  hpFlashT          (0.0),
-
-  castStart         (0.0),
-  lastCast          (0.0),
-
   // display
   messages          (),
-  messageY          (0.0),
-  messageVY         (0.0),
 
   fps               (0.0),
 
@@ -66,6 +52,7 @@ Player::Player() :
   blink(false)
 {
   this->proto.set_spawn_class(uint32_t(SpawnClass::PlayerClass));
+  this->proto.mutable_player();
 
   // TEST:
   this->inventory.Equip(std::make_shared<Item>(Item("sword")), InventorySlot::RightHand);
@@ -83,14 +70,13 @@ Player::Player() :
   gemSprites[Element::Water]    = Sprite("items/texture/gem.water");
   gemSprites[Element::Life]     = Sprite("items/texture/gem.life");
 }
-/*
-Player::Player(Deserializer &deser) : Mob("player", deser),
+
+Player::Player(const Entity_Proto &proto) :
+  Mob(proto),
+
   // rendering
   crosshairTex      (Texture::Get("gui/crosshair")),
   slotTex           (Texture::Get("gui/slot")),
-
-  bobPhase          (0.0),
-  bobAmplitude      (0.0),
 
   // gameplay
   itemActiveLeft    (false),
@@ -98,35 +84,32 @@ Player::Player(Deserializer &deser) : Mob("player", deser),
   lastItemActiveLeft (false),
   lastItemActiveRight(false),
 
-  lastHurtT         (),
-  pain              (0.0),
-
-  castStart         (0.0),
-  lastCast          (0.0),
-
   // display
+  messages          (),
+
   fps               (0.0),
 
   bigMessage        (new RenderString("", "big")),
   bigMessageT       (0.0),
 
-  leftHand          (new Item("barehand.player")),
-  rightHand         (new Item("barehand.player"))
-{
-  deser >> pain;
-  deser >> messages >> messageY >> messageVY;
-  deser >> lastHurtT;
-  deser >> angles;
-  deser >> elements;
+  mapZoom           (-32.0f),
 
-  gemSprites[Element::Physical] = Sprite("items/texture/gem.empty");
-  gemSprites[Element::Fire]     = Sprite("items/texture/gem.fire");
-  gemSprites[Element::Earth]    = Sprite("items/texture/gem.earth");
-  gemSprites[Element::Wind]      = Sprite("items/texture/gem.wind");
-  gemSprites[Element::Water]    = Sprite("items/texture/gem.water");
-  gemSprites[Element::Life]     = Sprite("items/texture/gem.life");
+  leftHand          (new Item("barehand.player")),
+  rightHand         (new Item("barehand.player")),
+
+  blink(false)
+{
+  for (auto &m:this->proto.player().messages()) {
+    Message *msg = new Message(m.text(), m.font());
+    msg->messageTime = m.time();
+    this->messages.push_back(msg);
+  }
+
+  for (auto &e:this->proto.player().elements()) {
+    this->elements.push_back(Element(e));
+  }
 }
-*/
+
 Player::~Player() {
   delete this->bigMessage;
 }
@@ -135,8 +118,8 @@ void
 Player::View(Gfx &gfx) const {
   Vector3 fwd   = this->GetForward();
   Vector3 right = this->GetRight();
-  Vector3 bob   = Vector3(0,1,0) * std::abs(std::sin(bobPhase * Const::pi * 2)*0.05) * bobAmplitude +
-                  right          *          std::cos(bobPhase * Const::pi * 2)*0.05  * bobAmplitude;
+  Vector3 bob   = Vector3(0,1,0) * std::abs(std::sin(this->GetBobPhase() * Const::pi * 2)*0.05) * this->GetBobAmplitude() +
+                  right          *          std::cos(this->GetBobPhase() * Const::pi * 2)*0.05  * this->GetBobAmplitude();
 
   Vector3 pos   = this->smoothPosition + Vector3(0,this->properties->eyeOffset,0) + bob;
 
@@ -151,7 +134,7 @@ Player::MapView(Gfx &gfx) const {
 void
 Player::Start(RunningState &state, uint32_t id) {
   Mob::Start(state, id);
-  this->pain = 0;
+  this->SetPain(0.0f);
 }
 
 void
@@ -164,27 +147,25 @@ Player::Update(RunningState &state) {
   this->fps = game.GetFPS();
 
   this->blink = std::fmod(game.GetTime()*2, 1.0) > 0.3;
-  this->hpFlashT -= game.GetDeltaT();
-  if (this->hpFlashT < 0.0) this->hpFlashT = 0.0;
+  this->SetHPFlashTime(std::max(0.0f, this->GetHPFlashTime() - game.GetDeltaT()));
 
-  this->pain -= game.GetDeltaT() * 0.1;
-  if (this->pain < 0) this->pain = 0;
+  this->SetPain(std::max(0.0f, this->GetPain() - game.GetDeltaT() * 0.1f));
 
-  if (!this->isInLiquid && move.GetMag() > 1.5) {
-    bobAmplitude += deltaT*4;
-    if (bobAmplitude > 1.0) bobAmplitude = 1.0;
+  if (!this->IsInLiquid() && move.GetMag() > 1.5) {
+    this->SetBobAmplitude(this->GetBobAmplitude() + deltaT * 4);
+    if (this->GetBobAmplitude() > 1.0) this->SetBobAmplitude(1.0f);
   } else {
-    bobAmplitude -= deltaT*4;
-    if (bobAmplitude <= 0.0) {
-      bobAmplitude = 0.0;
-      bobPhase = 1.0;
+    this->SetBobAmplitude(this->GetBobAmplitude() - deltaT*4);
+    if (this->GetBobAmplitude() <= 0.0) {
+      this->SetBobAmplitude(0.0f);
+      this->SetBobPhase(1.0f);
     }
   }
 
-  float lastPhase = bobPhase;
-  if (bobAmplitude > 0.0) bobPhase += deltaT; // (deltaT * this->GetMoveModifier()) * move.GetMag()/5;
-  if (bobPhase > 1.0) {
-    bobPhase -= 1.0;
+  float lastPhase = this->GetBobPhase();
+  if (this->GetBobAmplitude() > 0.0f) this->SetBobPhase(this->GetBobPhase() + deltaT);
+  if (this->GetBobPhase() > 1.0f) {
+    this->SetBobPhase(this->GetBobPhase() - 1.0f);
 
     // TODO: get step sound from ground cell
     if (this->groundCell) {
@@ -198,7 +179,7 @@ Player::Update(RunningState &state) {
       }
       state.GetGame().GetAudio().PlaySound(name, this->GetSmoothPosition() - (this->GetRight()*0.2), pitch);
     }
-  } else if (bobPhase >= 0.5 && lastPhase < 0.5) {
+  } else if (this->GetBobPhase() >= 0.5 && lastPhase < 0.5) {
     // TODO: get step sound from ground cell
     if (this->groundCell) {
       float pitch = 1.0 + state.GetRandom().Float()*0.05;
@@ -293,7 +274,7 @@ Player::Update(RunningState &state) {
   while(iter!=this->messages.end() && messageNum++ < 2) {
     (*iter)->messageTime -= game.GetDeltaT();
     if ((*iter)->messageTime <= 0) {
-      this->messageY += (*iter)->text->GetSize().y;
+      this->SetMessageY(this->GetMessageY() + (*iter)->text->GetSize().y);
       delete *iter;
       iter = this->messages.erase(iter);
     } else {
@@ -303,11 +284,11 @@ Player::Update(RunningState &state) {
   this->bigMessageT -= game.GetDeltaT();
   if (this->bigMessageT < 0.0f) this->bigMessageT = 0.0f;
 
-  messageY += messageVY * game.GetDeltaT();
-  messageVY -= game.GetDeltaT() * 100;
-  if (messageY < 0) {
-    messageY = 0;
-    messageVY = 0;
+  this->SetMessageY(this->GetMessageY() + this->GetMessageVY() * game.GetDeltaT());
+  this->SetMessageVY(this->GetMessageVY() - game.GetDeltaT() * 100);
+  if (this->GetMessageY() < 0.0f) {
+    this->SetMessageY(0.0f);
+    this->SetMessageVY(0.0f);
   }
 }
 
@@ -327,9 +308,9 @@ Player::UpdateInput(
   if (input.IsKeyDown(InputKey::Use) && !state.IsShowingInventory())
     this->UseItem(state, nullptr);
 
-  isSneaking = input.IsKeyActive(InputKey::Sneak);
+  this->SetSneaking(input.IsKeyActive(InputKey::Sneak));
 
-  this->SetForward(this->angles.EulerToVector());
+  this->SetForward(Vector3(this->GetYaw(), this->GetPitch(), 0).EulerToVector());
 
   Vector3 fwd   = this->GetForward().Horiz().Normalize();
   Vector3 right = this->GetRight().Horiz().Normalize();
@@ -345,12 +326,12 @@ Player::UpdateInput(
   if (this->elements.size()) {
     if (input.IsKeyActive(InputKey::CastSpell)) {
       this->CastSpell(state);
-    } else if (this->castStart != 0.0) {
+    } else if (this->GetCastStartTime() != 0.0) {
       this->StopCasting();
     }
   }
 
-  if (input.IsKeyActive(InputKey::Jump) && (isOnGround || isInLiquid || isNoclip)) doesWantJump = true;
+  if (input.IsKeyActive(InputKey::Jump) && (this->IsOnGround() || this->IsInLiquid() || this->IsNoclip())) doesWantJump = true;
 }
 
 void Player::Draw(Gfx &gfx) const {
@@ -363,7 +344,8 @@ Player::DrawWeapons(Gfx &gfx) const {
 
   Vector3 fwd(0,0,1);
   Vector3 right(1,0,0);
-  Vector3 bob = Vector3(0,sin(bobPhase*3.14159*4)*0.05, 0) * bobAmplitude + right * cos(bobPhase*3.14159*2)*0.05 * bobAmplitude;
+  Vector3 bob = Vector3(0,sin(this->GetBobPhase() * 3.14159 * 4) * 0.05, 0) * this->GetBobAmplitude() + 
+                  right * cos(this->GetBobPhase() * 3.14159 * 2) * 0.05 * this->GetBobAmplitude();
 
   Vector3 pos = Vector3(0,0,-1)+bob;
 
@@ -423,7 +405,7 @@ Player::DrawGUI(Gfx &gfx) const {
 
 
   // draw messages
-  float y = this->messageY + 4;
+  float y = this->GetMessageY() + 4;
   size_t messageNum = 0;
   for (auto &msg : this->messages) {
     if (messageNum++ >= 2) break;
@@ -448,7 +430,7 @@ Player::DrawGUI(Gfx &gfx) const {
     if (i<h-1) strHealth += strHeart; else strHealth += " ";
   }
   RenderString rsHealth(strHealth + " " + ToString(int(this->GetHealth())), "big");
-  gfx.SetColor(IColor(255, 255-255*this->hpFlashT, 255-255*this->hpFlashT));
+  gfx.SetColor(IColor(255, 255-255*this->GetHPFlashTime(), 255-255*this->GetHPFlashTime()));
   rsHealth.Draw(gfx, 2, vsize.y-4, (int)Align::HorizLeft | (int)Align::VertBottom);
 
   gfx.SetColor(IColor(255, 255, 255));
@@ -509,7 +491,7 @@ Player::HandleEvent(const InputEvent &event) {
   if (event.type == InputEventType::Key) {
     if (event.key == InputKey::MouseLeft)  this->itemActiveLeft  = event.down;
     if (event.key == InputKey::MouseRight) this->itemActiveRight = event.down;
-    if (event.key == InputKey::DebugNoclip && event.down) this->isNoclip = !this->isNoclip;
+    if (event.key == InputKey::DebugNoclip && event.down) this->SetNoClip(!this->IsNoclip());
 
     if (event.down) {
       if (event.key == InputKey::ElementClear) this->ClearElements();
@@ -520,45 +502,45 @@ Player::HandleEvent(const InputEvent &event) {
       if (event.key == InputKey::ElementLife)  this->QueueElement(Element::Life);
     }
   } else if (event.type == InputEventType::MouseDelta) {
+    float yaw = this->GetYaw();
+    float pitch = this->GetPitch();
 #if WIN32
-    angles.x += event.p.x*0.005;
-    angles.y -= event.p.y*0.005;
+    yaw   +=  event.p.x*0.005;
+    pitch += -event.p.y*0.005;
 #elif MACOSX
-    angles.x += event.p.x*0.005;
-    angles.y -= event.p.y*0.005;
+    yaw   +=  event.p.x*0.005;
+    pitch += -event.p.y*0.005;
 #else
-    angles.x += event.p.x*0.0005;
-    angles.y -= event.p.y*0.0005;
+    yaw   +=  event.p.x*0.0005;
+    pitch += -event.p.y*0.0005;
 #endif
 
-    if (angles.y >  89_deg) angles.y =  89_deg;
-    if (angles.y < -89_deg) angles.y = -89_deg;
+    if (pitch >  89_deg) pitch =  89_deg;
+    if (pitch < -89_deg) pitch = -89_deg;
+
+    this->SetYaw(yaw);
+    this->SetPitch(pitch);
   }
 }
 
 void
 Player::SetUniforms(const std::shared_ptr<Shader> &shader) const {
   if (shader) {
-    shader->Uniform("u_fade", IColor(std::sqrt(this->pain)*255, 0, 0));
+    shader->Uniform("u_fade", IColor(std::sqrt(this->GetPain())*255, 0, 0));
   }
 }
 
 void
 Player::AddHealth(RunningState &state, const HealthInfo &info) {
-  Game &game = state.GetGame();
-
   int hp = this->GetHealth();
   if (info.amount < 0) {
-    //if (!IsContinuous(info.type) || game.GetTime() > lastHurtT[(size_t)info.type] + 0.25) {
-    //}
-    this->pain -= info.amount / this->properties->maxHealth;
+    this->SetPain(this->GetPain() - info.amount / this->properties->maxHealth);
   }
 
   Mob::AddHealth(state, info);
   int hp2 = this->GetHealth();
   if (hp2 < hp) {
-    lastHurtT[(size_t)info.type] = game.GetTime();
-    this->hpFlashT = 1.0;
+    this->SetHPFlashTime(1.0f);
   }
 
   Entity *other = state.GetEntity(info.dealerId);
@@ -742,21 +724,21 @@ Player::CastSpell(RunningState &state) {
   const Spell &spell = getSpell(this->elements);
   float t = state.GetGame().GetTime();
 
-  if (castStart != 0.0 && t - castStart > spell.maxDuration) {
+  if (this->GetCastStartTime() != 0.0 && t - this->GetCastStartTime() > spell.maxDuration) {
     this->StopCasting();
     return;
-  } else if (t - lastCast < spell.castInterval) return;
+  } else if (t - this->GetLastCastTime() < spell.castInterval) return;
 
 
   Log("trying to cast spell %s\n", spell.name.c_str());
 
   if (spell.Cast(state, *this)) {
-    if (castStart == 0.0) {
+    if (this->GetCastStartTime() == 0.0) {
       AddMessage("You cast the spell "+spell.displayName);
       this->baseStats.UpgradeSkill("magic");
-      this->castStart = t;
+      this->SetCastStartTime(t);
     }
-    this->lastCast = t;
+    this->SetLastCastTime(t);
   } else {
     AddMessage("Your spell fizzles.");
     this->elements.clear();
@@ -768,8 +750,8 @@ Player::StopCasting() {
   for (Element e:this->elements)
     this->inventory.RemoveGem(e);
   this->elements.clear();
-  this->castStart = 0.0;
-  this->lastCast = 0.0;
+  this->SetCastStartTime(0.0f);
+  this->SetLastCastTime(0.0f);
 }
 
 void
@@ -777,18 +759,26 @@ Player::LearnSpell(const std::string &name) {
   Mob::LearnSpell(name);
   AddMessage("You learn the spell "+getSpell(name).displayName);
 }
-/*
-void
-Player::Serialize(Serializer &ser) const {
-  Mob::Serialize(ser);
 
-  ser << pain;
-  ser << messages << messageY << messageVY;
-  ser << lastHurtT;
-  ser << angles;
-  ser << elements;
+const Entity_Proto &
+Player::GetProto() {
+
+  this->proto.mutable_player()->clear_messages();
+  for (auto &msg : this->messages) {
+    PlayerMessage_Proto *p = this->proto.mutable_player()->add_messages();
+    p->set_text(msg->text->GetText());
+    p->set_font(msg->text->GetFontName());
+    p->set_time(msg->messageTime);
+  }
+
+  this->proto.mutable_player()->clear_elements();
+  for (auto &e : this->elements) {
+    this->proto.mutable_player()->add_elements(uint32_t(e));
+  }
+
+  return Entity::GetProto();
 }
-*/
+
 Player::Message::Message(const std::string &txt, const std::string &font) :
   text(new RenderString(txt, font)),
   messageTime(2)
@@ -797,20 +787,3 @@ Player::Message::Message(const std::string &txt, const std::string &font) :
 Player::Message::~Message() {
   delete text;
 }
-/*
-Serializer &operator << (Serializer &ser, const Player::Message *msg) {
-  return ser << msg->text->GetText() << msg->text->GetFontName() << msg->messageTime;
-}
-
-Deserializer &operator >> (Deserializer &deser, Player::Message *&msg) {
-  std::string str, font;
-  float t;
-  deser >> str >> font >> t;
-
-  msg = new Player::Message(str, font);
-  msg->messageTime = t;
-
-  return deser;
-
-}
-*/

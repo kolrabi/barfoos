@@ -46,6 +46,7 @@ void MainMenuState::NewGame() {
   RunningState *runningState = new RunningState(GetGame());
   runningState->NewGame();
 
+  Log("next state will be running state\n");
   nextState = runningState;
 }
 
