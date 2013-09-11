@@ -1,7 +1,6 @@
 #ifndef BARFOOS_WORLD_H
 #define BARFOOS_WORLD_H
 
-#include "common.h"
 #include "cell.h"
 #include "icolor.h"
 #include "vertexbuffer.h"
@@ -9,44 +8,49 @@
 #include <unordered_map>
 #include <unordered_set>
 
+#include "world.pb.h"
+
 class MiniMap final {
 public:
 
   MiniMap(const World &world);
-  MiniMap(const World &world, Deserializer &deser);
+  MiniMap(const World &world, const MiniMap_Proto &proto);
 
   void Draw(Gfx &gfx, const Vector3 &eyePos, float angle);
 
   void AddFeatureSeen(ID f);
   bool IsFeatureSeen(ID id) const;
 
+  const MiniMap_Proto &GetProto();
+
 private:
 
   const World &world;
+  MiniMap_Proto proto;
+
   std::vector<bool> seenFeatures;
   const Texture *mapTexture;
 
   size_t viewY;
   void RepaintMap();
-
-  friend Serializer &operator << (Serializer &ser, const MiniMap &map);
 };
 
 class World final {
 public:
 
   World(RunningState &state, const IVector3 &size);
-  World(RunningState &state, Deserializer &deser);
+  World(RunningState &state, const World_Proto &proto);
   World(const World &world) = delete;
   World(World &&world) = delete;
   ~World();
 
   World &operator=(const World &) = delete;
 
-  const IVector3 &GetSize()   const { return size; }
-  size_t    GetCellCount() const { return this->cellCount; }
   RunningState &  GetState()  const { return state; }
   MiniMap &       GetMap()          { return minimap; }
+
+  IVector3  GetSize()   const { return IVector3(this->proto.size_x(), this->proto.size_y(), this->proto.size_z()); }
+  size_t    GetCellCount() const { return this->cells.size(); }
 
   void Draw(Gfx &gfx);
   void Update(RunningState &runningState);
@@ -97,30 +101,34 @@ public:
   void                  MarkForUpdateNeighbours (const Cell *cell);
   void                  UpdateCell              (const IVector3 &pos);
 
-  size_t                GetCellIndex            (const IVector3 &pos) const { return pos.x+size.x*(pos.y+size.y*pos.z); }
-  IVector3              GetCellPos              (size_t i)            const { return IVector3( i%size.x, (i/size.x)%size.y, (i/(size.x*size.y))%size.z); }
-  bool                  IsValidCellPosition     (const IVector3 &pos) const { return pos.x < size.x  && pos.y < size.y && pos.z < size.z;  }
+  size_t                GetCellIndex            (const IVector3 &pos) const { return pos.x+proto.size_x()*(pos.y+proto.size_y()*pos.z); }
+  IVector3              GetCellPos              (size_t i)            const { return IVector3( i%proto.size_x(), (i/proto.size_x())%proto.size_y(), (i/(proto.size_x()*proto.size_y()))%proto.size_z()); }
+  bool                  IsValidCellPosition     (const IVector3 &pos) const { return pos.x < proto.size_x() && pos.y < proto.size_y() && pos.z < proto.size_z();  }
+
+  const World_Proto &   GetProto();
 
 private:
 
-  RunningState &state;
-  IVector3 size;
-  bool dirty, firstDirty;
+  static constexpr float tickInterval = 0.1f;
+  static const IColor ambientLight;
 
+  float                 GetNextTickTime         ()                    const { return this->proto.next_tick_time(); }
+  void                  SetNextTickTime         (float t)                   { this->proto.set_next_tick_time(t); }
+
+  RunningState &state;
+  World_Proto proto;
   MiniMap minimap;
 
-  size_t cellCount;
+  bool dirty, firstDirty;
+
   std::vector<Cell> cells;
-  mutable Cell defaultCell;
   std::vector<bool> defaultMask;
 
+  mutable Cell defaultCell;
+
   std::vector<size_t> dynamicCells;
-  float nextTickT;
-  float tickInterval;
 
   std::unordered_set<size_t> neighbourUpdates;
-
-  IColor ambientLight;
 
   VertexBuffer allVerts;
   std::unordered_map<const Texture *, size_t> vertexStartsNormal;
@@ -134,7 +142,6 @@ private:
   void UpdateCell(size_t i);
   void MarkForUpdateNeighbours(size_t i);
 
-  friend Serializer &operator << (Serializer &ser, const World &world);
 };
 
 inline Cell &

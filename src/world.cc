@@ -24,20 +24,18 @@
 #include "serializer.h"
 #include "deserializer.h"
 
+const IColor World::ambientLight = IColor(32,32,32);
+
 World::World(RunningState &state, const IVector3 &size) :
   state(state),
-  size(size),
+  minimap(*this),
+
   dirty(true),
   firstDirty(true),
-  minimap(*this),
-  cellCount(size.x * size.y * size.z),
-  cells(cellCount, Cell("default")),
+  cells(size.x * size.y * size.z, Cell("default")),
+  defaultMask(cells.size(), true),
   defaultCell("default"),
-  defaultMask(cellCount, true),
   dynamicCells(0),
-  nextTickT(0.0),
-  tickInterval(0.1),
-  ambientLight(32, 32, 32),
   allVerts(),
   vertexStartsNormal(),
   vertexCountsNormal(),
@@ -46,13 +44,18 @@ World::World(RunningState &state, const IVector3 &size) :
   checkOverwrite(false),
   checkOverwriteOK(true)
 {
+  this->proto.set_size_x(size.x);
+  this->proto.set_size_y(size.y);
+  this->proto.set_size_z(size.z);
 }
 
-World::World(RunningState &state, Deserializer &deser) :
+World::World(RunningState &state, const World_Proto &proto) :
   state(state),
+  proto(proto),
+  minimap(*this, proto.mini_map()),
+
   dirty(true),
   firstDirty(true),
-  minimap(*this, deser),
   defaultCell("default"),
   dynamicCells(0),
   allVerts(),
@@ -63,23 +66,23 @@ World::World(RunningState &state, Deserializer &deser) :
   checkOverwrite(false),
   checkOverwriteOK(true)
 {
-  deser >> this->size;
-  cellCount = size.x * size.y * size.z;
+  this->cells.clear();
+  this->defaultMask.clear();
+ /*for (auto &c:this->proto.cells()) {
+    // this->cells.push_back(Cell(c));
+    // this->defaultMask.push_back(c.is_default());
+  }*/
 
-  this->cells.resize(cellCount);
-  for (size_t i = 0; i<cellCount; i++) {
-    deser >> this->cells[i];
-  }
-
-  deser >> this->defaultMask;
+/*
   deser >> this->nextTickT;
   deser >> this->tickInterval;
   deser >> this->ambientLight;
 
-  for (size_t i = 0; i<cellCount; i++) {
+  for (size_t i = 0; i<GetCellCount(); i++) {
     this->cells[i].SetWorld(this, GetCellPos(i));
     this->MarkForUpdateNeighbours(i);
   }
+  */
 }
 
 World::~World() {
@@ -158,7 +161,7 @@ World::Draw(Gfx &gfx) {
 
     if (firstDirty) {
       // fill up liquids with liquids above, so it won't trickle
-      for (size_t i=0; i<this->cellCount; i++) {
+      for (size_t i=0; i<this->GetCellCount(); i++) {
         if (this->cells[i].IsLiquid() && this->cells[i][Side::Up].GetInfo() == this->cells[i].GetInfo()) {
           this->cells[i].SetDetail(16);
         }
@@ -172,7 +175,7 @@ World::Draw(Gfx &gfx) {
 
     size_t updateCount = 0;
 
-    for (size_t i=0; i<this->cellCount; i++) {
+    for (size_t i=0; i<this->GetCellCount(); i++) {
       Cell &cell = this->cells[i];
       const CellProperties &info = cell.GetInfo();
 
@@ -344,11 +347,11 @@ World::Update(
   // tick world
   {
       PROFILE_NAMED("Tick");
-    while (tickInterval != 0.0 && state.GetGame().GetTime() > nextTickT) {
+    while (tickInterval != 0.0 && state.GetGame().GetTime() > this->GetNextTickTime()) {
       for (size_t i : this->dynamicCells) {
         this->cells[i].Tick(state);
       }
-      nextTickT += tickInterval;
+      this->SetNextTickTime(this->GetNextTickTime() + tickInterval);
     }
   }
 }
@@ -416,14 +419,14 @@ World::CastRayYUp(const Vector3 &org) const {
 
   //if (GetCell(IVector3(x,y,z)).IsSolid() && y > GetCell(IVector3(x,y,z)).GetHeightBottom(org.x, org.z)) return y;
 
-  while (y < this->size.y) {
+  while (y < this->proto.size_y()) {
     const Cell &cell = this->GetCell(IVector3(x,y,z));
     if (cell.IsSolid()) {
       return y + cell.GetHeightBottom(org.x, org.z);
     }
     y++;
   }
-  return this->size.y;
+  return this->proto.size_y();
 }
 
 /**
@@ -438,7 +441,7 @@ World::CastRayYDown(const Vector3 &org) const {
   size_t y = org.y; // start cell y
   size_t z = org.z; // start cell z
 
-  if (y >= this->size.y) y = this->size.y - 1;
+  if (y >= this->proto.size_y()) y = this->proto.size_y() - 1;
 
   Cell *cell = &GetCell(IVector3(x,y,z));
   while(!cell->IsSolid()) {
@@ -630,7 +633,7 @@ Vector3 World::MoveAABB(
 
   // now try to move along y axis
   if (movingUp) {
-    float endY = size.y;
+    float endY = this->proto.size_y();
     // get lowest collision point
     for (const Vector3 &v : verts) {
       if (v.y <= 0.0f) continue;
@@ -735,10 +738,10 @@ World::GetLight(const Vector3 &pos) const {
 void
 World::Dump() {
   FILE *f = fopen("world.txt", "w");
-  for (size_t z = 0; z<size.z; z++) {
-    for (size_t x = 0; x<size.x; x++) {
+  for (size_t z = 0; z<this->proto.size_z(); z++) {
+    for (size_t x = 0; x<this->proto.size_x(); x++) {
       int air = 0;
-      for (size_t y = 0; y<size.y; y++) {
+      for (size_t y = 0; y<this->proto.size_y(); y++) {
         if ((this->GetCell(IVector3(x,y,z)).GetInfo().flags & CellFlags::Solid) == 0) {
           air ++;
         }
@@ -837,13 +840,13 @@ World::IsDefault(const IVector3 &pos) const {
 
 void
 World::ClearDefaults() {
-  this->defaultMask = std::vector<bool>(this->cellCount, true);
+  this->defaultMask = std::vector<bool>(this->GetCellCount(), true);
 }
 
 void
 World::CopyCellsFrom(const std::vector<Cell> &cells) {
   this->cells = cells;
-  for (size_t i=0; i<this->cellCount; i++) {
+  for (size_t i=0; i<this->GetCellCount(); i++) {
     this->cells[i].SetWorld(this, GetCellPos(i));
   }
   this->ClearDefaults();
@@ -929,9 +932,9 @@ IVector3
 World::GetRandomTeleportTarget(Random &random, const Vector3 &extents) const {
   IVector3 pos;
   do {
-    pos.x = random.Integer(size.x);
-    pos.y = random.Integer(size.y);
-    pos.z = random.Integer(size.z);
+    pos.x = random.Integer(this->proto.size_x());
+    pos.y = random.Integer(this->proto.size_y());
+    pos.z = random.Integer(this->proto.size_z());
     pos = FindSolidBelow(pos);
   } while(!IsCellValidTeleportTarget(pos, extents));
   return pos;
@@ -941,27 +944,36 @@ IVector3
 World::GetRandomCeiling(Random &random) const {
   IVector3 pos;
   do {
-    pos.x = random.Integer(size.x);
-    pos.y = random.Integer(size.y);
-    pos.z = random.Integer(size.z);
+    pos.x = random.Integer(this->proto.size_x());
+    pos.y = random.Integer(this->proto.size_y());
+    pos.z = random.Integer(this->proto.size_z());
     pos = FindSolidAbove(pos);
   } while(!IsCellValidCeiling(pos));
   return pos;
 }
 
 void World::TriggerOn(size_t id) {
-  for (size_t i=0; i<this->cellCount; i++) {
+  for (size_t i=0; i<this->GetCellCount(); i++) {
     if (this->cells[i].GetTriggerId() == id) this->cells[i].TriggerOn();
   }
 }
 
 void World::TriggerOff(size_t id) {
-  for (size_t i=0; i<this->cellCount; i++) {
+  for (size_t i=0; i<this->GetCellCount(); i++) {
     if (this->cells[i].GetTriggerId() == id) this->cells[i].TriggerOff();
   }
 }
 
+const World_Proto &
+World::GetProto() {
+  *this->proto.mutable_mini_map() = this->minimap.GetProto();
 
+  // TODO: save cells
+
+  return this->proto;
+}
+
+/*
 
 Serializer &operator << (Serializer &ser, const World &world) {
   ser << world.minimap;
@@ -978,7 +990,7 @@ Serializer &operator << (Serializer &ser, const World &world) {
 }
 
 
-
+*/
 
 
 // ----------------------------
@@ -991,12 +1003,13 @@ MiniMap::MiniMap(const World &world) :
 {
 }
 
-MiniMap::MiniMap(const World &world, Deserializer &deser) :
+MiniMap::MiniMap(const World &world, const MiniMap_Proto &proto) :
   world(world),
+  proto(proto),
   mapTexture(nullptr),
   viewY(0)
 {
-  deser >> this->seenFeatures;
+  // TODO: load seen features
 }
 
 void
@@ -1094,7 +1107,9 @@ MiniMap::RepaintMap() {
   this->mapTexture = Texture::Create("*minimap", Image(Point(size.x, size.z), pixels, true));
 }
 
-Serializer &operator << (Serializer &ser, const MiniMap &map) {
-  ser << map.seenFeatures;
-  return ser;
+
+const MiniMap_Proto &
+MiniMap::GetProto() {
+  // TODO: save seen features
+  return this->proto;
 }
