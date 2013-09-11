@@ -1,0 +1,19 @@
+message MiniMap_Proto {
+    repeated bool seen_features = 1;
+}
+
+message Cell_Proto {
+    required bool is_default = 1;
+}
+
+message World_Proto {
+    required MiniMap_Proto mini_map = 1;
+
+    required uint32 size_x = 2;
+    required uint32 size_y = 3;
+    required uint32 size_z = 4;
+
+    repeated Cell_Proto cells = 5;
+
+    required float next_tick_time = 6;
+}
