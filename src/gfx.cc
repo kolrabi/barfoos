@@ -11,6 +11,7 @@
 #include "player.h"
 #include "sprite.h"
 #include "vertexbuffer.h"
+#include "vector2.h"
 #include "matrix4.h"
 
 #include "GLee.h"
@@ -244,9 +245,19 @@ Gfx::SetTextureFrame(const Texture *texture, size_t stage, size_t currentFrame, 
   this->view->textureMatrix = Matrix4();
 
   if (frameCount > 1) {
+    Vector2 uv1, uv2;
+    texture->GetFrameUV(currentFrame,frameCount,uv1,uv2);
+
+    this->view->textureMatrix =
+      Matrix4::Translate(Vector3(uv1.x, uv2.y, 0)) *
+      Matrix4::Scale(Vector3(uv2.x-uv1.x, uv2.y-uv1.y, 1))
+      ;
+
+/*
     this->view->textureMatrix =
       Matrix4::Scale(Vector3(1.0/frameCount, 1, 1)) *
       Matrix4::Translate(Vector3(currentFrame, 0, 0));
+      */
   }
 }
 

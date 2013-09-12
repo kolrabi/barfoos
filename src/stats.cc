@@ -357,7 +357,7 @@ Stats::GetMagicDefense() const {
 
 uint32_t
 Stats::GetHit()          const {
-  return GetHitBonus() + 175 + GetDexterity() + GetLuck()/3 + GetLevel();
+  return GetHitBonus() + GetDexterity() + GetLuck()/3 + GetLevel();
 }
 
 uint32_t

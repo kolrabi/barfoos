@@ -2,9 +2,9 @@
 #define BARFOOS_TEXTURE_H
 
 #include "2d.h"
-#include "vector3.h"
 
 class Image;
+class Vector2;
 
 /** A texture. */
 struct Texture {
@@ -23,6 +23,8 @@ struct Texture {
 
   void Reload();
   void SetImage(const Image &image);
+
+  void GetFrameUV(size_t frame, size_t totalFrames, Vector2 &uv1, Vector2 &uv2) const;
 
   static void UpdateTextures();
   static const Texture *Get(const std::string &name);

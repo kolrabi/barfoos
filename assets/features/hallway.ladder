@@ -1,0 +1,84 @@
+size 7 7 7
+group hallway
+level 0 -1 40
+
+conn 1 2 3 -1
+next doorway
+next alcove
+
+conn 5 2 3 1
+next doorway
+next alcove
+
+conn 3 2 1 -3
+next doorway
+next alcove
+
+conn 3 2 5 3
+next doorway
+next alcove
+
+conn 3 0 3 -2
+next hallway.ladder
+onconnreplace L D
+
+conn 3 6 3 2
+next hallway.ladder
+onconnreplace l U
+onconnreplace m U
+
+def . 
+cell air
+
+def #
+cell brick
+nolock
+
+def &
+cell brick
+onlydefault
+nolock
+
+def L brick
+def l brick
+def m air
+
+def D
+cell ladder.right
+onlydefault
+nolock
+
+def U
+cell ladder.right
+onlydefault
+nolock
+
+slice 0 1
+&&&&&&&
+&&&&&&&
+&&&&&&&
+&&&L&&&
+&&&&&&&
+&&&&&&&
+&&&&&&&
+
+Entity 0.1 "torch" -3  2 2 3
+
+slice 2 5
+&&&&&&&
+&.....&
+&.....&
+&..m..&
+&.....&
+&.....&
+&&&&&&&
+
+slice 6 6
+&&&&&&&
+&#####&
+&#####&
+&##l##&
+&#####&
+&#####&
+&&&&&&&
+

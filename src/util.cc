@@ -3,6 +3,7 @@
 #include "util.h"
 
 #include "2d.h"
+#include "vector2.h"
 #include "vector3.h"
 #include "vector4.h"
 #include "matrix4.h"
@@ -22,6 +23,12 @@ float Wave(float x, float z, float t, float a) {
 Point::operator std::string() const {
   char tmp[256];
   snprintf(tmp, sizeof(tmp), "[%d,%d]", x,y);
+  return tmp;
+}
+
+Vector2::operator std::string() const {
+  char tmp[256];
+  snprintf(tmp, sizeof(tmp), "[%f,%f]", x,y);
   return tmp;
 }
 

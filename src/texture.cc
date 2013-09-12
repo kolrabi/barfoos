@@ -4,6 +4,7 @@
 
 #include "image.h"
 #include "fileio.h"
+#include "vector2.h"
 
 #include "GLee.h"
 #include <sys/time.h>
@@ -95,3 +96,18 @@ void Texture::UpdateTextures() {
   lastUpdate = now;
 }
 
+void
+Texture::GetFrameUV(size_t frame, size_t totalFrames, Vector2 &uv1, Vector2 &uv2) const {
+  size_t countX = totalFrames;
+  size_t countY = (totalFrames+7)/8;
+
+  if (totalFrames > 8) {
+    countX = 8;
+  }
+
+  float w = 1.0f/countX;
+  float h = 1.0f/countY;
+
+  uv1 = Vector2( (frame%countX)*w, (frame/countY)*h );
+  uv2 = uv1 + Vector2( w, h );
+}
