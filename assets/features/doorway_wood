@@ -11,17 +11,13 @@ conn 1 1 2 1
 next $room
 nextp $doorway 0.2
 
-def #
-cell carpet.red
+def # carpet.red
 
-def % 
-cell wood
+def % wood
 
-def . 
-cell air
+def . air
 
-def &
-cell wood
+def & wood
 nolock
 onlydefault
 

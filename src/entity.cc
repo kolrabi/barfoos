@@ -153,12 +153,19 @@ EntityProperties::ParseProperty(const std::string &cmd) {
   else if (cmd == "eyeoffset")        Parse(this->eyeOffset);
   else if (cmd == "glow")             Parse(this->glow);
   else if (cmd == "exp")              Parse(this->exp);
+
   else if (cmd == "str")              Parse(this->str);
-  else if (cmd == "dex")              Parse(this->dex);
   else if (cmd == "agi")              Parse(this->agi);
+  else if (cmd == "vit")              Parse(this->vit);
+  else if (cmd == "int")              Parse(this->int_);
+  else if (cmd == "dex")              Parse(this->dex);
+  else if (cmd == "luk")              Parse(this->luk);
+
+  else if (cmd == "atk")              Parse(this->atk);
   else if (cmd == "def")              Parse(this->def);
   else if (cmd == "mdef")             Parse(this->mdef);
   else if (cmd == "matk")             Parse(this->matk);
+
   else if (cmd == "thinkinterval")    Parse(this->thinkInterval);
   else if (cmd == "onuseitemreplace") {
     std::pair<std::string, std::string> replace;
@@ -351,13 +358,20 @@ Entity::Start(RunningState &state, uint32_t id) {
 
   // set stats
   this->baseStats.SetStrength(this->properties->str);
-  this->baseStats.SetDexterity(this->properties->dex);
   this->baseStats.SetAgility(this->properties->agi);
-  this->baseStats.SetDefense(this->properties->def);
-  this->baseStats.SetMagicDefense(this->properties->mdef);
-  this->baseStats.SetMagicAttack(this->properties->matk);
-  this->baseStats.SetMaxHealth(this->properties->maxHealth);
-  this->proto.set_health(this->properties->maxHealth);
+  this->baseStats.SetVitality(this->properties->vit);
+  this->baseStats.SetIntelligence(this->properties->int_);
+  this->baseStats.SetDexterity(this->properties->dex);
+  this->baseStats.SetLuck(this->properties->luk);
+
+  this->baseStats.SetAttackBonus(this->properties->atk);
+  this->baseStats.SetDefenseBonus(this->properties->def);
+  this->baseStats.SetMagicAttackBonus(this->properties->matk);
+  this->baseStats.SetMagicDefenseBonus(this->properties->mdef);
+
+  this->baseStats.SetMaxHealthBonus(this->properties->maxHealth);
+
+  this->proto.set_health(this->GetEffectiveStats().GetMaxHealth());
 
   // resolve initial collision with world
   std::vector<Vector3> verts;
@@ -664,7 +678,10 @@ Entity::GetEffectiveStats() const {
 
 void
 Entity::OnHealthDealt(RunningState &state, Entity &, const HealthInfo &info) {
-  if (this->baseStats.AddExperience(info.exp)) this->OnLevelUp(state);
+  if (this->baseStats.AddExperience(info.exp)) {
+    this->proto.set_health(this->GetEffectiveStats().GetMaxHealth());
+    this->OnLevelUp(state);
+  }
 }
 
 void

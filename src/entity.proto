@@ -10,19 +10,28 @@ message Skill_Proto {
 }
 
 message Stats_Proto {
-    required uint32 str             = 1;
-    required uint32 dex             = 2;
-    required uint32 agi             = 3;
-    required uint32 def             = 4;
-    required uint32 matk            = 5;
-    required uint32 mdef            = 6;
-    required uint32 max_hp          = 7 [default = 10];
-    required float  exp                = 8;
-    required uint32 sp                 = 9;
-    required float  walk_speed        = 10 [default = 1.0];
-    required float  cool_down         = 11 [default = 1.0];
+    required uint32 str                 = 1;
+    required uint32 agi                 = 2;
+    required uint32 vit                 = 3;
+    required uint32 int_                = 4;
+    required uint32 dex                 = 5;
+    required uint32 luk                 = 6;
 
-    repeated Skill_Proto skills        = 12;
+    required sint32 def_bonus           = 7;
+    required sint32 atk_bonus           = 8;
+    required sint32 matk_bonus          = 9;
+    required sint32 mdef_bonus          = 10;
+    required sint32 hit_bonus           = 17;
+    required sint32 crit_bonus          = 18;
+    required sint32 flee_bonus          = 19;
+
+    required uint32 max_hp              = 11 [default = 10];
+    required float  exp                 = 12;
+    required uint32 sp                  = 13;
+    required float  walk_speed          = 14 [default = 1.0];
+    required float  cool_down           = 15 [default = 1.0];
+
+    repeated Skill_Proto skills         = 16;
 }
 
 message Buff_Proto {

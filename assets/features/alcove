@@ -1,55 +1,50 @@
-size 3 5 5
+Size 3 5 5
 
-conn 1 1 2 -1
-conn 1 1 2 1
+Conn 1 1 2 -1
+Conn 1 1 2 1
 
-def #
-cell brick
+Def # brick
 
-def . 
-cell air
+Def . air
 
-def \
-cell brick
-bottom 1 0 0 1
+Def \ brick
+  Bottom 1 0 0 1
 
-def /
-cell brick
-bottom 0 1 1 0
+Def / brick
+  Bottom 0 1 1 0
 
-def &
-cell brick
-nolock
-onlydefault
+Def & brick
+  NoLock
+  OnlyDefault
 
 
-slice 0 0
+Slice 0 0
 &#&
 &#&
 &#&
 &#&
 &#&
 
-slice 1 2
+Slice 1 2
 &#&
 &.&
 &.&
 &.&
 &#&
 
-slice 3 3
+Slice 3 3
 &#&
 &/&
 &.&
 &\&
 &#&
 
-slice 4 4
+Slice 4 4
 &#&
 &#&
 &#&
 &#&
 &#&
 
-entity 1.0 torch 1 1 2 2
+Entity 1.0 torch 1 1 2 2
 

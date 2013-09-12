@@ -96,17 +96,37 @@ ItemProperties::ParseProperty(const std::string &cmd) {
   else if (cmd == "eqstr")      Parse(this->eqAddStr);
   else if (cmd == "eqdex")      Parse(this->eqAddDex);
   else if (cmd == "eqagi")      Parse(this->eqAddAgi);
+  else if (cmd == "eqint")      Parse(this->eqAddInt);
+  else if (cmd == "eqvit")      Parse(this->eqAddVit);
+  else if (cmd == "eqluk")      Parse(this->eqAddLuk);
+
+  else if (cmd == "eqatk")      Parse(this->eqAddAtk);
   else if (cmd == "eqdef")      Parse(this->eqAddDef);
   else if (cmd == "eqmatk")     Parse(this->eqAddMAtk);
   else if (cmd == "eqmdef")     Parse(this->eqAddMDef);
+
+  else if (cmd == "eqhit")      Parse(this->eqAddHit);
+  else if (cmd == "eqcrit")     Parse(this->eqAddCrit);
+  else if (cmd == "eqflee")     Parse(this->eqAddFlee);
+
   else if (cmd == "eqhp")       Parse(this->eqAddHP);
 
   else if (cmd == "uneqstr")    Parse(this->uneqAddStr);
   else if (cmd == "uneqdex")    Parse(this->uneqAddDex);
   else if (cmd == "uneqagi")    Parse(this->uneqAddAgi);
+  else if (cmd == "uneqint")    Parse(this->uneqAddInt);
+  else if (cmd == "uneqvit")    Parse(this->uneqAddVit);
+  else if (cmd == "uneqluk")    Parse(this->uneqAddLuk);
+
+  else if (cmd == "uneqatk")    Parse(this->uneqAddDef);
   else if (cmd == "uneqdef")    Parse(this->uneqAddDef);
   else if (cmd == "uneqmatk")   Parse(this->uneqAddMAtk);
   else if (cmd == "uneqmdef")   Parse(this->uneqAddMDef);
+
+  else if (cmd == "uneqhit")      Parse(this->uneqAddHit);
+  else if (cmd == "uneqcrit")     Parse(this->uneqAddCrit);
+  else if (cmd == "uneqflee")     Parse(this->uneqAddFlee);
+
   else if (cmd == "uneqhp")     Parse(this->uneqAddHP);
 
   else if (cmd == "light")      Parse(this->light);

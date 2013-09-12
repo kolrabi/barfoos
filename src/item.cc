@@ -357,18 +357,28 @@ Item::ModifyStats(Stats &stats, bool forceEquipped) const {
     stats.SetStrength     (stats.GetStrength()      + this->properties->eqAddStr   * f);
     stats.SetAgility      (stats.GetAgility()       + this->properties->eqAddAgi   * f);
     stats.SetDexterity    (stats.GetDexterity()     + this->properties->eqAddDex   * f);
-    stats.SetDefense      (stats.GetDefense()       + this->properties->eqAddDef   * f);
-    stats.SetMagicDefense (stats.GetMagicDefense()  + this->properties->eqAddMDef  * f);
-    stats.SetMagicAttack  (stats.GetMagicAttack()   + this->properties->eqAddMAtk  * f);
-    stats.SetMaxHealth    (stats.GetMaxHealth()     + this->properties->eqAddHP    * f);
+    stats.SetIntelligence (stats.GetIntelligence()  + this->properties->eqAddInt   * f);
+    stats.SetVitality     (stats.GetVitality()      + this->properties->eqAddVit   * f);
+    stats.SetLuck         (stats.GetLuck()          + this->properties->eqAddLuk   * f);
+
+    stats.SetAttackBonus       (stats.GetAttackBonus()        + this->properties->eqAddAtk   * f);
+    stats.SetDefenseBonus      (stats.GetDefenseBonus()       + this->properties->eqAddDef   * f);
+    stats.SetMagicAttackBonus  (stats.GetMagicAttackBonus()   + this->properties->eqAddMAtk  * f);
+    stats.SetMagicDefenseBonus (stats.GetMagicDefenseBonus()  + this->properties->eqAddMDef  * f);
+    stats.SetMaxHealthBonus    (stats.GetMaxHealthBonus()     + this->properties->eqAddHP    * f);
   } else {
     stats.SetStrength     (stats.GetStrength()      + this->properties->uneqAddStr   * f);
     stats.SetAgility      (stats.GetAgility()       + this->properties->uneqAddAgi   * f);
     stats.SetDexterity    (stats.GetDexterity()     + this->properties->uneqAddDex   * f);
-    stats.SetDefense      (stats.GetDefense()       + this->properties->uneqAddDef   * f);
-    stats.SetMagicDefense (stats.GetMagicDefense()  + this->properties->uneqAddMDef  * f);
-    stats.SetMagicAttack  (stats.GetMagicAttack()   + this->properties->uneqAddMAtk  * f);
-    stats.SetMaxHealth    (stats.GetMaxHealth()     + this->properties->uneqAddHP    * f);
+    stats.SetIntelligence (stats.GetIntelligence()  + this->properties->uneqAddInt   * f);
+    stats.SetVitality     (stats.GetVitality()      + this->properties->uneqAddVit   * f);
+    stats.SetLuck         (stats.GetLuck()          + this->properties->uneqAddLuk   * f);
+
+    stats.SetAttackBonus       (stats.GetAttackBonus()        + this->properties->uneqAddAtk   * f);
+    stats.SetDefenseBonus      (stats.GetDefenseBonus()       + this->properties->uneqAddDef   * f);
+    stats.SetMagicAttackBonus  (stats.GetMagicAttackBonus()   + this->properties->uneqAddMAtk  * f);
+    stats.SetMagicDefenseBonus (stats.GetMagicDefenseBonus()  + this->properties->uneqAddMDef  * f);
+    stats.SetMaxHealthBonus    (stats.GetMaxHealthBonus()     + this->properties->uneqAddHP    * f);
   }
   if (this->effect) this->effect->ModifyStats(stats, this->IsEquipped(), this->proto.modifier(), this->GetBeatitude());
 }
@@ -426,7 +436,7 @@ Item::GetDisplayName(bool capitalize) const {
 Stats
 Item::GetDisplayStats() const {
   Stats stats;
-  stats.SetMaxHealth(0);
+  stats.SetMaxHealthBonus(0);
   this->ModifyStats(stats, true);
   return stats;
 }

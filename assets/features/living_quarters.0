@@ -5,19 +5,19 @@ group room
 
 # direct connections to other rooms
 
-Conn 3 1 0 -3
+Conn 3 1 1 -3
   Next          $doorway_wood
   OnConnReplace 1 :
 
-Conn 0 1 3 -1
+Conn 1 1 3 -1
   Next          $doorway_wood
   OnConnReplace 2 :
 
-Conn 6 1 3  1
+Conn 5 1 3  1
   Next          $doorway_wood
   OnConnReplace 3 :
 
-Conn 3 1 6  3
+Conn 3 1 5  3
   Next          $doorway_wood
   OnConnReplace 4 :
   
@@ -27,47 +27,32 @@ Conn 3 1 6  3
 
 mob 0.1 slime 1 2 2 3
 
-def #
-cell wood
+def # wood
 
-def :
-cell carpet.red
+def : carpet.red
 
-def . 
-cell air
+def . air
 
-def #
-cell wood
+def # wood
 nolock
 onlydefault
 
-def 1
-cell wood
+def 1 wood
+def 2 wood
+def 3 wood
+def 4 wood
 
-def 2
-cell wood
+def % brick
 
-def 3
-cell wood
-
-def 4
-cell wood
-
-def % 
-cell brick
-
-def &
-cell brick
+def & brick
 nolock
 onlydefault
 
-def +
-cell brick
+def + brick
 nolock
 onlydefault
 
-def ;
-cell pillar
+def ; pillar
 
 slice 0 0
 &&&&&&&

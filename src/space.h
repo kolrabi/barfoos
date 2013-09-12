@@ -39,6 +39,20 @@ enum class Side : int8_t {
   InvalidSide = -1
 };
 
+static inline Side SideFromDir(int dir) {
+  switch(dir) {
+    case -1: return Side::Left;
+    case  1: return Side::Right;
+    case -2: return Side::Down;
+    case  2: return Side::Up;
+    case -3: return Side::Backward;
+    case  3: return Side::Forward;
+    case  0: 
+    default:
+      return Side::InvalidSide;
+  }
+}
+
 /** Get the opposite side. */
 static inline Side operator-(Side side) {
   return (Side)(((int)side)^1);

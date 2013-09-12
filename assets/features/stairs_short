@@ -3,10 +3,10 @@ level 0 -1 30
 
 group stairs
 
-conn 0 2 2 -1
+conn 1 2 2 -1
   next $doorway
 
-conn 4 1 2 1
+conn 3 1 2 1
   next $doorway
 
 def . air

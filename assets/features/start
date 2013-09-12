@@ -1,6 +1,6 @@
 Size            9   10  9
 
-Conn            9   2   4       1
+Conn            8   2   4       1
 Next            doorway
 
 Def             .   air

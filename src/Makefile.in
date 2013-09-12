@@ -64,9 +64,9 @@ CONFIG_CLEAN_FILES = res.rc
 CONFIG_CLEAN_VPATH_FILES =
 am__installdirs = "$(DESTDIR)$(bindir)"
 PROGRAMS = $(bin_PROGRAMS)
-am__barfoos_SOURCES_DIST = test.pb.cc game.pb.cc runningstate.pb.cc \
-	entity.pb.cc world.pb.cc main.cc image.cc image.h gfx.cc gfx.h \
-	gfxview.cc gfxview.h gfxscreen.cc gfxscreen.h vertexbuffer.cc \
+am__barfoos_SOURCES_DIST = game.pb.cc runningstate.pb.cc entity.pb.cc \
+	world.pb.cc main.cc image.cc image.h gfx.cc gfx.h gfxview.cc \
+	gfxview.h gfxscreen.cc gfxscreen.h vertexbuffer.cc \
 	vertexbuffer.h audio.cc audio.h fileio.cc fileio.h texture.cc \
 	texture.h GLee.c GLee.h game.cc game.h runningstate.cc \
 	runningstate.h mainmenustate.cc mainmenustate.h mainmenugui.cc \
@@ -84,7 +84,7 @@ am__barfoos_SOURCES_DIST = test.pb.cc game.pb.cc runningstate.pb.cc \
 	aabb.h 2d.h serializer.cc serializer.h deserializer.cc \
 	deserializer.h input.cc input.h profile.cc profile.h log.cc \
 	log.h res.rc icon.ico
-am__objects_1 = barfoos-test.pb.$(OBJEXT) barfoos-game.pb.$(OBJEXT) \
+am__objects_1 = barfoos-game.pb.$(OBJEXT) \
 	barfoos-runningstate.pb.$(OBJEXT) barfoos-entity.pb.$(OBJEXT) \
 	barfoos-world.pb.$(OBJEXT)
 @WINDOOF_TRUE@am__objects_2 = res.$(OBJEXT)
@@ -238,7 +238,7 @@ top_srcdir = @top_srcdir@
 CF = $(GL_CFLAGS) -Werror -Wall -Wextra -I$(top_srcdir)/src -DDATA_PATH=\"$(pkgdatadir)\"
 # -D_GLIBCXX_DEBUG
 @WINDOOF_TRUE@RESFILE = res.rc icon.ico
-PROTOS = test.pb.cc game.pb.cc runningstate.pb.cc entity.pb.cc world.pb.cc
+PROTOS = game.pb.cc runningstate.pb.cc entity.pb.cc world.pb.cc
 BUILT_SOURCES = $(PROTOS)
 barfoos_CXXFLAGS = $(CF)
 barfoos_CFLAGS = $(CF)
@@ -446,7 +446,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/barfoos-simplex.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/barfoos-spell.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/barfoos-stats.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/barfoos-test.pb.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/barfoos-text.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/barfoos-texture.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/barfoos-trigger.Po@am__quote@
@@ -498,20 +497,6 @@ barfoos-GLee.obj: GLee.c
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXXCOMPILE) -c -o $@ `$(CYGPATH_W) '$<'`
-
-barfoos-test.pb.o: test.pb.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -MT barfoos-test.pb.o -MD -MP -MF $(DEPDIR)/barfoos-test.pb.Tpo -c -o barfoos-test.pb.o `test -f 'test.pb.cc' || echo '$(srcdir)/'`test.pb.cc
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/barfoos-test.pb.Tpo $(DEPDIR)/barfoos-test.pb.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='test.pb.cc' object='barfoos-test.pb.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -c -o barfoos-test.pb.o `test -f 'test.pb.cc' || echo '$(srcdir)/'`test.pb.cc
-
-barfoos-test.pb.obj: test.pb.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -MT barfoos-test.pb.obj -MD -MP -MF $(DEPDIR)/barfoos-test.pb.Tpo -c -o barfoos-test.pb.obj `if test -f 'test.pb.cc'; then $(CYGPATH_W) 'test.pb.cc'; else $(CYGPATH_W) '$(srcdir)/test.pb.cc'; fi`
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/barfoos-test.pb.Tpo $(DEPDIR)/barfoos-test.pb.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='test.pb.cc' object='barfoos-test.pb.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -c -o barfoos-test.pb.obj `if test -f 'test.pb.cc'; then $(CYGPATH_W) 'test.pb.cc'; else $(CYGPATH_W) '$(srcdir)/test.pb.cc'; fi`
 
 barfoos-game.pb.o: game.pb.cc
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -MT barfoos-game.pb.o -MD -MP -MF $(DEPDIR)/barfoos-game.pb.Tpo -c -o barfoos-game.pb.o `test -f 'game.pb.cc' || echo '$(srcdir)/'`game.pb.cc

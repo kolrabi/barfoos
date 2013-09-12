@@ -124,8 +124,13 @@ struct EntityProperties : public Properties {
 
   // stats
   int     str               = 0;
-  int     dex               = 0;
   int     agi               = 0;
+  int     vit               = 0;
+  int     int_              = 0;
+  int     dex               = 0;
+  int     luk               = 0;
+
+  int     atk               = 0;
   int     def               = 0;
   int     matk              = 0;
   int     mdef              = 0;

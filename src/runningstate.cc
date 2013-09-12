@@ -498,7 +498,7 @@ RunningState::Explosion(Entity &entity, const Vector3 &pos, size_t radius, float
     Vector3 d = ent.GetPosition() - pos;
     float dmg = damage / (1.0 + d.GetSquareMag());
 
-    HealthInfo info = magical ? Stats::MagicAttack(ownerID, ent, dmg * damageFactor, element) : Stats::ExplosionAttack(ownerID, ent, dmg, element);
+    HealthInfo info = magical ? Stats::ExplosionAttack(ownerID, ent, dmg * damageFactor, element) : Stats::ExplosionAttack(ownerID, ent, dmg, element);
     ent.AddHealth(*this, info);
 
     try {
@@ -649,6 +649,19 @@ RunningState::SaveLevel() {
   } else {
     Log("could not open level save file\n");
   }
+
+  world->GetProto().SerializeToOstream(&out);
+
+  // TODO: serialize nondefault cells
+
+  /*
+  for (size_t i=0; i<world->GetCellCount(); i++) {
+    Cell_Proto cellProto;
+    world->GetCell(i).Serialize(cellProto);
+    cellProto.SerializeToOstream(&out);
+  }
+  */
+
   /*
   Serializer ser("LEVL");
   ser << *world;

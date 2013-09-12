@@ -100,6 +100,7 @@ private:
   const Texture *slotTex;
 
   std::unordered_map<Element, Sprite> gemSprites;
+  Entity *lookAtEntity = nullptr;
 
   // gameplay
   bool itemActiveLeft, itemActiveRight;

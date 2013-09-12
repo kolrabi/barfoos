@@ -46,17 +46,37 @@ struct ItemProperties : public Properties {
   int eqAddStr = 0;
   int eqAddDex = 0;
   int eqAddAgi = 0;
+  int eqAddVit = 0;
+  int eqAddInt = 0;
+  int eqAddLuk = 0;
+
+  int eqAddAtk = 0;
   int eqAddDef = 0;
   int eqAddMDef = 0;
   int eqAddMAtk = 0;
+
+  int eqAddHit = 0;
+  int eqAddCrit = 0;
+  int eqAddFlee = 0;
+
   int eqAddHP  = 0;
 
   int uneqAddStr = 0;
   int uneqAddDex = 0;
   int uneqAddAgi = 0;
+  int uneqAddVit = 0;
+  int uneqAddInt = 0;
+  int uneqAddLuk = 0;
+
+  int uneqAddAtk  = 0;
   int uneqAddDef = 0;
   int uneqAddMDef = 0;
   int uneqAddMAtk = 0;
+
+  int uneqAddHit = 0;
+  int uneqAddCrit = 0;
+  int uneqAddFlee = 0;
+
   int uneqAddHP  = 0;
 
   std::string useSkill = "";

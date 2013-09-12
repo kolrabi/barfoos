@@ -15,26 +15,21 @@ Conn     1  1  2    1
   Next   $stairs
   Next   $room
 
-Def      #
-  Cell   brick
+Def      # brick
 
-Def      .
-  Cell   air
+Def      . air
 
-Def      \
-  Cell   brick
+Def      \ brick
   Bottom 0.75 0 0 0.75
 
-Def      -  brick
+Def      - brick
   Bottom 0.75 0.75 0.75 0.75
   
-Def /
-  Cell   brick
+Def      / brick
   Bottom 0 0.75 0.75 0
   srev
 
-Def &
-  Cell   brick
+Def      & brick
   NoLock
   OnlyDefault
   

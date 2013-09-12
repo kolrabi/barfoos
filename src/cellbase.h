@@ -50,7 +50,7 @@ public:
 
   Cell &                    operator[](Side side);
   const Cell &              operator[](Side side) const;
-  
+
 protected:
 
                             CellBase(const std::string &type);

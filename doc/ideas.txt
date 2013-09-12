@@ -73,6 +73,7 @@ other:
   - permadeath?
   - magic:
     - mana vs. gems
+  - first person vs. 3rd
   - theme:
     
 ...

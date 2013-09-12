@@ -31,21 +31,41 @@ struct EffectProperties : public Properties {
   /** Item knockback multiplier. */
   float knockback = 1.0;
 
-  int eqAddStr = 0; /**< Add this amount of strength when item equipped. */
-  int eqAddDex = 0; /**< Add this amount of dexterity when item equipped. */
-  int eqAddAgi = 0; /**< Add this amount of agility when item equipped. */
-  int eqAddDef = 0; /**< Add this amount of defense when item equipped. */
-  int eqAddHP  = 0; /**< Add this amount of max hp when item equipped. */
+  int eqAddStr = 0;
+  int eqAddDex = 0;
+  int eqAddAgi = 0;
+  int eqAddVit = 0;
+  int eqAddInt = 0;
+  int eqAddLuk = 0;
+
+  int eqAddAtk = 0;
+  int eqAddDef = 0;
   int eqAddMDef = 0;
   int eqAddMAtk = 0;
 
-  int uneqAddStr = 0; /**< Add this amount of strength when item unequipped. */
-  int uneqAddDex = 0; /**< Add this amount of dexterity when item unequipped. */
-  int uneqAddAgi = 0; /**< Add this amount of agility when item unequipped. */
-  int uneqAddDef = 0; /**< Add this amount of defense when item unequipped. */
-  int uneqAddHP  = 0; /**< Add this amount of max hp when item unequipped. */
+  int eqAddHit = 0;
+  int eqAddCrit = 0;
+  int eqAddFlee = 0;
+
+  int eqAddHP  = 0;
+
+  int uneqAddStr = 0;
+  int uneqAddDex = 0;
+  int uneqAddAgi = 0;
+  int uneqAddVit = 0;
+  int uneqAddInt = 0;
+  int uneqAddLuk = 0;
+
+  int uneqAddAtk  = 0;
+  int uneqAddDef = 0;
   int uneqAddMDef = 0;
   int uneqAddMAtk = 0;
+
+  int uneqAddHit = 0;
+  int uneqAddCrit = 0;
+  int uneqAddFlee = 0;
+
+  int uneqAddHP  = 0;
 
   /** Item cooldown modifier. */
   float cooldown = 1.0;

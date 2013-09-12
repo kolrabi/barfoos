@@ -3,7 +3,7 @@ message MiniMap_Proto {
 }
 
 message Cell_Proto {
-    required bool is_default = 1;
+    required string type = 1;
 }
 
 message World_Proto {
@@ -12,8 +12,7 @@ message World_Proto {
     required uint32 size_x = 2;
     required uint32 size_y = 3;
     required uint32 size_z = 4;
-
-    repeated Cell_Proto cells = 5;
+    repeated bool is_cell_default = 5;
 
     required float next_tick_time = 6;
 }

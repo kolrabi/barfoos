@@ -232,7 +232,7 @@ WorldBuilder::BuildFeature(RunningState &state, Random &random, const Theme &the
   if (!revConn) return;
 
   // snap both connection points together
-  IVector3                  pos         = instance.pos + conn->pos - revConn->pos;
+  IVector3                  pos         = instance.pos + conn->pos - revConn->pos + IVector3(SideFromDir(conn->dir));
 
   // check if feature can be built
   this->world.BeginCheckOverwrite();

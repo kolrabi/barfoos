@@ -1,3 +1,5 @@
+#include "common.h"
+
 #include "cell.h"
 
 #include "vertex.h"

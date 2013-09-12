@@ -56,6 +56,7 @@ public:
   void Update(RunningState &runningState);
 
   Cell &GetCell(const IVector3 &pos) const;
+  Cell &GetCell(size_t i) const;
   Cell &SetCell(const IVector3 &pos, const Cell &cell, bool ignoreLock = false);
   std::vector<const Cell *> GetCellNeighbours(const IVector3 &pos) const;
   IColor GetLight(const IVector3 &pos) const;
@@ -149,6 +150,11 @@ World::GetCell(const IVector3 &pos) const {
   if (checkOverwrite) return const_cast<Cell &>(this->defaultCell);
   if (!this->IsValidCellPosition(pos)) return const_cast<Cell &>(this->defaultCell);
   return const_cast<Cell &>(this->cells[this->GetCellIndex(pos)]);
+}
+
+inline Cell &
+World::GetCell(size_t i) const {
+  return const_cast<Cell &>(this->cells[i]);
 }
 
 #endif

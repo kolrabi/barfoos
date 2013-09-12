@@ -30,26 +30,26 @@ Stats::MeleeAttack(const Entity &attacker, const Entity &victim, const Item &ite
   Stats atkStat = attacker.GetEffectiveStats();
   Stats defStat = victim.GetEffectiveStats();
 
-  uint32_t atkSkillLevel = atkStat.GetSkill(info.skill);
-  uint32_t defSkillLevel = defStat.GetSkill("evade");
+  uint32_t hitLevel  = atkStat.GetSkill(info.skill) + atkStat.GetHit();
+  uint32_t fleeLevel = defStat.GetFlee();
 
   // determine hit
-  int dex = random.Integer(std::max(atkStat.GetDexterity() + atkSkillLevel, (uint32_t)1));
-  int agi = random.Integer(std::max(defStat.GetAgility()   + defSkillLevel, (uint32_t)1));
+  int hit  = random.Integer(std::max(hitLevel,  (uint32_t)1));
+  int flee = random.Integer(std::max(fleeLevel, (uint32_t)1));
 
-  HitType hit = (dex < agi) ? HitType::Miss : HitType::Normal;
-  if (random.Chance(atkStat.GetDexterity()*0.001)) hit = HitType::Critical;
+  HitType hitType = (hit < flee) ? HitType::Miss : HitType::Normal;
+  if (random.Chance(atkStat.GetCrit()*0.01)) hitType = HitType::Critical;
 
-  info.hitType = hit;
+  info.hitType = hitType;
 
-  int dmg = (atkStat.GetStrength() * 0.5 * item.GetDamage() + atkSkillLevel*0.5) * charge;
+  int dmg = (atkStat.GetAttack() + item.GetDamage()) * charge;
   if (dmg < 1) dmg = 1;
 
-  int amount = dmg - defStat.GetDefense() * 0.1;
+  int amount = dmg - defStat.GetDefense();
   if (amount < 1) amount = 1;
 
   // determine damage
-  switch(hit) {
+  switch(hitType) {
     case HitType::Miss:     info.amount = 0.0; break;
     case HitType::Critical: info.amount = -dmg; break;
     case HitType::Normal:   info.amount = -amount; break;
@@ -82,7 +82,7 @@ Stats::MagicAttack(ID attackerID, const Entity &victim, float damage, Element el
   Stats defStat = victim.GetEffectiveStats();
 
   if (damage > 0.0) {
-    info.amount = -(damage - defStat.GetMagicDefense() * 0.5);
+    info.amount = -(damage - defStat.GetMagicDefense());
     if (info.amount > 0.0) info.amount = 0.0;
 
     bool kill = -info.amount > victim.GetHealth();
@@ -114,7 +114,7 @@ Stats::ExplosionAttack(ID attackerID, const Entity &victim, float damage, Elemen
   Stats defStat = victim.GetEffectiveStats();
 
   if (damage > 0.0) {
-    info.amount = -(damage - defStat.GetDefense() * 0.5);
+    info.amount = -(damage - defStat.GetDefense());
     if (info.amount > 0.0) info.amount = 0.0;
 
     bool kill = -info.amount > victim.GetHealth();
@@ -145,7 +145,7 @@ Stats::ProjectileAttack(const Entity &projectile, const Entity &victim, float da
   Stats defStat = victim.GetEffectiveStats();
 
   if (damage > 0.0) {
-    info.amount = -(damage - defStat.GetDefense() * 0.5);
+    info.amount = -(damage - defStat.GetDefense());
     if (info.amount > 0.0) info.amount = 0.0;
     bool kill = -info.amount > victim.GetHealth();
     float expDmg = kill ? victim.GetHealth() : -info.amount;
@@ -217,7 +217,7 @@ Stats::GetLevelForSkillExp(float exp) {
  * @return The tooltip.
  */
 std::string
-Stats::GetToolTip() const {
+Stats::GetToolTip(bool absolute) const {
   std::string tooltip;
   char tmp[256];
 
@@ -226,8 +226,18 @@ Stats::GetToolTip() const {
     tooltip += tmp;
   }
 
+  if (this->GetVitality()) {
+    snprintf(tmp, sizeof(tmp), "vit: %+d\n", this->GetVitality());
+    tooltip += tmp;
+  }
+
   if (this->GetAgility()) {
     snprintf(tmp, sizeof(tmp), "agi: %+d\n", this->GetAgility());
+    tooltip += tmp;
+  }
+
+  if (this->GetIntelligence()) {
+    snprintf(tmp, sizeof(tmp), "int: %+d\n", this->GetIntelligence());
     tooltip += tmp;
   }
 
@@ -236,16 +246,133 @@ Stats::GetToolTip() const {
     tooltip += tmp;
   }
 
-  if (this->GetDefense()) {
-    snprintf(tmp, sizeof(tmp), "def: %+d\n", this->GetDefense());
+  if (this->GetLuck()) {
+    snprintf(tmp, sizeof(tmp), "luk: %+d\n", this->GetLuck());
     tooltip += tmp;
   }
 
-  if (this->GetMaxHealth()) {
-    snprintf(tmp, sizeof(tmp), "hp:  %+d\n", this->GetMaxHealth());
-    tooltip += tmp;
+  if (absolute) {
+    if (this->GetAttack()) {
+      snprintf(tmp, sizeof(tmp), "atk: %+d\n", this->GetAttack());
+      tooltip += tmp;
+    }
+
+    if (this->GetDefense()) {
+      snprintf(tmp, sizeof(tmp), "def: %+d\n", this->GetDefense());
+      tooltip += tmp;
+    }
+
+    if (this->GetMagicAttack()) {
+      snprintf(tmp, sizeof(tmp), "matk: %+d\n", this->GetMagicAttack());
+      tooltip += tmp;
+    }
+
+    if (this->GetMagicDefense()) {
+      snprintf(tmp, sizeof(tmp), "mdef: %+d\n", this->GetMagicDefense());
+      tooltip += tmp;
+    }
+
+    if (this->GetHit()) {
+      snprintf(tmp, sizeof(tmp), "hit: %+d\n", this->GetHit());
+      tooltip += tmp;
+    }
+
+    if (this->GetCrit()) {
+      snprintf(tmp, sizeof(tmp), "crit: %+d\n", this->GetCrit());
+      tooltip += tmp;
+    }
+
+    if (this->GetFlee()) {
+      snprintf(tmp, sizeof(tmp), "flee: %+d\n", this->GetFlee());
+      tooltip += tmp;
+    }
+
+    if (this->GetMaxHealth()) {
+      snprintf(tmp, sizeof(tmp), "hp:  %+d\n", this->GetMaxHealth());
+      tooltip += tmp;
+    }
+  } else {
+    if (this->GetAttackBonus()) {
+      snprintf(tmp, sizeof(tmp), "atk: %+d\n", this->GetAttackBonus());
+      tooltip += tmp;
+    }
+
+    if (this->GetDefenseBonus()) {
+      snprintf(tmp, sizeof(tmp), "def: %+d\n", this->GetDefenseBonus());
+      tooltip += tmp;
+    }
+
+    if (this->GetMagicAttackBonus()) {
+      snprintf(tmp, sizeof(tmp), "matk: %+d\n", this->GetMagicAttackBonus());
+      tooltip += tmp;
+    }
+
+    if (this->GetMagicDefenseBonus()) {
+      snprintf(tmp, sizeof(tmp), "mdef: %+d\n", this->GetMagicDefenseBonus());
+      tooltip += tmp;
+    }
+
+    if (this->GetHitBonus()) {
+      snprintf(tmp, sizeof(tmp), "hit: %+d\n", this->GetHitBonus());
+      tooltip += tmp;
+    }
+
+    if (this->GetCritBonus()) {
+      snprintf(tmp, sizeof(tmp), "crit: %+d\n", this->GetCritBonus());
+      tooltip += tmp;
+    }
+
+    if (this->GetFleeBonus()) {
+      snprintf(tmp, sizeof(tmp), "flee: %+d\n", this->GetFleeBonus());
+      tooltip += tmp;
+    }
+
+    if (this->GetMaxHealthBonus()) {
+      snprintf(tmp, sizeof(tmp), "hp:  %+d\n", this->GetMaxHealthBonus());
+      tooltip += tmp;
+    }
   }
   return tooltip;
+}
+
+uint32_t
+Stats::GetAttack()       const {
+  return GetLevel()/4 + GetStrength() + GetDexterity() / 5 + GetLuck() / 3 + GetAttackBonus(); 
+}
+
+uint32_t
+Stats::GetMagicAttack()  const {
+  return GetLevel()/4 + GetIntelligence() + GetIntelligence()/2 + GetDexterity() / 5 + GetLuck() / 3 + GetMagicAttackBonus(); 
+}
+
+uint32_t
+Stats::GetDefense()      const {
+  return GetVitality() / 2 + std::max(GetVitality()/3, GetVitality()*GetVitality() / 150) + GetDefenseBonus();
+}
+
+uint32_t
+Stats::GetMagicDefense() const {
+  return GetLevel()/4 + GetIntelligence() + GetVitality() / 5 + GetDexterity() / 5;
+}
+
+uint32_t
+Stats::GetHit()          const {
+  return GetHitBonus() + 175 + GetDexterity() + GetLuck()/3 + GetLevel();
+}
+
+uint32_t
+Stats::GetCrit()         const {
+  return GetCritBonus() + GetLuck() / 3 + 1;
+}
+
+uint32_t
+Stats::GetFlee()         const {
+  return GetFleeBonus() + GetSkill("evade") + GetLevel() + GetAgility() + GetLuck()/5;
+}
+
+uint32_t
+Stats::GetMaxHealth()    const {
+  return GetMaxHealthBonus() + GetVitality() + GetLevel();
 }
 
 /** Compare two stats. Ignores sp and exp. */

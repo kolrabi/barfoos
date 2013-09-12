@@ -1,3 +1,5 @@
+#include "common.h"
+
 #include "GLee.h"
 
 #include "world.h"
@@ -47,6 +49,8 @@ World::World(RunningState &state, const IVector3 &size) :
   this->proto.set_size_x(size.x);
   this->proto.set_size_y(size.y);
   this->proto.set_size_z(size.z);
+
+  // TODO: load default mask
 }
 
 World::World(RunningState &state, const World_Proto &proto) :
@@ -968,7 +972,7 @@ const World_Proto &
 World::GetProto() {
   *this->proto.mutable_mini_map() = this->minimap.GetProto();
 
-  // TODO: save cells
+  // TODO: save default mask
 
   return this->proto;
 }

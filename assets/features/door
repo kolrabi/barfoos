@@ -16,13 +16,11 @@ Conn     1  1  2    1
   Next   $stairs
   Next   $room
 
-Def      #
-  Cell   brick
+Def      # brick
 
-Def             D   door.right.closed
+Def      D   door.right.closed
 
-Def &
-  Cell   brick
+Def      & brick
   NoLock
   OnlyDefault
 

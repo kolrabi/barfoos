@@ -1,3 +1,5 @@
+#include "common.h"
+
 #include "cell.h"
 
 #include "audio.h"
@@ -123,6 +125,12 @@ Cell::Cell(const Cell &that) :
 {
   (Triggerable&)self = that;
   shared = that.shared;
+}
+
+Cell::Cell(const Cell_Proto &proto) : 
+  CellRender(proto.type())
+{
+  
 }
 
 /** Assignment operator.

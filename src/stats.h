@@ -110,21 +110,51 @@ struct Stats {
   Stats() {}
   Stats(const Stats_Proto &proto) : proto(proto) {}
 
+  // primary stats
   uint32_t GetStrength()     const { return proto.str();     }
-  uint32_t GetDexterity()    const { return proto.dex();     }
   uint32_t GetAgility()      const { return proto.agi();     }
-  uint32_t GetDefense()      const { return proto.def();     }
-  uint32_t GetMagicAttack()  const { return proto.matk();    }
-  uint32_t GetMagicDefense() const { return proto.mdef();    }
-  uint32_t GetMaxHealth()    const { return proto.max_hp();  }
+  uint32_t GetVitality()     const { return proto.dex();     }
+  uint32_t GetIntelligence() const { return proto.int_();    }
+  uint32_t GetDexterity()    const { return proto.dex();     }
+  uint32_t GetLuck()         const { return proto.luk();     }
 
   void SetStrength(uint32_t v)      { proto.set_str(v);     }
-  void SetDexterity(uint32_t v)     { proto.set_dex(v);     }
   void SetAgility(uint32_t v)       { proto.set_agi(v);     }
-  void SetDefense(uint32_t v)       { proto.set_def(v);     }
-  void SetMagicAttack(uint32_t v)   { proto.set_matk(v);    }
-  void SetMagicDefense(uint32_t v)  { proto.set_mdef(v);    }
-  void SetMaxHealth(uint32_t v)     { proto.set_max_hp(v);  }
+  void SetVitality(uint32_t v)      { proto.set_vit(v);     }
+  void SetIntelligence(uint32_t v)  { proto.set_int_(v);    }
+  void SetDexterity(uint32_t v)     { proto.set_dex(v);     }
+  void SetLuck(uint32_t v)          { proto.set_luk(v);    }
+
+  // substats 
+  uint32_t GetAttack()       const;
+  uint32_t GetMagicAttack()  const;
+  uint32_t GetDefense()      const;
+  uint32_t GetMagicDefense() const;
+  uint32_t GetHit()          const;
+  uint32_t GetCrit()         const;
+  uint32_t GetFlee()         const;
+
+  // boni
+  int32_t GetAttackBonus()       const { return proto.atk_bonus(); }
+  int32_t GetDefenseBonus()      const { return proto.def_bonus(); }
+  int32_t GetMagicAttackBonus()  const { return proto.matk_bonus(); }
+  int32_t GetMagicDefenseBonus() const { return proto.mdef_bonus(); }
+  int32_t GetHitBonus()          const { return proto.hit_bonus(); }
+  int32_t GetCritBonus()         const { return proto.crit_bonus(); }
+  int32_t GetFleeBonus()         const { return proto.flee_bonus(); }
+
+  void SetAttackBonus(int32_t v)         { proto.set_atk_bonus(v);    }
+  void SetDefenseBonus(int32_t v)        { proto.set_def_bonus(v);     }
+  void SetMagicAttackBonus(int32_t v)    { proto.set_matk_bonus(v);    }
+  void SetMagicDefenseBonus(int32_t v)   { proto.set_mdef_bonus(v);    }
+  void SetHitBonus(int32_t v)            { proto.set_hit_bonus(v);    }
+  void SetCritBonus(int32_t v)           { proto.set_crit_bonus(v);    }
+  void SetFleeBonus(int32_t v)           { proto.set_flee_bonus(v);    }
+
+  uint32_t GetMaxHealth()    const;
+
+  uint32_t GetMaxHealthBonus()    const { return proto.max_hp(); }
+  void SetMaxHealthBonus(uint32_t v)     { proto.set_max_hp(v);  }
 
   float GetExperience() const { return proto.exp();     }
   uint32_t GetLevel()   const { return Stats::GetLevelForExp(this->GetExperience()); }
@@ -141,7 +171,7 @@ struct Stats {
 
   bool operator==(const Stats &o);
   bool AddExperience(float exp);
-  std::string GetToolTip() const;
+  std::string GetToolTip(bool absolute=false) const;
 
   Stats_Proto proto;
 

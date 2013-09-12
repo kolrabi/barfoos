@@ -12,7 +12,7 @@ endif
 .rc.o:
 	windres $< -o $@
 
-PROTOS=test.pb.cc game.pb.cc runningstate.pb.cc entity.pb.cc world.pb.cc
+PROTOS=game.pb.cc runningstate.pb.cc entity.pb.cc world.pb.cc
 
 %.pb.cc: %.proto
 	$(PROTOC) --cpp_out=. $<

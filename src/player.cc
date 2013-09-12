@@ -146,6 +146,11 @@ Player::Update(RunningState &state) {
 
   this->fps = game.GetFPS();
 
+  ID entityID;
+  Side cellSide;
+  this->GetSelection(state, 5.0, nullptr, cellSide, entityID);
+  this->lookAtEntity = state.GetEntity(entityID);
+
   this->blink = std::fmod(game.GetTime()*2, 1.0) > 0.3;
   this->SetHPFlashTime(std::max(0.0f, this->GetHPFlashTime() - game.GetDeltaT()));
 
@@ -437,6 +442,7 @@ Player::DrawGUI(Gfx &gfx) const {
 
   char tmp[1024];
   Stats stats = this->GetEffectiveStats();
+  /*
   snprintf(tmp, sizeof(tmp), "STR: %3d DEX: %3d AGI: %3d DEF: %3d MATK: %3d MDEF: %3d MAX HP: %3d",
     stats.GetStrength(), 
     stats.GetDexterity(), 
@@ -447,6 +453,7 @@ Player::DrawGUI(Gfx &gfx) const {
     stats.GetMaxHealth()
   );
   RenderString(tmp, "small").Draw(gfx, 4, vsize.y-32);
+  */
 
   snprintf(tmp, sizeof(tmp), "LVL: %3u EXP: %4d / %4d", 
     stats.GetLevel(), 
@@ -455,11 +462,15 @@ Player::DrawGUI(Gfx &gfx) const {
   );
   RenderString(tmp, "small").Draw(gfx, 4, vsize.y-32-12);
 
-  std::string buffstring;
+  std::string buffstring = stats.GetToolTip(true);
   for (auto &b:activeBuffs) {
     buffstring += "\n" + b.GetEffect().displayName;
   }
   RenderString(buffstring).Draw(gfx, vsize - Point(4,40), int(Align::HorizRight|Align::VertBottom));
+
+  if (this->lookAtEntity) {
+    RenderString(this->lookAtEntity->GetEffectiveStats().GetToolTip(true)).Draw(gfx, vsize/2, int(Align::HorizCenter));
+  }
 
   std::string skills;
   for (auto &s:GetEffectiveStats().GetAllSkills()) {

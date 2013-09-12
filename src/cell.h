@@ -1,11 +1,13 @@
 #ifndef BARFOOS_CELL_H
 #define BARFOOS_CELL_H
 
-#include "common.h"
 #include "icolor.h"
 #include "ivector3.h"
+#include "space.h"
 
 #include "cellrender.h"
+
+#include "world.pb.h"
 
 /** A cell in the world. */
 class Cell final : public CellRender {
@@ -13,6 +15,7 @@ public:
 
                             Cell(const std::string &type = "default");
                             Cell(const Cell &that);
+                            Cell(const Cell_Proto &proto);
                             ~Cell();
 
   Cell &                    operator=(const Cell &that);
@@ -53,6 +56,8 @@ public:
 
   Cell &                    SetYOffsets(float a, float b, float c, float d);
   Cell &                    SetYOffsetsBottom(float a, float b, float c, float d);
+
+  void                      Serialize(Cell_Proto &proto);
 
 protected:
 

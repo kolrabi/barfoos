@@ -36,38 +36,45 @@ EffectProperties::ParseProperty(const std::string &cmd) {
 
   } else if (cmd == "feeling") {
     Parse(this->feeling);
+  }
+  
+  else if (cmd == "eqstr")      Parse(this->eqAddStr);
+  else if (cmd == "eqdex")      Parse(this->eqAddDex);
+  else if (cmd == "eqagi")      Parse(this->eqAddAgi);
+  else if (cmd == "eqint")      Parse(this->eqAddInt);
+  else if (cmd == "eqvit")      Parse(this->eqAddVit);
+  else if (cmd == "eqluk")      Parse(this->eqAddLuk);
 
-  } else if (cmd == "eqstr") {
-    Parse(this->eqAddStr);
-  } else if (cmd == "eqdex") {
-    Parse(this->eqAddDex);
-  } else if (cmd == "eqagi") {
-    Parse(this->eqAddAgi);
-  } else if (cmd == "eqdef") {
-    Parse(this->eqAddDef);
-  } else if (cmd == "eqmdef") {
-    Parse(this->eqAddMDef);
-  } else if (cmd == "eqmatk") {
-    Parse(this->eqAddMDef);
-  } else if (cmd == "eqhp") {
-    Parse(this->eqAddHP);
+  else if (cmd == "eqatk")      Parse(this->eqAddAtk);
+  else if (cmd == "eqdef")      Parse(this->eqAddDef);
+  else if (cmd == "eqmatk")     Parse(this->eqAddMAtk);
+  else if (cmd == "eqmdef")     Parse(this->eqAddMDef);
 
-  } else if (cmd == "uneqstr") {
-    Parse(this->uneqAddStr);
-  } else if (cmd == "uneqdex") {
-    Parse(this->uneqAddDex);
-  } else if (cmd == "uneqagi") {
-    Parse(this->uneqAddAgi);
-  } else if (cmd == "uneqdef") {
-    Parse(this->uneqAddDef);
-  } else if (cmd == "uneqmdef") {
-    Parse(this->uneqAddMDef);
-  } else if (cmd == "uneqmatk") {
-    Parse(this->uneqAddMDef);
-  } else if (cmd == "uneqhp") {
-    Parse(this->uneqAddHP);
+  else if (cmd == "eqhit")      Parse(this->eqAddHit);
+  else if (cmd == "eqcrit")     Parse(this->eqAddCrit);
+  else if (cmd == "eqflee")     Parse(this->eqAddFlee);
 
-  } else if (cmd == "cooldown") {
+  else if (cmd == "eqhp")       Parse(this->eqAddHP);
+
+  else if (cmd == "uneqstr")    Parse(this->uneqAddStr);
+  else if (cmd == "uneqdex")    Parse(this->uneqAddDex);
+  else if (cmd == "uneqagi")    Parse(this->uneqAddAgi);
+  else if (cmd == "uneqint")    Parse(this->uneqAddInt);
+  else if (cmd == "uneqvit")    Parse(this->uneqAddVit);
+  else if (cmd == "uneqluk")    Parse(this->uneqAddLuk);
+
+  else if (cmd == "uneqatk")    Parse(this->uneqAddDef);
+  else if (cmd == "uneqdef")    Parse(this->uneqAddDef);
+  else if (cmd == "uneqmatk")   Parse(this->uneqAddMAtk);
+  else if (cmd == "uneqmdef")   Parse(this->uneqAddMDef);
+
+  else if (cmd == "uneqhit")      Parse(this->uneqAddHit);
+  else if (cmd == "uneqcrit")     Parse(this->uneqAddCrit);
+  else if (cmd == "uneqflee")     Parse(this->uneqAddFlee);
+
+  else if (cmd == "uneqhp")     Parse(this->uneqAddHP);
+
+  else if (cmd == "cooldown") {
     Parse(this->cooldown);
   } else if (cmd == "range") {
     Parse(this->range);
@@ -142,10 +149,15 @@ EffectProperties::ModifyStats(Stats &stats, bool forceEquipped, int modifier, Be
     stats.SetStrength     (stats.GetStrength()      + this->eqAddStr   * f);
     stats.SetAgility      (stats.GetAgility()       + this->eqAddAgi   * f);
     stats.SetDexterity    (stats.GetDexterity()     + this->eqAddDex   * f);
-    stats.SetDefense      (stats.GetDefense()       + this->eqAddDef   * f);
-    stats.SetMagicDefense (stats.GetMagicDefense()  + this->eqAddMDef  * f);
-    stats.SetMagicAttack  (stats.GetMagicAttack()   + this->eqAddMAtk  * f);
-    stats.SetMaxHealth    (stats.GetMaxHealth()     + this->eqAddHP    * f);
+    stats.SetIntelligence (stats.GetIntelligence()  + this->eqAddInt   * f);
+    stats.SetVitality     (stats.GetVitality()      + this->eqAddVit   * f);
+    stats.SetLuck         (stats.GetLuck()          + this->eqAddLuk   * f);
+
+    stats.SetAttackBonus       (stats.GetAttackBonus()        + this->eqAddAtk   * f);
+    stats.SetDefenseBonus      (stats.GetDefenseBonus()       + this->eqAddDef   * f);
+    stats.SetMagicDefenseBonus (stats.GetMagicDefenseBonus()  + this->eqAddMDef  * f);
+    stats.SetMagicAttackBonus  (stats.GetMagicAttackBonus()   + this->eqAddMAtk  * f);
+    stats.SetMaxHealthBonus    (stats.GetMaxHealthBonus()     + this->eqAddHP    * f);
 
     if (beatitude == Beatitude::Normal) {
       stats.SetWalkSpeed  (stats.GetWalkSpeed() * std::pow(this->walkSpeed, modifier*0.25) * this->walkSpeed);
@@ -158,10 +170,15 @@ EffectProperties::ModifyStats(Stats &stats, bool forceEquipped, int modifier, Be
     stats.SetStrength     (stats.GetStrength()      + this->uneqAddStr   * f);
     stats.SetAgility      (stats.GetAgility()       + this->uneqAddAgi   * f);
     stats.SetDexterity    (stats.GetDexterity()     + this->uneqAddDex   * f);
-    stats.SetDefense      (stats.GetDefense()       + this->uneqAddDef   * f);
-    stats.SetMagicDefense (stats.GetMagicDefense()  + this->uneqAddMDef  * f);
-    stats.SetMagicAttack  (stats.GetMagicAttack()   + this->uneqAddMAtk  * f);
-    stats.SetMaxHealth    (stats.GetMaxHealth()     + this->uneqAddHP    * f);
+    stats.SetIntelligence (stats.GetIntelligence()  + this->uneqAddInt   * f);
+    stats.SetVitality     (stats.GetVitality()      + this->uneqAddVit   * f);
+    stats.SetLuck         (stats.GetLuck()          + this->uneqAddLuk   * f);
+
+    stats.SetAttackBonus       (stats.GetAttackBonus()        + this->uneqAddAtk   * f);
+    stats.SetDefenseBonus      (stats.GetDefenseBonus()       + this->uneqAddDef   * f);
+    stats.SetMagicDefenseBonus (stats.GetMagicDefenseBonus()  + this->uneqAddMDef  * f);
+    stats.SetMagicAttackBonus  (stats.GetMagicAttackBonus()   + this->uneqAddMAtk  * f);
+    stats.SetMaxHealthBonus    (stats.GetMaxHealthBonus()     + this->uneqAddHP    * f);
   }
 }
 

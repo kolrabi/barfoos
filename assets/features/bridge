@@ -2,52 +2,41 @@ size 7 7 7
 group hallway
 level 0 -1 10
 
-conn 0 2 3 -1
+conn 1 2 3 -1
 next doorway
 next alcove
 
-conn 6 2 3 1
+conn 5 2 3 1
 next doorway
 next alcove
 
-conn 3 6 3 2
+def . air
 
-def . 
-cell air
-
-def #
-cell brick
+def # brick
 nolock
 
-def % 
-cell step
+def % step
 bottom 0.5 0.5 0.5 0.5
 
-def &
-cell brick
+def & brick
 onlydefault
 nolock
 
-def a 
-cell step
+def a step
 bottom 0 1 1 1
 
-def b
-cell step
+def b step
 bottom 1 1 1 0
 brev
 
-def c 
-cell step
+def c step
 bottom 1 0 1 1
 brev
 
-def d
-cell step
+def d step
 bottom 1 1 0 1
 
-def L
-cell lava
+def L lava
 
 slice 0 0
 &&&&&&&
