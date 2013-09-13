@@ -30,8 +30,12 @@ CellBase::CellBase(const std::string &type) :
   for (size_t i=0; i<6; i++)
     this->neighbours[i] = nullptr;
 
-  this->vertsDirty = false;
+  this->vertsDirty = true;
   this->colorDirty = false;
+
+  this->proto.set_type(type);
+  if (this->IsLiquid()) this->SetLiquidAmount(15);
+  this->SetScale( this->info->scale );
 }
  
 CellBase::CellBase(const CellBase &that) :
@@ -45,7 +49,7 @@ CellBase::CellBase(const CellBase &that) :
   for (size_t i=0; i<6; i++)
     this->neighbours[i] = nullptr;
 
-  this->vertsDirty = false;
+  this->vertsDirty = true;
   this->colorDirty = false;
 }
 
@@ -477,12 +481,12 @@ Cell::SetTopHeights(float a, float b, float c, float d) {
                 this->GetTopHeight(1) != b ||
                 this->GetTopHeight(2) != c ||
                 this->GetTopHeight(3) != d;
-  if (!change) return *this;
-                
-  this->SetTopHeight(0, a);
-  this->SetTopHeight(1, b);
-  this->SetTopHeight(2, c);
-  this->SetTopHeight(3, d);
+  if (change) {
+    this->SetTopHeight(0, a);
+    this->SetTopHeight(1, b);
+    this->SetTopHeight(2, c);
+    this->SetTopHeight(3, d);
+  }
 
   if (world && !IsDynamic()) 
     world->MarkForUpdateNeighbours(this);

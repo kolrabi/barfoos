@@ -92,9 +92,6 @@ World::SetCell(const IVector3 &pos, const Cell &cell, bool ignoreLock) {
   size_t i = this->GetCellIndex(pos);
   if (this->cells[i].IsIgnoringWrite()) return this->defaultCell;
 
-  if (cell.GetType() != "" && cell.GetType() != "default" && cell.GetType() != "bedrock")
-  Log("%s %d %s\n", __PRETTY_FUNCTION__, cell.IsProtected(), cell.GetType().c_str());
-
   defaultMask[i] = false;
 
   size_t featId = this->cells[i].GetFeatureID();
@@ -320,7 +317,7 @@ World::Update(
 
   if (neighbourCount > 0) {
     this->dirty = true;
-    //Log("updated %u neighbours\n", neighbourCount);
+    Log("updated %u neighbours\n", neighbourCount);
   }
 
   // tick world

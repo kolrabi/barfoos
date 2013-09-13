@@ -80,10 +80,10 @@ RunningState::NewGame() {
   theme.caveLengthMax = theme.caveLengthMin + random.Integer(100);
   theme.caveRepeat    = random.Integer(20)+10;
 
-  theme.teleportCount = 0; //random.Integer(10)+2;
-  theme.trapCount = 0; //random.Integer(10)+10;
-  theme.decoCount = 0; //500+random.Integer(200);
-  theme.itemCount = 0; //100+random.Integer(120);
+  theme.teleportCount = 50; //random.Integer(10)+2;
+  theme.trapCount = 50; //random.Integer(10)+10;
+  theme.decoCount = 50; //500+random.Integer(200);
+  theme.itemCount = 50; //100+random.Integer(120);
   theme.monsterCount = 0; //50+random.Integer(100);
 
   WorldBuilder builder(*this->world);
