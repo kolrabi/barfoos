@@ -1,8 +1,7 @@
+
+
 #include "trigger.h"
-
-#include "serializer.h"
-#include "deserializer.h"
-
+/*
 Triggerable::Triggerable() :
   triggerID(0),
   isToggle(false),
@@ -22,17 +21,17 @@ uint32_t Triggerable::GetTriggerId() const {
 bool Triggerable::IsTriggered() const {
   return triggered;
 }
-
+*/
 void Triggerable::TriggerOn() {
-  if (isToggle) {
-    triggered = !triggered;
+  if (this->IsTriggerToggle()) {
+    this->SetTriggered(!this->IsTriggered());
   } else {
-    triggered = true;
+    this->SetTriggered(true);
   }
 }
 
 void Triggerable::TriggerOff() {
-  if (!isToggle) {
-    triggered = false;
+  if (!this->IsTriggerToggle()) {
+    this->SetTriggered(false);
   }
 }

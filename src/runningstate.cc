@@ -543,7 +543,7 @@ RunningState::SpawnInAABB(
 }
 
 void RunningState::LockCell(Cell &cell) {
-  if (cell.GetLockedID()) return;
+  if (cell.GetLockID()) return;
 
   ID id = this->proto.next_lock_id();
   this->proto.set_next_lock_id(id + 1);

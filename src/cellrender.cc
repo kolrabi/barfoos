@@ -59,6 +59,45 @@ static const SideData &GetSideData(Side s) {
   return sideData[(int)s];
 }
 
+/** C'tor.
+  * @param type Cell type.
+  */
+CellRender::CellRender(const std::string &type) :
+  CellBase(type),
+  visibility(0),
+  verts(72),
+  texture(nullptr),
+  emissiveTexture(nullptr),
+  activeTexture(nullptr),
+  emissiveActiveTexture(nullptr),
+  uscale(1.0)
+{
+}
+
+CellRender::CellRender(const Cell_Proto &proto) :
+  CellBase(proto),
+  visibility(0),
+  verts(72),
+  texture(nullptr),
+  emissiveTexture(nullptr),
+  activeTexture(nullptr),
+  emissiveActiveTexture(nullptr),
+  uscale(1.0)
+{
+}
+
+CellRender::CellRender(const CellRender &that) :
+  CellBase(that),
+  visibility(0),
+  verts(72),
+  texture(that.texture),
+  emissiveTexture(that.emissiveTexture),
+  activeTexture(that.activeTexture),
+  emissiveActiveTexture(that.emissiveActiveTexture),
+  uscale(that.uscale)
+{
+}
+
 /** Get all 4 corner colors for a given side.
   * @param side Side to use.
   * @param[out] colors Where to store the colors.
@@ -115,23 +154,23 @@ CellRender::SideVerts(Side side, std::vector<Vertex> &verts, bool reverse) const
   if (!drawA && !drawB) return;
 
   float u[4] = { 
-    this->shared.u[0] + (pos[0].Dot(data.uvec) + data.tile) * this->uscale, 
-    this->shared.u[1] + (pos[1].Dot(data.uvec) + data.tile) * this->uscale, 
-    this->shared.u[2] + (pos[2].Dot(data.uvec) + data.tile) * this->uscale, 
-    this->shared.u[3] + (pos[3].Dot(data.uvec) + data.tile) * this->uscale 
+    this->u[0] + (pos[0].Dot(data.uvec) + data.tile) * this->uscale, 
+    this->u[1] + (pos[1].Dot(data.uvec) + data.tile) * this->uscale, 
+    this->u[2] + (pos[2].Dot(data.uvec) + data.tile) * this->uscale, 
+    this->u[3] + (pos[3].Dot(data.uvec) + data.tile) * this->uscale 
   };
   
   float v[4] = { 
-    pos[0].Dot(data.vvec) + this->shared.v[0], 
-    pos[1].Dot(data.vvec) + this->shared.v[1],
-    pos[2].Dot(data.vvec) + this->shared.v[2],
-    pos[3].Dot(data.vvec) + this->shared.v[3] 
+    pos[0].Dot(data.vvec) + this->v[0], 
+    pos[1].Dot(data.vvec) + this->v[1],
+    pos[2].Dot(data.vvec) + this->v[2],
+    pos[3].Dot(data.vvec) + this->v[3] 
   };
 
   if (GetInfo().flags & CellFlags::UVTurb) {
-    float t = this->lastT * 3;
+    float t = this->uvTime;
     if (GetInfo().flags & CellFlags::Viscous) {
-      t *= 0.5;
+      t *= 0.05;
     }
     for (int i=0; i<4; i++) {
       Vector3 p(pos[i] + this->pos);
@@ -292,10 +331,10 @@ CellRender::UpdateVertices() {
   if ((this->info->flags & CellFlags::Dynamic) == 0) this->vertsDirty = false;
 
   float h[4];
-  h[0] = YOfs(0);
-  h[1] = YOfs(1);
-  h[2] = YOfs(2);
-  h[3] = YOfs(3);
+  h[0] = GetTopHeight(0);
+  h[1] = GetTopHeight(1);
+  h[2] = GetTopHeight(2);
+  h[3] = GetTopHeight(3);
   
   if (info->flags & CellFlags::Liquid && (neighbours[(int)Side::Up]->info != this->info)) {
     // snap vertices of neighbouring liquid cells together to make a nice connected surface
@@ -339,24 +378,24 @@ CellRender::UpdateVertices() {
     float w[4] = {1,1,1,1};
     
     // 0
-    if (lb) { h[0] += lb->YOfs(2); w[0]++; };
-    if (b)  { h[0] += b ->YOfs(1); w[0]++; };
-    if (l)  { h[0] += l ->YOfs(3); w[0]++; };
+    if (lb) { h[0] += lb->GetTopHeight(2); w[0]++; };
+    if (b)  { h[0] += b ->GetTopHeight(1); w[0]++; };
+    if (l)  { h[0] += l ->GetTopHeight(3); w[0]++; };
     
     // 1
-    if (lf) { h[1] += lf->YOfs(3); w[1]++; };
-    if (f)  { h[1] += f ->YOfs(0); w[1]++; };
-    if (l)  { h[1] += l ->YOfs(2); w[1]++; };
+    if (lf) { h[1] += lf->GetTopHeight(3); w[1]++; };
+    if (f)  { h[1] += f ->GetTopHeight(0); w[1]++; };
+    if (l)  { h[1] += l ->GetTopHeight(2); w[1]++; };
 
     // 2
-    if (rf) { h[2] += rf->YOfs(0); w[2]++; };
-    if (f)  { h[2] += f ->YOfs(3); w[2]++; };
-    if (r)  { h[2] += r ->YOfs(1); w[2]++; };
+    if (rf) { h[2] += rf->GetTopHeight(0); w[2]++; };
+    if (f)  { h[2] += f ->GetTopHeight(3); w[2]++; };
+    if (r)  { h[2] += r ->GetTopHeight(1); w[2]++; };
     
     // 3
-    if (rb) { h[3] += rb->YOfs(1); w[3]++; };
-    if (b)  { h[3] += b ->YOfs(2); w[3]++; };
-    if (r)  { h[3] += r ->YOfs(0); w[3]++; };
+    if (rb) { h[3] += rb->GetTopHeight(1); w[3]++; };
+    if (b)  { h[3] += b ->GetTopHeight(2); w[3]++; };
+    if (r)  { h[3] += r ->GetTopHeight(0); w[3]++; };
         
     h[0] /= w[0]; h[1] /= w[1]; h[2] /= w[2]; h[3] /= w[3];
   }  
@@ -368,9 +407,9 @@ CellRender::UpdateVertices() {
     //   | 0---3
     //   +------> X
 
-    float t = this->lastT * 3;
+    float t = this->uvTime;
     if (GetInfo().flags & CellFlags::Viscous) {
-      t *= 0.5;
+      t *= 0.25;
     }
     h[0] += Wave(this->pos.x,   this->pos.z,   t, 0.1);
     h[1] += Wave(this->pos.x,   this->pos.z+1, t, 0.1);
@@ -378,28 +417,28 @@ CellRender::UpdateVertices() {
     h[3] += Wave(this->pos.x+1, this->pos.z,   t, 0.1);
   }
   
-  const float &scaleX = shared.scale.x;
-  const float &scaleY = shared.scale.y;
-  const float &scaleZ = shared.scale.z;
+  const float &scaleX = this->proto.scale_x();
+  const float &scaleY = this->proto.scale_y();
+  const float &scaleZ = this->proto.scale_z();
   
-  corners[0] = Vector3(0.5-0.5*scaleX, 0.5+(YOfsb(0)-0.5)*scaleY, 0.5-0.5*scaleZ); 
-  corners[1] = Vector3(0.5+0.5*scaleX, 0.5+(YOfsb(3)-0.5)*scaleY, 0.5-0.5*scaleZ); 
+  corners[0] = Vector3(0.5-0.5*scaleX, 0.5+(GetBottomHeight(0)-0.5)*scaleY, 0.5-0.5*scaleZ); 
+  corners[1] = Vector3(0.5+0.5*scaleX, 0.5+(GetBottomHeight(3)-0.5)*scaleY, 0.5-0.5*scaleZ); 
   corners[2] = Vector3(0.5-0.5*scaleX, 0.5+(h[0]    -0.5)*scaleY, 0.5-0.5*scaleZ); 
   corners[3] = Vector3(0.5+0.5*scaleX, 0.5+(h[3]    -0.5)*scaleY, 0.5-0.5*scaleZ); 
 
-  corners[4] = Vector3(0.5-0.5*scaleX, 0.5+(YOfsb(1)-0.5)*scaleY, 0.5+0.5*scaleZ); 
-  corners[5] = Vector3(0.5+0.5*scaleX, 0.5+(YOfsb(2)-0.5)*scaleY, 0.5+0.5*scaleZ); 
+  corners[4] = Vector3(0.5-0.5*scaleX, 0.5+(GetBottomHeight(1)-0.5)*scaleY, 0.5+0.5*scaleZ); 
+  corners[5] = Vector3(0.5+0.5*scaleX, 0.5+(GetBottomHeight(2)-0.5)*scaleY, 0.5+0.5*scaleZ); 
   corners[6] = Vector3(0.5-0.5*scaleX, 0.5+(h[1]    -0.5)*scaleY, 0.5+0.5*scaleZ);
   corners[7] = Vector3(0.5+0.5*scaleX, 0.5+(h[2]    -0.5)*scaleY, 0.5+0.5*scaleZ);
 
   verts.clear();
   
-  if (visibility & (1<<Side::Right))    SideVerts(Side::Right,    verts, this->reversedSides);
-  if (visibility & (1<<Side::Left))     SideVerts(Side::Left,     verts, this->reversedSides);
-  if (visibility & (1<<Side::Up))       SideVerts(Side::Up,       verts, this->shared.reversedTop);
-  if (visibility & (1<<Side::Down))     SideVerts(Side::Down,     verts, this->shared.reversedBottom);
-  if (visibility & (1<<Side::Forward))  SideVerts(Side::Forward,  verts, this->reversedSides);
-  if (visibility & (1<<Side::Backward)) SideVerts(Side::Backward, verts, this->reversedSides);
+  if (visibility & (1<<Side::Right))    SideVerts(Side::Right,    verts, this->IsSideReversed());
+  if (visibility & (1<<Side::Left))     SideVerts(Side::Left,     verts, this->IsSideReversed());
+  if (visibility & (1<<Side::Up))       SideVerts(Side::Up,       verts, this->IsTopReversed());
+  if (visibility & (1<<Side::Down))     SideVerts(Side::Down,     verts, this->IsBottomReversed());
+  if (visibility & (1<<Side::Forward))  SideVerts(Side::Forward,  verts, this->IsSideReversed());
+  if (visibility & (1<<Side::Backward)) SideVerts(Side::Backward, verts, this->IsSideReversed());
   
   return true;
 }
@@ -412,12 +451,12 @@ CellRender::UpdateColors() {
   
   std::vector<IColor> colors;
   
-  if (visibility & (1<<Side::Right))    SideColors(Side::Right,    colors, this->reversedSides);
-  if (visibility & (1<<Side::Left))     SideColors(Side::Left,     colors, this->reversedSides);
-  if (visibility & (1<<Side::Up))       SideColors(Side::Up,       colors, this->shared.reversedTop);
-  if (visibility & (1<<Side::Down))     SideColors(Side::Down,     colors, this->shared.reversedBottom);
-  if (visibility & (1<<Side::Forward))  SideColors(Side::Forward,  colors, this->reversedSides);
-  if (visibility & (1<<Side::Backward)) SideColors(Side::Backward, colors, this->reversedSides);
+  if (visibility & (1<<Side::Right))    SideColors(Side::Right,    colors, this->IsSideReversed());
+  if (visibility & (1<<Side::Left))     SideColors(Side::Left,     colors, this->IsSideReversed());
+  if (visibility & (1<<Side::Up))       SideColors(Side::Up,       colors, this->IsTopReversed());
+  if (visibility & (1<<Side::Down))     SideColors(Side::Down,     colors, this->IsBottomReversed());
+  if (visibility & (1<<Side::Forward))  SideColors(Side::Forward,  colors, this->IsSideReversed());
+  if (visibility & (1<<Side::Backward)) SideColors(Side::Backward, colors, this->IsSideReversed());
   
   if (colors.size() != verts.size()) {
     Log("color count %u doesn't match vertex count %u! %u\n", colors.size(), verts.size(), info->flags & CellFlags::DoubleSided);

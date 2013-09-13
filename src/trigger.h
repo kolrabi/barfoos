@@ -6,20 +6,15 @@
 class Triggerable {
 public:
 
-  Triggerable();
+  virtual void SetTrigger(uint32_t id, bool toggle = false) = 0;
+  virtual uint32_t GetTriggerId() const = 0;
+  virtual bool IsTriggerToggle() const = 0;
 
-  void SetTrigger(uint32_t id, bool toggle = false);
-  uint32_t GetTriggerId() const;
-  bool IsTriggered() const;
+  virtual void SetTriggered(bool triggered) = 0;
+  virtual bool IsTriggered() const = 0;
   
   void TriggerOn();
   void TriggerOff();
-  
-protected:
-
-  uint32_t triggerID;
-  bool isToggle;
-  bool triggered;
 };
 
 #endif

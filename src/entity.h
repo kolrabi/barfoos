@@ -262,9 +262,12 @@ public:
 
   virtual const Entity_Proto &GetProto();
 
-  //virtual void              Serialize(Serializer &ser)        const;
+  virtual void              SetTrigger(uint32_t id, bool toggle = false) override { this->proto.set_trigger_id(id); this->proto.set_is_trigger_toggle(toggle); }
+  virtual uint32_t          GetTriggerId() const override { return this->proto.has_trigger_id() ? this->proto.trigger_id() : InvalidID; }
+  virtual bool              IsTriggerToggle() const override { return this->proto.is_trigger_toggle(); }
 
-  //virtual SpawnClass        GetSpawnClass()                   const { return SpawnClass::EntityClass; }
+  virtual void              SetTriggered(bool triggered) override { this->proto.set_is_triggered(triggered); }
+  virtual bool              IsTriggered() const override{ return this->proto.is_triggered(); }
 
 protected:
 

@@ -275,12 +275,12 @@ Cell Feature::MakeCell(const FeatureCharDef &def, const IVector3 &pos) const {
     def.bottomNoise * simplexNoise( (vpos + Vector3(1,0,0) ) * def.bottomFreq ) + dispB
   };
       
-  cell.SetYOffsets(def.top[0]+ofsT[0],def.top[1]+ofsT[1],def.top[2]+ofsT[2],def.top[3]+ofsT[3]);
-  cell.SetYOffsetsBottom(def.bot[0]+ofsB[0],def.bot[1]+ofsB[1],def.bot[2]+ofsB[2],def.bot[3]+ofsB[3]);
-  cell.SetOrder(def.topRev, def.botRev);
-  cell.SetLocked(def.lockCell);
-  cell.SetIgnoreLock(def.ignoreLock);
-  cell.SetIgnoreWrite(def.ignoreWrite);
+  cell.SetTopHeights(def.top[0]+ofsT[0],def.top[1]+ofsT[1],def.top[2]+ofsT[2],def.top[3]+ofsT[3]);
+  cell.SetBottomHeights(def.bot[0]+ofsB[0],def.bot[1]+ofsB[1],def.bot[2]+ofsB[2],def.bot[3]+ofsB[3]);
+  cell.SetReversed(def.topRev, def.botRev);
+  cell.SetProtected(def.lockCell);
+  cell.SetIgnoringProtection(def.ignoreLock);
+  cell.SetIgnoringWrite(def.ignoreWrite);
   return cell;           
 }
 

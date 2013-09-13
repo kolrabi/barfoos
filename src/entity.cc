@@ -423,10 +423,6 @@ Entity::Continue(RunningState &, uint32_t id) {
 
   this->baseStats = Stats(this->proto.base_stats());
 
-  this->triggerID = this->proto.trigger_id();
-  this->isToggle = this->proto.is_toggle();
-  this->triggered = this->proto.is_triggered();
-
   this->inventory.Clear();
   for (auto &i:this->proto.inventory()) {
     this->inventory[InventorySlot(i.slot())] = std::shared_ptr<Item>(new Item(i.item()));
@@ -775,10 +771,6 @@ Entity::GetProto() {
   }
 
   *this->proto.mutable_base_stats() = this->baseStats.proto;
-
-  this->proto.set_trigger_id(this->triggerID);
-  this->proto.set_is_toggle(this->isToggle);
-  this->proto.set_is_triggered(this->triggered);
 
   return this->proto;
 }

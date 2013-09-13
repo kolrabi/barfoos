@@ -2,9 +2,56 @@ message MiniMap_Proto {
     repeated bool seen_features = 1;
 }
 
+message CellSpawn_Proto {
+	required string mob_type = 1;
+	required uint32 side = 2;
+	required float  rate = 3;
+}
+
 message Cell_Proto {
     required string type = 1;
-    optional uint32 teleport_target = 2;
+    required float next_activation_time = 2;
+    optional uint32 teleport_target = 3;
+    optional uint32 trigger_target_id = 4;
+    optional uint32 lock_id = 5;
+    optional uint32 feature_id = 6;
+    optional CellSpawn_Proto spawn_on_active = 7;
+    optional uint32 liquid_amount = 8 [default = 0];
+
+    optional group Top_Heights = 9 {
+        required float a = 1 [default = 1.0];
+        required float b = 2 [default = 1.0];
+        required float c = 3 [default = 1.0];
+        required float d = 4 [default = 1.0];
+    }
+    optional group Bottom_Heights = 10 {
+        required float a = 1 [default = 0.0];
+        required float b = 2 [default = 0.0];
+        required float c = 3 [default = 0.0];
+        required float d = 4 [default = 0.0];
+    }
+
+    optional float scale_x = 11 [default = 1.0];
+    optional float scale_y = 12 [default = 1.0];
+    optional float scale_z = 13 [default = 1.0];
+
+    required float last_use_time = 14;
+
+    required sint32 light_r = 15;
+    required sint32 light_g = 16;
+    required sint32 light_b = 17;
+
+    optional uint32 trigger_id = 18;
+    optional bool is_trigger_toggle = 19;
+    optional bool is_triggered = 20;
+
+    required bool is_protected = 100;
+    required bool is_ignoring_protection = 101;
+    required bool is_ignoring_write = 102;
+
+    required bool is_top_reversed = 200;
+    required bool is_bottom_reversed = 201;
+    required bool is_side_reversed = 202;
 }
 
 message World_Proto {

@@ -72,21 +72,6 @@ World::World(RunningState &state, const World_Proto &proto) :
 {
   this->cells.clear();
   this->defaultMask.clear();
- /*for (auto &c:this->proto.cells()) {
-    // this->cells.push_back(Cell(c));
-    // this->defaultMask.push_back(c.is_default());
-  }*/
-
-/*
-  deser >> this->nextTickT;
-  deser >> this->tickInterval;
-  deser >> this->ambientLight;
-
-  for (size_t i = 0; i<GetCellCount(); i++) {
-    this->cells[i].SetWorld(this, GetCellPos(i));
-    this->MarkForUpdateNeighbours(i);
-  }
-  */
 }
 
 World::~World() {
@@ -95,8 +80,9 @@ World::~World() {
 Cell &
 World::SetCell(const IVector3 &pos, const Cell &cell, bool ignoreLock) {
   if (checkOverwrite) {
-    if (!this->IsValidCellPosition(pos)) checkOverwriteOK = false;
-    else if (!ignoreLock && this->cells[this->GetCellIndex(pos)].IsLocked())
+    if (!this->IsValidCellPosition(pos)) 
+      checkOverwriteOK = false;
+    else if (!ignoreLock && this->cells[this->GetCellIndex(pos)].IsProtected())
       checkOverwriteOK = false;
     return this->defaultCell;
   }
@@ -104,7 +90,10 @@ World::SetCell(const IVector3 &pos, const Cell &cell, bool ignoreLock) {
   if (!this->IsValidCellPosition(pos)) return this->defaultCell;
 
   size_t i = this->GetCellIndex(pos);
-  if (this->cells[i].GetIgnoreWrite()) return this->defaultCell;
+  if (this->cells[i].IsIgnoringWrite()) return this->defaultCell;
+
+  if (cell.GetType() != "" && cell.GetType() != "default" && cell.GetType() != "bedrock")
+  Log("%s %d %s\n", __PRETTY_FUNCTION__, cell.IsProtected(), cell.GetType().c_str());
 
   defaultMask[i] = false;
 
@@ -167,7 +156,7 @@ World::Draw(Gfx &gfx) {
       // fill up liquids with liquids above, so it won't trickle
       for (size_t i=0; i<this->GetCellCount(); i++) {
         if (this->cells[i].IsLiquid() && this->cells[i][Side::Up].GetInfo() == this->cells[i].GetInfo()) {
-          this->cells[i].SetDetail(16);
+          this->cells[i].SetLiquidAmount(16);
         }
       }
 

@@ -12,45 +12,137 @@ public:
 
   const std::string &       GetType() const { return this->proto.type(); }
   const CellProperties &    GetInfo() const { return *this->info; }
+  World *                   GetWorld() const { return this->world; }
+  const IVector3 &          GetPosition() const { return this->pos; }
 
-  void                      Lock(ID id);
-  void                      Unlock();
-  ID                        GetLockedID() const;
+  void                      SetLockID(ID id) { this->proto.set_lock_id(id); }
+  void                      ClearLockID() { this->proto.clear_lock_id(); }
+  ID                        GetLockID() const { return this->proto.lock_id(); }
+  bool                      IsLocked() const { return this->proto.has_lock_id(); }
+
+  float                     GetNextActivationTime() const { return this->proto.next_activation_time(); }
+  void                      SetNextActivationTime(float f) { this->proto.set_next_activation_time(f); }
 
   void                      SetTeleportTarget(uint32_t index) { this->proto.set_teleport_target(index); }
   uint32_t                  GetTeleportTarget() const { return this->proto.teleport_target(); }
   bool                      IsTeleport() const { return this->proto.has_teleport_target(); }
 
-  void                      SetTriggerTarget(uint32_t triggerTargetId);
-  void                      SetSpawnOnActive(const std::string &mob, Side side, float rate);
+  void                      SetTriggerTarget(uint32_t triggerTargetId) { this->proto.set_trigger_target_id(triggerTargetId); }
+  ID                        GetTriggerTarget() const { return this->IsTrigger() ? this->proto.trigger_target_id() : InvalidID; }
+  bool                      IsTrigger() const { return this->proto.has_trigger_target_id(); }
 
-  void                      SetLocked(bool locked); // TODO: rename
-  void                      SetIgnoreLock(bool ignore);
-  void                      SetIgnoreWrite(bool ignore);
-  void                      SetDetail(uint32_t detail);
-  void                      SetFeatureID(uint32_t f);
+  void                      SetProtected(bool locked) { this->proto.set_is_protected(locked); }
+  bool                      IsProtected() const { return this->proto.is_protected(); }
+
+  void                      SetIgnoringProtection(bool ignore) { this->proto.set_is_ignoring_protection(ignore); }
+  bool                      IsIgnoringProtection() const { return this->proto.is_ignoring_protection(); }
+
+  void                      SetIgnoringWrite(bool ignore) { this->proto.set_is_ignoring_write(ignore); }
+  bool                      IsIgnoringWrite() const { return this->proto.is_ignoring_write(); }
+
+  void                      SetFeatureID(ID id) { this->proto.set_feature_id(id); }
+  ID                        GetFeatureID() const { return this->proto.has_feature_id() ? this->proto.feature_id() : InvalidID; }
+
+  bool                      IsTopReversed() const { return this->proto.is_top_reversed(); }
+  bool                      IsBottomReversed() const { return this->proto.is_bottom_reversed(); }
+  void                      SetReversed(bool top, bool bottom);
+
+  void                      SetSideReversed     (bool rev)                                      { this->proto.set_is_side_reversed(rev); }
+  bool                      IsSideReversed      ()                                        const { return this->proto.is_side_reversed(); }
+
+  bool                      HasSpawnOnActive() const { return this->proto.has_spawn_on_active(); }
+  void                      SetSpawnOnActive(const std::string &mob, Side side, float rate) {
+                              this->proto.mutable_spawn_on_active()->set_mob_type(mob);
+                              this->proto.mutable_spawn_on_active()->set_side(uint32_t(side));
+                              this->proto.mutable_spawn_on_active()->set_rate(rate);
+                            }
+
+  const std::string &       GetSpawnOnActiveMobType() const { return this->proto.spawn_on_active().mob_type(); }
+  Side                      GetSpawnOnActiveSide() const { return Side(this->proto.spawn_on_active().side()); }
+  float                     GetSpawnOnActiveRate() const { return this->proto.spawn_on_active().rate(); }
+
+  uint32_t                  GetLiquidAmount() const { return this->proto.liquid_amount(); }
+  void                      SetLiquidAmount(uint32_t amt) { this->proto.set_liquid_amount(amt); }
+
+  void                      SetTopHeight(size_t n, float f) { 
+                              switch(n) {
+                                case 0:  this->proto.mutable_top_heights()->set_a(f); break;
+                                case 1:  this->proto.mutable_top_heights()->set_b(f); break;
+                                case 2:  this->proto.mutable_top_heights()->set_c(f); break;
+                                case 3:  this->proto.mutable_top_heights()->set_d(f); break;
+                              }
+                            }
+                            
+  float                     GetTopHeight(size_t n) const { 
+                              switch(n) {
+                                case 0:  return this->proto.top_heights().a();
+                                case 1:  return this->proto.top_heights().b();
+                                case 2:  return this->proto.top_heights().c();
+                                case 3:  return this->proto.top_heights().d();
+                                default: return 1.0f;
+                              }
+                            }
+
+  bool                      IsTopFlat() const { return !this->proto.has_top_heights(); }
+
+  void                      SetBottomHeight(size_t n, float f) { 
+                              switch(n) {
+                                case 0:  this->proto.mutable_bottom_heights()->set_a(f); break;
+                                case 1:  this->proto.mutable_bottom_heights()->set_b(f); break;
+                                case 2:  this->proto.mutable_bottom_heights()->set_c(f); break;
+                                case 3:  this->proto.mutable_bottom_heights()->set_d(f); break;
+                              }
+                            }
+                            
+  float                     GetBottomHeight(size_t n) const { 
+                              switch(n) {
+                                case 0:  return this->proto.bottom_heights().a();
+                                case 1:  return this->proto.bottom_heights().b();
+                                case 2:  return this->proto.bottom_heights().c();
+                                case 3:  return this->proto.bottom_heights().d();
+                                default: return 1.0f;
+                              }
+                            }
+
+  bool                      IsBottomFlat() const { return !this->proto.has_top_heights(); }
+
+  void                      SetScale(const Vector3 &scale) { this->proto.set_scale_x(scale.x); this->proto.set_scale_y(scale.y); this->proto.set_scale_z(scale.z); }
+  Vector3                   GetScale() const { return Vector3( this->proto.scale_x(), this->proto.scale_y(), this->proto.scale_z() ); }
+
+  void                      SetLastUseTime(float f) { this->proto.set_last_use_time(f); }
+  float                     GetLastUseTime() const { return this->proto.last_use_time(); }
+
+  IColor                    GetLightLevel() const { return IColor(this->proto.light_r(), this->proto.light_g(), this->proto.light_b()); }
+  bool                      SetLightLevel(const IColor &level, bool force = false) {
+                              // only update when changing
+                              if (!force && level == this->GetLightLevel()) return false;
+                              this->proto.set_light_r(level.r);
+                              this->proto.set_light_g(level.g);
+                              this->proto.set_light_b(level.b);
+                              return true;
+                            }
+
+  virtual void              SetTrigger(uint32_t id, bool toggle = false) override { this->proto.set_trigger_id(id); this->proto.set_is_trigger_toggle(toggle); }
+  virtual uint32_t          GetTriggerId() const override { return this->proto.has_trigger_id() ? this->proto.trigger_id() : InvalidID; }
+  virtual bool              IsTriggerToggle() const override { return this->proto.is_trigger_toggle(); }
+
+  virtual void              SetTriggered(bool triggered) override { this->proto.set_is_triggered(triggered); }
+  virtual bool              IsTriggered() const override{ return this->proto.is_triggered(); }
+
+  // -------------------------------------------------------------
+
+  void                      Lock(ID id);
+  void                      Unlock();
 
   float                     GetHeight(float x, float z) const;
   float                     GetHeightBottom(float x, float z) const;
   float                     GetHeightClamp(float x, float z) const;
   float                     GetHeightBottomClamp(float x, float z) const;
 
-  bool                      IsBottomFlat() const;
   bool                      IsDynamic() const;
   bool                      IsLiquid() const;
   bool                      IsSolid() const;
-  bool                      IsTopFlat() const;
   bool                      IsTransparent() const;
-  bool                      IsTrigger() const;
-
-  bool                      IsLocked() const; // TODO: rename
-  bool                      GetIgnoreLock() const;
-  bool                      GetIgnoreWrite() const;
-  uint32_t                  GetDetail() const;
-  uint32_t                  GetFeatureID() const;
-
-  World *                   GetWorld() const;
-  IVector3                  GetPosition() const;
 
   Cell &                    operator[](Side side);
   const Cell &              operator[](Side side) const;
@@ -58,100 +150,20 @@ public:
 protected:
 
                             CellBase(const std::string &type);
+                            CellBase(const CellBase &that);
                             CellBase(const Cell_Proto &proto);
 
   const CellProperties *    info;
   World *                   world;
   IVector3                  pos;
-  Cell *                    neighbours[6];
+  Cell *                    neighbours[6] = {};
 
-  float                     lastT;
-  float                     nextActivationT;
-
-  std::string               spawnOnActiveMob;
-  SpawnClass                spawnOnActiveClass;
-  Side                      spawnOnActiveSide;
-  float                     spawnOnActiveRate;
-
-  bool                      isTrigger;
-  ID                        triggerTargetId;
-
-  static const int          OffsetScale = 127;
+  uint8_t                   tickInterval;
 
   Cell_Proto proto;
 
-  // shared information, that will stay the same after assignment from different cell
-  struct SharedInfo {
-    uint8_t tickInterval;
-
-    // map generation
-    bool isLocked;    // disallow modification via World::SetCell...
-    bool ignoreLock;  // ..unless this is true
-    bool ignoreWrite; // World::SetCell will only pretend to succeed
-    ID featureID;
-
-    // rendering
-    bool reversedTop;
-    bool reversedBottom;
-
-    int16_t topHeights[4] = { OffsetScale, OffsetScale, OffsetScale, OffsetScale };
-    int16_t bottomHeights[4]={0,0,0,0};
-    float u[4] ={0,0,0,0};
-    float v[4] ={0,0,0,0};
-
-    uint32_t detail;
-    float smoothDetail;
-
-    ID lockedID;
-    Vector3 scale;
-
-    bool topFlat, bottomFlat;
-
-    SharedInfo(const CellProperties *info) :
-      tickInterval( info->flags & CellFlags::Viscous ? 32 : 5 ),
-      isLocked(false),
-      ignoreLock(false),
-      ignoreWrite(false),
-      featureID(InvalidID),
-      reversedTop(false),
-      reversedBottom(false),
-      detail( info->flags & CellFlags::Liquid ? 15 : 0 ),
-      smoothDetail(detail),
-      lockedID(0),
-      scale(info->scale),
-      topFlat(true),
-      bottomFlat(true)
-    { }
-  } shared;
-
-  float YOfs(size_t n)  const { return this->shared.topHeights[n]/(float)OffsetScale; }
-  float YOfsb(size_t n) const { return this->shared.bottomHeights[n]/(float)OffsetScale; }
-
   bool vertsDirty, colorDirty;
 };
-
-inline World *CellBase::GetWorld() const {
-  return this->world;
-}
-
-inline IVector3 CellBase::GetPosition() const {
-  return this->pos;
-}
-
-inline void CellBase::SetTriggerTarget(ID id) {
-  this->isTrigger = id != 0 && id != InvalidID;
-  this->triggerTargetId = id;
-}
-
-inline void CellBase::SetSpawnOnActive(const std::string &mob, Side side, float rate) {
-  this->spawnOnActiveMob = mob;
-  this->spawnOnActiveSide = side;
-  this->spawnOnActiveRate = rate;
-}
-
-inline uint32_t CellBase::GetLockedID() const {
-  return this->shared.lockedID;
-}
 
 inline float
 CellBase::GetHeight(
@@ -169,7 +181,7 @@ CellBase::GetHeightClamp(
   float x,
   float z
 ) const {
-  if (this->IsTopFlat()) return YOfs(0);
+  if (this->IsTopFlat()) return GetTopHeight(0);
 
   if (x > 1.0) x = 1.0;
   if (x < 0.0) x = 0.0;
@@ -179,7 +191,7 @@ CellBase::GetHeightClamp(
   float slopeX;
   float slopeZ;
 
-  if (this->shared.reversedTop) {
+  if (this->IsTopReversed()) {
     // Z ^
     //   | 1---2
     //   | | \ |
@@ -188,12 +200,12 @@ CellBase::GetHeightClamp(
 
     if (x < z) {
       // lower left triangle
-      slopeX = YOfs(3) - YOfs(0);
-      slopeZ = YOfs(1) - YOfs(0);
+      slopeX = GetTopHeight(3) - GetTopHeight(0);
+      slopeZ = GetTopHeight(1) - GetTopHeight(0);
     } else {
       // upper right triangle
-      slopeX = YOfs(2) - YOfs(1);
-      slopeZ = YOfs(2) - YOfs(3);
+      slopeX = GetTopHeight(2) - GetTopHeight(1);
+      slopeZ = GetTopHeight(2) - GetTopHeight(3);
     }
   } else {
     // Z ^
@@ -204,16 +216,16 @@ CellBase::GetHeightClamp(
 
     if (x < z) {
       // upper left triangle
-      slopeX = YOfs(2) - YOfs(1);
-      slopeZ = YOfs(1) - YOfs(0);
+      slopeX = GetTopHeight(2) - GetTopHeight(1);
+      slopeZ = GetTopHeight(1) - GetTopHeight(0);
     } else {
       // lower right triangle
-      slopeX = YOfs(3) - YOfs(0);
-      slopeZ = YOfs(2) - YOfs(3);
+      slopeX = GetTopHeight(3) - GetTopHeight(0);
+      slopeZ = GetTopHeight(2) - GetTopHeight(3);
     }
   }
 
-  return YOfs(0) + slopeX * x + slopeZ * z;
+  return GetTopHeight(0) + slopeX * x + slopeZ * z;
 }
 
 inline float
@@ -232,7 +244,7 @@ CellBase::GetHeightBottomClamp(
   float x,
   float z
 ) const {
-  if (this->IsBottomFlat()) return YOfsb(0);
+  if (this->IsBottomFlat()) return GetBottomHeight(0);
 
   if (x > 1.0) x = 1.0;
   if (x < 0.0) x = 0.0;
@@ -242,7 +254,7 @@ CellBase::GetHeightBottomClamp(
   float slopeX;
   float slopeZ;
 
-  if (this->shared.reversedBottom) {
+  if (this->IsBottomReversed()) {
     // Z ^
     //   | 1---2
     //   | | \ |
@@ -251,12 +263,12 @@ CellBase::GetHeightBottomClamp(
 
     if (x < z) {
       // lower left triangle
-      slopeX = YOfsb(3) - YOfsb(0);
-      slopeZ = YOfsb(1) - YOfsb(0);
+      slopeX = GetBottomHeight(3) - GetBottomHeight(0);
+      slopeZ = GetBottomHeight(1) - GetBottomHeight(0);
     } else {
       // upper right triangle
-      slopeX = YOfsb(2) - YOfsb(1);
-      slopeZ = YOfsb(2) - YOfsb(3);
+      slopeX = GetBottomHeight(2) - GetBottomHeight(1);
+      slopeZ = GetBottomHeight(2) - GetBottomHeight(3);
     }
   } else {
     // Z ^
@@ -267,31 +279,31 @@ CellBase::GetHeightBottomClamp(
 
     if (x < z) {
       // upper left triangle
-      slopeX = YOfsb(2) - YOfsb(1);
-      slopeZ = YOfsb(1) - YOfsb(0);
+      slopeX = GetBottomHeight(2) - GetBottomHeight(1);
+      slopeZ = GetBottomHeight(1) - GetBottomHeight(0);
     } else {
       // lower right triangle
-      slopeX = YOfsb(3) - YOfsb(0);
-      slopeZ = YOfsb(2) - YOfsb(3);
+      slopeX = GetBottomHeight(3) - GetBottomHeight(0);
+      slopeZ = GetBottomHeight(2) - GetBottomHeight(3);
     }
   }
 
-  return YOfsb(0) + slopeX * x + slopeZ * z;
-}
-
-inline bool CellBase::IsTopFlat() const {
-  return this->shared.topFlat; //YOfs(0) == 1.0 && YOfs(1) == 1.0 && YOfs(2) == 1.0 && YOfs(3) == 1.0;
-}
-
-inline bool CellBase::IsBottomFlat() const {
-  return this->shared.bottomFlat; //YOfsb(0) == 0.0 && YOfsb(1) == 0.0 && YOfsb(2) == 0.0 && YOfsb(3) == 0.0;
+  return GetBottomHeight(0) + slopeX * x + slopeZ * z;
 }
 
 inline bool CellBase::IsTransparent() const {
   return
     this->GetInfo().flags & CellFlags::Transparent ||
     this->GetInfo().flags & CellFlags::DoNotRender ||
-    !IsTopFlat() || !IsBottomFlat() || YOfsb(0) != 0.0 || YOfs(0) != 1.0;
+    GetBottomHeight(0) != 0.0 || 
+    GetBottomHeight(1) != 0.0 || 
+    GetBottomHeight(2) != 0.0 || 
+    GetBottomHeight(3) != 0.0 || 
+    GetTopHeight(0) != 1.0 ||
+    GetTopHeight(1) != 1.0 ||
+    GetTopHeight(2) != 1.0 ||
+    GetTopHeight(3) != 1.0 
+    ;
 }
 
 inline bool CellBase::IsSolid() const {
@@ -304,50 +316,6 @@ inline bool CellBase::IsLiquid() const {
 
 inline bool CellBase::IsDynamic() const {
   return this->info->flags & CellFlags::Dynamic || this->GetTriggerId() || this->IsTrigger();
-}
-
-inline bool CellBase::IsTrigger() const {
-  return this->isTrigger;
-}
-
-inline bool CellBase::IsLocked() const {
-  return this->shared.isLocked;
-}
-
-inline void CellBase::SetLocked(bool locked) {
-  this->shared.isLocked = locked;
-}
-
-inline bool CellBase::GetIgnoreLock() const {
-  return this->shared.ignoreLock;
-}
-
-inline void CellBase::SetIgnoreLock(bool ignore) {
-  this->shared.ignoreLock = ignore;
-}
-
-inline bool CellBase::GetIgnoreWrite() const {
-  return this->shared.ignoreWrite;
-}
-
-inline void CellBase::SetIgnoreWrite(bool ignore) {
-  this->shared.ignoreWrite = ignore;
-}
-
-inline uint32_t CellBase::GetDetail() const {
-  return this->shared.detail;
-}
-
-inline void CellBase::SetDetail(uint32_t detail) {
-  this->shared.detail = detail;
-}
-
-inline uint32_t CellBase::GetFeatureID() const {
-  return this->shared.featureID;
-}
-
-inline void CellBase::SetFeatureID(uint32_t f) {
-  this->shared.featureID = f;
 }
 
 inline Cell &CellBase::operator[](Side side) {

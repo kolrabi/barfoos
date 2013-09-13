@@ -24,14 +24,23 @@ CellBase::CellBase(const std::string &type) :
   info(&GetCellProperties(type)),
   world(nullptr),
   pos(0,0,0),
-  lastT(0.0),
-  nextActivationT(0.0),
-  spawnOnActiveMob(""),
-  spawnOnActiveSide(Side::InvalidSide),
-  spawnOnActiveRate(0.0),
-  isTrigger(false),
-  triggerTargetId(0),
-  shared(info)
+  tickInterval( info->flags & CellFlags::Viscous ? 32 : 5 ),
+  proto()
+{
+  for (size_t i=0; i<6; i++)
+    this->neighbours[i] = nullptr;
+
+  this->vertsDirty = false;
+  this->colorDirty = false;
+}
+ 
+CellBase::CellBase(const CellBase &that) :
+  Triggerable(that),
+  info(that.info),
+  world(nullptr),
+  pos(0,0,0),
+  tickInterval( info->flags & CellFlags::Viscous ? 32 : 5 ),
+  proto(that.proto)
 {
   for (size_t i=0; i<6; i++)
     this->neighbours[i] = nullptr;
@@ -40,15 +49,29 @@ CellBase::CellBase(const std::string &type) :
   this->colorDirty = false;
 }
 
+CellBase::CellBase(const Cell_Proto &proto) :
+  Triggerable(),
+  info(&GetCellProperties(proto.type())),
+  world(nullptr),
+  pos(0,0,0),
+  tickInterval( info->flags & CellFlags::Viscous ? 32 : 5 ),
+  proto(proto)
+{
+  for (size_t i=0; i<6; i++)
+    this->neighbours[i] = nullptr;
+
+  this->vertsDirty = false;
+  this->colorDirty = false;
+}
 
 /** Lock a cell (for use with a key).
   * @param id Lock/key ID.
   */
 void
 CellBase::Lock(uint32_t id) {
-  if (this->shared.lockedID == id) return;
+  if (this->GetLockID() == id) return;
 
-  this->shared.lockedID = id;
+  this->SetLockID(id);
 
   for (int i=0; i<6; i++) {
     if (info->onUseCascade & (1<<i) && this->neighbours[i]->info == info)
@@ -61,9 +84,9 @@ CellBase::Lock(uint32_t id) {
   */
 void
 CellBase::Unlock() {
-  if (this->shared.lockedID == 0) return;
+  if (!this->IsLocked()) return;
 
-  this->shared.lockedID = 0;
+  this->ClearLockID();
 
   for (int i=0; i<6; i++) {
     if (info->onUseCascade & (1<<i) && this->neighbours[i]->info == info)
@@ -71,22 +94,12 @@ CellBase::Unlock() {
   }
 }
 
-// -------------------------------------------------------------------------
-
-/** C'tor.
-  * @param type Cell type.
-  */
-CellRender::CellRender(const std::string &type) :
-  CellBase(type),
-  visibility(0),
-  reversedSides(false),
-  verts(72),
-  texture(nullptr),
-  emissiveTexture(nullptr),
-  activeTexture(nullptr),
-  emissiveActiveTexture(nullptr),
-  uscale(1.0)
-{
+void
+CellBase::SetReversed(bool top, bool bottom) { 
+  this->proto.set_is_top_reversed(top); 
+  this->proto.set_is_bottom_reversed(bottom); 
+  if (this->world && !this->IsDynamic()) 
+    this->world->MarkForUpdateNeighbours(&this->world->GetCell(this->GetPosition()));
 }
 
 // -------------------------------------------------------------------------
@@ -96,64 +109,24 @@ CellRender::CellRender(const std::string &type) :
   */
 Cell::Cell(const std::string &type) :
   CellRender(type),
-  tickPhase(0),
-  lightLevel(0,0,0),
-  lastUseT(0.0)
+  tickPhase(0)
 {
-  // unique information
-  this->SetYOffsets(1,1,1,1);
-  this->SetYOffsetsBottom(0,0,0,0);
 }
 
 /** Copy c'tor.
   * @param that Cell from which to copy.
   */
 Cell::Cell(const Cell &that) :
-  CellRender(that.info->type),
-
-  tickPhase(0),
-  lightLevel(0,0,0),
-
-  lastUseT(0.0)
+  CellRender(that),
+  tickPhase(0)
 {
-  (Triggerable&)self = that;
-  shared = that.shared;
 }
 
-Cell::Cell(const Cell_Proto &proto) : 
-  CellRender(proto.type())
+Cell::Cell(const Cell_Proto &proto) :
+  CellRender(proto),
+  tickPhase(0)
 {
-  
-}
-
-/** Assignment operator.
-  * @param that Cell from which to copy.
-  * @return The cell to which it was assigned.
-  */
-Cell &
-Cell::operator =(const Cell &that) {
-  this->shared = that.shared;
-
-  // unique information
-  this->info = that.info;
-  this->world = nullptr;
-  this->tickPhase = 0;
-  this->visibility = 0;
-  this->reversedSides = false;
-
-  for (size_t i=0; i<6; i++)
-    this->neighbours[i] = nullptr;
-
-  this->texture = that.texture;
-  this->activeTexture = that.activeTexture;
-  this->emissiveTexture = that.emissiveTexture;
-  this->emissiveActiveTexture = that.emissiveActiveTexture;
-  this->uscale = that.uscale;
-
-  this->lastUseT = 0.0;
-  this->lastT = 0.0;
-
-  return self;
+  Log("%s\n", __PRETTY_FUNCTION__);
 }
 
 /** D'tor. */
@@ -169,52 +142,51 @@ Cell::Update(
 ) {
   if (!world) return;
 
-  float deltaT = state.GetGame().GetDeltaT();
-  this->lastT  = state.GetGame().GetTime();
+  float t = state.GetGame().GetTime();
+
+  this->uvTime = t;
 
   // Spawn entities if activated
-  if (this->spawnOnActiveMob != "" && this->IsTriggered() && this->lastT > this->nextActivationT) {
+  if (this->HasSpawnOnActive() && this->IsTriggered() && t > this->GetNextActivationTime()) {
     // spawn in adjacent cell
-    Entity *entity = state.GetEntity(state.SpawnInAABB(spawnOnActiveMob, self[spawnOnActiveSide].GetAABB()));
+    Entity *entity = state.GetEntity(state.SpawnInAABB(this->GetSpawnOnActiveMobType(), self[this->GetSpawnOnActiveSide()].GetAABB()));
 
     // if it is a projectile, set velocity
     Mob *mob = dynamic_cast<Mob*>(entity);
-    if (mob) mob->SetVelocity(Vector3(this->spawnOnActiveSide) * mob->GetProperties()->maxSpeed);
+    if (mob) mob->SetVelocity(Vector3(this->GetSpawnOnActiveSide()) * mob->GetProperties()->maxSpeed);
 
-    if (spawnOnActiveRate == 0.0) {
+    if (this->GetSpawnOnActiveRate() == 0.0) {
       // spawn only once
       this->TriggerOff();
     } else {
       // spawn again a bit later
-      this->nextActivationT = this->lastT + this->spawnOnActiveRate;
+      this->SetNextActivationTime(t + this->GetSpawnOnActiveRate());
     }
   }
 
   // update liquids
   if (this->IsLiquid()) {
-    this->shared.smoothDetail = this->shared.smoothDetail + (this->shared.detail - this->shared.smoothDetail) * deltaT * 2;
-
-    if (this->shared.smoothDetail < 0.1) {
+    if (this->GetLiquidAmount() == 0) {
       // this cell lost all its liquid, replace by air
       this->world->SetCell(this->pos, Cell("air"));
 
       // "this" is now the new air cell
     } else {
       // update heights
-      float h = this->shared.smoothDetail/16.0;
+      float h = this->GetLiquidAmount()/16.0;
 
       if (self[Side::Up].info == info && self[Side::Down].info == info) {
         // liquid and top and bottom cells are the same as this one
-        this->SetYOffsets(1,1,1,1);
-        this->SetYOffsetsBottom(0,0,0,0);
+        this->SetTopHeights(1,1,1,1);
+        this->SetBottomHeights(0,0,0,0);
       } else if (self[Side::Up].info == info && self[Side::Down].info != info) {
         // liquid and liquid above and nothing liquid below
-        this->SetYOffsets(1,1,1,1);
-        this->SetYOffsetsBottom(1-h,1-h,1-h,1-h);
+        this->SetTopHeights(1,1,1,1);
+        this->SetBottomHeights(1-h,1-h,1-h,1-h);
       } else {
         // no liquid above
-        this->SetYOffsetsBottom(0,0,0,0);
-        this->SetYOffsets(h,h,h,h);
+        this->SetBottomHeights(0,0,0,0);
+        this->SetTopHeights(h,h,h,h);
       }
     } 
   }
@@ -228,7 +200,7 @@ Cell::Update(
 void
 Cell::OnUse(RunningState &state, Mob &user, bool force) {
   // enforce delay
-  if (state.GetGame().GetTime() - this->lastUseT < this->info->useDelay) 
+  if (state.GetGame().GetTime() - this->GetLastUseTime() < this->info->useDelay) 
     return;
 
   // enforce chance
@@ -236,10 +208,10 @@ Cell::OnUse(RunningState &state, Mob &user, bool force) {
     return;
 
   // update use time
-  this->lastUseT = state.GetGame().GetTime();
+  this->SetLastUseTime(state.GetGame().GetTime());
 
   // check if it is locked
-  if (this->shared.lockedID) {
+  if (this->IsLocked()) {
     state.GetPlayer().AddMessage("It is locked!");
     PlaySound(state, "use.locked");
     return;
@@ -248,7 +220,7 @@ Cell::OnUse(RunningState &state, Mob &user, bool force) {
   // replace cell if wanted
   const CellProperties *info = this->info;
   if (info->flags & CellFlags::OnUseReplace) {
-    this->world->SetCell(GetPosition(), Cell(info->replace)).lastUseT = state.GetGame().GetTime();
+    this->world->SetCell(GetPosition(), Cell(info->replace)).SetLastUseTime(state.GetGame().GetTime());
   }
 
   // cascade through neighbours
@@ -266,16 +238,16 @@ Cell::OnUse(RunningState &state, Mob &user, bool force) {
   */
 void 
 Cell::Tick(RunningState &state) {
-  this->tickPhase = (this->tickPhase + 1) % this->shared.tickInterval;
+  this->tickPhase = (this->tickPhase + 1) % this->tickInterval;
   if (this->tickPhase) return;
 
   if (this->neighbours[0] == nullptr) return;
 
-  if ((this->info->flags & CellFlags::Liquid) && this->shared.detail > 0) {
-    if (self[Side::Up].info == self.info && self.shared.detail < 16) return;
+  if ((this->info->flags & CellFlags::Liquid) && this->GetLiquidAmount() > 0) {
+    if (self[Side::Up].info == self.info && this->GetLiquidAmount() < 16) return;
 
     // if we can't flow down and have more than 1 unit of liquid
-    if (!this->Flow(Side::Down) && this->shared.detail > 1) {
+    if (!this->Flow(Side::Down) && this->GetLiquidAmount() > 1) {
       // try flowing to one random side
       Side sides[4] = { Side::Left, Side::Right, Side::Forward, Side::Backward };
       int n = state.GetRandom().Integer(4);
@@ -286,19 +258,19 @@ Cell::Tick(RunningState &state) {
       }
 
       // if we have too much liquid, even allow flowing up
-      if (this->shared.detail > 16) this->Flow(Side::Up);
+      if (this->GetLiquidAmount() > 16) this->Flow(Side::Up);
     }
   }
 
   // if this cell wants to be replaced if detail falls below a certain level
-  if (info->detailBelowReplace && this->shared.detail < this->info->detailBelowReplace && this->info->replace != "") {
+  if (info->detailBelowReplace && this->GetLiquidAmount() < this->info->detailBelowReplace && this->info->replace != "") {
     // check if we are connected to liquid neighbours
     bool liquidNeighbours = false;
-    liquidNeighbours |= this->neighbours[(int)Side::Left]->info == this->info     && this->neighbours[(int)Side::Left]->shared.detail > info->detailBelowReplace;
-    liquidNeighbours |= this->neighbours[(int)Side::Right]->info == this->info    && this->neighbours[(int)Side::Right]->shared.detail > info->detailBelowReplace;
-    liquidNeighbours |= this->neighbours[(int)Side::Forward]->info == this->info  && this->neighbours[(int)Side::Forward]->shared.detail > info->detailBelowReplace;
-    liquidNeighbours |= this->neighbours[(int)Side::Backward]->info == this->info && this->neighbours[(int)Side::Backward]->shared.detail > info->detailBelowReplace;
-    liquidNeighbours |= this->neighbours[(int)Side::Down]->info == this->info     && this->neighbours[(int)Side::Down]->shared.detail > info->detailBelowReplace;
+    liquidNeighbours |= this->neighbours[(int)Side::Left]->info == this->info     && this->neighbours[(int)Side::Left]->GetLiquidAmount() > info->detailBelowReplace;
+    liquidNeighbours |= this->neighbours[(int)Side::Right]->info == this->info    && this->neighbours[(int)Side::Right]->GetLiquidAmount() > info->detailBelowReplace;
+    liquidNeighbours |= this->neighbours[(int)Side::Forward]->info == this->info  && this->neighbours[(int)Side::Forward]->GetLiquidAmount() > info->detailBelowReplace;
+    liquidNeighbours |= this->neighbours[(int)Side::Backward]->info == this->info && this->neighbours[(int)Side::Backward]->GetLiquidAmount() > info->detailBelowReplace;
+    liquidNeighbours |= this->neighbours[(int)Side::Down]->info == this->info     && this->neighbours[(int)Side::Down]->GetLiquidAmount() > info->detailBelowReplace;
 
     // if not connected, take a chance and replace
     if (!liquidNeighbours && state.GetRandom().Chance(this->info->replaceChance)) {
@@ -330,19 +302,18 @@ Cell::Flow(Side side) {
     }
 
     // check if cell is full
-    if ((cell->shared.detail >= this->shared.detail && side != Side::Down) || cell->shared.detail >= 16) return false;
+    if ((cell->GetLiquidAmount() >= this->GetLiquidAmount() && side != Side::Down) || cell->GetLiquidAmount() >= 16) return false;
   }
 
-  this->shared.detail -= 1;
+  this->SetLiquidAmount(this->GetLiquidAmount() - 1);
 
   if (cell->info != this->info) {
     // replace target cell if not already of this type
     this->world->SetCell(this->pos[side], Cell(info->type));
-    cell->shared.detail = 1;
-    cell->shared.smoothDetail = 1;
+    cell->SetLiquidAmount(1);
   } else {
     // otherwise just increase liquid
-    cell->shared.detail++;
+    cell->SetLiquidAmount(cell->GetLiquidAmount() + 1);
   }
 
   world->MarkForUpdateNeighbours(this);
@@ -361,13 +332,10 @@ Cell::UpdateNeighbours(
   size_t oldvis = this->visibility;
   this->visibility = 0;
 
-  if (std::abs(this->shared.smoothDetail - this->shared.detail) > 0.1) {
-    this->visibility |= (int)Side::Left | (int)Side::Right | (int)Side::Forward | (int)Side::Backward;
-  }
+  // TODO: if liquid check sides for non liquid or different liquid amount
 
   // check if vertically out of box
-  bool oversize = YOfs(0)  > 1.0 || YOfs(1)  > 1.0 || YOfs(2)  > 1.0 || YOfs(3)  > 1.0 ||
-                  YOfsb(0) < 0.0 || YOfsb(1) < 0.0 || YOfsb(2) < 0.0 || YOfsb(3) < 0.0;
+  bool oversize = !this->IsTopFlat() || !this->IsBottomFlat();
 
   // check for transparent neighbours
   for (size_t i =0; i<6; i++) {
@@ -411,7 +379,7 @@ Cell::UpdateNeighbours(
     // collect max light from neighbours
     for (size_t i=0; i<6; i++) {
       Cell &cell = *this->neighbours[i];
-      color = color.Max(cell.lightLevel);
+      color = color.Max(cell.GetLightLevel());
     }
 
     // propagate light
@@ -495,19 +463,7 @@ CellRender::SideCornerColor(Side side, size_t corner) const {
   return (l0+l1+l2+l3)/4;
 }
 
-/** Set top and bottom vertex order.
-  * @param topReversed Whether or not to reverse top side vertex order. 
-  * @param bottomReversed Whether or not to reverse bottom side vertex order. 
-  * @return The updated cell.
-  */
-Cell &
-Cell::SetOrder(bool topReversed, bool bottomReversed) {
-  this->shared.reversedTop = topReversed;
-  this->shared.reversedBottom = bottomReversed;
-  if (world && !IsDynamic()) world->MarkForUpdateNeighbours(this);
-  return *this;
-}
-
+// TODO: move to cellbase
 /** Set top corner heights.
   * @param a Height of corner 0.
   * @param b Height of corner 1.
@@ -516,20 +472,25 @@ Cell::SetOrder(bool topReversed, bool bottomReversed) {
   * @return The updated cell.
   */
 Cell &
-Cell::SetYOffsets(float a, float b, float c, float d) {
-  bool change = this->shared.topHeights[0] != a * OffsetScale || 
-                this->shared.topHeights[1] != b * OffsetScale ||
-                this->shared.topHeights[2] != c * OffsetScale ||
-                this->shared.topHeights[3] != d * OffsetScale;
-  this->shared.topHeights[0] = a * OffsetScale;
-  this->shared.topHeights[1] = b * OffsetScale;
-  this->shared.topHeights[2] = c * OffsetScale;
-  this->shared.topHeights[3] = d * OffsetScale;
-  if (world && change && !IsDynamic()) world->MarkForUpdateNeighbours(this);
-  this->shared.topFlat = a == b && b == c && c == d;
+Cell::SetTopHeights(float a, float b, float c, float d) {
+  bool change = this->GetTopHeight(0) != a ||
+                this->GetTopHeight(1) != b ||
+                this->GetTopHeight(2) != c ||
+                this->GetTopHeight(3) != d;
+  if (!change) return *this;
+                
+  this->SetTopHeight(0, a);
+  this->SetTopHeight(1, b);
+  this->SetTopHeight(2, c);
+  this->SetTopHeight(3, d);
+
+  if (world && !IsDynamic()) 
+    world->MarkForUpdateNeighbours(this);
+
   return *this;
 }
 
+// TODO: move to cellbase
 /** Set bottom corner heights.
   * @param a Height of corner 0.
   * @param b Height of corner 1.
@@ -538,17 +499,21 @@ Cell::SetYOffsets(float a, float b, float c, float d) {
   * @return The updated cell.
   */
 Cell &
-Cell::SetYOffsetsBottom(float a, float b, float c, float d) {
-  bool change = this->shared.bottomHeights[0] != a * OffsetScale || 
-                this->shared.bottomHeights[1] != b * OffsetScale ||
-                this->shared.bottomHeights[2] != c * OffsetScale ||
-                this->shared.bottomHeights[3] != d * OffsetScale;
-  this->shared.bottomHeights[0] = a * OffsetScale;
-  this->shared.bottomHeights[1] = b * OffsetScale;
-  this->shared.bottomHeights[2] = c * OffsetScale;
-  this->shared.bottomHeights[3] = d * OffsetScale;
-  if (world && change && !IsDynamic()) world->MarkForUpdateNeighbours(this);
-  this->shared.bottomFlat = a == b && b == c && c == d;
+Cell::SetBottomHeights(float a, float b, float c, float d) {
+  bool change = this->GetBottomHeight(0) != a ||
+                this->GetBottomHeight(1) != b ||
+                this->GetBottomHeight(2) != c ||
+                this->GetBottomHeight(3) != d;
+  if (!change) return *this;
+                
+  this->SetBottomHeight(0, a);
+  this->SetBottomHeight(1, b);
+  this->SetBottomHeight(2, c);
+  this->SetBottomHeight(3, d);
+
+  if (world && !IsDynamic()) 
+    world->MarkForUpdateNeighbours(this);
+
   return *this;
 }
 
@@ -691,20 +656,20 @@ Cell::Ray(const Vector3 &start, const Vector3 &dir, float &t, Vector3 &p) const 
   */
 void
 Cell::OnStepOn(RunningState &state, Mob &mob) {
-  if (this->IsTeleport() && state.GetGame().GetTime() > this->nextActivationT) {
+  if (this->IsTeleport() && state.GetGame().GetTime() > this->GetNextActivationTime()) {
     IVector3 target(this->world->GetCellPos(this->GetTeleportTarget()));
     Cell &targetCell = state.GetWorld().GetCell(target);
 
-    this->nextActivationT = state.GetGame().GetTime() + 2;
-    targetCell.nextActivationT = state.GetGame().GetTime() + 2;
+    this->SetNextActivationTime(state.GetGame().GetTime() + 2);
+    targetCell.SetNextActivationTime(state.GetGame().GetTime() + 2);
 
     mob.Teleport(state, Vector3(target));
     this->PlaySound(state, "teleport");
     targetCell.PlaySound(state, "teleport");
   }
 
-  if (this->isTrigger) {
-    state.TriggerOn(this->triggerTargetId);
+  if (this->IsTrigger()) {
+    state.TriggerOn(this->GetTriggerTarget());
     PlaySound(state, "trigger.on");
   }
 }
@@ -716,8 +681,8 @@ Cell::OnStepOn(RunningState &state, Mob &mob) {
   */
 void
 Cell::OnStepOff(RunningState &state, Mob &) {
-  if (this->isTrigger) {
-    state.TriggerOff(this->triggerTargetId);
+  if (this->IsTrigger()) {
+    state.TriggerOff(this->GetTriggerTarget());
     PlaySound(state, "trigger.off");
   }
 }
@@ -739,10 +704,10 @@ Cell::OnUseItem(RunningState &, Mob &, Item &item) {
 
   auto iter2 = this->info->onUseItemAddDetail.find(itemType);
   if (iter2 != this->info->onUseItemAddDetail.end()) {
-    if (iter2->second < 0 && (int)(this->shared.detail) < -iter2->second) {
-      this->shared.detail = 0;
+    if (iter2->second < 0 && (int)(this->GetLiquidAmount()) < -iter2->second) {
+      this->SetLiquidAmount(0);
     } else {
-      this->shared.detail += iter2->second;
+      this->SetLiquidAmount(this->GetLiquidAmount() + iter2->second);
     }
   }
 
@@ -757,22 +722,23 @@ Cell::OnUseItem(RunningState &, Mob &, Item &item) {
   */
 void
 Cell::Rotate() {
-  int16_t tmp = this->shared.topHeights[0];
-  this->shared.topHeights[0] = this->shared.topHeights[1];
-  this->shared.topHeights[1] = this->shared.topHeights[2];
-  this->shared.topHeights[2] = this->shared.topHeights[3];
-  this->shared.topHeights[3] = tmp;
+  float tmp;
 
-  tmp = this->shared.bottomHeights[0];
-  this->shared.bottomHeights[0] = this->shared.bottomHeights[1];
-  this->shared.bottomHeights[1] = this->shared.bottomHeights[2];
-  this->shared.bottomHeights[2] = this->shared.bottomHeights[3];
-  this->shared.bottomHeights[3] = tmp;
+  tmp = this->GetTopHeight(0);
+  this->SetTopHeight(0, this->GetTopHeight(1));
+  this->SetTopHeight(1, this->GetTopHeight(2));
+  this->SetTopHeight(2, this->GetTopHeight(3));
+  this->SetTopHeight(3, tmp);
 
-  this->shared.scale = this->shared.scale.ZYX();
-  this->reversedSides = !this->reversedSides;
-  this->shared.reversedTop = !this->shared.reversedTop;
-  this->shared.reversedBottom = !this->shared.reversedBottom;
+  tmp = this->GetBottomHeight(0);
+  this->SetBottomHeight(0, this->GetBottomHeight(1));
+  this->SetBottomHeight(1, this->GetBottomHeight(2));
+  this->SetBottomHeight(2, this->GetBottomHeight(3));
+  this->SetBottomHeight(3, tmp);
+
+  this->SetScale(this->GetScale().ZYX());
+  this->SetSideReversed(!this->IsSideReversed());
+  this->SetReversed(!this->IsTopReversed(), !this->IsBottomReversed());
 }
 
 /** Play a sound at the cell's position.
@@ -784,70 +750,3 @@ Cell::PlaySound(RunningState &state, const std::string &type) {
   if (this->info->sounds.find(type) == this->info->sounds.end()) return;
   state.GetGame().GetAudio().PlaySound(this->info->sounds.at(type), GetAABB().center);
 }
-/*
-Serializer &operator << (Serializer &ser, const Cell &cell) {
-  //ser << (Triggerable&)cell;
-  ser << cell.info->type;
-  ser << (cell.texture?cell.texture->name:"") << cell.uscale;
-  ser << cell.lastT << cell.tickPhase << cell.lastUseT;
-  ser << cell.lightLevel;
-  ser << cell.spawnOnActiveMob << (int8_t&)cell.spawnOnActiveSide << cell.spawnOnActiveRate;
-
-  ser << cell.shared.tickInterval;
-  ser << cell.shared.featureID;
-  ser << uint8_t((cell.shared.reversedTop ? 1 : 0) | (cell.shared.reversedBottom ? 2 : 0));
-
-  for (int i=0; i<4; i++) {
-    ser << cell.shared.topHeights[i];
-    ser << cell.shared.bottomHeights[i];
-    ser << cell.shared.u[i];
-    ser << cell.shared.v[i];
-  }
-
-  ser << cell.shared.detail << cell.shared.smoothDetail;
-  ser << cell.teleport << cell.teleportTarget;
-  ser << cell.shared.lockedID;
-  return ser;
-}
-
-
-Deserializer &operator >> (Deserializer &deser, Cell &cell) {
-//  deser >> (Triggerable&)cell;
-
-  std::string cellType;
-  deser >> cellType;
-
-  cell = Cell(cellType);
-
-  std::string textureName;
-  deser >> textureName;
-  if (textureName != "") cell.texture = Texture::Get(textureName);
-
-  deser >> cell.uscale;
-  deser >> cell.lastT >> cell.tickPhase >> cell.lastUseT;
-  deser >> cell.lightLevel;
-
-  deser >> cell.spawnOnActiveMob >> (int8_t&)cell.spawnOnActiveSide >> cell.spawnOnActiveRate;
-
-  deser >> cell.shared.tickInterval;
-  deser >> cell.shared.featureID;
-
-  uint8_t flags;
-  deser >> flags;
-  cell.shared.reversedTop = flags & 1;
-  cell.shared.reversedBottom = flags & 2;
-
-  for (int i=0; i<4; i++) {
-    deser >> cell.shared.topHeights[i];
-    deser >> cell.shared.bottomHeights[i];
-    deser >> cell.shared.u[i];
-    deser >> cell.shared.v[i];
-  }
-
-  deser >> cell.shared.detail >> cell.shared.smoothDetail;
-  deser >> cell.teleport >> cell.teleportTarget;
-  deser >> cell.shared.lockedID;
-
-  return deser;
-}
-*/

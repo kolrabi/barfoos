@@ -138,9 +138,9 @@ message Entity_Proto {
     optional Player_Proto player        = 21;
     optional Item_Proto item            = 22;
 
-    required uint32 trigger_id          = 23;
-    required bool   is_toggle           = 24;
-    required bool   is_triggered        = 25;
+    optional uint32 trigger_id = 201;
+    optional bool is_trigger_toggle = 202;
+    optional bool is_triggered = 203;
 }
 
 message EntityList_Proto {

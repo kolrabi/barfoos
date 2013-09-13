@@ -182,9 +182,10 @@ WorldBuilder::MakeGround(Random &random) {
     IVector3 pos = this->world.GetCellPos(i);
     if (pos.x < 2 || pos.y < 2 || pos.z < 2 || pos.x >= size.x-2 || pos.y >= size.y-2 || pos.z >= size.z-2) {
       defaultCells[i] = Cell("bedrock");
-      defaultCells[i].SetLocked(true);
-      defaultCells[i].SetIgnoreWrite(true);
+      defaultCells[i].SetProtected(true);
+      defaultCells[i].SetIgnoringWrite(true);
     } else {
+      /*
       defaultCells[i] = Cell("rock");
 
       IVector3 ppp(pos+r);
@@ -199,7 +200,7 @@ WorldBuilder::MakeGround(Random &random) {
         defaultCells[i] = Cell("rock");
       } else {
         defaultCells[i] = Cell("dirt");
-      }
+      }*/
     }
   }
 }

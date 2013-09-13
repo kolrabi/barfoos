@@ -251,7 +251,7 @@ bool Item::UseOnCell(RunningState &state, Mob &user, Cell *cell, Side) {
   if (this->properties->canUseCell) {
     cell->OnUseItem(state, user, *this);
 
-    uint32_t cellLock = cell->GetLockedID();
+    uint32_t cellLock = cell->GetLockID();
     if (cellLock && this->properties->unlockChance > 0.0 && (this->proto.unlock_id() == cellLock || this->proto.unlock_id() == 0) && state.GetRandom().Chance(this->properties->unlockChance)) {
       cell->Unlock();
       if (this->properties->onUnlockBreak) {

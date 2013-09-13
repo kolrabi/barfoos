@@ -21,17 +21,14 @@ public:
   uint8_t                   GetVisibility       ()                                        const;
   void                      SetVisibility       (uint8_t visibility);
 
-  void                      SetReversedSides    (bool rev)                                      { this->reversedSides = rev; }
-
 protected:
 
                             CellRender          (const std::string &type);
+                            CellRender          (const CellRender &that);
+                            CellRender          (const Cell_Proto &proto);
 
   /** Side visibility. */
   uint8_t                   visibility;
-
-  /** Whether or not to draw the sides reversed. */
-  bool                      reversedSides;
 
   /** Corner positions relative to cell. */
   Vector3                   corners[8];
@@ -54,6 +51,10 @@ protected:
   /** Texture u coordinate scale. */
   float                     uscale;
 
+  float                     uvTime;
+  float                     u[4] = {0,0,0,0};
+  float                     v[4] = {0,0,0,0};
+
   IColor                    SideCornerColor     (Side side, size_t corner)                const;
   void                      SideColors          (Side side, IColor *colors)               const;
   void                      SideColors          (Side side, std::vector<IColor> &outcolors, bool reverse)     const;
@@ -64,7 +65,7 @@ protected:
   * @return Normal texture for this cell, or active. 
   */
 inline const Texture *CellRender::GetTexture() const {
-  if (this->activeTexture && this->lastT < this->nextActivationT) {
+  if (this->activeTexture && this->uvTime < this->GetNextActivationTime()) {
     return this->activeTexture;
   }
   return this->texture;
@@ -74,7 +75,7 @@ inline const Texture *CellRender::GetTexture() const {
   * @return Normal texture for this cell, or active. 
   */
 inline const Texture *CellRender::GetEmissiveTexture() const {
-  if (this->emissiveActiveTexture && this->lastT < this->nextActivationT) {
+  if (this->emissiveActiveTexture && this->uvTime < this->GetNextActivationTime()) {
     return this->emissiveActiveTexture;
   }
   return this->emissiveTexture;
