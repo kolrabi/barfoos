@@ -312,12 +312,12 @@ void
 WorldBuilder::PlaceTeleports(Random &random, const Theme &theme) {
   Log("Placing %u teleports...\n", theme.teleportCount);
   for (size_t i=0; i<theme.teleportCount; i++) {
-    IVector3 a = world.GetRandomTeleportTarget(random);
-    IVector3 b = world.GetRandomTeleportTarget(random);
-    while (a == b) b = world.GetRandomTeleportTarget(random);
+    size_t a = world.GetCellIndex(world.GetRandomTeleportTarget(random));
+    size_t b = world.GetCellIndex(world.GetRandomTeleportTarget(random));
+    while (a == b) b = world.GetCellIndex(world.GetRandomTeleportTarget(random));
 
-    world.SetCell(a, Cell("teleport")).SetTeleportTarget(b);
-    world.SetCell(b, Cell("teleport")).SetTeleportTarget(a);
+    world.SetCell(world.GetCellPos(a), Cell("teleport")).SetTeleportTarget(b);
+    world.SetCell(world.GetCellPos(b), Cell("teleport")).SetTeleportTarget(a);
   }
 }
 
@@ -326,7 +326,7 @@ WorldBuilder::PlaceTraps(RunningState &state, Random &random, const Theme &theme
   Log("Placing %u traps...\n", theme.trapCount);
   for (size_t i=0; i<theme.trapCount; i++) {
 
-    IVector3 a = world.GetRandomTeleportTarget(random);
+    size_t a = world.GetCellIndex(world.GetRandomTeleportTarget(random));
 
     Cell *aboveCell = &world.GetCell(a)[Side::Up][Side::Up];
     Side side = (Side)random.Integer(6);

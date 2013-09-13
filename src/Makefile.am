@@ -17,7 +17,10 @@ PROTOS=game.pb.cc runningstate.pb.cc entity.pb.cc world.pb.cc
 %.pb.cc: %.proto
 	$(PROTOC) --cpp_out=. $<
 
-BUILT_SOURCES=$(PROTOS)
+common.h.gch: common.h
+	$(CXX) -DHAVE_CONFIG_H -I. $(CXXFLAGS) $(CF) $<
+
+BUILT_SOURCES=$(PROTOS) common.h.gch
 
 bin_PROGRAMS=barfoos
 
@@ -27,61 +30,59 @@ barfoos_LDADD=
 barfoos_LDFLAGS=
 barfoos_SOURCES=\
   $(PROTOS) \
-  main.cc \
-  image.cc image.h \
-  gfx.cc gfx.h gfxview.cc gfxview.h gfxscreen.cc gfxscreen.h \
-  vertexbuffer.cc vertexbuffer.h \
+  $(RESFILE) \
+  2d.h \
+  aabb.h \
   audio.cc audio.h \
-  fileio.cc fileio.h \
-  texture.cc texture.h \
-  GLee.c GLee.h \
-  game.cc game.h \
-  runningstate.cc runningstate.h \
-  mainmenustate.cc mainmenustate.h \
-  mainmenugui.cc mainmenugui.h \
-  simplex.cc simplex.h \
-  text.cc text.h \
-  shader.cc shader.h \
-  stats.cc stats.h \
-  \
-  properties.cc properties.h \
-  spell.cc spell.h \
-  \
-  gui.cc gui.h \
-  inventorygui.cc inventorygui.h \
-  \
-  entity.cc entity.h \
-  mob.cc mob.h \
-  monster.cc monster.h \
-  player.cc player.h \
-  itementity.cc itementity.h \
-  projectile.cc projectile.h \
-  \
-  trigger.cc trigger.h \
-  \
   cell.cc cell.h \
   cellproperties.cc cellproperties.h \
   cellrender.cc \
-  feature.cc feature.h \
-  world.cc world.h \
-  worldedit.cc worldedit.h \
-  worldbuilder.cc worldbuilder.h \
-  \
-  item.cc item.h \
-  itemproperties.cc itemproperties.h \
-  inventory.cc inventory.h \
+  common.h common.h.gch \
   effect.cc effect.h \
-  \
-  common.h ivector3.h space.h vector3.h \
-  random.h \
-  util.cc util.h \
-  aabb.h 2d.h \
-  serializer.cc serializer.h \
-  deserializer.cc deserializer.h \
+  entity.cc entity.h \
+  feature.cc feature.h \
+  fileio.cc fileio.h \
+  game.cc game.h \
+  gfx.cc gfx.h \
+  gfxscreen.cc gfxscreen.h \
+  gfxview.cc gfxview.h \
+  GLee.c GLee.h \
+  gui.cc gui.h \
+  image.cc image.h \
   input.cc input.h \
-  profile.cc profile.h \
+  inventory.cc inventory.h \
+  inventorygui.cc inventorygui.h \
+  item.cc item.h \
+  itementity.cc itementity.h \
+  itemproperties.cc itemproperties.h \
+  ivector3.h \
   log.cc log.h \
-  $(RESFILE)
+  main.cc \
+  mainmenugui.cc mainmenugui.h \
+  mainmenustate.cc mainmenustate.h \
+  matrix4.h \
+  mob.cc mob.h \
+  monster.cc monster.h \
+  player.cc player.h \
+  profile.cc profile.h \
+  projectile.cc projectile.h \
+  properties.cc properties.h \
+  random.h \
+  runningstate.cc runningstate.h \
+  shader.cc shader.h \
+  simplex.cc simplex.h \
+  space.h \
+  spell.cc spell.h \
+  stats.cc stats.h \
+  text.cc text.h \
+  texture.cc texture.h \
+  trigger.cc trigger.h \
+  util.cc util.h \
+  vector2.h vector3.h vector4.h \
+  vertexbuffer.cc vertexbuffer.h \
+  world.cc world.h \
+  worldbuilder.cc worldbuilder.h \
+  worldedit.cc worldedit.h
 
 ## Packaging ------------------------------------------------------
 

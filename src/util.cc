@@ -8,12 +8,14 @@
 #include "vector4.h"
 #include "matrix4.h"
 #include "aabb.h"
-
-#include "serializer.h"
-#include "deserializer.h"
+#include "vertex.h"
 
 #include <cstring>
 #include <cstdio>
+
+template class std::vector<Vector3>;
+template class std::vector<Vertex>;
+template class std::vector<std::string>;
 
 float Wave(float x, float z, float t, float a) {
   return a * cos( ((x+z)*0.4+t*0.4) )
@@ -102,12 +104,4 @@ std::vector<std::string> Tokenize(const char *l) {
     if (inString) p++;
   } while(q && *p);
   return tokens;
-}
-
-Serializer &operator << (Serializer &ser, const AABB &aabb) {
-  return ser << aabb.center << aabb.extents;
-}
-
-Deserializer &operator >> (Deserializer &deser, AABB &aabb) {
-  return deser >> aabb.center >> aabb.extents;
 }

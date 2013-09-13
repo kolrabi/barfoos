@@ -4,6 +4,7 @@ message MiniMap_Proto {
 
 message Cell_Proto {
     required string type = 1;
+    optional uint32 teleport_target = 2;
 }
 
 message World_Proto {

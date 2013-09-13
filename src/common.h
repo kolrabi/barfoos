@@ -15,6 +15,10 @@
 
 #include <sstream>
 
+#include <vector>
+#include <unordered_map>
+#include <unordered_set>
+
 // ====================================================================================
 
 // deal with old compilers
@@ -98,5 +102,9 @@ std::string ToString(const T &v) {
   str << v;
   return str.str();
 }
+
+extern template class std::vector<Vector3>;
+extern template class std::vector<Vertex>;
+extern template class std::vector<std::string>;
 
 #endif

@@ -5,17 +5,22 @@
 
 #include "trigger.h"
 
+#include "world.pb.h"
+
 class CellBase : public Triggerable {
 public:
 
-  const std::string &       GetType() const;
-  const CellProperties &    GetInfo() const;
+  const std::string &       GetType() const { return this->proto.type(); }
+  const CellProperties &    GetInfo() const { return *this->info; }
 
   void                      Lock(ID id);
   void                      Unlock();
   ID                        GetLockedID() const;
 
-  void                      SetTeleportTarget(const IVector3 &target);
+  void                      SetTeleportTarget(uint32_t index) { this->proto.set_teleport_target(index); }
+  uint32_t                  GetTeleportTarget() const { return this->proto.teleport_target(); }
+  bool                      IsTeleport() const { return this->proto.has_teleport_target(); }
+
   void                      SetTriggerTarget(uint32_t triggerTargetId);
   void                      SetSpawnOnActive(const std::string &mob, Side side, float rate);
 
@@ -34,7 +39,6 @@ public:
   bool                      IsDynamic() const;
   bool                      IsLiquid() const;
   bool                      IsSolid() const;
-  bool                      IsTeleport() const;
   bool                      IsTopFlat() const;
   bool                      IsTransparent() const;
   bool                      IsTrigger() const;
@@ -54,16 +58,15 @@ public:
 protected:
 
                             CellBase(const std::string &type);
+                            CellBase(const Cell_Proto &proto);
 
   const CellProperties *    info;
   World *                   world;
   IVector3                  pos;
   Cell *                    neighbours[6];
+
   float                     lastT;
   float                     nextActivationT;
-
-  bool                      teleport;
-  IVector3                  teleportTarget;
 
   std::string               spawnOnActiveMob;
   SpawnClass                spawnOnActiveClass;
@@ -74,6 +77,8 @@ protected:
   ID                        triggerTargetId;
 
   static const int          OffsetScale = 127;
+
+  Cell_Proto proto;
 
   // shared information, that will stay the same after assignment from different cell
   struct SharedInfo {
@@ -89,8 +94,10 @@ protected:
     bool reversedTop;
     bool reversedBottom;
 
-    int16_t topHeights[4], bottomHeights[4];
-    float u[4], v[4];
+    int16_t topHeights[4] = { OffsetScale, OffsetScale, OffsetScale, OffsetScale };
+    int16_t bottomHeights[4]={0,0,0,0};
+    float u[4] ={0,0,0,0};
+    float v[4] ={0,0,0,0};
 
     uint32_t detail;
     float smoothDetail;
@@ -108,10 +115,6 @@ protected:
       featureID(InvalidID),
       reversedTop(false),
       reversedBottom(false),
-      topHeights { OffsetScale, OffsetScale, OffsetScale, OffsetScale },
-      bottomHeights { 0, 0, 0, 0 },
-      u { 0,0,0,0 },
-      v { 0,0,0,0 },
       detail( info->flags & CellFlags::Liquid ? 15 : 0 ),
       smoothDetail(detail),
       lockedID(0),
@@ -127,26 +130,12 @@ protected:
   bool vertsDirty, colorDirty;
 };
 
-inline const CellProperties &CellBase::GetInfo() const {
-  return *this->info;
-}
-
-inline const std::string &CellBase::GetType() const {
-  return this->info->type;
-}
-
-
 inline World *CellBase::GetWorld() const {
   return this->world;
 }
 
 inline IVector3 CellBase::GetPosition() const {
   return this->pos;
-}
-
-inline void CellBase::SetTeleportTarget(const IVector3 &target) {
-  this->teleport = true;
-  this->teleportTarget = target;
 }
 
 inline void CellBase::SetTriggerTarget(ID id) {
@@ -319,10 +308,6 @@ inline bool CellBase::IsDynamic() const {
 
 inline bool CellBase::IsTrigger() const {
   return this->isTrigger;
-}
-
-inline bool CellBase::IsTeleport() const {
-  return this->teleport;
 }
 
 inline bool CellBase::IsLocked() const {

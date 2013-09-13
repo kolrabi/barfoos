@@ -13,7 +13,7 @@
 #include <sys/stat.h>
 #include <dirent.h>
 
-static const std::vector<const char *> assetPrefix { 
+static const std::vector<const char *> assetPrefix = { 
   "../assets/", 
   "assets/",
   DATA_PATH "/" 

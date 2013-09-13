@@ -2,9 +2,6 @@
 #define BARFOOS_CELLPROPERTIES_H
 
 #include "properties.h"
-#include "icolor.h"
-#include "vector3.h"
-#include "ivector3.h"
 
 #include <unordered_map>
 

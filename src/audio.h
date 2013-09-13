@@ -1,11 +1,6 @@
 #ifndef BARFOOS_AUDIO_H
 #define BARFOOS_AUDIO_H
 
-#include "vector3.h"
-
-#include <unordered_map>
-#include <vector>
-
 /** Audio subsystem. */
 class Audio final {
 public:
@@ -59,9 +54,10 @@ public:
 
   void Update(Game &);
 
-  void SetPlayer(const Player *player) { this->player = player; }
+  void SetPlayer(const Mob *player) { this->player = player; }
 
-  std::shared_ptr<Source> PlaySound(const std::string &name, const Vector3 &pos, const Vector3 &velocity = Vector3(), bool loop = false, float volume = 1.0, float pitch = 1.0);
+  std::shared_ptr<Source> PlaySound(const std::string &name, const Vector3 &pos);
+  std::shared_ptr<Source> PlaySound(const std::string &name, const Vector3 &pos, const Vector3 &velocity, bool loop = false, float volume = 1.0, float pitch = 1.0);
 
 private:
 
@@ -75,7 +71,7 @@ private:
   bool isInited;
 
   /** The player object used as a listener. */
-  const Player *player;
+  const Mob *player;
 
   /** All loaded audio buffers. */
   std::unordered_map<std::string, Buffer *> buffers;

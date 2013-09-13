@@ -1,10 +1,6 @@
 #ifndef BARFOOS_CELL_H
 #define BARFOOS_CELL_H
 
-#include "icolor.h"
-#include "ivector3.h"
-#include "space.h"
-
 #include "cellrender.h"
 
 #include "world.pb.h"
@@ -71,12 +67,7 @@ protected:
 
   /** Time of last usage. */
   float                     lastUseT;
-
-  friend Serializer &       operator << (Serializer &ser, const Cell &cell);
-  friend Deserializer &     operator >> (Deserializer &deser, Cell &cell);
 };
-
-Serializer &operator << (Serializer &ser, const Cell &);
 
 /** Get the current light level of the cell.
   * @return The light level.

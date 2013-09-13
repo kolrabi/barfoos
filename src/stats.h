@@ -157,7 +157,7 @@ struct Stats {
   void SetMaxHealthBonus(uint32_t v)     { proto.set_max_hp(v);  }
 
   float GetExperience() const { return proto.exp();     }
-  uint32_t GetLevel()   const { return Stats::GetLevelForExp(this->GetExperience()); }
+  uint32_t GetLevel()   const { return GetLevelForExp(this->GetExperience()); }
   uint32_t GetSP()      const { return proto.sp();      }
 
   float GetWalkSpeed()  const { return proto.walk_speed(); }

@@ -80,11 +80,11 @@ RunningState::NewGame() {
   theme.caveLengthMax = theme.caveLengthMin + random.Integer(100);
   theme.caveRepeat    = random.Integer(20)+10;
 
-  theme.teleportCount = random.Integer(10)+2;
-  theme.trapCount = random.Integer(10)+10;
-  theme.decoCount = 500+random.Integer(200);
-  theme.itemCount = 100+random.Integer(120);
-  theme.monsterCount = 50+random.Integer(100);
+  theme.teleportCount = 0; //random.Integer(10)+2;
+  theme.trapCount = 0; //random.Integer(10)+10;
+  theme.decoCount = 0; //500+random.Integer(200);
+  theme.itemCount = 0; //100+random.Integer(120);
+  theme.monsterCount = 0; //50+random.Integer(100);
 
   WorldBuilder builder(*this->world);
   builder.Build(*this, theme);
@@ -550,7 +550,7 @@ void RunningState::LockCell(Cell &cell) {
   cell.Lock(id);
 
   if (GetRandom().Chance(0.8)) {
-    IVector3 keyPos = this->GetWorld().GetRandomTeleportTarget(this->GetRandom())[Side::Up];
+    size_t keyIndex = this->GetWorld().GetCellIndex(this->GetWorld().GetRandomTeleportTarget(this->GetRandom()));
     //while (this->GetWorld().GetCell(keyPos).GetFeatureID() >= maxFeatureID - 1) {
     //  keyPos = this->GetWorld().GetRandomTeleportTarget(this->GetRandom())[Side::Up];
     //}
@@ -559,7 +559,7 @@ void RunningState::LockCell(Cell &cell) {
     keyItem->SetUnlockID(id);
 
     ItemEntity *entity = new ItemEntity(keyItem);
-    entity->SetPosition(this->GetWorld().GetCell(keyPos).GetAABB().center);
+    entity->SetPosition(this->GetWorld().GetCell(keyIndex)[Side::Up].GetAABB().center);
     entity->AddVelocity(Vector3(0,10,0));
 
     AddEntity(entity);
@@ -574,7 +574,7 @@ void RunningState::LockEntity(Entity &ent) {
   ent.Lock(id);
 
   if (GetRandom().Chance(0.8)) {
-    IVector3 keyPos = this->GetWorld().GetRandomTeleportTarget(this->GetRandom())[Side::Up];
+    size_t keyIndex = this->GetWorld().GetCellIndex(this->GetWorld().GetRandomTeleportTarget(this->GetRandom()));
     //while (this->GetWorld().GetCell(keyPos).GetFeatureID() >= maxFeatureID - 1) {
     //  keyPos = this->GetWorld().GetRandomTeleportTarget(this->GetRandom())[Side::Up];
     //}
@@ -583,7 +583,7 @@ void RunningState::LockEntity(Entity &ent) {
     keyItem->SetUnlockID(id);
 
     ItemEntity *entity = new ItemEntity(keyItem);
-    entity->SetPosition(this->GetWorld().GetCell(keyPos).GetAABB().center);
+    entity->SetPosition(this->GetWorld().GetCell(keyIndex)[Side::Up].GetAABB().center);
     entity->AddVelocity(Vector3(0,10,0));
 
     AddEntity(entity);

@@ -3,8 +3,6 @@
 
 #include "cellbase.h"
 
-#include "vertex.h"
-
 class CellRender : public CellBase {
 public:
 
@@ -17,8 +15,8 @@ public:
   bool                      UpdateVertices      ();
   void                      UpdateColors        ();
 
-  void                      Draw                (std::vector<Vertex> &vertices)           const;
-  void                      DrawEmissive        (std::vector<Vertex> &vertices)           const;
+
+  const std::vector<Vertex>&GetVertices         ()                                        const { return this->verts; }
   
   uint8_t                   GetVisibility       ()                                        const;
   void                      SetVisibility       (uint8_t visibility);
@@ -94,34 +92,6 @@ inline uint8_t CellRender::GetVisibility() const {
   */
 inline void CellRender::SetVisibility(uint8_t visibility) {
   this->visibility = visibility;
-}
-
-/** Append cell vertices to a vector.
-  * @param verts Where to copy the vertices.
-  */
-inline void
-CellRender::Draw(std::vector<Vertex> &verts) const {
-  if (info->flags & CellFlags::DoNotRender || visibility == 0) return;
-
-  for (const Vertex &v : this->verts) {
-    verts.push_back(v);
-  }
-}
-
-/** Append cell vertices to a vector, with color values set to white.
-  * @param verts Where to copy the vertices.
-  */
-inline void
-CellRender::DrawEmissive(std::vector<Vertex> &verts) const {
-  Draw(verts);
-  /*
-  if (info->flags & CellFlags::DoNotRender || visibility == 0) return;
-
-  for (const Vertex &v : this->verts) {
-    Vertex vv = v;
-    vv.rgb[0] = vv.rgb[1] = vv.rgb[2] = vv.rgb[3] = 1.0;
-    verts.push_back(vv);
-  }*/
 }
 
 #endif

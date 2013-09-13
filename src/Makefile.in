@@ -65,53 +65,52 @@ CONFIG_CLEAN_VPATH_FILES =
 am__installdirs = "$(DESTDIR)$(bindir)"
 PROGRAMS = $(bin_PROGRAMS)
 am__barfoos_SOURCES_DIST = game.pb.cc runningstate.pb.cc entity.pb.cc \
-	world.pb.cc main.cc image.cc image.h gfx.cc gfx.h gfxview.cc \
-	gfxview.h gfxscreen.cc gfxscreen.h vertexbuffer.cc \
-	vertexbuffer.h audio.cc audio.h fileio.cc fileio.h texture.cc \
-	texture.h GLee.c GLee.h game.cc game.h runningstate.cc \
-	runningstate.h mainmenustate.cc mainmenustate.h mainmenugui.cc \
-	mainmenugui.h simplex.cc simplex.h text.cc text.h shader.cc \
-	shader.h stats.cc stats.h properties.cc properties.h spell.cc \
-	spell.h gui.cc gui.h inventorygui.cc inventorygui.h entity.cc \
-	entity.h mob.cc mob.h monster.cc monster.h player.cc player.h \
-	itementity.cc itementity.h projectile.cc projectile.h \
-	trigger.cc trigger.h cell.cc cell.h cellproperties.cc \
-	cellproperties.h cellrender.cc feature.cc feature.h world.cc \
-	world.h worldedit.cc worldedit.h worldbuilder.cc \
-	worldbuilder.h item.cc item.h itemproperties.cc \
-	itemproperties.h inventory.cc inventory.h effect.cc effect.h \
-	common.h ivector3.h space.h vector3.h random.h util.cc util.h \
-	aabb.h 2d.h serializer.cc serializer.h deserializer.cc \
-	deserializer.h input.cc input.h profile.cc profile.h log.cc \
-	log.h res.rc icon.ico
+	world.pb.cc res.rc icon.ico 2d.h aabb.h audio.cc audio.h \
+	cell.cc cell.h cellproperties.cc cellproperties.h \
+	cellrender.cc common.h common.h.gch effect.cc effect.h \
+	entity.cc entity.h feature.cc feature.h fileio.cc fileio.h \
+	game.cc game.h gfx.cc gfx.h gfxscreen.cc gfxscreen.h \
+	gfxview.cc gfxview.h GLee.c GLee.h gui.cc gui.h image.cc \
+	image.h input.cc input.h inventory.cc inventory.h \
+	inventorygui.cc inventorygui.h item.cc item.h itementity.cc \
+	itementity.h itemproperties.cc itemproperties.h ivector3.h \
+	log.cc log.h main.cc mainmenugui.cc mainmenugui.h \
+	mainmenustate.cc mainmenustate.h matrix4.h mob.cc mob.h \
+	monster.cc monster.h player.cc player.h profile.cc profile.h \
+	projectile.cc projectile.h properties.cc properties.h random.h \
+	runningstate.cc runningstate.h shader.cc shader.h simplex.cc \
+	simplex.h space.h spell.cc spell.h stats.cc stats.h text.cc \
+	text.h texture.cc texture.h trigger.cc trigger.h util.cc \
+	util.h vector2.h vector3.h vector4.h vertexbuffer.cc \
+	vertexbuffer.h world.cc world.h worldbuilder.cc worldbuilder.h \
+	worldedit.cc worldedit.h
 am__objects_1 = barfoos-game.pb.$(OBJEXT) \
 	barfoos-runningstate.pb.$(OBJEXT) barfoos-entity.pb.$(OBJEXT) \
 	barfoos-world.pb.$(OBJEXT)
 @WINDOOF_TRUE@am__objects_2 = res.$(OBJEXT)
-am_barfoos_OBJECTS = $(am__objects_1) barfoos-main.$(OBJEXT) \
-	barfoos-image.$(OBJEXT) barfoos-gfx.$(OBJEXT) \
-	barfoos-gfxview.$(OBJEXT) barfoos-gfxscreen.$(OBJEXT) \
-	barfoos-vertexbuffer.$(OBJEXT) barfoos-audio.$(OBJEXT) \
-	barfoos-fileio.$(OBJEXT) barfoos-texture.$(OBJEXT) \
-	barfoos-GLee.$(OBJEXT) barfoos-game.$(OBJEXT) \
-	barfoos-runningstate.$(OBJEXT) barfoos-mainmenustate.$(OBJEXT) \
-	barfoos-mainmenugui.$(OBJEXT) barfoos-simplex.$(OBJEXT) \
-	barfoos-text.$(OBJEXT) barfoos-shader.$(OBJEXT) \
-	barfoos-stats.$(OBJEXT) barfoos-properties.$(OBJEXT) \
-	barfoos-spell.$(OBJEXT) barfoos-gui.$(OBJEXT) \
-	barfoos-inventorygui.$(OBJEXT) barfoos-entity.$(OBJEXT) \
-	barfoos-mob.$(OBJEXT) barfoos-monster.$(OBJEXT) \
-	barfoos-player.$(OBJEXT) barfoos-itementity.$(OBJEXT) \
-	barfoos-projectile.$(OBJEXT) barfoos-trigger.$(OBJEXT) \
-	barfoos-cell.$(OBJEXT) barfoos-cellproperties.$(OBJEXT) \
-	barfoos-cellrender.$(OBJEXT) barfoos-feature.$(OBJEXT) \
-	barfoos-world.$(OBJEXT) barfoos-worldedit.$(OBJEXT) \
-	barfoos-worldbuilder.$(OBJEXT) barfoos-item.$(OBJEXT) \
-	barfoos-itemproperties.$(OBJEXT) barfoos-inventory.$(OBJEXT) \
-	barfoos-effect.$(OBJEXT) barfoos-util.$(OBJEXT) \
-	barfoos-serializer.$(OBJEXT) barfoos-deserializer.$(OBJEXT) \
-	barfoos-input.$(OBJEXT) barfoos-profile.$(OBJEXT) \
-	barfoos-log.$(OBJEXT) $(am__objects_2)
+am_barfoos_OBJECTS = $(am__objects_1) $(am__objects_2) \
+	barfoos-audio.$(OBJEXT) barfoos-cell.$(OBJEXT) \
+	barfoos-cellproperties.$(OBJEXT) barfoos-cellrender.$(OBJEXT) \
+	barfoos-effect.$(OBJEXT) barfoos-entity.$(OBJEXT) \
+	barfoos-feature.$(OBJEXT) barfoos-fileio.$(OBJEXT) \
+	barfoos-game.$(OBJEXT) barfoos-gfx.$(OBJEXT) \
+	barfoos-gfxscreen.$(OBJEXT) barfoos-gfxview.$(OBJEXT) \
+	barfoos-GLee.$(OBJEXT) barfoos-gui.$(OBJEXT) \
+	barfoos-image.$(OBJEXT) barfoos-input.$(OBJEXT) \
+	barfoos-inventory.$(OBJEXT) barfoos-inventorygui.$(OBJEXT) \
+	barfoos-item.$(OBJEXT) barfoos-itementity.$(OBJEXT) \
+	barfoos-itemproperties.$(OBJEXT) barfoos-log.$(OBJEXT) \
+	barfoos-main.$(OBJEXT) barfoos-mainmenugui.$(OBJEXT) \
+	barfoos-mainmenustate.$(OBJEXT) barfoos-mob.$(OBJEXT) \
+	barfoos-monster.$(OBJEXT) barfoos-player.$(OBJEXT) \
+	barfoos-profile.$(OBJEXT) barfoos-projectile.$(OBJEXT) \
+	barfoos-properties.$(OBJEXT) barfoos-runningstate.$(OBJEXT) \
+	barfoos-shader.$(OBJEXT) barfoos-simplex.$(OBJEXT) \
+	barfoos-spell.$(OBJEXT) barfoos-stats.$(OBJEXT) \
+	barfoos-text.$(OBJEXT) barfoos-texture.$(OBJEXT) \
+	barfoos-trigger.$(OBJEXT) barfoos-util.$(OBJEXT) \
+	barfoos-vertexbuffer.$(OBJEXT) barfoos-world.$(OBJEXT) \
+	barfoos-worldbuilder.$(OBJEXT) barfoos-worldedit.$(OBJEXT)
 barfoos_OBJECTS = $(am_barfoos_OBJECTS)
 barfoos_DEPENDENCIES =
 barfoos_LINK = $(CXXLD) $(barfoos_CXXFLAGS) $(CXXFLAGS) \
@@ -239,68 +238,66 @@ CF = $(GL_CFLAGS) -Werror -Wall -Wextra -I$(top_srcdir)/src -DDATA_PATH=\"$(pkgd
 # -D_GLIBCXX_DEBUG
 @WINDOOF_TRUE@RESFILE = res.rc icon.ico
 PROTOS = game.pb.cc runningstate.pb.cc entity.pb.cc world.pb.cc
-BUILT_SOURCES = $(PROTOS)
+BUILT_SOURCES = $(PROTOS) common.h.gch
 barfoos_CXXFLAGS = $(CF)
 barfoos_CFLAGS = $(CF)
 barfoos_LDADD = 
 barfoos_LDFLAGS = 
 barfoos_SOURCES = \
   $(PROTOS) \
-  main.cc \
-  image.cc image.h \
-  gfx.cc gfx.h gfxview.cc gfxview.h gfxscreen.cc gfxscreen.h \
-  vertexbuffer.cc vertexbuffer.h \
+  $(RESFILE) \
+  2d.h \
+  aabb.h \
   audio.cc audio.h \
-  fileio.cc fileio.h \
-  texture.cc texture.h \
-  GLee.c GLee.h \
-  game.cc game.h \
-  runningstate.cc runningstate.h \
-  mainmenustate.cc mainmenustate.h \
-  mainmenugui.cc mainmenugui.h \
-  simplex.cc simplex.h \
-  text.cc text.h \
-  shader.cc shader.h \
-  stats.cc stats.h \
-  \
-  properties.cc properties.h \
-  spell.cc spell.h \
-  \
-  gui.cc gui.h \
-  inventorygui.cc inventorygui.h \
-  \
-  entity.cc entity.h \
-  mob.cc mob.h \
-  monster.cc monster.h \
-  player.cc player.h \
-  itementity.cc itementity.h \
-  projectile.cc projectile.h \
-  \
-  trigger.cc trigger.h \
-  \
   cell.cc cell.h \
   cellproperties.cc cellproperties.h \
   cellrender.cc \
-  feature.cc feature.h \
-  world.cc world.h \
-  worldedit.cc worldedit.h \
-  worldbuilder.cc worldbuilder.h \
-  \
-  item.cc item.h \
-  itemproperties.cc itemproperties.h \
-  inventory.cc inventory.h \
+  common.h common.h.gch \
   effect.cc effect.h \
-  \
-  common.h ivector3.h space.h vector3.h \
-  random.h \
-  util.cc util.h \
-  aabb.h 2d.h \
-  serializer.cc serializer.h \
-  deserializer.cc deserializer.h \
+  entity.cc entity.h \
+  feature.cc feature.h \
+  fileio.cc fileio.h \
+  game.cc game.h \
+  gfx.cc gfx.h \
+  gfxscreen.cc gfxscreen.h \
+  gfxview.cc gfxview.h \
+  GLee.c GLee.h \
+  gui.cc gui.h \
+  image.cc image.h \
   input.cc input.h \
-  profile.cc profile.h \
+  inventory.cc inventory.h \
+  inventorygui.cc inventorygui.h \
+  item.cc item.h \
+  itementity.cc itementity.h \
+  itemproperties.cc itemproperties.h \
+  ivector3.h \
   log.cc log.h \
-  $(RESFILE)
+  main.cc \
+  mainmenugui.cc mainmenugui.h \
+  mainmenustate.cc mainmenustate.h \
+  matrix4.h \
+  mob.cc mob.h \
+  monster.cc monster.h \
+  player.cc player.h \
+  profile.cc profile.h \
+  projectile.cc projectile.h \
+  properties.cc properties.h \
+  random.h \
+  runningstate.cc runningstate.h \
+  shader.cc shader.h \
+  simplex.cc simplex.h \
+  space.h \
+  spell.cc spell.h \
+  stats.cc stats.h \
+  text.cc text.h \
+  texture.cc texture.h \
+  trigger.cc trigger.h \
+  util.cc util.h \
+  vector2.h vector3.h vector4.h \
+  vertexbuffer.cc vertexbuffer.h \
+  world.cc world.h \
+  worldbuilder.cc worldbuilder.h \
+  worldedit.cc worldedit.h
 
 EXTRA_DIST = libgcc_s_dw2-1.dll libstdc++-6.dll icon.ico res.rc.in
 all: $(BUILT_SOURCES) config.h
@@ -410,7 +407,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/barfoos-cell.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/barfoos-cellproperties.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/barfoos-cellrender.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/barfoos-deserializer.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/barfoos-effect.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/barfoos-entity.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/barfoos-entity.pb.Po@am__quote@
@@ -441,7 +437,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/barfoos-properties.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/barfoos-runningstate.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/barfoos-runningstate.pb.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/barfoos-serializer.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/barfoos-shader.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/barfoos-simplex.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/barfoos-spell.Po@am__quote@
@@ -554,90 +549,6 @@ barfoos-world.pb.obj: world.pb.cc
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -c -o barfoos-world.pb.obj `if test -f 'world.pb.cc'; then $(CYGPATH_W) 'world.pb.cc'; else $(CYGPATH_W) '$(srcdir)/world.pb.cc'; fi`
 
-barfoos-main.o: main.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -MT barfoos-main.o -MD -MP -MF $(DEPDIR)/barfoos-main.Tpo -c -o barfoos-main.o `test -f 'main.cc' || echo '$(srcdir)/'`main.cc
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/barfoos-main.Tpo $(DEPDIR)/barfoos-main.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='main.cc' object='barfoos-main.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -c -o barfoos-main.o `test -f 'main.cc' || echo '$(srcdir)/'`main.cc
-
-barfoos-main.obj: main.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -MT barfoos-main.obj -MD -MP -MF $(DEPDIR)/barfoos-main.Tpo -c -o barfoos-main.obj `if test -f 'main.cc'; then $(CYGPATH_W) 'main.cc'; else $(CYGPATH_W) '$(srcdir)/main.cc'; fi`
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/barfoos-main.Tpo $(DEPDIR)/barfoos-main.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='main.cc' object='barfoos-main.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -c -o barfoos-main.obj `if test -f 'main.cc'; then $(CYGPATH_W) 'main.cc'; else $(CYGPATH_W) '$(srcdir)/main.cc'; fi`
-
-barfoos-image.o: image.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -MT barfoos-image.o -MD -MP -MF $(DEPDIR)/barfoos-image.Tpo -c -o barfoos-image.o `test -f 'image.cc' || echo '$(srcdir)/'`image.cc
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/barfoos-image.Tpo $(DEPDIR)/barfoos-image.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='image.cc' object='barfoos-image.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -c -o barfoos-image.o `test -f 'image.cc' || echo '$(srcdir)/'`image.cc
-
-barfoos-image.obj: image.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -MT barfoos-image.obj -MD -MP -MF $(DEPDIR)/barfoos-image.Tpo -c -o barfoos-image.obj `if test -f 'image.cc'; then $(CYGPATH_W) 'image.cc'; else $(CYGPATH_W) '$(srcdir)/image.cc'; fi`
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/barfoos-image.Tpo $(DEPDIR)/barfoos-image.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='image.cc' object='barfoos-image.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -c -o barfoos-image.obj `if test -f 'image.cc'; then $(CYGPATH_W) 'image.cc'; else $(CYGPATH_W) '$(srcdir)/image.cc'; fi`
-
-barfoos-gfx.o: gfx.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -MT barfoos-gfx.o -MD -MP -MF $(DEPDIR)/barfoos-gfx.Tpo -c -o barfoos-gfx.o `test -f 'gfx.cc' || echo '$(srcdir)/'`gfx.cc
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/barfoos-gfx.Tpo $(DEPDIR)/barfoos-gfx.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='gfx.cc' object='barfoos-gfx.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -c -o barfoos-gfx.o `test -f 'gfx.cc' || echo '$(srcdir)/'`gfx.cc
-
-barfoos-gfx.obj: gfx.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -MT barfoos-gfx.obj -MD -MP -MF $(DEPDIR)/barfoos-gfx.Tpo -c -o barfoos-gfx.obj `if test -f 'gfx.cc'; then $(CYGPATH_W) 'gfx.cc'; else $(CYGPATH_W) '$(srcdir)/gfx.cc'; fi`
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/barfoos-gfx.Tpo $(DEPDIR)/barfoos-gfx.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='gfx.cc' object='barfoos-gfx.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -c -o barfoos-gfx.obj `if test -f 'gfx.cc'; then $(CYGPATH_W) 'gfx.cc'; else $(CYGPATH_W) '$(srcdir)/gfx.cc'; fi`
-
-barfoos-gfxview.o: gfxview.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -MT barfoos-gfxview.o -MD -MP -MF $(DEPDIR)/barfoos-gfxview.Tpo -c -o barfoos-gfxview.o `test -f 'gfxview.cc' || echo '$(srcdir)/'`gfxview.cc
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/barfoos-gfxview.Tpo $(DEPDIR)/barfoos-gfxview.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='gfxview.cc' object='barfoos-gfxview.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -c -o barfoos-gfxview.o `test -f 'gfxview.cc' || echo '$(srcdir)/'`gfxview.cc
-
-barfoos-gfxview.obj: gfxview.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -MT barfoos-gfxview.obj -MD -MP -MF $(DEPDIR)/barfoos-gfxview.Tpo -c -o barfoos-gfxview.obj `if test -f 'gfxview.cc'; then $(CYGPATH_W) 'gfxview.cc'; else $(CYGPATH_W) '$(srcdir)/gfxview.cc'; fi`
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/barfoos-gfxview.Tpo $(DEPDIR)/barfoos-gfxview.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='gfxview.cc' object='barfoos-gfxview.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -c -o barfoos-gfxview.obj `if test -f 'gfxview.cc'; then $(CYGPATH_W) 'gfxview.cc'; else $(CYGPATH_W) '$(srcdir)/gfxview.cc'; fi`
-
-barfoos-gfxscreen.o: gfxscreen.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -MT barfoos-gfxscreen.o -MD -MP -MF $(DEPDIR)/barfoos-gfxscreen.Tpo -c -o barfoos-gfxscreen.o `test -f 'gfxscreen.cc' || echo '$(srcdir)/'`gfxscreen.cc
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/barfoos-gfxscreen.Tpo $(DEPDIR)/barfoos-gfxscreen.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='gfxscreen.cc' object='barfoos-gfxscreen.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -c -o barfoos-gfxscreen.o `test -f 'gfxscreen.cc' || echo '$(srcdir)/'`gfxscreen.cc
-
-barfoos-gfxscreen.obj: gfxscreen.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -MT barfoos-gfxscreen.obj -MD -MP -MF $(DEPDIR)/barfoos-gfxscreen.Tpo -c -o barfoos-gfxscreen.obj `if test -f 'gfxscreen.cc'; then $(CYGPATH_W) 'gfxscreen.cc'; else $(CYGPATH_W) '$(srcdir)/gfxscreen.cc'; fi`
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/barfoos-gfxscreen.Tpo $(DEPDIR)/barfoos-gfxscreen.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='gfxscreen.cc' object='barfoos-gfxscreen.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -c -o barfoos-gfxscreen.obj `if test -f 'gfxscreen.cc'; then $(CYGPATH_W) 'gfxscreen.cc'; else $(CYGPATH_W) '$(srcdir)/gfxscreen.cc'; fi`
-
-barfoos-vertexbuffer.o: vertexbuffer.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -MT barfoos-vertexbuffer.o -MD -MP -MF $(DEPDIR)/barfoos-vertexbuffer.Tpo -c -o barfoos-vertexbuffer.o `test -f 'vertexbuffer.cc' || echo '$(srcdir)/'`vertexbuffer.cc
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/barfoos-vertexbuffer.Tpo $(DEPDIR)/barfoos-vertexbuffer.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='vertexbuffer.cc' object='barfoos-vertexbuffer.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -c -o barfoos-vertexbuffer.o `test -f 'vertexbuffer.cc' || echo '$(srcdir)/'`vertexbuffer.cc
-
-barfoos-vertexbuffer.obj: vertexbuffer.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -MT barfoos-vertexbuffer.obj -MD -MP -MF $(DEPDIR)/barfoos-vertexbuffer.Tpo -c -o barfoos-vertexbuffer.obj `if test -f 'vertexbuffer.cc'; then $(CYGPATH_W) 'vertexbuffer.cc'; else $(CYGPATH_W) '$(srcdir)/vertexbuffer.cc'; fi`
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/barfoos-vertexbuffer.Tpo $(DEPDIR)/barfoos-vertexbuffer.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='vertexbuffer.cc' object='barfoos-vertexbuffer.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -c -o barfoos-vertexbuffer.obj `if test -f 'vertexbuffer.cc'; then $(CYGPATH_W) 'vertexbuffer.cc'; else $(CYGPATH_W) '$(srcdir)/vertexbuffer.cc'; fi`
-
 barfoos-audio.o: audio.cc
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -MT barfoos-audio.o -MD -MP -MF $(DEPDIR)/barfoos-audio.Tpo -c -o barfoos-audio.o `test -f 'audio.cc' || echo '$(srcdir)/'`audio.cc
 @am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/barfoos-audio.Tpo $(DEPDIR)/barfoos-audio.Po
@@ -651,300 +562,6 @@ barfoos-audio.obj: audio.cc
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='audio.cc' object='barfoos-audio.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -c -o barfoos-audio.obj `if test -f 'audio.cc'; then $(CYGPATH_W) 'audio.cc'; else $(CYGPATH_W) '$(srcdir)/audio.cc'; fi`
-
-barfoos-fileio.o: fileio.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -MT barfoos-fileio.o -MD -MP -MF $(DEPDIR)/barfoos-fileio.Tpo -c -o barfoos-fileio.o `test -f 'fileio.cc' || echo '$(srcdir)/'`fileio.cc
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/barfoos-fileio.Tpo $(DEPDIR)/barfoos-fileio.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='fileio.cc' object='barfoos-fileio.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -c -o barfoos-fileio.o `test -f 'fileio.cc' || echo '$(srcdir)/'`fileio.cc
-
-barfoos-fileio.obj: fileio.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -MT barfoos-fileio.obj -MD -MP -MF $(DEPDIR)/barfoos-fileio.Tpo -c -o barfoos-fileio.obj `if test -f 'fileio.cc'; then $(CYGPATH_W) 'fileio.cc'; else $(CYGPATH_W) '$(srcdir)/fileio.cc'; fi`
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/barfoos-fileio.Tpo $(DEPDIR)/barfoos-fileio.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='fileio.cc' object='barfoos-fileio.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -c -o barfoos-fileio.obj `if test -f 'fileio.cc'; then $(CYGPATH_W) 'fileio.cc'; else $(CYGPATH_W) '$(srcdir)/fileio.cc'; fi`
-
-barfoos-texture.o: texture.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -MT barfoos-texture.o -MD -MP -MF $(DEPDIR)/barfoos-texture.Tpo -c -o barfoos-texture.o `test -f 'texture.cc' || echo '$(srcdir)/'`texture.cc
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/barfoos-texture.Tpo $(DEPDIR)/barfoos-texture.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='texture.cc' object='barfoos-texture.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -c -o barfoos-texture.o `test -f 'texture.cc' || echo '$(srcdir)/'`texture.cc
-
-barfoos-texture.obj: texture.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -MT barfoos-texture.obj -MD -MP -MF $(DEPDIR)/barfoos-texture.Tpo -c -o barfoos-texture.obj `if test -f 'texture.cc'; then $(CYGPATH_W) 'texture.cc'; else $(CYGPATH_W) '$(srcdir)/texture.cc'; fi`
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/barfoos-texture.Tpo $(DEPDIR)/barfoos-texture.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='texture.cc' object='barfoos-texture.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -c -o barfoos-texture.obj `if test -f 'texture.cc'; then $(CYGPATH_W) 'texture.cc'; else $(CYGPATH_W) '$(srcdir)/texture.cc'; fi`
-
-barfoos-game.o: game.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -MT barfoos-game.o -MD -MP -MF $(DEPDIR)/barfoos-game.Tpo -c -o barfoos-game.o `test -f 'game.cc' || echo '$(srcdir)/'`game.cc
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/barfoos-game.Tpo $(DEPDIR)/barfoos-game.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='game.cc' object='barfoos-game.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -c -o barfoos-game.o `test -f 'game.cc' || echo '$(srcdir)/'`game.cc
-
-barfoos-game.obj: game.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -MT barfoos-game.obj -MD -MP -MF $(DEPDIR)/barfoos-game.Tpo -c -o barfoos-game.obj `if test -f 'game.cc'; then $(CYGPATH_W) 'game.cc'; else $(CYGPATH_W) '$(srcdir)/game.cc'; fi`
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/barfoos-game.Tpo $(DEPDIR)/barfoos-game.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='game.cc' object='barfoos-game.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -c -o barfoos-game.obj `if test -f 'game.cc'; then $(CYGPATH_W) 'game.cc'; else $(CYGPATH_W) '$(srcdir)/game.cc'; fi`
-
-barfoos-runningstate.o: runningstate.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -MT barfoos-runningstate.o -MD -MP -MF $(DEPDIR)/barfoos-runningstate.Tpo -c -o barfoos-runningstate.o `test -f 'runningstate.cc' || echo '$(srcdir)/'`runningstate.cc
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/barfoos-runningstate.Tpo $(DEPDIR)/barfoos-runningstate.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='runningstate.cc' object='barfoos-runningstate.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -c -o barfoos-runningstate.o `test -f 'runningstate.cc' || echo '$(srcdir)/'`runningstate.cc
-
-barfoos-runningstate.obj: runningstate.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -MT barfoos-runningstate.obj -MD -MP -MF $(DEPDIR)/barfoos-runningstate.Tpo -c -o barfoos-runningstate.obj `if test -f 'runningstate.cc'; then $(CYGPATH_W) 'runningstate.cc'; else $(CYGPATH_W) '$(srcdir)/runningstate.cc'; fi`
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/barfoos-runningstate.Tpo $(DEPDIR)/barfoos-runningstate.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='runningstate.cc' object='barfoos-runningstate.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -c -o barfoos-runningstate.obj `if test -f 'runningstate.cc'; then $(CYGPATH_W) 'runningstate.cc'; else $(CYGPATH_W) '$(srcdir)/runningstate.cc'; fi`
-
-barfoos-mainmenustate.o: mainmenustate.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -MT barfoos-mainmenustate.o -MD -MP -MF $(DEPDIR)/barfoos-mainmenustate.Tpo -c -o barfoos-mainmenustate.o `test -f 'mainmenustate.cc' || echo '$(srcdir)/'`mainmenustate.cc
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/barfoos-mainmenustate.Tpo $(DEPDIR)/barfoos-mainmenustate.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='mainmenustate.cc' object='barfoos-mainmenustate.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -c -o barfoos-mainmenustate.o `test -f 'mainmenustate.cc' || echo '$(srcdir)/'`mainmenustate.cc
-
-barfoos-mainmenustate.obj: mainmenustate.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -MT barfoos-mainmenustate.obj -MD -MP -MF $(DEPDIR)/barfoos-mainmenustate.Tpo -c -o barfoos-mainmenustate.obj `if test -f 'mainmenustate.cc'; then $(CYGPATH_W) 'mainmenustate.cc'; else $(CYGPATH_W) '$(srcdir)/mainmenustate.cc'; fi`
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/barfoos-mainmenustate.Tpo $(DEPDIR)/barfoos-mainmenustate.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='mainmenustate.cc' object='barfoos-mainmenustate.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -c -o barfoos-mainmenustate.obj `if test -f 'mainmenustate.cc'; then $(CYGPATH_W) 'mainmenustate.cc'; else $(CYGPATH_W) '$(srcdir)/mainmenustate.cc'; fi`
-
-barfoos-mainmenugui.o: mainmenugui.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -MT barfoos-mainmenugui.o -MD -MP -MF $(DEPDIR)/barfoos-mainmenugui.Tpo -c -o barfoos-mainmenugui.o `test -f 'mainmenugui.cc' || echo '$(srcdir)/'`mainmenugui.cc
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/barfoos-mainmenugui.Tpo $(DEPDIR)/barfoos-mainmenugui.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='mainmenugui.cc' object='barfoos-mainmenugui.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -c -o barfoos-mainmenugui.o `test -f 'mainmenugui.cc' || echo '$(srcdir)/'`mainmenugui.cc
-
-barfoos-mainmenugui.obj: mainmenugui.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -MT barfoos-mainmenugui.obj -MD -MP -MF $(DEPDIR)/barfoos-mainmenugui.Tpo -c -o barfoos-mainmenugui.obj `if test -f 'mainmenugui.cc'; then $(CYGPATH_W) 'mainmenugui.cc'; else $(CYGPATH_W) '$(srcdir)/mainmenugui.cc'; fi`
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/barfoos-mainmenugui.Tpo $(DEPDIR)/barfoos-mainmenugui.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='mainmenugui.cc' object='barfoos-mainmenugui.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -c -o barfoos-mainmenugui.obj `if test -f 'mainmenugui.cc'; then $(CYGPATH_W) 'mainmenugui.cc'; else $(CYGPATH_W) '$(srcdir)/mainmenugui.cc'; fi`
-
-barfoos-simplex.o: simplex.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -MT barfoos-simplex.o -MD -MP -MF $(DEPDIR)/barfoos-simplex.Tpo -c -o barfoos-simplex.o `test -f 'simplex.cc' || echo '$(srcdir)/'`simplex.cc
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/barfoos-simplex.Tpo $(DEPDIR)/barfoos-simplex.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='simplex.cc' object='barfoos-simplex.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -c -o barfoos-simplex.o `test -f 'simplex.cc' || echo '$(srcdir)/'`simplex.cc
-
-barfoos-simplex.obj: simplex.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -MT barfoos-simplex.obj -MD -MP -MF $(DEPDIR)/barfoos-simplex.Tpo -c -o barfoos-simplex.obj `if test -f 'simplex.cc'; then $(CYGPATH_W) 'simplex.cc'; else $(CYGPATH_W) '$(srcdir)/simplex.cc'; fi`
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/barfoos-simplex.Tpo $(DEPDIR)/barfoos-simplex.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='simplex.cc' object='barfoos-simplex.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -c -o barfoos-simplex.obj `if test -f 'simplex.cc'; then $(CYGPATH_W) 'simplex.cc'; else $(CYGPATH_W) '$(srcdir)/simplex.cc'; fi`
-
-barfoos-text.o: text.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -MT barfoos-text.o -MD -MP -MF $(DEPDIR)/barfoos-text.Tpo -c -o barfoos-text.o `test -f 'text.cc' || echo '$(srcdir)/'`text.cc
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/barfoos-text.Tpo $(DEPDIR)/barfoos-text.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='text.cc' object='barfoos-text.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -c -o barfoos-text.o `test -f 'text.cc' || echo '$(srcdir)/'`text.cc
-
-barfoos-text.obj: text.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -MT barfoos-text.obj -MD -MP -MF $(DEPDIR)/barfoos-text.Tpo -c -o barfoos-text.obj `if test -f 'text.cc'; then $(CYGPATH_W) 'text.cc'; else $(CYGPATH_W) '$(srcdir)/text.cc'; fi`
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/barfoos-text.Tpo $(DEPDIR)/barfoos-text.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='text.cc' object='barfoos-text.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -c -o barfoos-text.obj `if test -f 'text.cc'; then $(CYGPATH_W) 'text.cc'; else $(CYGPATH_W) '$(srcdir)/text.cc'; fi`
-
-barfoos-shader.o: shader.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -MT barfoos-shader.o -MD -MP -MF $(DEPDIR)/barfoos-shader.Tpo -c -o barfoos-shader.o `test -f 'shader.cc' || echo '$(srcdir)/'`shader.cc
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/barfoos-shader.Tpo $(DEPDIR)/barfoos-shader.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='shader.cc' object='barfoos-shader.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -c -o barfoos-shader.o `test -f 'shader.cc' || echo '$(srcdir)/'`shader.cc
-
-barfoos-shader.obj: shader.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -MT barfoos-shader.obj -MD -MP -MF $(DEPDIR)/barfoos-shader.Tpo -c -o barfoos-shader.obj `if test -f 'shader.cc'; then $(CYGPATH_W) 'shader.cc'; else $(CYGPATH_W) '$(srcdir)/shader.cc'; fi`
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/barfoos-shader.Tpo $(DEPDIR)/barfoos-shader.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='shader.cc' object='barfoos-shader.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -c -o barfoos-shader.obj `if test -f 'shader.cc'; then $(CYGPATH_W) 'shader.cc'; else $(CYGPATH_W) '$(srcdir)/shader.cc'; fi`
-
-barfoos-stats.o: stats.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -MT barfoos-stats.o -MD -MP -MF $(DEPDIR)/barfoos-stats.Tpo -c -o barfoos-stats.o `test -f 'stats.cc' || echo '$(srcdir)/'`stats.cc
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/barfoos-stats.Tpo $(DEPDIR)/barfoos-stats.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='stats.cc' object='barfoos-stats.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -c -o barfoos-stats.o `test -f 'stats.cc' || echo '$(srcdir)/'`stats.cc
-
-barfoos-stats.obj: stats.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -MT barfoos-stats.obj -MD -MP -MF $(DEPDIR)/barfoos-stats.Tpo -c -o barfoos-stats.obj `if test -f 'stats.cc'; then $(CYGPATH_W) 'stats.cc'; else $(CYGPATH_W) '$(srcdir)/stats.cc'; fi`
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/barfoos-stats.Tpo $(DEPDIR)/barfoos-stats.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='stats.cc' object='barfoos-stats.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -c -o barfoos-stats.obj `if test -f 'stats.cc'; then $(CYGPATH_W) 'stats.cc'; else $(CYGPATH_W) '$(srcdir)/stats.cc'; fi`
-
-barfoos-properties.o: properties.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -MT barfoos-properties.o -MD -MP -MF $(DEPDIR)/barfoos-properties.Tpo -c -o barfoos-properties.o `test -f 'properties.cc' || echo '$(srcdir)/'`properties.cc
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/barfoos-properties.Tpo $(DEPDIR)/barfoos-properties.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='properties.cc' object='barfoos-properties.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -c -o barfoos-properties.o `test -f 'properties.cc' || echo '$(srcdir)/'`properties.cc
-
-barfoos-properties.obj: properties.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -MT barfoos-properties.obj -MD -MP -MF $(DEPDIR)/barfoos-properties.Tpo -c -o barfoos-properties.obj `if test -f 'properties.cc'; then $(CYGPATH_W) 'properties.cc'; else $(CYGPATH_W) '$(srcdir)/properties.cc'; fi`
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/barfoos-properties.Tpo $(DEPDIR)/barfoos-properties.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='properties.cc' object='barfoos-properties.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -c -o barfoos-properties.obj `if test -f 'properties.cc'; then $(CYGPATH_W) 'properties.cc'; else $(CYGPATH_W) '$(srcdir)/properties.cc'; fi`
-
-barfoos-spell.o: spell.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -MT barfoos-spell.o -MD -MP -MF $(DEPDIR)/barfoos-spell.Tpo -c -o barfoos-spell.o `test -f 'spell.cc' || echo '$(srcdir)/'`spell.cc
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/barfoos-spell.Tpo $(DEPDIR)/barfoos-spell.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='spell.cc' object='barfoos-spell.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -c -o barfoos-spell.o `test -f 'spell.cc' || echo '$(srcdir)/'`spell.cc
-
-barfoos-spell.obj: spell.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -MT barfoos-spell.obj -MD -MP -MF $(DEPDIR)/barfoos-spell.Tpo -c -o barfoos-spell.obj `if test -f 'spell.cc'; then $(CYGPATH_W) 'spell.cc'; else $(CYGPATH_W) '$(srcdir)/spell.cc'; fi`
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/barfoos-spell.Tpo $(DEPDIR)/barfoos-spell.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='spell.cc' object='barfoos-spell.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -c -o barfoos-spell.obj `if test -f 'spell.cc'; then $(CYGPATH_W) 'spell.cc'; else $(CYGPATH_W) '$(srcdir)/spell.cc'; fi`
-
-barfoos-gui.o: gui.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -MT barfoos-gui.o -MD -MP -MF $(DEPDIR)/barfoos-gui.Tpo -c -o barfoos-gui.o `test -f 'gui.cc' || echo '$(srcdir)/'`gui.cc
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/barfoos-gui.Tpo $(DEPDIR)/barfoos-gui.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='gui.cc' object='barfoos-gui.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -c -o barfoos-gui.o `test -f 'gui.cc' || echo '$(srcdir)/'`gui.cc
-
-barfoos-gui.obj: gui.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -MT barfoos-gui.obj -MD -MP -MF $(DEPDIR)/barfoos-gui.Tpo -c -o barfoos-gui.obj `if test -f 'gui.cc'; then $(CYGPATH_W) 'gui.cc'; else $(CYGPATH_W) '$(srcdir)/gui.cc'; fi`
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/barfoos-gui.Tpo $(DEPDIR)/barfoos-gui.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='gui.cc' object='barfoos-gui.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -c -o barfoos-gui.obj `if test -f 'gui.cc'; then $(CYGPATH_W) 'gui.cc'; else $(CYGPATH_W) '$(srcdir)/gui.cc'; fi`
-
-barfoos-inventorygui.o: inventorygui.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -MT barfoos-inventorygui.o -MD -MP -MF $(DEPDIR)/barfoos-inventorygui.Tpo -c -o barfoos-inventorygui.o `test -f 'inventorygui.cc' || echo '$(srcdir)/'`inventorygui.cc
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/barfoos-inventorygui.Tpo $(DEPDIR)/barfoos-inventorygui.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='inventorygui.cc' object='barfoos-inventorygui.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -c -o barfoos-inventorygui.o `test -f 'inventorygui.cc' || echo '$(srcdir)/'`inventorygui.cc
-
-barfoos-inventorygui.obj: inventorygui.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -MT barfoos-inventorygui.obj -MD -MP -MF $(DEPDIR)/barfoos-inventorygui.Tpo -c -o barfoos-inventorygui.obj `if test -f 'inventorygui.cc'; then $(CYGPATH_W) 'inventorygui.cc'; else $(CYGPATH_W) '$(srcdir)/inventorygui.cc'; fi`
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/barfoos-inventorygui.Tpo $(DEPDIR)/barfoos-inventorygui.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='inventorygui.cc' object='barfoos-inventorygui.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -c -o barfoos-inventorygui.obj `if test -f 'inventorygui.cc'; then $(CYGPATH_W) 'inventorygui.cc'; else $(CYGPATH_W) '$(srcdir)/inventorygui.cc'; fi`
-
-barfoos-entity.o: entity.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -MT barfoos-entity.o -MD -MP -MF $(DEPDIR)/barfoos-entity.Tpo -c -o barfoos-entity.o `test -f 'entity.cc' || echo '$(srcdir)/'`entity.cc
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/barfoos-entity.Tpo $(DEPDIR)/barfoos-entity.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='entity.cc' object='barfoos-entity.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -c -o barfoos-entity.o `test -f 'entity.cc' || echo '$(srcdir)/'`entity.cc
-
-barfoos-entity.obj: entity.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -MT barfoos-entity.obj -MD -MP -MF $(DEPDIR)/barfoos-entity.Tpo -c -o barfoos-entity.obj `if test -f 'entity.cc'; then $(CYGPATH_W) 'entity.cc'; else $(CYGPATH_W) '$(srcdir)/entity.cc'; fi`
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/barfoos-entity.Tpo $(DEPDIR)/barfoos-entity.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='entity.cc' object='barfoos-entity.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -c -o barfoos-entity.obj `if test -f 'entity.cc'; then $(CYGPATH_W) 'entity.cc'; else $(CYGPATH_W) '$(srcdir)/entity.cc'; fi`
-
-barfoos-mob.o: mob.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -MT barfoos-mob.o -MD -MP -MF $(DEPDIR)/barfoos-mob.Tpo -c -o barfoos-mob.o `test -f 'mob.cc' || echo '$(srcdir)/'`mob.cc
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/barfoos-mob.Tpo $(DEPDIR)/barfoos-mob.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='mob.cc' object='barfoos-mob.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -c -o barfoos-mob.o `test -f 'mob.cc' || echo '$(srcdir)/'`mob.cc
-
-barfoos-mob.obj: mob.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -MT barfoos-mob.obj -MD -MP -MF $(DEPDIR)/barfoos-mob.Tpo -c -o barfoos-mob.obj `if test -f 'mob.cc'; then $(CYGPATH_W) 'mob.cc'; else $(CYGPATH_W) '$(srcdir)/mob.cc'; fi`
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/barfoos-mob.Tpo $(DEPDIR)/barfoos-mob.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='mob.cc' object='barfoos-mob.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -c -o barfoos-mob.obj `if test -f 'mob.cc'; then $(CYGPATH_W) 'mob.cc'; else $(CYGPATH_W) '$(srcdir)/mob.cc'; fi`
-
-barfoos-monster.o: monster.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -MT barfoos-monster.o -MD -MP -MF $(DEPDIR)/barfoos-monster.Tpo -c -o barfoos-monster.o `test -f 'monster.cc' || echo '$(srcdir)/'`monster.cc
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/barfoos-monster.Tpo $(DEPDIR)/barfoos-monster.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='monster.cc' object='barfoos-monster.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -c -o barfoos-monster.o `test -f 'monster.cc' || echo '$(srcdir)/'`monster.cc
-
-barfoos-monster.obj: monster.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -MT barfoos-monster.obj -MD -MP -MF $(DEPDIR)/barfoos-monster.Tpo -c -o barfoos-monster.obj `if test -f 'monster.cc'; then $(CYGPATH_W) 'monster.cc'; else $(CYGPATH_W) '$(srcdir)/monster.cc'; fi`
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/barfoos-monster.Tpo $(DEPDIR)/barfoos-monster.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='monster.cc' object='barfoos-monster.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -c -o barfoos-monster.obj `if test -f 'monster.cc'; then $(CYGPATH_W) 'monster.cc'; else $(CYGPATH_W) '$(srcdir)/monster.cc'; fi`
-
-barfoos-player.o: player.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -MT barfoos-player.o -MD -MP -MF $(DEPDIR)/barfoos-player.Tpo -c -o barfoos-player.o `test -f 'player.cc' || echo '$(srcdir)/'`player.cc
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/barfoos-player.Tpo $(DEPDIR)/barfoos-player.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='player.cc' object='barfoos-player.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -c -o barfoos-player.o `test -f 'player.cc' || echo '$(srcdir)/'`player.cc
-
-barfoos-player.obj: player.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -MT barfoos-player.obj -MD -MP -MF $(DEPDIR)/barfoos-player.Tpo -c -o barfoos-player.obj `if test -f 'player.cc'; then $(CYGPATH_W) 'player.cc'; else $(CYGPATH_W) '$(srcdir)/player.cc'; fi`
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/barfoos-player.Tpo $(DEPDIR)/barfoos-player.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='player.cc' object='barfoos-player.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -c -o barfoos-player.obj `if test -f 'player.cc'; then $(CYGPATH_W) 'player.cc'; else $(CYGPATH_W) '$(srcdir)/player.cc'; fi`
-
-barfoos-itementity.o: itementity.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -MT barfoos-itementity.o -MD -MP -MF $(DEPDIR)/barfoos-itementity.Tpo -c -o barfoos-itementity.o `test -f 'itementity.cc' || echo '$(srcdir)/'`itementity.cc
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/barfoos-itementity.Tpo $(DEPDIR)/barfoos-itementity.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='itementity.cc' object='barfoos-itementity.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -c -o barfoos-itementity.o `test -f 'itementity.cc' || echo '$(srcdir)/'`itementity.cc
-
-barfoos-itementity.obj: itementity.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -MT barfoos-itementity.obj -MD -MP -MF $(DEPDIR)/barfoos-itementity.Tpo -c -o barfoos-itementity.obj `if test -f 'itementity.cc'; then $(CYGPATH_W) 'itementity.cc'; else $(CYGPATH_W) '$(srcdir)/itementity.cc'; fi`
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/barfoos-itementity.Tpo $(DEPDIR)/barfoos-itementity.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='itementity.cc' object='barfoos-itementity.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -c -o barfoos-itementity.obj `if test -f 'itementity.cc'; then $(CYGPATH_W) 'itementity.cc'; else $(CYGPATH_W) '$(srcdir)/itementity.cc'; fi`
-
-barfoos-projectile.o: projectile.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -MT barfoos-projectile.o -MD -MP -MF $(DEPDIR)/barfoos-projectile.Tpo -c -o barfoos-projectile.o `test -f 'projectile.cc' || echo '$(srcdir)/'`projectile.cc
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/barfoos-projectile.Tpo $(DEPDIR)/barfoos-projectile.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='projectile.cc' object='barfoos-projectile.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -c -o barfoos-projectile.o `test -f 'projectile.cc' || echo '$(srcdir)/'`projectile.cc
-
-barfoos-projectile.obj: projectile.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -MT barfoos-projectile.obj -MD -MP -MF $(DEPDIR)/barfoos-projectile.Tpo -c -o barfoos-projectile.obj `if test -f 'projectile.cc'; then $(CYGPATH_W) 'projectile.cc'; else $(CYGPATH_W) '$(srcdir)/projectile.cc'; fi`
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/barfoos-projectile.Tpo $(DEPDIR)/barfoos-projectile.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='projectile.cc' object='barfoos-projectile.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -c -o barfoos-projectile.obj `if test -f 'projectile.cc'; then $(CYGPATH_W) 'projectile.cc'; else $(CYGPATH_W) '$(srcdir)/projectile.cc'; fi`
-
-barfoos-trigger.o: trigger.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -MT barfoos-trigger.o -MD -MP -MF $(DEPDIR)/barfoos-trigger.Tpo -c -o barfoos-trigger.o `test -f 'trigger.cc' || echo '$(srcdir)/'`trigger.cc
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/barfoos-trigger.Tpo $(DEPDIR)/barfoos-trigger.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='trigger.cc' object='barfoos-trigger.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -c -o barfoos-trigger.o `test -f 'trigger.cc' || echo '$(srcdir)/'`trigger.cc
-
-barfoos-trigger.obj: trigger.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -MT barfoos-trigger.obj -MD -MP -MF $(DEPDIR)/barfoos-trigger.Tpo -c -o barfoos-trigger.obj `if test -f 'trigger.cc'; then $(CYGPATH_W) 'trigger.cc'; else $(CYGPATH_W) '$(srcdir)/trigger.cc'; fi`
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/barfoos-trigger.Tpo $(DEPDIR)/barfoos-trigger.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='trigger.cc' object='barfoos-trigger.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -c -o barfoos-trigger.obj `if test -f 'trigger.cc'; then $(CYGPATH_W) 'trigger.cc'; else $(CYGPATH_W) '$(srcdir)/trigger.cc'; fi`
 
 barfoos-cell.o: cell.cc
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -MT barfoos-cell.o -MD -MP -MF $(DEPDIR)/barfoos-cell.Tpo -c -o barfoos-cell.o `test -f 'cell.cc' || echo '$(srcdir)/'`cell.cc
@@ -988,104 +605,6 @@ barfoos-cellrender.obj: cellrender.cc
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -c -o barfoos-cellrender.obj `if test -f 'cellrender.cc'; then $(CYGPATH_W) 'cellrender.cc'; else $(CYGPATH_W) '$(srcdir)/cellrender.cc'; fi`
 
-barfoos-feature.o: feature.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -MT barfoos-feature.o -MD -MP -MF $(DEPDIR)/barfoos-feature.Tpo -c -o barfoos-feature.o `test -f 'feature.cc' || echo '$(srcdir)/'`feature.cc
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/barfoos-feature.Tpo $(DEPDIR)/barfoos-feature.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='feature.cc' object='barfoos-feature.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -c -o barfoos-feature.o `test -f 'feature.cc' || echo '$(srcdir)/'`feature.cc
-
-barfoos-feature.obj: feature.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -MT barfoos-feature.obj -MD -MP -MF $(DEPDIR)/barfoos-feature.Tpo -c -o barfoos-feature.obj `if test -f 'feature.cc'; then $(CYGPATH_W) 'feature.cc'; else $(CYGPATH_W) '$(srcdir)/feature.cc'; fi`
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/barfoos-feature.Tpo $(DEPDIR)/barfoos-feature.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='feature.cc' object='barfoos-feature.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -c -o barfoos-feature.obj `if test -f 'feature.cc'; then $(CYGPATH_W) 'feature.cc'; else $(CYGPATH_W) '$(srcdir)/feature.cc'; fi`
-
-barfoos-world.o: world.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -MT barfoos-world.o -MD -MP -MF $(DEPDIR)/barfoos-world.Tpo -c -o barfoos-world.o `test -f 'world.cc' || echo '$(srcdir)/'`world.cc
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/barfoos-world.Tpo $(DEPDIR)/barfoos-world.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='world.cc' object='barfoos-world.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -c -o barfoos-world.o `test -f 'world.cc' || echo '$(srcdir)/'`world.cc
-
-barfoos-world.obj: world.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -MT barfoos-world.obj -MD -MP -MF $(DEPDIR)/barfoos-world.Tpo -c -o barfoos-world.obj `if test -f 'world.cc'; then $(CYGPATH_W) 'world.cc'; else $(CYGPATH_W) '$(srcdir)/world.cc'; fi`
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/barfoos-world.Tpo $(DEPDIR)/barfoos-world.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='world.cc' object='barfoos-world.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -c -o barfoos-world.obj `if test -f 'world.cc'; then $(CYGPATH_W) 'world.cc'; else $(CYGPATH_W) '$(srcdir)/world.cc'; fi`
-
-barfoos-worldedit.o: worldedit.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -MT barfoos-worldedit.o -MD -MP -MF $(DEPDIR)/barfoos-worldedit.Tpo -c -o barfoos-worldedit.o `test -f 'worldedit.cc' || echo '$(srcdir)/'`worldedit.cc
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/barfoos-worldedit.Tpo $(DEPDIR)/barfoos-worldedit.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='worldedit.cc' object='barfoos-worldedit.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -c -o barfoos-worldedit.o `test -f 'worldedit.cc' || echo '$(srcdir)/'`worldedit.cc
-
-barfoos-worldedit.obj: worldedit.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -MT barfoos-worldedit.obj -MD -MP -MF $(DEPDIR)/barfoos-worldedit.Tpo -c -o barfoos-worldedit.obj `if test -f 'worldedit.cc'; then $(CYGPATH_W) 'worldedit.cc'; else $(CYGPATH_W) '$(srcdir)/worldedit.cc'; fi`
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/barfoos-worldedit.Tpo $(DEPDIR)/barfoos-worldedit.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='worldedit.cc' object='barfoos-worldedit.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -c -o barfoos-worldedit.obj `if test -f 'worldedit.cc'; then $(CYGPATH_W) 'worldedit.cc'; else $(CYGPATH_W) '$(srcdir)/worldedit.cc'; fi`
-
-barfoos-worldbuilder.o: worldbuilder.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -MT barfoos-worldbuilder.o -MD -MP -MF $(DEPDIR)/barfoos-worldbuilder.Tpo -c -o barfoos-worldbuilder.o `test -f 'worldbuilder.cc' || echo '$(srcdir)/'`worldbuilder.cc
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/barfoos-worldbuilder.Tpo $(DEPDIR)/barfoos-worldbuilder.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='worldbuilder.cc' object='barfoos-worldbuilder.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -c -o barfoos-worldbuilder.o `test -f 'worldbuilder.cc' || echo '$(srcdir)/'`worldbuilder.cc
-
-barfoos-worldbuilder.obj: worldbuilder.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -MT barfoos-worldbuilder.obj -MD -MP -MF $(DEPDIR)/barfoos-worldbuilder.Tpo -c -o barfoos-worldbuilder.obj `if test -f 'worldbuilder.cc'; then $(CYGPATH_W) 'worldbuilder.cc'; else $(CYGPATH_W) '$(srcdir)/worldbuilder.cc'; fi`
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/barfoos-worldbuilder.Tpo $(DEPDIR)/barfoos-worldbuilder.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='worldbuilder.cc' object='barfoos-worldbuilder.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -c -o barfoos-worldbuilder.obj `if test -f 'worldbuilder.cc'; then $(CYGPATH_W) 'worldbuilder.cc'; else $(CYGPATH_W) '$(srcdir)/worldbuilder.cc'; fi`
-
-barfoos-item.o: item.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -MT barfoos-item.o -MD -MP -MF $(DEPDIR)/barfoos-item.Tpo -c -o barfoos-item.o `test -f 'item.cc' || echo '$(srcdir)/'`item.cc
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/barfoos-item.Tpo $(DEPDIR)/barfoos-item.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='item.cc' object='barfoos-item.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -c -o barfoos-item.o `test -f 'item.cc' || echo '$(srcdir)/'`item.cc
-
-barfoos-item.obj: item.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -MT barfoos-item.obj -MD -MP -MF $(DEPDIR)/barfoos-item.Tpo -c -o barfoos-item.obj `if test -f 'item.cc'; then $(CYGPATH_W) 'item.cc'; else $(CYGPATH_W) '$(srcdir)/item.cc'; fi`
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/barfoos-item.Tpo $(DEPDIR)/barfoos-item.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='item.cc' object='barfoos-item.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -c -o barfoos-item.obj `if test -f 'item.cc'; then $(CYGPATH_W) 'item.cc'; else $(CYGPATH_W) '$(srcdir)/item.cc'; fi`
-
-barfoos-itemproperties.o: itemproperties.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -MT barfoos-itemproperties.o -MD -MP -MF $(DEPDIR)/barfoos-itemproperties.Tpo -c -o barfoos-itemproperties.o `test -f 'itemproperties.cc' || echo '$(srcdir)/'`itemproperties.cc
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/barfoos-itemproperties.Tpo $(DEPDIR)/barfoos-itemproperties.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='itemproperties.cc' object='barfoos-itemproperties.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -c -o barfoos-itemproperties.o `test -f 'itemproperties.cc' || echo '$(srcdir)/'`itemproperties.cc
-
-barfoos-itemproperties.obj: itemproperties.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -MT barfoos-itemproperties.obj -MD -MP -MF $(DEPDIR)/barfoos-itemproperties.Tpo -c -o barfoos-itemproperties.obj `if test -f 'itemproperties.cc'; then $(CYGPATH_W) 'itemproperties.cc'; else $(CYGPATH_W) '$(srcdir)/itemproperties.cc'; fi`
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/barfoos-itemproperties.Tpo $(DEPDIR)/barfoos-itemproperties.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='itemproperties.cc' object='barfoos-itemproperties.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -c -o barfoos-itemproperties.obj `if test -f 'itemproperties.cc'; then $(CYGPATH_W) 'itemproperties.cc'; else $(CYGPATH_W) '$(srcdir)/itemproperties.cc'; fi`
-
-barfoos-inventory.o: inventory.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -MT barfoos-inventory.o -MD -MP -MF $(DEPDIR)/barfoos-inventory.Tpo -c -o barfoos-inventory.o `test -f 'inventory.cc' || echo '$(srcdir)/'`inventory.cc
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/barfoos-inventory.Tpo $(DEPDIR)/barfoos-inventory.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='inventory.cc' object='barfoos-inventory.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -c -o barfoos-inventory.o `test -f 'inventory.cc' || echo '$(srcdir)/'`inventory.cc
-
-barfoos-inventory.obj: inventory.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -MT barfoos-inventory.obj -MD -MP -MF $(DEPDIR)/barfoos-inventory.Tpo -c -o barfoos-inventory.obj `if test -f 'inventory.cc'; then $(CYGPATH_W) 'inventory.cc'; else $(CYGPATH_W) '$(srcdir)/inventory.cc'; fi`
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/barfoos-inventory.Tpo $(DEPDIR)/barfoos-inventory.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='inventory.cc' object='barfoos-inventory.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -c -o barfoos-inventory.obj `if test -f 'inventory.cc'; then $(CYGPATH_W) 'inventory.cc'; else $(CYGPATH_W) '$(srcdir)/inventory.cc'; fi`
-
 barfoos-effect.o: effect.cc
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -MT barfoos-effect.o -MD -MP -MF $(DEPDIR)/barfoos-effect.Tpo -c -o barfoos-effect.o `test -f 'effect.cc' || echo '$(srcdir)/'`effect.cc
 @am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/barfoos-effect.Tpo $(DEPDIR)/barfoos-effect.Po
@@ -1100,47 +619,131 @@ barfoos-effect.obj: effect.cc
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -c -o barfoos-effect.obj `if test -f 'effect.cc'; then $(CYGPATH_W) 'effect.cc'; else $(CYGPATH_W) '$(srcdir)/effect.cc'; fi`
 
-barfoos-util.o: util.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -MT barfoos-util.o -MD -MP -MF $(DEPDIR)/barfoos-util.Tpo -c -o barfoos-util.o `test -f 'util.cc' || echo '$(srcdir)/'`util.cc
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/barfoos-util.Tpo $(DEPDIR)/barfoos-util.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='util.cc' object='barfoos-util.o' libtool=no @AMDEPBACKSLASH@
+barfoos-entity.o: entity.cc
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -MT barfoos-entity.o -MD -MP -MF $(DEPDIR)/barfoos-entity.Tpo -c -o barfoos-entity.o `test -f 'entity.cc' || echo '$(srcdir)/'`entity.cc
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/barfoos-entity.Tpo $(DEPDIR)/barfoos-entity.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='entity.cc' object='barfoos-entity.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -c -o barfoos-util.o `test -f 'util.cc' || echo '$(srcdir)/'`util.cc
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -c -o barfoos-entity.o `test -f 'entity.cc' || echo '$(srcdir)/'`entity.cc
 
-barfoos-util.obj: util.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -MT barfoos-util.obj -MD -MP -MF $(DEPDIR)/barfoos-util.Tpo -c -o barfoos-util.obj `if test -f 'util.cc'; then $(CYGPATH_W) 'util.cc'; else $(CYGPATH_W) '$(srcdir)/util.cc'; fi`
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/barfoos-util.Tpo $(DEPDIR)/barfoos-util.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='util.cc' object='barfoos-util.obj' libtool=no @AMDEPBACKSLASH@
+barfoos-entity.obj: entity.cc
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -MT barfoos-entity.obj -MD -MP -MF $(DEPDIR)/barfoos-entity.Tpo -c -o barfoos-entity.obj `if test -f 'entity.cc'; then $(CYGPATH_W) 'entity.cc'; else $(CYGPATH_W) '$(srcdir)/entity.cc'; fi`
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/barfoos-entity.Tpo $(DEPDIR)/barfoos-entity.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='entity.cc' object='barfoos-entity.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -c -o barfoos-util.obj `if test -f 'util.cc'; then $(CYGPATH_W) 'util.cc'; else $(CYGPATH_W) '$(srcdir)/util.cc'; fi`
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -c -o barfoos-entity.obj `if test -f 'entity.cc'; then $(CYGPATH_W) 'entity.cc'; else $(CYGPATH_W) '$(srcdir)/entity.cc'; fi`
 
-barfoos-serializer.o: serializer.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -MT barfoos-serializer.o -MD -MP -MF $(DEPDIR)/barfoos-serializer.Tpo -c -o barfoos-serializer.o `test -f 'serializer.cc' || echo '$(srcdir)/'`serializer.cc
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/barfoos-serializer.Tpo $(DEPDIR)/barfoos-serializer.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='serializer.cc' object='barfoos-serializer.o' libtool=no @AMDEPBACKSLASH@
+barfoos-feature.o: feature.cc
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -MT barfoos-feature.o -MD -MP -MF $(DEPDIR)/barfoos-feature.Tpo -c -o barfoos-feature.o `test -f 'feature.cc' || echo '$(srcdir)/'`feature.cc
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/barfoos-feature.Tpo $(DEPDIR)/barfoos-feature.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='feature.cc' object='barfoos-feature.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -c -o barfoos-serializer.o `test -f 'serializer.cc' || echo '$(srcdir)/'`serializer.cc
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -c -o barfoos-feature.o `test -f 'feature.cc' || echo '$(srcdir)/'`feature.cc
 
-barfoos-serializer.obj: serializer.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -MT barfoos-serializer.obj -MD -MP -MF $(DEPDIR)/barfoos-serializer.Tpo -c -o barfoos-serializer.obj `if test -f 'serializer.cc'; then $(CYGPATH_W) 'serializer.cc'; else $(CYGPATH_W) '$(srcdir)/serializer.cc'; fi`
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/barfoos-serializer.Tpo $(DEPDIR)/barfoos-serializer.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='serializer.cc' object='barfoos-serializer.obj' libtool=no @AMDEPBACKSLASH@
+barfoos-feature.obj: feature.cc
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -MT barfoos-feature.obj -MD -MP -MF $(DEPDIR)/barfoos-feature.Tpo -c -o barfoos-feature.obj `if test -f 'feature.cc'; then $(CYGPATH_W) 'feature.cc'; else $(CYGPATH_W) '$(srcdir)/feature.cc'; fi`
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/barfoos-feature.Tpo $(DEPDIR)/barfoos-feature.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='feature.cc' object='barfoos-feature.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -c -o barfoos-serializer.obj `if test -f 'serializer.cc'; then $(CYGPATH_W) 'serializer.cc'; else $(CYGPATH_W) '$(srcdir)/serializer.cc'; fi`
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -c -o barfoos-feature.obj `if test -f 'feature.cc'; then $(CYGPATH_W) 'feature.cc'; else $(CYGPATH_W) '$(srcdir)/feature.cc'; fi`
 
-barfoos-deserializer.o: deserializer.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -MT barfoos-deserializer.o -MD -MP -MF $(DEPDIR)/barfoos-deserializer.Tpo -c -o barfoos-deserializer.o `test -f 'deserializer.cc' || echo '$(srcdir)/'`deserializer.cc
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/barfoos-deserializer.Tpo $(DEPDIR)/barfoos-deserializer.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='deserializer.cc' object='barfoos-deserializer.o' libtool=no @AMDEPBACKSLASH@
+barfoos-fileio.o: fileio.cc
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -MT barfoos-fileio.o -MD -MP -MF $(DEPDIR)/barfoos-fileio.Tpo -c -o barfoos-fileio.o `test -f 'fileio.cc' || echo '$(srcdir)/'`fileio.cc
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/barfoos-fileio.Tpo $(DEPDIR)/barfoos-fileio.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='fileio.cc' object='barfoos-fileio.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -c -o barfoos-deserializer.o `test -f 'deserializer.cc' || echo '$(srcdir)/'`deserializer.cc
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -c -o barfoos-fileio.o `test -f 'fileio.cc' || echo '$(srcdir)/'`fileio.cc
 
-barfoos-deserializer.obj: deserializer.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -MT barfoos-deserializer.obj -MD -MP -MF $(DEPDIR)/barfoos-deserializer.Tpo -c -o barfoos-deserializer.obj `if test -f 'deserializer.cc'; then $(CYGPATH_W) 'deserializer.cc'; else $(CYGPATH_W) '$(srcdir)/deserializer.cc'; fi`
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/barfoos-deserializer.Tpo $(DEPDIR)/barfoos-deserializer.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='deserializer.cc' object='barfoos-deserializer.obj' libtool=no @AMDEPBACKSLASH@
+barfoos-fileio.obj: fileio.cc
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -MT barfoos-fileio.obj -MD -MP -MF $(DEPDIR)/barfoos-fileio.Tpo -c -o barfoos-fileio.obj `if test -f 'fileio.cc'; then $(CYGPATH_W) 'fileio.cc'; else $(CYGPATH_W) '$(srcdir)/fileio.cc'; fi`
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/barfoos-fileio.Tpo $(DEPDIR)/barfoos-fileio.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='fileio.cc' object='barfoos-fileio.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -c -o barfoos-deserializer.obj `if test -f 'deserializer.cc'; then $(CYGPATH_W) 'deserializer.cc'; else $(CYGPATH_W) '$(srcdir)/deserializer.cc'; fi`
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -c -o barfoos-fileio.obj `if test -f 'fileio.cc'; then $(CYGPATH_W) 'fileio.cc'; else $(CYGPATH_W) '$(srcdir)/fileio.cc'; fi`
+
+barfoos-game.o: game.cc
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -MT barfoos-game.o -MD -MP -MF $(DEPDIR)/barfoos-game.Tpo -c -o barfoos-game.o `test -f 'game.cc' || echo '$(srcdir)/'`game.cc
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/barfoos-game.Tpo $(DEPDIR)/barfoos-game.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='game.cc' object='barfoos-game.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -c -o barfoos-game.o `test -f 'game.cc' || echo '$(srcdir)/'`game.cc
+
+barfoos-game.obj: game.cc
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -MT barfoos-game.obj -MD -MP -MF $(DEPDIR)/barfoos-game.Tpo -c -o barfoos-game.obj `if test -f 'game.cc'; then $(CYGPATH_W) 'game.cc'; else $(CYGPATH_W) '$(srcdir)/game.cc'; fi`
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/barfoos-game.Tpo $(DEPDIR)/barfoos-game.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='game.cc' object='barfoos-game.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -c -o barfoos-game.obj `if test -f 'game.cc'; then $(CYGPATH_W) 'game.cc'; else $(CYGPATH_W) '$(srcdir)/game.cc'; fi`
+
+barfoos-gfx.o: gfx.cc
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -MT barfoos-gfx.o -MD -MP -MF $(DEPDIR)/barfoos-gfx.Tpo -c -o barfoos-gfx.o `test -f 'gfx.cc' || echo '$(srcdir)/'`gfx.cc
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/barfoos-gfx.Tpo $(DEPDIR)/barfoos-gfx.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='gfx.cc' object='barfoos-gfx.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -c -o barfoos-gfx.o `test -f 'gfx.cc' || echo '$(srcdir)/'`gfx.cc
+
+barfoos-gfx.obj: gfx.cc
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -MT barfoos-gfx.obj -MD -MP -MF $(DEPDIR)/barfoos-gfx.Tpo -c -o barfoos-gfx.obj `if test -f 'gfx.cc'; then $(CYGPATH_W) 'gfx.cc'; else $(CYGPATH_W) '$(srcdir)/gfx.cc'; fi`
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/barfoos-gfx.Tpo $(DEPDIR)/barfoos-gfx.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='gfx.cc' object='barfoos-gfx.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -c -o barfoos-gfx.obj `if test -f 'gfx.cc'; then $(CYGPATH_W) 'gfx.cc'; else $(CYGPATH_W) '$(srcdir)/gfx.cc'; fi`
+
+barfoos-gfxscreen.o: gfxscreen.cc
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -MT barfoos-gfxscreen.o -MD -MP -MF $(DEPDIR)/barfoos-gfxscreen.Tpo -c -o barfoos-gfxscreen.o `test -f 'gfxscreen.cc' || echo '$(srcdir)/'`gfxscreen.cc
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/barfoos-gfxscreen.Tpo $(DEPDIR)/barfoos-gfxscreen.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='gfxscreen.cc' object='barfoos-gfxscreen.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -c -o barfoos-gfxscreen.o `test -f 'gfxscreen.cc' || echo '$(srcdir)/'`gfxscreen.cc
+
+barfoos-gfxscreen.obj: gfxscreen.cc
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -MT barfoos-gfxscreen.obj -MD -MP -MF $(DEPDIR)/barfoos-gfxscreen.Tpo -c -o barfoos-gfxscreen.obj `if test -f 'gfxscreen.cc'; then $(CYGPATH_W) 'gfxscreen.cc'; else $(CYGPATH_W) '$(srcdir)/gfxscreen.cc'; fi`
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/barfoos-gfxscreen.Tpo $(DEPDIR)/barfoos-gfxscreen.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='gfxscreen.cc' object='barfoos-gfxscreen.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -c -o barfoos-gfxscreen.obj `if test -f 'gfxscreen.cc'; then $(CYGPATH_W) 'gfxscreen.cc'; else $(CYGPATH_W) '$(srcdir)/gfxscreen.cc'; fi`
+
+barfoos-gfxview.o: gfxview.cc
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -MT barfoos-gfxview.o -MD -MP -MF $(DEPDIR)/barfoos-gfxview.Tpo -c -o barfoos-gfxview.o `test -f 'gfxview.cc' || echo '$(srcdir)/'`gfxview.cc
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/barfoos-gfxview.Tpo $(DEPDIR)/barfoos-gfxview.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='gfxview.cc' object='barfoos-gfxview.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -c -o barfoos-gfxview.o `test -f 'gfxview.cc' || echo '$(srcdir)/'`gfxview.cc
+
+barfoos-gfxview.obj: gfxview.cc
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -MT barfoos-gfxview.obj -MD -MP -MF $(DEPDIR)/barfoos-gfxview.Tpo -c -o barfoos-gfxview.obj `if test -f 'gfxview.cc'; then $(CYGPATH_W) 'gfxview.cc'; else $(CYGPATH_W) '$(srcdir)/gfxview.cc'; fi`
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/barfoos-gfxview.Tpo $(DEPDIR)/barfoos-gfxview.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='gfxview.cc' object='barfoos-gfxview.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -c -o barfoos-gfxview.obj `if test -f 'gfxview.cc'; then $(CYGPATH_W) 'gfxview.cc'; else $(CYGPATH_W) '$(srcdir)/gfxview.cc'; fi`
+
+barfoos-gui.o: gui.cc
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -MT barfoos-gui.o -MD -MP -MF $(DEPDIR)/barfoos-gui.Tpo -c -o barfoos-gui.o `test -f 'gui.cc' || echo '$(srcdir)/'`gui.cc
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/barfoos-gui.Tpo $(DEPDIR)/barfoos-gui.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='gui.cc' object='barfoos-gui.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -c -o barfoos-gui.o `test -f 'gui.cc' || echo '$(srcdir)/'`gui.cc
+
+barfoos-gui.obj: gui.cc
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -MT barfoos-gui.obj -MD -MP -MF $(DEPDIR)/barfoos-gui.Tpo -c -o barfoos-gui.obj `if test -f 'gui.cc'; then $(CYGPATH_W) 'gui.cc'; else $(CYGPATH_W) '$(srcdir)/gui.cc'; fi`
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/barfoos-gui.Tpo $(DEPDIR)/barfoos-gui.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='gui.cc' object='barfoos-gui.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -c -o barfoos-gui.obj `if test -f 'gui.cc'; then $(CYGPATH_W) 'gui.cc'; else $(CYGPATH_W) '$(srcdir)/gui.cc'; fi`
+
+barfoos-image.o: image.cc
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -MT barfoos-image.o -MD -MP -MF $(DEPDIR)/barfoos-image.Tpo -c -o barfoos-image.o `test -f 'image.cc' || echo '$(srcdir)/'`image.cc
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/barfoos-image.Tpo $(DEPDIR)/barfoos-image.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='image.cc' object='barfoos-image.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -c -o barfoos-image.o `test -f 'image.cc' || echo '$(srcdir)/'`image.cc
+
+barfoos-image.obj: image.cc
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -MT barfoos-image.obj -MD -MP -MF $(DEPDIR)/barfoos-image.Tpo -c -o barfoos-image.obj `if test -f 'image.cc'; then $(CYGPATH_W) 'image.cc'; else $(CYGPATH_W) '$(srcdir)/image.cc'; fi`
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/barfoos-image.Tpo $(DEPDIR)/barfoos-image.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='image.cc' object='barfoos-image.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -c -o barfoos-image.obj `if test -f 'image.cc'; then $(CYGPATH_W) 'image.cc'; else $(CYGPATH_W) '$(srcdir)/image.cc'; fi`
 
 barfoos-input.o: input.cc
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -MT barfoos-input.o -MD -MP -MF $(DEPDIR)/barfoos-input.Tpo -c -o barfoos-input.o `test -f 'input.cc' || echo '$(srcdir)/'`input.cc
@@ -1156,19 +759,75 @@ barfoos-input.obj: input.cc
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -c -o barfoos-input.obj `if test -f 'input.cc'; then $(CYGPATH_W) 'input.cc'; else $(CYGPATH_W) '$(srcdir)/input.cc'; fi`
 
-barfoos-profile.o: profile.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -MT barfoos-profile.o -MD -MP -MF $(DEPDIR)/barfoos-profile.Tpo -c -o barfoos-profile.o `test -f 'profile.cc' || echo '$(srcdir)/'`profile.cc
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/barfoos-profile.Tpo $(DEPDIR)/barfoos-profile.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='profile.cc' object='barfoos-profile.o' libtool=no @AMDEPBACKSLASH@
+barfoos-inventory.o: inventory.cc
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -MT barfoos-inventory.o -MD -MP -MF $(DEPDIR)/barfoos-inventory.Tpo -c -o barfoos-inventory.o `test -f 'inventory.cc' || echo '$(srcdir)/'`inventory.cc
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/barfoos-inventory.Tpo $(DEPDIR)/barfoos-inventory.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='inventory.cc' object='barfoos-inventory.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -c -o barfoos-profile.o `test -f 'profile.cc' || echo '$(srcdir)/'`profile.cc
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -c -o barfoos-inventory.o `test -f 'inventory.cc' || echo '$(srcdir)/'`inventory.cc
 
-barfoos-profile.obj: profile.cc
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -MT barfoos-profile.obj -MD -MP -MF $(DEPDIR)/barfoos-profile.Tpo -c -o barfoos-profile.obj `if test -f 'profile.cc'; then $(CYGPATH_W) 'profile.cc'; else $(CYGPATH_W) '$(srcdir)/profile.cc'; fi`
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/barfoos-profile.Tpo $(DEPDIR)/barfoos-profile.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='profile.cc' object='barfoos-profile.obj' libtool=no @AMDEPBACKSLASH@
+barfoos-inventory.obj: inventory.cc
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -MT barfoos-inventory.obj -MD -MP -MF $(DEPDIR)/barfoos-inventory.Tpo -c -o barfoos-inventory.obj `if test -f 'inventory.cc'; then $(CYGPATH_W) 'inventory.cc'; else $(CYGPATH_W) '$(srcdir)/inventory.cc'; fi`
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/barfoos-inventory.Tpo $(DEPDIR)/barfoos-inventory.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='inventory.cc' object='barfoos-inventory.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -c -o barfoos-profile.obj `if test -f 'profile.cc'; then $(CYGPATH_W) 'profile.cc'; else $(CYGPATH_W) '$(srcdir)/profile.cc'; fi`
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -c -o barfoos-inventory.obj `if test -f 'inventory.cc'; then $(CYGPATH_W) 'inventory.cc'; else $(CYGPATH_W) '$(srcdir)/inventory.cc'; fi`
+
+barfoos-inventorygui.o: inventorygui.cc
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -MT barfoos-inventorygui.o -MD -MP -MF $(DEPDIR)/barfoos-inventorygui.Tpo -c -o barfoos-inventorygui.o `test -f 'inventorygui.cc' || echo '$(srcdir)/'`inventorygui.cc
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/barfoos-inventorygui.Tpo $(DEPDIR)/barfoos-inventorygui.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='inventorygui.cc' object='barfoos-inventorygui.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -c -o barfoos-inventorygui.o `test -f 'inventorygui.cc' || echo '$(srcdir)/'`inventorygui.cc
+
+barfoos-inventorygui.obj: inventorygui.cc
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -MT barfoos-inventorygui.obj -MD -MP -MF $(DEPDIR)/barfoos-inventorygui.Tpo -c -o barfoos-inventorygui.obj `if test -f 'inventorygui.cc'; then $(CYGPATH_W) 'inventorygui.cc'; else $(CYGPATH_W) '$(srcdir)/inventorygui.cc'; fi`
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/barfoos-inventorygui.Tpo $(DEPDIR)/barfoos-inventorygui.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='inventorygui.cc' object='barfoos-inventorygui.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -c -o barfoos-inventorygui.obj `if test -f 'inventorygui.cc'; then $(CYGPATH_W) 'inventorygui.cc'; else $(CYGPATH_W) '$(srcdir)/inventorygui.cc'; fi`
+
+barfoos-item.o: item.cc
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -MT barfoos-item.o -MD -MP -MF $(DEPDIR)/barfoos-item.Tpo -c -o barfoos-item.o `test -f 'item.cc' || echo '$(srcdir)/'`item.cc
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/barfoos-item.Tpo $(DEPDIR)/barfoos-item.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='item.cc' object='barfoos-item.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -c -o barfoos-item.o `test -f 'item.cc' || echo '$(srcdir)/'`item.cc
+
+barfoos-item.obj: item.cc
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -MT barfoos-item.obj -MD -MP -MF $(DEPDIR)/barfoos-item.Tpo -c -o barfoos-item.obj `if test -f 'item.cc'; then $(CYGPATH_W) 'item.cc'; else $(CYGPATH_W) '$(srcdir)/item.cc'; fi`
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/barfoos-item.Tpo $(DEPDIR)/barfoos-item.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='item.cc' object='barfoos-item.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -c -o barfoos-item.obj `if test -f 'item.cc'; then $(CYGPATH_W) 'item.cc'; else $(CYGPATH_W) '$(srcdir)/item.cc'; fi`
+
+barfoos-itementity.o: itementity.cc
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -MT barfoos-itementity.o -MD -MP -MF $(DEPDIR)/barfoos-itementity.Tpo -c -o barfoos-itementity.o `test -f 'itementity.cc' || echo '$(srcdir)/'`itementity.cc
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/barfoos-itementity.Tpo $(DEPDIR)/barfoos-itementity.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='itementity.cc' object='barfoos-itementity.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -c -o barfoos-itementity.o `test -f 'itementity.cc' || echo '$(srcdir)/'`itementity.cc
+
+barfoos-itementity.obj: itementity.cc
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -MT barfoos-itementity.obj -MD -MP -MF $(DEPDIR)/barfoos-itementity.Tpo -c -o barfoos-itementity.obj `if test -f 'itementity.cc'; then $(CYGPATH_W) 'itementity.cc'; else $(CYGPATH_W) '$(srcdir)/itementity.cc'; fi`
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/barfoos-itementity.Tpo $(DEPDIR)/barfoos-itementity.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='itementity.cc' object='barfoos-itementity.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -c -o barfoos-itementity.obj `if test -f 'itementity.cc'; then $(CYGPATH_W) 'itementity.cc'; else $(CYGPATH_W) '$(srcdir)/itementity.cc'; fi`
+
+barfoos-itemproperties.o: itemproperties.cc
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -MT barfoos-itemproperties.o -MD -MP -MF $(DEPDIR)/barfoos-itemproperties.Tpo -c -o barfoos-itemproperties.o `test -f 'itemproperties.cc' || echo '$(srcdir)/'`itemproperties.cc
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/barfoos-itemproperties.Tpo $(DEPDIR)/barfoos-itemproperties.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='itemproperties.cc' object='barfoos-itemproperties.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -c -o barfoos-itemproperties.o `test -f 'itemproperties.cc' || echo '$(srcdir)/'`itemproperties.cc
+
+barfoos-itemproperties.obj: itemproperties.cc
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -MT barfoos-itemproperties.obj -MD -MP -MF $(DEPDIR)/barfoos-itemproperties.Tpo -c -o barfoos-itemproperties.obj `if test -f 'itemproperties.cc'; then $(CYGPATH_W) 'itemproperties.cc'; else $(CYGPATH_W) '$(srcdir)/itemproperties.cc'; fi`
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/barfoos-itemproperties.Tpo $(DEPDIR)/barfoos-itemproperties.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='itemproperties.cc' object='barfoos-itemproperties.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -c -o barfoos-itemproperties.obj `if test -f 'itemproperties.cc'; then $(CYGPATH_W) 'itemproperties.cc'; else $(CYGPATH_W) '$(srcdir)/itemproperties.cc'; fi`
 
 barfoos-log.o: log.cc
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -MT barfoos-log.o -MD -MP -MF $(DEPDIR)/barfoos-log.Tpo -c -o barfoos-log.o `test -f 'log.cc' || echo '$(srcdir)/'`log.cc
@@ -1183,6 +842,314 @@ barfoos-log.obj: log.cc
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='log.cc' object='barfoos-log.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -c -o barfoos-log.obj `if test -f 'log.cc'; then $(CYGPATH_W) 'log.cc'; else $(CYGPATH_W) '$(srcdir)/log.cc'; fi`
+
+barfoos-main.o: main.cc
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -MT barfoos-main.o -MD -MP -MF $(DEPDIR)/barfoos-main.Tpo -c -o barfoos-main.o `test -f 'main.cc' || echo '$(srcdir)/'`main.cc
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/barfoos-main.Tpo $(DEPDIR)/barfoos-main.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='main.cc' object='barfoos-main.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -c -o barfoos-main.o `test -f 'main.cc' || echo '$(srcdir)/'`main.cc
+
+barfoos-main.obj: main.cc
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -MT barfoos-main.obj -MD -MP -MF $(DEPDIR)/barfoos-main.Tpo -c -o barfoos-main.obj `if test -f 'main.cc'; then $(CYGPATH_W) 'main.cc'; else $(CYGPATH_W) '$(srcdir)/main.cc'; fi`
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/barfoos-main.Tpo $(DEPDIR)/barfoos-main.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='main.cc' object='barfoos-main.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -c -o barfoos-main.obj `if test -f 'main.cc'; then $(CYGPATH_W) 'main.cc'; else $(CYGPATH_W) '$(srcdir)/main.cc'; fi`
+
+barfoos-mainmenugui.o: mainmenugui.cc
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -MT barfoos-mainmenugui.o -MD -MP -MF $(DEPDIR)/barfoos-mainmenugui.Tpo -c -o barfoos-mainmenugui.o `test -f 'mainmenugui.cc' || echo '$(srcdir)/'`mainmenugui.cc
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/barfoos-mainmenugui.Tpo $(DEPDIR)/barfoos-mainmenugui.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='mainmenugui.cc' object='barfoos-mainmenugui.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -c -o barfoos-mainmenugui.o `test -f 'mainmenugui.cc' || echo '$(srcdir)/'`mainmenugui.cc
+
+barfoos-mainmenugui.obj: mainmenugui.cc
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -MT barfoos-mainmenugui.obj -MD -MP -MF $(DEPDIR)/barfoos-mainmenugui.Tpo -c -o barfoos-mainmenugui.obj `if test -f 'mainmenugui.cc'; then $(CYGPATH_W) 'mainmenugui.cc'; else $(CYGPATH_W) '$(srcdir)/mainmenugui.cc'; fi`
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/barfoos-mainmenugui.Tpo $(DEPDIR)/barfoos-mainmenugui.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='mainmenugui.cc' object='barfoos-mainmenugui.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -c -o barfoos-mainmenugui.obj `if test -f 'mainmenugui.cc'; then $(CYGPATH_W) 'mainmenugui.cc'; else $(CYGPATH_W) '$(srcdir)/mainmenugui.cc'; fi`
+
+barfoos-mainmenustate.o: mainmenustate.cc
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -MT barfoos-mainmenustate.o -MD -MP -MF $(DEPDIR)/barfoos-mainmenustate.Tpo -c -o barfoos-mainmenustate.o `test -f 'mainmenustate.cc' || echo '$(srcdir)/'`mainmenustate.cc
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/barfoos-mainmenustate.Tpo $(DEPDIR)/barfoos-mainmenustate.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='mainmenustate.cc' object='barfoos-mainmenustate.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -c -o barfoos-mainmenustate.o `test -f 'mainmenustate.cc' || echo '$(srcdir)/'`mainmenustate.cc
+
+barfoos-mainmenustate.obj: mainmenustate.cc
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -MT barfoos-mainmenustate.obj -MD -MP -MF $(DEPDIR)/barfoos-mainmenustate.Tpo -c -o barfoos-mainmenustate.obj `if test -f 'mainmenustate.cc'; then $(CYGPATH_W) 'mainmenustate.cc'; else $(CYGPATH_W) '$(srcdir)/mainmenustate.cc'; fi`
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/barfoos-mainmenustate.Tpo $(DEPDIR)/barfoos-mainmenustate.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='mainmenustate.cc' object='barfoos-mainmenustate.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -c -o barfoos-mainmenustate.obj `if test -f 'mainmenustate.cc'; then $(CYGPATH_W) 'mainmenustate.cc'; else $(CYGPATH_W) '$(srcdir)/mainmenustate.cc'; fi`
+
+barfoos-mob.o: mob.cc
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -MT barfoos-mob.o -MD -MP -MF $(DEPDIR)/barfoos-mob.Tpo -c -o barfoos-mob.o `test -f 'mob.cc' || echo '$(srcdir)/'`mob.cc
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/barfoos-mob.Tpo $(DEPDIR)/barfoos-mob.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='mob.cc' object='barfoos-mob.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -c -o barfoos-mob.o `test -f 'mob.cc' || echo '$(srcdir)/'`mob.cc
+
+barfoos-mob.obj: mob.cc
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -MT barfoos-mob.obj -MD -MP -MF $(DEPDIR)/barfoos-mob.Tpo -c -o barfoos-mob.obj `if test -f 'mob.cc'; then $(CYGPATH_W) 'mob.cc'; else $(CYGPATH_W) '$(srcdir)/mob.cc'; fi`
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/barfoos-mob.Tpo $(DEPDIR)/barfoos-mob.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='mob.cc' object='barfoos-mob.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -c -o barfoos-mob.obj `if test -f 'mob.cc'; then $(CYGPATH_W) 'mob.cc'; else $(CYGPATH_W) '$(srcdir)/mob.cc'; fi`
+
+barfoos-monster.o: monster.cc
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -MT barfoos-monster.o -MD -MP -MF $(DEPDIR)/barfoos-monster.Tpo -c -o barfoos-monster.o `test -f 'monster.cc' || echo '$(srcdir)/'`monster.cc
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/barfoos-monster.Tpo $(DEPDIR)/barfoos-monster.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='monster.cc' object='barfoos-monster.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -c -o barfoos-monster.o `test -f 'monster.cc' || echo '$(srcdir)/'`monster.cc
+
+barfoos-monster.obj: monster.cc
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -MT barfoos-monster.obj -MD -MP -MF $(DEPDIR)/barfoos-monster.Tpo -c -o barfoos-monster.obj `if test -f 'monster.cc'; then $(CYGPATH_W) 'monster.cc'; else $(CYGPATH_W) '$(srcdir)/monster.cc'; fi`
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/barfoos-monster.Tpo $(DEPDIR)/barfoos-monster.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='monster.cc' object='barfoos-monster.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -c -o barfoos-monster.obj `if test -f 'monster.cc'; then $(CYGPATH_W) 'monster.cc'; else $(CYGPATH_W) '$(srcdir)/monster.cc'; fi`
+
+barfoos-player.o: player.cc
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -MT barfoos-player.o -MD -MP -MF $(DEPDIR)/barfoos-player.Tpo -c -o barfoos-player.o `test -f 'player.cc' || echo '$(srcdir)/'`player.cc
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/barfoos-player.Tpo $(DEPDIR)/barfoos-player.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='player.cc' object='barfoos-player.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -c -o barfoos-player.o `test -f 'player.cc' || echo '$(srcdir)/'`player.cc
+
+barfoos-player.obj: player.cc
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -MT barfoos-player.obj -MD -MP -MF $(DEPDIR)/barfoos-player.Tpo -c -o barfoos-player.obj `if test -f 'player.cc'; then $(CYGPATH_W) 'player.cc'; else $(CYGPATH_W) '$(srcdir)/player.cc'; fi`
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/barfoos-player.Tpo $(DEPDIR)/barfoos-player.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='player.cc' object='barfoos-player.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -c -o barfoos-player.obj `if test -f 'player.cc'; then $(CYGPATH_W) 'player.cc'; else $(CYGPATH_W) '$(srcdir)/player.cc'; fi`
+
+barfoos-profile.o: profile.cc
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -MT barfoos-profile.o -MD -MP -MF $(DEPDIR)/barfoos-profile.Tpo -c -o barfoos-profile.o `test -f 'profile.cc' || echo '$(srcdir)/'`profile.cc
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/barfoos-profile.Tpo $(DEPDIR)/barfoos-profile.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='profile.cc' object='barfoos-profile.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -c -o barfoos-profile.o `test -f 'profile.cc' || echo '$(srcdir)/'`profile.cc
+
+barfoos-profile.obj: profile.cc
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -MT barfoos-profile.obj -MD -MP -MF $(DEPDIR)/barfoos-profile.Tpo -c -o barfoos-profile.obj `if test -f 'profile.cc'; then $(CYGPATH_W) 'profile.cc'; else $(CYGPATH_W) '$(srcdir)/profile.cc'; fi`
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/barfoos-profile.Tpo $(DEPDIR)/barfoos-profile.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='profile.cc' object='barfoos-profile.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -c -o barfoos-profile.obj `if test -f 'profile.cc'; then $(CYGPATH_W) 'profile.cc'; else $(CYGPATH_W) '$(srcdir)/profile.cc'; fi`
+
+barfoos-projectile.o: projectile.cc
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -MT barfoos-projectile.o -MD -MP -MF $(DEPDIR)/barfoos-projectile.Tpo -c -o barfoos-projectile.o `test -f 'projectile.cc' || echo '$(srcdir)/'`projectile.cc
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/barfoos-projectile.Tpo $(DEPDIR)/barfoos-projectile.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='projectile.cc' object='barfoos-projectile.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -c -o barfoos-projectile.o `test -f 'projectile.cc' || echo '$(srcdir)/'`projectile.cc
+
+barfoos-projectile.obj: projectile.cc
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -MT barfoos-projectile.obj -MD -MP -MF $(DEPDIR)/barfoos-projectile.Tpo -c -o barfoos-projectile.obj `if test -f 'projectile.cc'; then $(CYGPATH_W) 'projectile.cc'; else $(CYGPATH_W) '$(srcdir)/projectile.cc'; fi`
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/barfoos-projectile.Tpo $(DEPDIR)/barfoos-projectile.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='projectile.cc' object='barfoos-projectile.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -c -o barfoos-projectile.obj `if test -f 'projectile.cc'; then $(CYGPATH_W) 'projectile.cc'; else $(CYGPATH_W) '$(srcdir)/projectile.cc'; fi`
+
+barfoos-properties.o: properties.cc
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -MT barfoos-properties.o -MD -MP -MF $(DEPDIR)/barfoos-properties.Tpo -c -o barfoos-properties.o `test -f 'properties.cc' || echo '$(srcdir)/'`properties.cc
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/barfoos-properties.Tpo $(DEPDIR)/barfoos-properties.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='properties.cc' object='barfoos-properties.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -c -o barfoos-properties.o `test -f 'properties.cc' || echo '$(srcdir)/'`properties.cc
+
+barfoos-properties.obj: properties.cc
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -MT barfoos-properties.obj -MD -MP -MF $(DEPDIR)/barfoos-properties.Tpo -c -o barfoos-properties.obj `if test -f 'properties.cc'; then $(CYGPATH_W) 'properties.cc'; else $(CYGPATH_W) '$(srcdir)/properties.cc'; fi`
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/barfoos-properties.Tpo $(DEPDIR)/barfoos-properties.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='properties.cc' object='barfoos-properties.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -c -o barfoos-properties.obj `if test -f 'properties.cc'; then $(CYGPATH_W) 'properties.cc'; else $(CYGPATH_W) '$(srcdir)/properties.cc'; fi`
+
+barfoos-runningstate.o: runningstate.cc
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -MT barfoos-runningstate.o -MD -MP -MF $(DEPDIR)/barfoos-runningstate.Tpo -c -o barfoos-runningstate.o `test -f 'runningstate.cc' || echo '$(srcdir)/'`runningstate.cc
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/barfoos-runningstate.Tpo $(DEPDIR)/barfoos-runningstate.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='runningstate.cc' object='barfoos-runningstate.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -c -o barfoos-runningstate.o `test -f 'runningstate.cc' || echo '$(srcdir)/'`runningstate.cc
+
+barfoos-runningstate.obj: runningstate.cc
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -MT barfoos-runningstate.obj -MD -MP -MF $(DEPDIR)/barfoos-runningstate.Tpo -c -o barfoos-runningstate.obj `if test -f 'runningstate.cc'; then $(CYGPATH_W) 'runningstate.cc'; else $(CYGPATH_W) '$(srcdir)/runningstate.cc'; fi`
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/barfoos-runningstate.Tpo $(DEPDIR)/barfoos-runningstate.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='runningstate.cc' object='barfoos-runningstate.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -c -o barfoos-runningstate.obj `if test -f 'runningstate.cc'; then $(CYGPATH_W) 'runningstate.cc'; else $(CYGPATH_W) '$(srcdir)/runningstate.cc'; fi`
+
+barfoos-shader.o: shader.cc
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -MT barfoos-shader.o -MD -MP -MF $(DEPDIR)/barfoos-shader.Tpo -c -o barfoos-shader.o `test -f 'shader.cc' || echo '$(srcdir)/'`shader.cc
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/barfoos-shader.Tpo $(DEPDIR)/barfoos-shader.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='shader.cc' object='barfoos-shader.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -c -o barfoos-shader.o `test -f 'shader.cc' || echo '$(srcdir)/'`shader.cc
+
+barfoos-shader.obj: shader.cc
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -MT barfoos-shader.obj -MD -MP -MF $(DEPDIR)/barfoos-shader.Tpo -c -o barfoos-shader.obj `if test -f 'shader.cc'; then $(CYGPATH_W) 'shader.cc'; else $(CYGPATH_W) '$(srcdir)/shader.cc'; fi`
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/barfoos-shader.Tpo $(DEPDIR)/barfoos-shader.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='shader.cc' object='barfoos-shader.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -c -o barfoos-shader.obj `if test -f 'shader.cc'; then $(CYGPATH_W) 'shader.cc'; else $(CYGPATH_W) '$(srcdir)/shader.cc'; fi`
+
+barfoos-simplex.o: simplex.cc
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -MT barfoos-simplex.o -MD -MP -MF $(DEPDIR)/barfoos-simplex.Tpo -c -o barfoos-simplex.o `test -f 'simplex.cc' || echo '$(srcdir)/'`simplex.cc
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/barfoos-simplex.Tpo $(DEPDIR)/barfoos-simplex.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='simplex.cc' object='barfoos-simplex.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -c -o barfoos-simplex.o `test -f 'simplex.cc' || echo '$(srcdir)/'`simplex.cc
+
+barfoos-simplex.obj: simplex.cc
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -MT barfoos-simplex.obj -MD -MP -MF $(DEPDIR)/barfoos-simplex.Tpo -c -o barfoos-simplex.obj `if test -f 'simplex.cc'; then $(CYGPATH_W) 'simplex.cc'; else $(CYGPATH_W) '$(srcdir)/simplex.cc'; fi`
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/barfoos-simplex.Tpo $(DEPDIR)/barfoos-simplex.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='simplex.cc' object='barfoos-simplex.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -c -o barfoos-simplex.obj `if test -f 'simplex.cc'; then $(CYGPATH_W) 'simplex.cc'; else $(CYGPATH_W) '$(srcdir)/simplex.cc'; fi`
+
+barfoos-spell.o: spell.cc
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -MT barfoos-spell.o -MD -MP -MF $(DEPDIR)/barfoos-spell.Tpo -c -o barfoos-spell.o `test -f 'spell.cc' || echo '$(srcdir)/'`spell.cc
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/barfoos-spell.Tpo $(DEPDIR)/barfoos-spell.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='spell.cc' object='barfoos-spell.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -c -o barfoos-spell.o `test -f 'spell.cc' || echo '$(srcdir)/'`spell.cc
+
+barfoos-spell.obj: spell.cc
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -MT barfoos-spell.obj -MD -MP -MF $(DEPDIR)/barfoos-spell.Tpo -c -o barfoos-spell.obj `if test -f 'spell.cc'; then $(CYGPATH_W) 'spell.cc'; else $(CYGPATH_W) '$(srcdir)/spell.cc'; fi`
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/barfoos-spell.Tpo $(DEPDIR)/barfoos-spell.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='spell.cc' object='barfoos-spell.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -c -o barfoos-spell.obj `if test -f 'spell.cc'; then $(CYGPATH_W) 'spell.cc'; else $(CYGPATH_W) '$(srcdir)/spell.cc'; fi`
+
+barfoos-stats.o: stats.cc
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -MT barfoos-stats.o -MD -MP -MF $(DEPDIR)/barfoos-stats.Tpo -c -o barfoos-stats.o `test -f 'stats.cc' || echo '$(srcdir)/'`stats.cc
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/barfoos-stats.Tpo $(DEPDIR)/barfoos-stats.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='stats.cc' object='barfoos-stats.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -c -o barfoos-stats.o `test -f 'stats.cc' || echo '$(srcdir)/'`stats.cc
+
+barfoos-stats.obj: stats.cc
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -MT barfoos-stats.obj -MD -MP -MF $(DEPDIR)/barfoos-stats.Tpo -c -o barfoos-stats.obj `if test -f 'stats.cc'; then $(CYGPATH_W) 'stats.cc'; else $(CYGPATH_W) '$(srcdir)/stats.cc'; fi`
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/barfoos-stats.Tpo $(DEPDIR)/barfoos-stats.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='stats.cc' object='barfoos-stats.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -c -o barfoos-stats.obj `if test -f 'stats.cc'; then $(CYGPATH_W) 'stats.cc'; else $(CYGPATH_W) '$(srcdir)/stats.cc'; fi`
+
+barfoos-text.o: text.cc
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -MT barfoos-text.o -MD -MP -MF $(DEPDIR)/barfoos-text.Tpo -c -o barfoos-text.o `test -f 'text.cc' || echo '$(srcdir)/'`text.cc
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/barfoos-text.Tpo $(DEPDIR)/barfoos-text.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='text.cc' object='barfoos-text.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -c -o barfoos-text.o `test -f 'text.cc' || echo '$(srcdir)/'`text.cc
+
+barfoos-text.obj: text.cc
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -MT barfoos-text.obj -MD -MP -MF $(DEPDIR)/barfoos-text.Tpo -c -o barfoos-text.obj `if test -f 'text.cc'; then $(CYGPATH_W) 'text.cc'; else $(CYGPATH_W) '$(srcdir)/text.cc'; fi`
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/barfoos-text.Tpo $(DEPDIR)/barfoos-text.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='text.cc' object='barfoos-text.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -c -o barfoos-text.obj `if test -f 'text.cc'; then $(CYGPATH_W) 'text.cc'; else $(CYGPATH_W) '$(srcdir)/text.cc'; fi`
+
+barfoos-texture.o: texture.cc
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -MT barfoos-texture.o -MD -MP -MF $(DEPDIR)/barfoos-texture.Tpo -c -o barfoos-texture.o `test -f 'texture.cc' || echo '$(srcdir)/'`texture.cc
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/barfoos-texture.Tpo $(DEPDIR)/barfoos-texture.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='texture.cc' object='barfoos-texture.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -c -o barfoos-texture.o `test -f 'texture.cc' || echo '$(srcdir)/'`texture.cc
+
+barfoos-texture.obj: texture.cc
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -MT barfoos-texture.obj -MD -MP -MF $(DEPDIR)/barfoos-texture.Tpo -c -o barfoos-texture.obj `if test -f 'texture.cc'; then $(CYGPATH_W) 'texture.cc'; else $(CYGPATH_W) '$(srcdir)/texture.cc'; fi`
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/barfoos-texture.Tpo $(DEPDIR)/barfoos-texture.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='texture.cc' object='barfoos-texture.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -c -o barfoos-texture.obj `if test -f 'texture.cc'; then $(CYGPATH_W) 'texture.cc'; else $(CYGPATH_W) '$(srcdir)/texture.cc'; fi`
+
+barfoos-trigger.o: trigger.cc
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -MT barfoos-trigger.o -MD -MP -MF $(DEPDIR)/barfoos-trigger.Tpo -c -o barfoos-trigger.o `test -f 'trigger.cc' || echo '$(srcdir)/'`trigger.cc
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/barfoos-trigger.Tpo $(DEPDIR)/barfoos-trigger.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='trigger.cc' object='barfoos-trigger.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -c -o barfoos-trigger.o `test -f 'trigger.cc' || echo '$(srcdir)/'`trigger.cc
+
+barfoos-trigger.obj: trigger.cc
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -MT barfoos-trigger.obj -MD -MP -MF $(DEPDIR)/barfoos-trigger.Tpo -c -o barfoos-trigger.obj `if test -f 'trigger.cc'; then $(CYGPATH_W) 'trigger.cc'; else $(CYGPATH_W) '$(srcdir)/trigger.cc'; fi`
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/barfoos-trigger.Tpo $(DEPDIR)/barfoos-trigger.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='trigger.cc' object='barfoos-trigger.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -c -o barfoos-trigger.obj `if test -f 'trigger.cc'; then $(CYGPATH_W) 'trigger.cc'; else $(CYGPATH_W) '$(srcdir)/trigger.cc'; fi`
+
+barfoos-util.o: util.cc
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -MT barfoos-util.o -MD -MP -MF $(DEPDIR)/barfoos-util.Tpo -c -o barfoos-util.o `test -f 'util.cc' || echo '$(srcdir)/'`util.cc
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/barfoos-util.Tpo $(DEPDIR)/barfoos-util.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='util.cc' object='barfoos-util.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -c -o barfoos-util.o `test -f 'util.cc' || echo '$(srcdir)/'`util.cc
+
+barfoos-util.obj: util.cc
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -MT barfoos-util.obj -MD -MP -MF $(DEPDIR)/barfoos-util.Tpo -c -o barfoos-util.obj `if test -f 'util.cc'; then $(CYGPATH_W) 'util.cc'; else $(CYGPATH_W) '$(srcdir)/util.cc'; fi`
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/barfoos-util.Tpo $(DEPDIR)/barfoos-util.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='util.cc' object='barfoos-util.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -c -o barfoos-util.obj `if test -f 'util.cc'; then $(CYGPATH_W) 'util.cc'; else $(CYGPATH_W) '$(srcdir)/util.cc'; fi`
+
+barfoos-vertexbuffer.o: vertexbuffer.cc
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -MT barfoos-vertexbuffer.o -MD -MP -MF $(DEPDIR)/barfoos-vertexbuffer.Tpo -c -o barfoos-vertexbuffer.o `test -f 'vertexbuffer.cc' || echo '$(srcdir)/'`vertexbuffer.cc
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/barfoos-vertexbuffer.Tpo $(DEPDIR)/barfoos-vertexbuffer.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='vertexbuffer.cc' object='barfoos-vertexbuffer.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -c -o barfoos-vertexbuffer.o `test -f 'vertexbuffer.cc' || echo '$(srcdir)/'`vertexbuffer.cc
+
+barfoos-vertexbuffer.obj: vertexbuffer.cc
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -MT barfoos-vertexbuffer.obj -MD -MP -MF $(DEPDIR)/barfoos-vertexbuffer.Tpo -c -o barfoos-vertexbuffer.obj `if test -f 'vertexbuffer.cc'; then $(CYGPATH_W) 'vertexbuffer.cc'; else $(CYGPATH_W) '$(srcdir)/vertexbuffer.cc'; fi`
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/barfoos-vertexbuffer.Tpo $(DEPDIR)/barfoos-vertexbuffer.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='vertexbuffer.cc' object='barfoos-vertexbuffer.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -c -o barfoos-vertexbuffer.obj `if test -f 'vertexbuffer.cc'; then $(CYGPATH_W) 'vertexbuffer.cc'; else $(CYGPATH_W) '$(srcdir)/vertexbuffer.cc'; fi`
+
+barfoos-world.o: world.cc
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -MT barfoos-world.o -MD -MP -MF $(DEPDIR)/barfoos-world.Tpo -c -o barfoos-world.o `test -f 'world.cc' || echo '$(srcdir)/'`world.cc
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/barfoos-world.Tpo $(DEPDIR)/barfoos-world.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='world.cc' object='barfoos-world.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -c -o barfoos-world.o `test -f 'world.cc' || echo '$(srcdir)/'`world.cc
+
+barfoos-world.obj: world.cc
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -MT barfoos-world.obj -MD -MP -MF $(DEPDIR)/barfoos-world.Tpo -c -o barfoos-world.obj `if test -f 'world.cc'; then $(CYGPATH_W) 'world.cc'; else $(CYGPATH_W) '$(srcdir)/world.cc'; fi`
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/barfoos-world.Tpo $(DEPDIR)/barfoos-world.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='world.cc' object='barfoos-world.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -c -o barfoos-world.obj `if test -f 'world.cc'; then $(CYGPATH_W) 'world.cc'; else $(CYGPATH_W) '$(srcdir)/world.cc'; fi`
+
+barfoos-worldbuilder.o: worldbuilder.cc
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -MT barfoos-worldbuilder.o -MD -MP -MF $(DEPDIR)/barfoos-worldbuilder.Tpo -c -o barfoos-worldbuilder.o `test -f 'worldbuilder.cc' || echo '$(srcdir)/'`worldbuilder.cc
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/barfoos-worldbuilder.Tpo $(DEPDIR)/barfoos-worldbuilder.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='worldbuilder.cc' object='barfoos-worldbuilder.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -c -o barfoos-worldbuilder.o `test -f 'worldbuilder.cc' || echo '$(srcdir)/'`worldbuilder.cc
+
+barfoos-worldbuilder.obj: worldbuilder.cc
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -MT barfoos-worldbuilder.obj -MD -MP -MF $(DEPDIR)/barfoos-worldbuilder.Tpo -c -o barfoos-worldbuilder.obj `if test -f 'worldbuilder.cc'; then $(CYGPATH_W) 'worldbuilder.cc'; else $(CYGPATH_W) '$(srcdir)/worldbuilder.cc'; fi`
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/barfoos-worldbuilder.Tpo $(DEPDIR)/barfoos-worldbuilder.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='worldbuilder.cc' object='barfoos-worldbuilder.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -c -o barfoos-worldbuilder.obj `if test -f 'worldbuilder.cc'; then $(CYGPATH_W) 'worldbuilder.cc'; else $(CYGPATH_W) '$(srcdir)/worldbuilder.cc'; fi`
+
+barfoos-worldedit.o: worldedit.cc
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -MT barfoos-worldedit.o -MD -MP -MF $(DEPDIR)/barfoos-worldedit.Tpo -c -o barfoos-worldedit.o `test -f 'worldedit.cc' || echo '$(srcdir)/'`worldedit.cc
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/barfoos-worldedit.Tpo $(DEPDIR)/barfoos-worldedit.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='worldedit.cc' object='barfoos-worldedit.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -c -o barfoos-worldedit.o `test -f 'worldedit.cc' || echo '$(srcdir)/'`worldedit.cc
+
+barfoos-worldedit.obj: worldedit.cc
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -MT barfoos-worldedit.obj -MD -MP -MF $(DEPDIR)/barfoos-worldedit.Tpo -c -o barfoos-worldedit.obj `if test -f 'worldedit.cc'; then $(CYGPATH_W) 'worldedit.cc'; else $(CYGPATH_W) '$(srcdir)/worldedit.cc'; fi`
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/barfoos-worldedit.Tpo $(DEPDIR)/barfoos-worldedit.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='worldedit.cc' object='barfoos-worldedit.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(barfoos_CXXFLAGS) $(CXXFLAGS) -c -o barfoos-worldedit.obj `if test -f 'worldedit.cc'; then $(CYGPATH_W) 'worldedit.cc'; else $(CYGPATH_W) '$(srcdir)/worldedit.cc'; fi`
 
 ID: $(HEADERS) $(SOURCES) $(LISP) $(TAGS_FILES)
 	list='$(SOURCES) $(HEADERS) $(LISP) $(TAGS_FILES)'; \
@@ -1410,6 +1377,9 @@ uninstall-am: uninstall-binPROGRAMS
 
 %.pb.cc: %.proto
 	$(PROTOC) --cpp_out=. $<
+
+common.h.gch: common.h
+	$(CXX) -DHAVE_CONFIG_H -I. $(CXXFLAGS) $(CF) $<
 
 @MECKES_TRUE@app:
 @MECKES_TRUE@	sh makeapp.sh

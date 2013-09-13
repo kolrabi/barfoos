@@ -2,14 +2,16 @@
 
 #include "audio.h"
 
+#if HAVE_AUDIO
 #include "fileio.h"
 #include "game.h"
-#include "player.h"
+#include "mob.h"
 
-#if HAVE_AUDIO
 #include <AL/al.h>
 #include <AL/alc.h>
 #include <vorbis/vorbisfile.h>
+#else
+#include "vector3.h"
 #endif
 
 /** C'tor. */
@@ -170,6 +172,11 @@ Audio::PlaySound(const std::string &name, const Vector3 &pos, const Vector3 &vel
   (void)pitch;
   return nullptr;
 #endif
+}
+
+std::shared_ptr<Audio::Source>
+Audio::PlaySound(const std::string &name, const Vector3 &pos) {
+  return PlaySound(name, pos, Vector3());
 }
 
 // =========================================================================

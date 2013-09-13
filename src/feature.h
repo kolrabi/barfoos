@@ -76,54 +76,28 @@ struct FeatureReplacement {
 };
 
 struct FeatureCharDef {
-  std::string type;
-  float top[4]; 
-  float bot[4];
-  bool botRev, topRev, sideRev;
-  bool revRand;
-  bool lockCell;
-  bool ignoreLock;
-  bool ignoreWrite;
-  bool onlydefault;
-  float topNoise;
-  float bottomNoise;
-  float topFreq;
-  float bottomFreq;
-  float topDisplace;
-  float bottomDisplace;
-  
-  FeatureCharDef() :
-    type(""),
-    top{ 1, 1, 1, 1 },
-    bot{ 0, 0, 0, 0 },
-    botRev(false),
-    topRev(false),
-    sideRev(false),
-    revRand(true),
-    lockCell(true),
-    ignoreLock(false),
-    ignoreWrite(false),
-    onlydefault(false),
-    topNoise(0.0),
-    bottomNoise(0.0),
-    topFreq(0.0),
-    bottomFreq(0.0),
-    topDisplace(0.0),
-    bottomDisplace(0.0)
-  {}
+  std::string type      = "";
+  float top[4]          = {1,1,1,1}; 
+  float bot[4]          = {0,0,0,0};
+  bool  botRev          = false;
+  bool  topRev          = false;
+  bool  sideRev         = false;
+  bool  revRand         = true;
+  bool  lockCell        = true;
+  bool  ignoreLock      = false;
+  bool  ignoreWrite     = false;
+  bool  onlydefault     = false;
+  float topNoise        = 0.0f;;
+  float bottomNoise     = 0.0f;
+  float topFreq         = 0.0f;
+  float bottomFreq      = 0.0f;
+  float topDisplace     = 0.0f;
+  float bottomDisplace  = 0.0f;
   
   void Rotate() {
     float tmp;
-    tmp = top[0];
-    top[0] = top[1];
-    top[1] = top[2];
-    top[2] = top[3];
-    top[3] = tmp;
-    tmp = bot[0];
-    bot[0] = bot[1];
-    bot[1] = bot[2];
-    bot[2] = bot[3];
-    bot[3] = tmp;
+    tmp = top[0]; top[0] = top[1]; top[1] = top[2]; top[2] = top[3]; top[3] = tmp;
+    tmp = bot[0]; bot[0] = bot[1]; bot[1] = bot[2]; bot[2] = bot[3]; bot[3] = tmp;
     botRev = !botRev;
     topRev = !topRev;
   }

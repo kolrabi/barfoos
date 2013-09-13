@@ -232,7 +232,7 @@ void InventorySlotGui::HandleEvent(const InputEvent &event) {
   if (event.type != InputEventType::Key) return;
   if (!this->IsOver(event.p)) return;
 
-  Inventory &inv(entity.GetInventory());
+  Inventory &inv = entity.GetInventory();
 
   if (event.key == InputKey::MouseLeft) {
 

@@ -197,12 +197,11 @@ World::Draw(Gfx &gfx) {
       }
 
       // group vertex buffers by texture
-
       const Texture *tex = cell.GetTexture();
-      if (tex) cell.Draw(verticesNormal[tex]);
+      if (tex) for (auto &v:cell.GetVertices()) verticesNormal[tex].push_back(v);
 
       const Texture *etex = cell.GetEmissiveTexture();
-      if (etex) cell.DrawEmissive(verticesEmissive[etex]);
+      if (etex) for (auto &v:cell.GetVertices()) verticesEmissive[etex].push_back(v);
     }
 
     //if (updateCount) Log("%u cell vertex updates\n", updateCount);
@@ -261,27 +260,14 @@ World::Draw(Gfx &gfx) {
     std::unordered_map<const Texture *, VertexBuffer> dynVerticesEmissive;
 
     for (size_t i : dynamicCells) {
-      this->cells[i].UpdateVertices();
+      Cell &cell = this->cells[i];
+      cell.UpdateVertices();
 
-      const Texture *tex = this->cells[i].GetTexture();
-      if (tex) {
-        /*
-        if (dynVerticesNormal.find(tex) == dynVerticesNormal.end())
-            dynVerticesNormal[tex] = std::vector<Vertex>();
-*/
-        this->cells[i].Draw(dynVerticesNormal[tex].GetVerts());
-      }
-
-      const Texture *etex = this->cells[i].GetEmissiveTexture();
-      if (etex) {
- /*       if (dynVerticesEmissive.find(etex) == dynVerticesEmissive.end())
-            dynVerticesEmissive[etex] = std::vector<Vertex>();
-*/
-        this->cells[i].Draw(dynVerticesEmissive[tex].GetVerts());
-/*
-        std::vector<Vertex> tmp;
-        this->cells[i].DrawEmissive(tmp);
-        dynVerticesEmissive[etex].Add(tmp);*/
+      const Texture *tex = cell.GetTexture();
+      const Texture *etex = cell.GetEmissiveTexture();
+      for (auto &v:cell.GetVertices()) {
+        if (tex)  dynVerticesNormal[tex].Add(v);
+        if (etex) dynVerticesEmissive[etex].Add(v);
       }
     }
 

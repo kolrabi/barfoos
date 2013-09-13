@@ -1,9 +1,11 @@
 #ifndef BARFOOS_PROPERTIES_H
 #define BARFOOS_PROPERTIES_H
 
-#include <vector>
-#include <unordered_map>
 #include <cstdio>
+
+#include "vector3.h"
+#include "ivector3.h"
+#include "icolor.h"
 
 struct Properties {
 

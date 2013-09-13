@@ -2,6 +2,7 @@
 
 #include "item.h"
 
+#include "cell.h"
 #include "entity.h"
 #include "world.h"
 #include "mob.h"
@@ -14,9 +15,6 @@
 #include "itementity.h"
 #include "player.h"
 #include "inventory.h"
-
-#include "serializer.h"
-#include "deserializer.h"
 
 Item::Item(const std::string &type) :
   properties(&getItem(type)),
@@ -540,40 +538,3 @@ Item::CanStack(const Item &other) const {
          GetBeatitude()  == other.GetBeatitude() &&
          GetModifier()   == other.GetModifier();
 }
-/*
-Serializer &operator << (Serializer &ser, const Item &item) {
-  ser << item.properties->name;
-  ser << (item.effect?item.effect->name:"");
-  // ser << item.sprite;
-  ser << item.cooldownFrac;
-  ser << item.durability;
-  ser << item.nextUseT;
-
-  ser << (int8_t)item.beatitude << item.modifier;
-  ser << item.amount;
-
-  return ser;
-}
-
-Deserializer &operator >> (Deserializer &deser, Item *&item) {
-  Log("deser item\n");
-
-  std::string type, effect;
-  deser >> type >> effect;
-
-  item = new Item(type);
-  item->initDone = true;
-
-  item->effect = &getEffect(effect);
-
-  // deser << item->sprite;
-  deser >> item->cooldownFrac;
-  deser >> item->durability;
-  deser >> item->nextUseT;
-
-  deser >> (int8_t&)item->beatitude >> item->modifier;
-  deser >> item->amount;
-
-  return deser;
-}
-*/

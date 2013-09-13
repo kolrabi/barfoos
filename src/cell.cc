@@ -1,23 +1,18 @@
 #include "common.h"
 
 #include "cell.h"
+#include "world.h"
+
+#include "gfx.h"
+#include "texture.h"
 
 #include "audio.h"
-#include "util.h"
-#include "world.h"
-#include "gfx.h"
+
 #include "runningstate.h"
-#include "projectile.h"
 #include "player.h"
 #include "item.h"
 
-#include "random.h"
 #include "vertex.h"
-
-#include "texture.h"
-
-#include "serializer.h"
-#include "deserializer.h"
 
 // -------------------------------------------------------------------------
 
@@ -31,8 +26,6 @@ CellBase::CellBase(const std::string &type) :
   pos(0,0,0),
   lastT(0.0),
   nextActivationT(0.0),
-  teleport(false),
-  teleportTarget(),
   spawnOnActiveMob(""),
   spawnOnActiveSide(Side::InvalidSide),
   spawnOnActiveRate(0.0),
@@ -185,8 +178,8 @@ Cell::Update(
     Entity *entity = state.GetEntity(state.SpawnInAABB(spawnOnActiveMob, self[spawnOnActiveSide].GetAABB()));
 
     // if it is a projectile, set velocity
-    Projectile *proj = dynamic_cast<Projectile*>(entity);
-    if (proj) proj->SetVelocity(Vector3(this->spawnOnActiveSide) * proj->GetProperties()->maxSpeed);
+    Mob *mob = dynamic_cast<Mob*>(entity);
+    if (mob) mob->SetVelocity(Vector3(this->spawnOnActiveSide) * mob->GetProperties()->maxSpeed);
 
     if (spawnOnActiveRate == 0.0) {
       // spawn only once
@@ -698,8 +691,8 @@ Cell::Ray(const Vector3 &start, const Vector3 &dir, float &t, Vector3 &p) const 
   */
 void
 Cell::OnStepOn(RunningState &state, Mob &mob) {
-  if (this->teleport && state.GetGame().GetTime() > this->nextActivationT) {
-    IVector3 target(this->teleportTarget);
+  if (this->IsTeleport() && state.GetGame().GetTime() > this->nextActivationT) {
+    IVector3 target(this->world->GetCellPos(this->GetTeleportTarget()));
     Cell &targetCell = state.GetWorld().GetCell(target);
 
     this->nextActivationT = state.GetGame().GetTime() + 2;
@@ -791,7 +784,7 @@ Cell::PlaySound(RunningState &state, const std::string &type) {
   if (this->info->sounds.find(type) == this->info->sounds.end()) return;
   state.GetGame().GetAudio().PlaySound(this->info->sounds.at(type), GetAABB().center);
 }
-
+/*
 Serializer &operator << (Serializer &ser, const Cell &cell) {
   //ser << (Triggerable&)cell;
   ser << cell.info->type;
@@ -816,6 +809,7 @@ Serializer &operator << (Serializer &ser, const Cell &cell) {
   ser << cell.shared.lockedID;
   return ser;
 }
+
 
 Deserializer &operator >> (Deserializer &deser, Cell &cell) {
 //  deser >> (Triggerable&)cell;
@@ -856,3 +850,4 @@ Deserializer &operator >> (Deserializer &deser, Cell &cell) {
 
   return deser;
 }
+*/
