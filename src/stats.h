@@ -107,7 +107,8 @@ struct Buff {
 
 /** Entity stats. */
 struct Stats {
-  Stats() {}
+  Stats() {
+  }
   Stats(const Stats_Proto &proto) : proto(proto) {}
 
   // primary stats
@@ -156,8 +157,11 @@ struct Stats {
   uint32_t GetMaxHealthBonus()    const { return proto.max_hp(); }
   void SetMaxHealthBonus(uint32_t v)     { proto.set_max_hp(v);  }
 
+  void SetExperience(float exp) { this->proto.set_exp(exp); }
   float GetExperience() const { return proto.exp();     }
   uint32_t GetLevel()   const { return GetLevelForExp(this->GetExperience()); }
+  
+  void SetSP(uint32_t sp)     { this->proto.set_sp(sp); }
   uint32_t GetSP()      const { return proto.sp();      }
 
   float GetWalkSpeed()  const { return proto.walk_speed(); }

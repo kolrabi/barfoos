@@ -98,7 +98,7 @@ World::SetCell(const IVector3 &pos, const Cell &cell, bool ignoreLock) {
 
   CellProperties info = this->cells[i].GetInfo();
   this->cells[i] = cell;
-  this->cells[i].SetWorld(this, pos);
+  this->cells[i].SetWorld(this, GetCellPos(i));
   this->cells[i].SetFeatureID(featId);
   this->UpdateCell(i);
 

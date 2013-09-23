@@ -65,7 +65,7 @@ static const SideData &GetSideData(Side s) {
 CellRender::CellRender(const std::string &type) :
   CellBase(type),
   visibility(0),
-  verts(72),
+  verts(),
   texture(nullptr),
   emissiveTexture(nullptr),
   activeTexture(nullptr),
@@ -77,7 +77,7 @@ CellRender::CellRender(const std::string &type) :
 CellRender::CellRender(const Cell_Proto &proto) :
   CellBase(proto),
   visibility(0),
-  verts(72),
+  verts(),
   texture(nullptr),
   emissiveTexture(nullptr),
   activeTexture(nullptr),
@@ -89,7 +89,7 @@ CellRender::CellRender(const Cell_Proto &proto) :
 CellRender::CellRender(const CellRender &that) :
   CellBase(that),
   visibility(0),
-  verts(72),
+  verts(),
   texture(that.texture),
   emissiveTexture(that.emissiveTexture),
   activeTexture(that.activeTexture),
@@ -446,7 +446,7 @@ CellRender::UpdateVertices() {
 void
 CellRender::UpdateColors() {
   if (!visibility || (this->info->flags & CellFlags::DoNotRender)) return;
-  if (!this->colorDirty) return;
+  //if (!this->colorDirty) return;
   if ((this->info->flags & CellFlags::Dynamic) == 0) this->colorDirty = false;
   
   std::vector<IColor> colors;

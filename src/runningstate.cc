@@ -643,7 +643,7 @@ RunningState::SaveLevel() {
   if (createUserStream("save.level."+ToString(this->GetLevel()), out)) {
     ::EntityList_Proto entityList;
     for (auto &e:this->entities) {
-      if (e.second) *entityList.add_entities() = e.second->GetProto();
+      if (e.second) *entityList.mutable_entities()->Add() = e.second->GetProto();
     }
     entityList.SerializeToOstream(&out);
   } else {

@@ -61,7 +61,7 @@ Player::Player() :
 
   this->baseStats.UpgradeSkill("magic", 10);
 
-  this->LearnSpell("spell.test");
+  //this->LearnSpell("spell.test");
 
   gemSprites[Element::Physical] = Sprite("items/texture/gem.empty");
   gemSprites[Element::Fire]     = Sprite("items/texture/gem.fire");
@@ -767,8 +767,11 @@ Player::StopCasting() {
 
 void
 Player::LearnSpell(const std::string &name) {
+  Log("%s %d\n", __PRETTY_FUNCTION__, __LINE__);
   Mob::LearnSpell(name);
+  Log("%s %d\n", __PRETTY_FUNCTION__, __LINE__);
   AddMessage("You learn the spell "+getSpell(name).displayName);
+  Log("%s %d\n", __PRETTY_FUNCTION__, __LINE__);
 }
 
 const Entity_Proto &

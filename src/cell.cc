@@ -31,7 +31,7 @@ CellBase::CellBase(const std::string &type) :
     this->neighbours[i] = nullptr;
 
   this->vertsDirty = true;
-  this->colorDirty = false;
+  this->colorDirty = true;
 
   this->proto.set_type(type);
   if (this->IsLiquid()) this->SetLiquidAmount(15);
@@ -41,8 +41,8 @@ CellBase::CellBase(const std::string &type) :
 CellBase::CellBase(const CellBase &that) :
   Triggerable(that),
   info(that.info),
-  world(nullptr),
-  pos(0,0,0),
+  world(that.world),
+  pos(that.pos),
   tickInterval( info->flags & CellFlags::Viscous ? 32 : 5 ),
   proto(that.proto)
 {
@@ -50,7 +50,7 @@ CellBase::CellBase(const CellBase &that) :
     this->neighbours[i] = nullptr;
 
   this->vertsDirty = true;
-  this->colorDirty = false;
+  this->colorDirty = true;
 }
 
 CellBase::CellBase(const Cell_Proto &proto) :
@@ -89,6 +89,8 @@ CellBase::Lock(uint32_t id) {
 void
 CellBase::Unlock() {
   if (!this->IsLocked()) return;
+
+  Log("unlock %04x\n", this->info->onUseCascade);
 
   this->ClearLockID();
 
@@ -224,11 +226,14 @@ Cell::OnUse(RunningState &state, Mob &user, bool force) {
   // replace cell if wanted
   const CellProperties *info = this->info;
   if (info->flags & CellFlags::OnUseReplace) {
+    Log("replacing with %s %d %d %d\n", info->replace.c_str(), pos.x, pos.y, pos.z);
     this->world->SetCell(GetPosition(), Cell(info->replace)).SetLastUseTime(state.GetGame().GetTime());
   }
 
   // cascade through neighbours
+  Log("cascading %04x\n", info->onUseCascade);
   for (int i=0; i<6; i++) {
+    Log("%d %d %p %p %s %d %d %d\n", i, info->onUseCascade & (1<<i), this->info, this->neighbours[i]->info, this->neighbours[i]->GetType().c_str(), pos.x, pos.y, pos.z);
     if (info->onUseCascade & (1<<i) && this->neighbours[i]->info == info)
       this->neighbours[i]->OnUse(state, user, true);
   }
@@ -567,7 +572,12 @@ Cell::CheckSideSolid(Side side, const Vector3 &org, bool sneak) const {
   */
 void
 Cell::SetWorld(World *world, const IVector3 &pos) {
+  this->pos = pos;
   this->world = world;
+
+  if (this->GetType() == "door.right.closed"||this->GetType() == "door.right.open") {
+    Log("setworld %d %d %d\n", pos.x, pos.y, pos.z);
+  }
 
   if (info->textures.empty()) {
     this->SetTexture(0, info->flags & MultiSided);
@@ -581,7 +591,6 @@ Cell::SetWorld(World *world, const IVector3 &pos) {
   if (this->info->activeTexture != "") this->activeTexture = Texture::Get("cells/texture/"+this->info->activeTexture);
   if (this->info->emissiveActiveTexture != "") this->emissiveActiveTexture = Texture::Get("cells/texture/"+this->info->emissiveActiveTexture);
 
-  this->pos = pos;
   for (size_t i=0; i<6; i++) {
     this->neighbours[i] = &this->world->GetCell(pos[(Side)i]);
   }

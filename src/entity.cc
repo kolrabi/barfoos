@@ -299,6 +299,12 @@ Entity::Entity(const std::string &type) :
   emitters(this->properties->emitters)
 {
   this->proto.set_spawn_class(uint32_t(SpawnClass::EntityClass));
+  this->proto.set_type(type);
+
+  this->SetForward(Vector3());
+  this->SetIsDead(false);
+  this->SetRenderAngle(0.0);
+  this->SetDieTime(0.0);
 }
 
 Entity::Entity(const Entity_Proto &proto) :
@@ -331,7 +337,7 @@ Entity::Start(RunningState &state, uint32_t id) {
   this->proto.set_start_time(game.GetTime());
 
   if (this->properties->randomAngle) {
-    this->proto.set_render_angle(state.GetRandom().Float01() * 360.0);
+    this->SetRenderAngle(state.GetRandom().Float01() * 360.0);
   }
 
   if (this->properties->lifetime) {
@@ -402,7 +408,10 @@ Entity::Start(RunningState &state, uint32_t id) {
       offset = offset - d * d.Dot(aabb.extents);
     }
   }
+  
   this->SetPosition(aabb.center + offset);
+  this->SetSpawnPosition(this->GetPosition());
+  this->Unlock();
 
   if (this->properties->lockedChance && state.GetRandom().Chance(this->properties->lockedChance)) state.LockEntity(*this);
 

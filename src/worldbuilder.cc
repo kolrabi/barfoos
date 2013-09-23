@@ -245,6 +245,8 @@ WorldBuilder::BuildFeature(RunningState &state, Random &random, const Theme &the
   this->minY = std::min(this->minY, pos.y);
   this->maxY = std::max(this->maxY, nextFeature->GetSize().y + pos.y);
 
+  Log("%s\n", nextFeature->GetName().c_str());
+
   // replace some cells after connection if wanted
   feature->ReplaceChars(this->world, instance.pos, conn->id, featNum);
 

@@ -26,6 +26,7 @@ Item::Item(const std::string &type) :
 {
   if (!this->sprite.animations.empty()) this->sprite.StartAnim(0);
 
+  this->proto.set_type(type);
   this->proto.set_durability(this->properties->durability);
 }
 
@@ -49,15 +50,17 @@ void Item::ReplaceWith(const std::string &type) {
   this->sprite = this->properties->sprite;
   this->typeIdentified = false;
 
-  this->proto.set_is_init_done(false);
-  this->proto.set_cooldown_frac(0.0f);
+  // reset to defaults
+  this->proto.set_type(type);
+  this->proto.clear_is_init_done();
+  this->proto.clear_cooldown_frac();
   this->proto.set_durability(this->properties->durability);
-  this->proto.set_next_use_time(0.0f);
-  this->proto.set_is_item_identified(false);
-  this->proto.set_is_charging(false);
-  this->proto.set_charge_time(0.0f);
-  this->proto.set_amount(1);
-  this->proto.set_unlock_id(0);
+  this->proto.clear_next_use_time();
+  this->proto.clear_is_item_identified();
+  this->proto.clear_is_charging();
+  this->proto.clear_charge_time();
+  this->proto.clear_amount();
+  this->proto.clear_unlock_id();
 
   if (!this->sprite.animations.empty()) this->sprite.StartAnim(0);
 }

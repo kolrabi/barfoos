@@ -201,6 +201,7 @@ public:
   ID                        GetId()                           const { return this->proto.id(); }
   bool                      IsRemovable()                     const { return removable; }
   const EntityProperties *  GetProperties()                   const { return properties; }
+  Inventory &               GetInventory()                          { return this->inventory; }
   virtual std::string       GetName()                         const { return properties->displayName; }
 
   ID                        GetOwner()                        const { return this->proto.has_owner_id() ? this->proto.owner_id() : InvalidID; }
@@ -209,9 +210,10 @@ public:
   // gameplay
 
   bool                      IsSolid()                         const { return properties->isSolid; }
-  bool                      IsDead()                          const { return this->proto.is_dead(); }
-  Inventory &               GetInventory()                          { return this->inventory; }
 
+  void                      SetIsDead(bool dead)                    { this->proto.set_is_dead(dead); }
+  bool                      IsDead()                          const { return this->proto.is_dead(); }
+  
   void                      SetSpawnPosition(const Vector3  &p)     { this->proto.mutable_spawn_position()->set_x(p.x); 
                                                                       this->proto.mutable_spawn_position()->set_y(p.y); 
                                                                       this->proto.mutable_spawn_position()->set_z(p.z); }
@@ -268,6 +270,8 @@ public:
 
   virtual void              SetTriggered(bool triggered) override { this->proto.set_is_triggered(triggered); }
   virtual bool              IsTriggered() const override{ return this->proto.is_triggered(); }
+
+  void                      SetRenderAngle(float angle)             { this->proto.set_render_angle(angle); }
 
 protected:
 

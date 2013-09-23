@@ -24,6 +24,10 @@ Mob::Mob(const std::string &propertyName) :
 {
   this->proto.set_spawn_class(uint32_t(SpawnClass::MobClass));
   this->proto.mutable_mob();
+  this->SetNoClip(false);
+  this->SetSneaking(false);
+  this->SetInLiquid(false);
+  this->SetLastJumpTime(0.0f);
 }
 
 Mob::Mob(const Entity_Proto &proto) :
@@ -258,8 +262,8 @@ Mob::Think(RunningState &state) {
 
 void
 Mob::SetInLiquid(bool inLiquid) {
-  if (inLiquid == this->IsInLiquid()) return;
   this->proto.mutable_mob()->set_is_in_liquid(inLiquid);
+  if (inLiquid == this->IsInLiquid()) return;
   /*
   if (inLiquid) {
     // play splash sound
@@ -343,7 +347,11 @@ Mob::HasLearntSpell(const std::string &name) const {
 
 void
 Mob::LearnSpell(const std::string &name) {
-  if (!HasLearntSpell(name))
-    *this->proto.mutable_mob()->add_learnt_spells() = name;
+  Log("%s %d\n", __PRETTY_FUNCTION__, __LINE__);
+  if (!HasLearntSpell(name)) {
+    Log("%s %d\n", __PRETTY_FUNCTION__, __LINE__);
+    this->proto.mutable_mob()->add_learnt_spells(name);
+  }
+  Log("%s %d\n", __PRETTY_FUNCTION__, __LINE__);
 }
 

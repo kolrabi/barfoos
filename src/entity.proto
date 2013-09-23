@@ -1,7 +1,7 @@
 message Vec3_Proto {
-    required float  x                   = 1;
-    required float  y                   = 2;
-    required float  z                   = 3;
+    required float  x                   = 1 ;
+    required float  y                   = 2 ;
+    required float  z                   = 3 ;
 }
 
 message Skill_Proto {
@@ -10,26 +10,26 @@ message Skill_Proto {
 }
 
 message Stats_Proto {
-    required uint32 str                 = 1;
-    required uint32 agi                 = 2;
-    required uint32 vit                 = 3;
-    required uint32 int_                = 4;
-    required uint32 dex                 = 5;
-    required uint32 luk                 = 6;
+    optional uint32 str                 = 1 ;
+    optional uint32 agi                 = 2 ;
+    optional uint32 vit                 = 3 ;
+    optional uint32 int_                = 4 ;
+    optional uint32 dex                 = 5 ;
+    optional uint32 luk                 = 6 ;
 
-    required sint32 def_bonus           = 7;
-    required sint32 atk_bonus           = 8;
-    required sint32 matk_bonus          = 9;
-    required sint32 mdef_bonus          = 10;
-    required sint32 hit_bonus           = 17;
-    required sint32 crit_bonus          = 18;
-    required sint32 flee_bonus          = 19;
+    optional sint32 def_bonus           = 7 ;
+    optional sint32 atk_bonus           = 8 ;
+    optional sint32 matk_bonus          = 9 ;
+    optional sint32 mdef_bonus          = 10;
+    optional sint32 hit_bonus           = 17;
+    optional sint32 crit_bonus          = 18;
+    optional sint32 flee_bonus          = 19;
 
-    required uint32 max_hp              = 11 [default = 10];
-    required float  exp                 = 12;
-    required uint32 sp                  = 13;
-    required float  walk_speed          = 14 [default = 1.0];
-    required float  cool_down           = 15 [default = 1.0];
+    optional uint32 max_hp              = 11 [default = 10];
+    optional float  exp                 = 12;
+    optional uint32 sp                  = 13;
+    optional float  walk_speed          = 14 [default = 1.0];
+    optional float  cool_down           = 15 [default = 1.0];
 
     repeated Skill_Proto skills         = 16;
 }
@@ -40,14 +40,14 @@ message Buff_Proto {
 }
 
 message Mob_Proto {
-    required Vec3_Proto velocity    = 1;
-    required float last_jump_time   = 2;
-    required bool is_on_ground      = 3;
-    required bool is_noclip         = 4;
-    required bool is_sneaking       = 5;
+    optional Vec3_Proto velocity    = 1;
+    optional float last_jump_time   = 2;
+    optional bool is_on_ground      = 3;
+    optional bool is_noclip         = 4;
+    optional bool is_sneaking       = 5;
     repeated string learnt_spells   = 6;
-    required bool is_in_liquid      = 7;
-    required bool is_submerged      = 8;
+    optional bool is_in_liquid      = 7;
+    optional bool is_submerged      = 8;
 }
 
 message Monster_Proto {
@@ -64,45 +64,45 @@ message PlayerMessage_Proto {
 }
 
 message Player_Proto {
-    required float bob_phase            = 8;
-    required float bob_amplitude        = 9;
+    optional float bob_phase            = 8;
+    optional float bob_amplitude        = 9;
     repeated PlayerMessage_Proto messages = 1;
-    required float message_y            = 2;
-    required float message_vy           = 3;
+    optional float message_y            = 2;
+    optional float message_vy           = 3;
 
     required float  pain                = 4;
     required float  hp_flash_time       = 5;
 
-    required float yaw          = 6;
-    required float pitch        = 10;
+    optional float yaw          = 6;
+    optional float pitch        = 10;
 
     repeated uint32 elements            = 7;
     optional float cast_start_time = 11;
-    required float last_cast_time = 12;
+    optional float last_cast_time = 12;
 }
 
 message Item_Proto {
     required string type                = 1;
     optional string effect              = 2;
 
-    required float  cooldown_frac       = 3;
-    required float  durability          = 4;
-    required float  next_use_time       = 5;
+    optional float  cooldown_frac       = 3;
+    optional float  durability          = 4;
+    optional float  next_use_time       = 5;
 
-    required sint32 beatitude           = 6;
-    required sint32 modifier            = 7;
+    optional sint32 beatitude           = 6;
+    optional sint32 modifier            = 7;
 
-    required uint32 amount              = 8 [default = 1];
+    optional uint32 amount              = 8 [default = 1];
 
-    required bool is_charging = 9;
-    required float charge_time = 10;
-    required bool is_item_identified = 11;
+    optional bool is_charging = 9;
+    optional float charge_time = 10;
+    optional bool is_item_identified = 11;
 
-    required uint32 unlock_id = 12;
+    optional uint32 unlock_id = 12;
 
-    required bool is_equipped = 13;
+    optional bool is_equipped = 13;
 
-    required bool is_init_done = 14;
+    optional bool is_init_done = 14;
 }
 
 message Inventory_Proto {

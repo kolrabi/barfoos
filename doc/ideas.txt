@@ -47,9 +47,10 @@ story:
   ideas:        |-
                 you run away into a dungeon
                 you get lost and must find the way out
+                carry one item
                 obviously no weapons or armor, just bite, bark, howl
                 maybe some transformation foods?
-                smell and hearing as gameplay elements
+                smell and hearing as gameplay elements?
 
   names:
     - A Journey of Dog
