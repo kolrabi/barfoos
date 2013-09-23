@@ -38,7 +38,6 @@ Feature::Feature() :
   replacements(),
   name("<undefined>"),
   groups(),
-  cells(0),
   defaultMask(0),
   chars(0),
   size(0,0,0),
@@ -57,7 +56,6 @@ Feature::Feature(FILE *f, const std::string &name) :
   replacements(),
   name(name),
   groups(),
-  cells(0),
   defaultMask(0),
   chars(0),
   size(0,0,0),
@@ -87,7 +85,6 @@ Feature::Feature(FILE *f, const std::string &name) :
         std::atoi(tokens[2].c_str()), 
         std::atoi(tokens[3].c_str())
       );
-      cells = std::vector<Cell>(size.x * size.y * size.z);
       defaultMask = std::vector<bool>(size.x*size.y*size.z, false);
       chars = std::vector<char>(size.x * size.y * size.z);
 
@@ -442,7 +439,8 @@ Feature::GetRandomConnection(
   int dir, 
   RunningState &state
 ) const {
-  std::vector<const FeatureConnection *> cs;
+  static std::vector<const FeatureConnection *> cs;
+  cs.clear();
   for (const FeatureConnection &c : conns) {
     if (c.dir == dir) cs.push_back(&c);
   }
@@ -476,8 +474,6 @@ Feature::Rotate() {
         IVector3 to(from.Rotate(size));
         size_t fromIndex = from.x+        size.x*(y+        size.y*from.z);
         size_t toIndex   = to.x  +feature.size.x*(y+feature.size.y*to.z);
-        feature.cells[toIndex] = cells[fromIndex];
-        feature.cells[toIndex].Rotate();
         feature.defaultMask[toIndex] = defaultMask[fromIndex];
         feature.chars[toIndex] = chars[fromIndex];
       }

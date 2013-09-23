@@ -142,7 +142,6 @@ protected:
   
   std::string decoGroup = "misc";
 
-  std::vector<Cell> cells;
   std::vector<bool> defaultMask;
   std::vector<char> chars;
   IVector3 size; 

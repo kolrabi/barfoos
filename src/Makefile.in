@@ -1378,7 +1378,7 @@ uninstall-am: uninstall-binPROGRAMS
 %.pb.cc: %.proto
 	$(PROTOC) --cpp_out=. $<
 
-common.h.gch: common.h
+common.h.gch: common.h log.h profile.h
 	$(CXX) -DHAVE_CONFIG_H -I. $(CXXFLAGS) $(CF) $<
 
 @MECKES_TRUE@app:

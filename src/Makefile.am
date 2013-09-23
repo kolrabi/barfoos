@@ -17,7 +17,7 @@ PROTOS=game.pb.cc runningstate.pb.cc entity.pb.cc world.pb.cc
 %.pb.cc: %.proto
 	$(PROTOC) --cpp_out=. $<
 
-common.h.gch: common.h
+common.h.gch: common.h log.h profile.h
 	$(CXX) -DHAVE_CONFIG_H -I. $(CXXFLAGS) $(CF) $<
 
 BUILT_SOURCES=$(PROTOS) common.h.gch

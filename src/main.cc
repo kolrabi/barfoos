@@ -6,6 +6,8 @@
 
 #include <google/protobuf/stubs/common.h>
 
+FILE *memLog = nullptr;
+
 static std::string credits() {
   std::string str;
 
@@ -61,6 +63,7 @@ int main(int, char **) {
 
   glfwTerminate();
 
+  fclose(memLog); memLog = nullptr;
   Profile::Dump();
 
   return 0;

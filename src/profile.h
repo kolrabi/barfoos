@@ -2,8 +2,10 @@
 #define BARFOOS_PROFILE_H
 
 #ifdef MACOSX
-#define NO_PROFILE
+#define NO_PROFILE 1
 #endif
+
+#define NO_PROFILE 1
 
 #ifdef NO_PROFILE
 
@@ -15,13 +17,15 @@
 class Profile {
 public:
 
+  ~Profile() {}
+
   static void Dump();
   static std::string GetDump();
 
 private:
 
-  std::string name;
-  unsigned long long startTick;
+  //std::string name;
+  //unsigned long long startTick;
 };
 
 #else

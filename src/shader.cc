@@ -52,6 +52,13 @@ Shader::~Shader() {
   glDeleteObjectARB(program);
 }
 
+bool
+Shader::HasUniform(const std::string &name) const {
+  int loc = GetUniformLocation(name);
+  return loc != -1;
+}
+
+
 void
 Shader::Uniform(const std::string &name, int value) const {
   int loc = GetUniformLocation(name);

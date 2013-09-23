@@ -67,10 +67,13 @@ RunningState::NewGame() {
   std::string seed = ToString(time(nullptr));
   GetGame().NewGame(seed);
 
+  Log("allocating world...\n");
   delete this->world;
   this->world = new World(*this, IVector3(64, 64, 64));
 
   Random &random = GetRandom();
+
+  Log("setting theme...\n");
 
   Theme theme;
   theme.featureCount  = random.Integer(400)+400;             // 400 - 800
@@ -86,6 +89,8 @@ RunningState::NewGame() {
   theme.itemCount = 50; //100+random.Integer(120);
   theme.monsterCount = 0; //50+random.Integer(100);
 
+  Log("building...\n");
+  
   WorldBuilder builder(*this->world);
   builder.Build(*this, theme);
 

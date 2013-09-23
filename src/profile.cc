@@ -1,7 +1,7 @@
 #include "common.h"
 
 // broken on macos x
-#if !defined(MACOSX)
+#if !defined(NO_PROFILE)
 
 #ifdef WIN32
 #include <windows.h>
@@ -71,7 +71,7 @@ Profile::~Profile() {
 
 std::string 
 Profile::GetDump() {
-#ifdef MACOSX
+#ifdef NO_PROFILE
   return "No profiling information available.";
 #else 
   std::stringstream str;
@@ -99,3 +99,52 @@ Profile::Dump() {
 }
 
 
+#ifndef NO_PROFILE
+
+#include <new>
+
+extern FILE *memLog;
+static uint64_t firstLog = 0;
+static int64_t totalMem = 0;
+
+struct alloc_info {
+  int32_t size;
+};
+
+void *operator new(size_t size) {
+  alloc_info *a = (alloc_info*)malloc(size + sizeof(alloc_info));
+  if (!a) {
+    throw std::bad_alloc();
+  }
+  if (!memLog) {
+    memLog = fopen("memlog.txt", "wb");
+    firstLog = measure();
+  } 
+
+  if (memLog) {
+    a->size = size;
+    totalMem += a->size;
+    //printf(memLog, "%llu %u %lld # + %p\n", measure() - firstLog, a->size, totalMem, (char*)a+sizeof(alloc_info));
+  }
+  return (char*)a + sizeof(alloc_info);
+}
+
+void operator delete(void *p) {
+  if (!p) return;
+
+  alloc_info *a = (alloc_info*)((char*)p - sizeof(alloc_info));
+  if (memLog) {
+    totalMem -= a->size;
+    //fprintf(memLog, "%llu -%u %lld # -\n", measure() - firstLog, a->size, totalMem);
+    /*if (a->size == 8) {
+      Log("# %p: ", p);
+      for (int i=0; i<a->size; i++)
+        Log("%02x ", ((char*)p)[i]&0xFF);
+      Log("\n");
+    }*/
+  }
+
+  free(a);
+}
+
+#endif

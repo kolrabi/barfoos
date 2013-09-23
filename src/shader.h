@@ -23,6 +23,8 @@ public:
   void Uniform(const std::string &name, const Vector3 &value) const;
   void Uniform(const std::string &name, const std::vector<Vector3> &value) const;
   void Uniform(const std::string &name, const Matrix4 &value) const;
+
+  bool HasUniform(const std::string &name) const;
   
   GLhandleARB GetProgram() const { return program; }
 

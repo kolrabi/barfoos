@@ -19,8 +19,7 @@ Audio::Audio() :
   device(nullptr),
   context(nullptr),
   isInited(false),
-  player(nullptr)
-{
+  player(nullptr) {
 }
 
 /** D'tor. Deinitializes audio if needed. */
@@ -44,16 +43,16 @@ Audio::Init() {
   }
 
   Log("Creating audio context...\n", deviceName);
-  this->context = alcCreateContext((ALCdevice*)this->device, nullptr);
+  this->context = alcCreateContext((ALCdevice *)this->device, nullptr);
   if (!this->context) {
     Log("Could not create audio context: %04x\n", alGetError());
-    alcCloseDevice((ALCdevice*)this->device);
+    alcCloseDevice((ALCdevice *)this->device);
     this->device = nullptr;
     return true;
   }
 
-  alcMakeContextCurrent((ALCcontext*)this->context);
-  alcProcessContext((ALCcontext*)this->context);
+  alcMakeContextCurrent((ALCcontext *)this->context);
+  alcProcessContext((ALCcontext *)this->context);
 #endif
   return this->isInited = true;
 }
@@ -73,15 +72,15 @@ Audio::Deinit() {
   this->sources.clear();
 
   Log("Destroying audio buffers...\n");
-  for (auto &b:this->buffers) delete b.second;
+  for (auto & b : this->buffers) delete b.second;
   this->buffers.clear();
 
   Log("Destroying audio context...\n");
-  alcMakeContextCurrent((ALCcontext*)this->context);
-  alcDestroyContext((ALCcontext*)this->context);
+  alcMakeContextCurrent((ALCcontext *)this->context);
+  alcDestroyContext((ALCcontext *)this->context);
 
   Log("Closing audio device...\n");
-  alcCloseDevice((ALCdevice*)this->device);
+  alcCloseDevice((ALCdevice *)this->device);
 
   this->context = nullptr;
   this->device = nullptr;
@@ -92,16 +91,16 @@ Audio::Deinit() {
 
 /** Update game audio.
  * Updates listener position and velocity to that of the player
- * if it has been set. Removes all finished sources. 
+ * if it has been set. Removes all finished sources.
  */
-void 
+void
 Audio::Update(Game &) {
   if (!this->isInited) return;
 
 #if HAVE_AUDIO
-  Vector3 listenerPos(      this->player ? this->player->GetSmoothEyePosition() : Vector3(0,0,0));
-  Vector3 listenerForward(  this->player ? this->player->GetForward()           : Vector3(0,0,1));
-  Vector3 listenerVelocity( this->player ? this->player->GetVelocity()          : Vector3(0,0,0));
+  Vector3 listenerPos(      this->player ? this->player->GetSmoothEyePosition() : Vector3(0, 0, 0));
+  Vector3 listenerForward(  this->player ? this->player->GetForward()           : Vector3(0, 0, 1));
+  Vector3 listenerVelocity( this->player ? this->player->GetVelocity()          : Vector3(0, 0, 0));
 
   ALfloat listenerPosf[]      = { listenerPos.x,      listenerPos.y,      listenerPos.z      };
   ALfloat listenerVelocityf[] = { listenerVelocity.x, listenerVelocity.y, listenerVelocity.z };
@@ -114,7 +113,7 @@ Audio::Update(Game &) {
   //Log("listening from %f %f %f\n", listenerPos.x, listenerPos.y, listenerPos.z);
 
   auto iter = this->sources.begin();
-  while(iter != this->sources.end()) {
+  while (iter != this->sources.end()) {
     if ((*iter)->IsStillPlaying()) {
       iter ++;
     } else {
@@ -139,7 +138,7 @@ Audio::GetSoundBuffer(const std::string &name) {
     this->buffers[name] = Audio::Buffer::LoadOgg(name);
   }
   return this->buffers[name];
-#else 
+#else
   (void)name;
   return nullptr;
 #endif
@@ -163,7 +162,7 @@ Audio::PlaySound(const std::string &name, const Vector3 &pos, const Vector3 &vel
   std::shared_ptr<Audio::Source> source(new Audio::Source(this->GetSoundBuffer(name), pos, velocity, loop, volume, pitch));
   this->sources.push_back(source);
   return source;
-#else 
+#else
   (void)name;
   (void)pos;
   (void)velocity;
@@ -191,7 +190,7 @@ Audio::Buffer::LoadOgg(const std::string &name) {
   Audio::Buffer *buffer = new Audio::Buffer();
 
   Log("Loading sound %s\n", name.c_str());
-  FILE *f = openAsset("audio/"+name+".ogg");
+  FILE *f = openAsset("audio/" + name + ".ogg");
   if (!f) {
     perror(name.c_str());
     return buffer;
@@ -220,7 +219,7 @@ Audio::Buffer::LoadOgg(const std::string &name) {
   ogg_int64_t readPos = 0;
   int bitStream = -1;
 
-  while(readPos < length) {
+  while (readPos < length) {
     long readCount = ov_read(&oggFile, data + readPos, length - readPos, 0, 2, 1, &bitStream);
     if (readCount <= 0) break;
     readPos += readCount;
@@ -243,8 +242,7 @@ Audio::Buffer::LoadOgg(const std::string &name) {
 
 /** C'tor. */
 Audio::Buffer::Buffer() :
-  buffer(0)
-{
+  buffer(0) {
 #if HAVE_AUDIO
   alGenBuffers(1, &this->buffer);
 #endif
@@ -261,8 +259,7 @@ Audio::Buffer::~Buffer() {
 // =========================================================================
 
 Audio::Source::Source(Buffer *buffer, const Vector3 &pos, const Vector3 &velocity, bool loop, float volume, float pitch) :
-  source(0)
-{
+  source(0) {
 #if HAVE_AUDIO
   alGenSources(1, &this->source);
 
@@ -295,7 +292,7 @@ Audio::Source::~Source() {
 /** Check playing state of a source.
   * @return true if source is still playing.
   */
-bool 
+bool
 Audio::Source::IsStillPlaying() const {
 #if HAVE_AUDIO
   if (!this->source) return false;
@@ -312,7 +309,7 @@ Audio::Source::IsStillPlaying() const {
 /** Update the position of a source.
   * @param pos The new position.
   */
-void 
+void
 Audio::Source::SetPosition(const Vector3 &pos) {
 #if HAVE_AUDIO
   alSource3f(this->source, AL_POSITION, pos.x, pos.y, pos.z);

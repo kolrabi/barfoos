@@ -298,18 +298,23 @@ Gfx::SetUniforms() const {
 
   if (!this->activeShader) return;
 
-  std::vector<Vector3> lightPos;
-  std::vector<IColor>  lightCol;
+  if (this->activeShader->HasUniform("u_lightPos") && this->activeShader->HasUniform("u_lightColor")) {
+    std::vector<Vector3> lightPos;
+    std::vector<IColor>  lightCol;
 
-  for (size_t i=0; i<this->lightPositions.size(); i++) {
-//    if (this->view->IsPointVisible(this->lightPositions[i])) {
-      lightPos.push_back(this->lightPositions[i]);
-      lightCol.push_back(this->lightColors[i]);
-//    }
+    for (size_t i=0; i<this->lightPositions.size(); i++) {
+  //    if (this->view->IsPointVisible(this->lightPositions[i])) {
+        lightPos.push_back(this->lightPositions[i]);
+        lightCol.push_back(this->lightColors[i]);
+  //    }
+    }
+    lightCol.resize(MaxLights, IColor(0,0,0));
+    lightPos.resize(MaxLights);
+    
+    this->activeShader->Uniform("u_lightPos",   lightPos);
+    this->activeShader->Uniform("u_lightColor", lightCol);
   }
 
-  lightCol.resize(MaxLights, IColor(0,0,0));
-  lightPos.resize(MaxLights);
 
   this->view->SetUniforms(this->activeShader);
 
@@ -318,9 +323,6 @@ Gfx::SetUniforms() const {
   this->activeShader->Uniform("u_time",     this->GetTime());
   this->activeShader->Uniform("u_color",    this->color, this->alpha);
   this->activeShader->Uniform("u_light",    this->light, 1.0);
-
-  this->activeShader->Uniform("u_lightPos",   lightPos);
-  this->activeShader->Uniform("u_lightColor", lightCol);
 
   this->activeShader->Uniform("u_texture", 0);
   this->activeShader->Uniform("u_texture2", 1);

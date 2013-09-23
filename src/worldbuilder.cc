@@ -175,16 +175,19 @@ WorldBuilder::MakeGround(Random &random) {
   IVector3 r(random.Integer(), random.Integer(), random.Integer());
 
   size_t cellCount = this->world.GetCellCount();
-  defaultCells = std::vector<Cell>(cellCount);
+  defaultCells.clear();
 
   const IVector3 &size = this->world.GetSize();
   for (size_t i=0; i<cellCount; i++) {
     IVector3 pos = this->world.GetCellPos(i);
     if (pos.x < 2 || pos.y < 2 || pos.z < 2 || pos.x >= size.x-2 || pos.y >= size.y-2 || pos.z >= size.z-2) {
-      defaultCells[i] = Cell("bedrock");
-      defaultCells[i].SetProtected(true);
-      defaultCells[i].SetIgnoringWrite(true);
+      Cell cell("bedrock");
+      cell.SetProtected(true);
+      cell.SetIgnoringWrite(true);
+
+      defaultCells.push_back(cell);
     } else {
+      defaultCells.push_back(Cell("dirt"));
       /*
       defaultCells[i] = Cell("rock");
 
@@ -244,8 +247,6 @@ WorldBuilder::BuildFeature(RunningState &state, Random &random, const Theme &the
   FeatureInstance           nextInstance = nextFeature->BuildFeature(state, this->world, pos, conn->dir, instance.dist, instances.size(), revConn, featNum);
   this->minY = std::min(this->minY, pos.y);
   this->maxY = std::max(this->maxY, nextFeature->GetSize().y + pos.y);
-
-  Log("%s\n", nextFeature->GetName().c_str());
 
   // replace some cells after connection if wanted
   feature->ReplaceChars(this->world, instance.pos, conn->id, featNum);

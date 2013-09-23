@@ -3,6 +3,8 @@
 
 #include "log.h"
 
+FILE *logfile = nullptr;
+
 void Log(const char *fmt, ...) {
   va_list ap;
   va_start(ap, fmt);
@@ -18,11 +20,8 @@ void Log(const char *fmt, ...) {
   fputs(str, stderr);
   fflush(stderr);
   
-  
-  FILE *f = fopen("log.txt", "a");
-  if (f) { 
-    fputs(str, f);
-    fclose(f);
+  if (!logfile) logfile = fopen("log.txt", "w");
+  if (logfile) { 
+    fputs(str, logfile);
   }
-  
 }
