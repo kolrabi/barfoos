@@ -90,8 +90,6 @@ void
 CellBase::Unlock() {
   if (!this->IsLocked()) return;
 
-  Log("unlock %04x\n", this->info->onUseCascade);
-
   this->ClearLockID();
 
   for (int i=0; i<6; i++) {
@@ -100,12 +98,76 @@ CellBase::Unlock() {
   }
 }
 
+
+/** Check whether the player has seen this cell yet.
+  * Compares the cell's feature id with the list of all seen features.
+  * @return true if cell was seen.
+  */
+bool
+CellBase::IsSeen(size_t) const {
+  if (!this->world) return false;
+  if (this->GetFeatureID() == InvalidID) return false;
+
+  // if (/*!this->visibility && */(info->flags & CellFlags::DoNotRender) != 0) return false;
+  return this->world->GetMap().IsFeatureSeen(this->GetFeatureID());
+}
+
 void
 CellBase::SetReversed(bool top, bool bottom) { 
   this->proto.set_is_top_reversed(top); 
   this->proto.set_is_bottom_reversed(bottom); 
   if (this->world && !this->IsDynamic()) 
     this->world->MarkForUpdateNeighbours(&this->world->GetCell(this->GetPosition()));
+}
+
+/** Set top corner heights.
+  * @param a Height of corner 0.
+  * @param b Height of corner 1.
+  * @param c Height of corner 2.
+  * @param d Height of corner 3.
+  * @return The updated cell.
+  */
+void
+CellBase::SetTopHeights(float a, float b, float c, float d) {
+  bool change = this->GetTopHeight(0) != a ||
+                this->GetTopHeight(1) != b ||
+                this->GetTopHeight(2) != c ||
+                this->GetTopHeight(3) != d;
+
+  if (!change) return;
+
+  this->SetTopHeight(0, a);
+  this->SetTopHeight(1, b);
+  this->SetTopHeight(2, c);
+  this->SetTopHeight(3, d);
+
+  if (world && !IsDynamic()) 
+    world->MarkForUpdateNeighbours(this);
+}
+
+/** Set bottom corner heights.
+  * @param a Height of corner 0.
+  * @param b Height of corner 1.
+  * @param c Height of corner 2.
+  * @param d Height of corner 3.
+  * @return The updated cell.
+  */
+void
+CellBase::SetBottomHeights(float a, float b, float c, float d) {
+  bool change = this->GetBottomHeight(0) != a ||
+                this->GetBottomHeight(1) != b ||
+                this->GetBottomHeight(2) != c ||
+                this->GetBottomHeight(3) != d;
+
+  if (!change) return;
+                
+  this->SetBottomHeight(0, a);
+  this->SetBottomHeight(1, b);
+  this->SetBottomHeight(2, c);
+  this->SetBottomHeight(3, d);
+
+  if (world && !IsDynamic()) 
+    world->MarkForUpdateNeighbours(this);
 }
 
 // -------------------------------------------------------------------------
@@ -472,60 +534,6 @@ CellRender::SideCornerColor(Side side, size_t corner) const {
   return (l0+l1+l2+l3)/4;
 }
 
-// TODO: move to cellbase
-/** Set top corner heights.
-  * @param a Height of corner 0.
-  * @param b Height of corner 1.
-  * @param c Height of corner 2.
-  * @param d Height of corner 3.
-  * @return The updated cell.
-  */
-Cell &
-Cell::SetTopHeights(float a, float b, float c, float d) {
-  bool change = this->GetTopHeight(0) != a ||
-                this->GetTopHeight(1) != b ||
-                this->GetTopHeight(2) != c ||
-                this->GetTopHeight(3) != d;
-  if (change) {
-    this->SetTopHeight(0, a);
-    this->SetTopHeight(1, b);
-    this->SetTopHeight(2, c);
-    this->SetTopHeight(3, d);
-  }
-
-  if (world && !IsDynamic()) 
-    world->MarkForUpdateNeighbours(this);
-
-  return *this;
-}
-
-// TODO: move to cellbase
-/** Set bottom corner heights.
-  * @param a Height of corner 0.
-  * @param b Height of corner 1.
-  * @param c Height of corner 2.
-  * @param d Height of corner 3.
-  * @return The updated cell.
-  */
-Cell &
-Cell::SetBottomHeights(float a, float b, float c, float d) {
-  bool change = this->GetBottomHeight(0) != a ||
-                this->GetBottomHeight(1) != b ||
-                this->GetBottomHeight(2) != c ||
-                this->GetBottomHeight(3) != d;
-  if (!change) return *this;
-                
-  this->SetBottomHeight(0, a);
-  this->SetBottomHeight(1, b);
-  this->SetBottomHeight(2, c);
-  this->SetBottomHeight(3, d);
-
-  if (world && !IsDynamic()) 
-    world->MarkForUpdateNeighbours(this);
-
-  return *this;
-}
-
 /** Check solidity of a cells side.
   * Also checks the solidity of the adjacent cell.
   * @param side Side to check.
@@ -611,19 +619,6 @@ Cell::GetAABB() const {
   aabb.center = Vector3(this->pos) + Vector3(0.5,0.5,0.5);
   aabb.extents = Vector3(0.5,0.5,0.5);
   return aabb;
-}
-
-/** Check whether the player has seen this cell yet.
-  * Compares the cell's feature id with the list of all seen features.
-  * @return true if cell was seen.
-  */
-bool
-Cell::IsSeen(size_t) const {
-  if (!this->world) return false;
-  if (this->GetFeatureID() == InvalidID) return false;
-
-  if (!this->visibility && (info->flags & CellFlags::DoNotRender) == 0) return false;
-  return this->world->GetMap().IsFeatureSeen(this->GetFeatureID());
 }
 
 /** Cast a ray against the triangles of the cell.

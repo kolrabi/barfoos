@@ -25,6 +25,9 @@ AM_CONDITIONAL([WINDOOF], [test x$OS     = xWindows_NT])
 AM_CONDITIONAL([MECKES],  [test x$OSTYPE = xdarwin11  ])
 
 LDFLAGS="-L/opt/local/lib"
+CFLAGS="$CFLAGS"
+CXXFLAGS="$CXXFLAGS"
+
 
 AC_MSG_CHECKING([for operating system...])
 if test x$OS = xWindows_NT; then

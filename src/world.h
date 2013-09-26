@@ -99,7 +99,7 @@ public:
   void                  TriggerOn               (size_t id);
   void                  TriggerOff              (size_t id);
 
-  void                  MarkForUpdateNeighbours (const Cell *cell);
+  void                  MarkForUpdateNeighbours (const CellBase *cell);
   void                  UpdateCell              (const IVector3 &pos);
 
   size_t                GetCellIndex            (const IVector3 &pos) const { return pos.x+proto.size_x()*(pos.y+proto.size_y()*pos.z); }

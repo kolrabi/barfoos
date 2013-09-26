@@ -19,10 +19,6 @@ public:
 
   void                      UpdateNeighbours(size_t depth = 16);
 
-  // TODO: CellBase --->
-  bool                      IsSeen(size_t checkNeighbours = 0) const;
-  // <---
-
   void                      PlaySound(RunningState &state, const std::string &sound);
 
   AABB                      GetAABB() const;
@@ -39,12 +35,7 @@ public:
 
   void                      Rotate();
 
-  Cell &                    SetTopHeights(float a, float b, float c, float d);
-  Cell &                    SetBottomHeights(float a, float b, float c, float d);
-
 protected:
-
-  // unique information, that will change after assignment from different cell
 
   /** Current tick phase from 0 to tickInterval. Tick()s on 0. */
   uint8_t                   tickPhase;

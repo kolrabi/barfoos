@@ -1,16 +1,13 @@
+#include "common.h"
+
 #include "mob.h"
+
 #include "world.h"
 #include "cell.h"
 #include "util.h"
 #include "runningstate.h"
 #include "item.h"
 #include "audio.h"
-
-#include "serializer.h"
-#include "deserializer.h"
-
-#include <cmath>
-#include <algorithm>
 
 Mob::Mob(const std::string &propertyName) :
   Entity          (propertyName),

@@ -6,9 +6,6 @@
 #include "entity.h"
 #include "random.h"
 
-#include "serializer.h"
-#include "deserializer.h"
-
 /** Calculate the outcome of a melee attack with an item.
  * @param attacker Entity that attacks
  * @param victim Entity that defends

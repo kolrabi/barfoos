@@ -19,9 +19,6 @@
 
 #include "gui.h"
 
-#include "serializer.h"
-#include "deserializer.h"
-
 #include "mainmenustate.h"
 #include "matrix4.h"
 

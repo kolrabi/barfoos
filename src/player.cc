@@ -1,3 +1,5 @@
+#include "common.h"
+
 #include "player.h"
 
 #include "runningstate.h"
@@ -17,11 +19,6 @@
 
 #include "audio.h"
 #include "input.h"
-
-#include "serializer.h"
-#include "deserializer.h"
-
-#include <sstream>
 
 Player::Player() :
   Mob("player"),

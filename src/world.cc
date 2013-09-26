@@ -23,9 +23,6 @@
 #include "texture.h"
 #include "aabb.h"
 
-#include "serializer.h"
-#include "deserializer.h"
-
 const IColor World::ambientLight = IColor(32,32,32);
 
 World::World(RunningState &state, const IVector3 &size) :
@@ -278,15 +275,13 @@ World::Draw(Gfx &gfx) {
   }
 }
 
-void World::MarkForUpdateNeighbours(const Cell *cell) {
-//  cell.UpdateNeighbours();
-  //if (!this->neighbourUpdates.size()) Log("marking cell!\n");
-  size_t i = GetCellIndex(cell->GetPosition());
-  this->neighbourUpdates.insert(i);
+void
+World::MarkForUpdateNeighbours(const CellBase *cell) {
+  this->neighbourUpdates.insert(GetCellIndex(cell->GetPosition()));
 }
 
-void World::MarkForUpdateNeighbours(size_t i) {
-  //if (!this->neighbourUpdates.size()) Log("marking index!\n");
+void
+World::MarkForUpdateNeighbours(size_t i) {
   this->neighbourUpdates.insert(i);
 }
 

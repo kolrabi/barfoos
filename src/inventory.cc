@@ -11,9 +11,6 @@
 
 #include "simplex.h"
 
-#include "serializer.h"
-#include "deserializer.h"
-
 Inventory::Inventory() :
   inventory(),
   overflow(0),

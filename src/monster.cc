@@ -1,4 +1,7 @@
+#include "common.h"
+
 #include "monster.h"
+
 #include "world.h"
 #include "cell.h"
 #include "util.h"
@@ -6,11 +9,6 @@
 #include "item.h"
 
 #include "audio.h"
-
-#include "serializer.h"
-#include "deserializer.h"
-
-#include <cmath>
 
 Monster::Monster(const std::string &propertyName) :
   Mob             (propertyName)

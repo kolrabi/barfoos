@@ -15,6 +15,8 @@ public:
   World *                   GetWorld() const { return this->world; }
   const IVector3 &          GetPosition() const { return this->pos; }
 
+  bool                      IsSeen(size_t checkNeighbours = 0) const;
+
   void                      SetLockID(ID id) { this->proto.set_lock_id(id); }
   void                      ClearLockID() { this->proto.clear_lock_id(); }
   ID                        GetLockID() const { return this->proto.lock_id(); }
@@ -82,6 +84,9 @@ public:
                                 default: return 1.0f;
                               }
                             }
+
+  void                      SetTopHeights(float a, float b, float c, float d);
+  void                      SetBottomHeights(float a, float b, float c, float d);
 
   bool                      IsTopFlat() const { return !this->proto.has_top_heights(); }
 
