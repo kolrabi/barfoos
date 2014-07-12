@@ -1,0 +1,148 @@
+message Vec3_Proto {
+    required float  x                   = 1 ;
+    required float  y                   = 2 ;
+    required float  z                   = 3 ;
+}
+
+message Skill_Proto {
+    required string    name             = 1;
+    required uint32    exp              = 2;
+}
+
+message Stats_Proto {
+    optional uint32 str                 = 1 ;
+    optional uint32 agi                 = 2 ;
+    optional uint32 vit                 = 3 ;
+    optional uint32 int_                = 4 ;
+    optional uint32 dex                 = 5 ;
+    optional uint32 luk                 = 6 ;
+
+    optional sint32 def_bonus           = 7 ;
+    optional sint32 atk_bonus           = 8 ;
+    optional sint32 matk_bonus          = 9 ;
+    optional sint32 mdef_bonus          = 10;
+    optional sint32 hit_bonus           = 17;
+    optional sint32 crit_bonus          = 18;
+    optional sint32 flee_bonus          = 19;
+
+    optional uint32 max_hp              = 11 [default = 10];
+    optional float  exp                 = 12;
+    optional uint32 sp                  = 13;
+    optional float  walk_speed          = 14 [default = 1.0];
+    optional float  cool_down           = 15 [default = 1.0];
+
+    repeated Skill_Proto skills         = 16;
+}
+
+message Buff_Proto {
+    required string    effect            = 1;
+    required float    start_time        = 2;
+}
+
+message Mob_Proto {
+    optional Vec3_Proto velocity    = 1;
+    optional float last_jump_time   = 2;
+    optional bool is_on_ground      = 3;
+    optional bool is_noclip         = 4;
+    optional bool is_sneaking       = 5;
+    repeated string learnt_spells   = 6;
+    optional bool is_in_liquid      = 7;
+    optional bool is_submerged      = 8;
+}
+
+message Monster_Proto {
+    required float next_move_time   = 1;
+    optional Vec3_Proto move_target = 2;
+    optional uint32 attack_target   = 3;
+    required float next_attack_time       = 4;
+}
+
+message PlayerMessage_Proto {
+    required string text                = 1;
+    required string font                = 2;
+    required float  time                = 3;
+}
+
+message Player_Proto {
+    optional float bob_phase            = 8;
+    optional float bob_amplitude        = 9;
+    repeated PlayerMessage_Proto messages = 1;
+    optional float message_y            = 2;
+    optional float message_vy           = 3;
+
+    required float  pain                = 4;
+    required float  hp_flash_time       = 5;
+
+    optional float yaw          = 6;
+    optional float pitch        = 10;
+
+    repeated uint32 elements            = 7;
+    optional float cast_start_time = 11;
+    optional float last_cast_time = 12;
+}
+
+message Item_Proto {
+    required string type                = 1;
+    optional string effect              = 2;
+
+    optional float  cooldown_frac       = 3;
+    optional float  durability          = 4;
+    optional float  next_use_time       = 5;
+
+    optional sint32 beatitude           = 6;
+    optional sint32 modifier            = 7;
+
+    optional uint32 amount              = 8 [default = 1];
+
+    optional bool is_charging = 9;
+    optional float charge_time = 10;
+    optional bool is_item_identified = 11;
+
+    optional uint32 unlock_id = 12;
+
+    optional bool is_equipped = 13;
+
+    optional bool is_init_done = 14;
+}
+
+message Inventory_Proto {
+    required uint32 slot                = 1;
+    required Item_Proto item            = 2;
+}
+
+message Entity_Proto {
+    required uint32 spawn_class         = 1;
+    required string type                = 2;
+    required uint32 id                  = 3;
+    optional uint32 owner_id            = 4;
+
+    required float  next_think_time    = 6;
+    required float     start_time      = 7;
+    required Vec3_Proto position = 8;
+    required Vec3_Proto spawn_position = 9;
+    required Vec3_Proto forward     = 10;
+    required float      die_time        = 11;
+    required bool       is_dead        = 14;
+
+    required Stats_Proto base_stats    = 12;
+    repeated Buff_Proto active_buffs = 13;
+
+    required float      health          = 15;
+    required float      render_angle    = 16;
+    required uint32     locked_id       = 17;
+
+    repeated Inventory_Proto inventory  = 18;
+
+    optional Mob_Proto mob              = 19;
+    optional Monster_Proto monster      = 20;
+    optional Player_Proto player        = 21;
+    optional Item_Proto item            = 22;
+
+    optional uint32 trigger_id = 201;
+    optional bool is_trigger_toggle = 202;
+    optional bool is_triggered = 203;
+}
+
+message EntityList_Proto {
+    repeated Entity_Proto entities      = 1;
+}

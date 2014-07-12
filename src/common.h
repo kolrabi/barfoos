@@ -38,8 +38,8 @@
 
 // ====================================================================================
 
-#include "profile.h"
-#include "log.h"
+#include "util/profile.h"
+#include "util/log.h"
 
 enum        Axis          : int8_t;
 enum        Corner        : int8_t;

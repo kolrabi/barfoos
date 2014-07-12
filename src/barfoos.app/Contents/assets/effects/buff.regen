@@ -1,9 +1,0 @@
-AddHealth 1.0
-Duration 5.0
-
-Group buff
-
-Feeling "rejuvenated"
-Name    "Regenerating"
-Extend
-

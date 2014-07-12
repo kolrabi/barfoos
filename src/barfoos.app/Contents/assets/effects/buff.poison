@@ -1,9 +1,0 @@
-AddHealth -0.5
-Duration 5.0
-
-Group buff
-
-Feeling "sick"
-Name    "Poisoned"
-Extend
-

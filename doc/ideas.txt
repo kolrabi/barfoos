@@ -23,10 +23,7 @@ story:
                 get to next level
 
 - description:  multiplayer space station crawler
-  ideas:        |-
-                plain old futuristic scifi
-                just kill everything (aliens) 
-                get to next level
+  ideas:        same as above but scifi
 
 - description:  find your pet
   ideas:        |-
@@ -58,14 +55,16 @@ story:
 
 - description: 	dungeon pizza
   ideas:        |-
+                quests: deliver food, gather ingredients
                 bring pizza (or other food) to the endboss
                 defend pizza against other monsters
+                deliver on time while the food is still hot to get more tips
                 fight with food on the way down?
                 bring the money back to your boss
                 survive
-                get promotions (level up, money for equipment)
+                get promotions (level up, money, equipment upgrades)
                 harder dungeons
-                
+
   names: 
     - Deliver
     - Pizza Diablo

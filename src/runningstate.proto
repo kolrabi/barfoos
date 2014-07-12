@@ -1,7 +1,0 @@
-message RunningState_Proto {
-	required sint32 level                   = 1;
-	required uint32 next_entity_id          = 2;
-	required uint32 next_trigger_id         = 3;
-	required uint32 next_lock_id            = 4;
-	required uint32 player_id               = 5;
-}
