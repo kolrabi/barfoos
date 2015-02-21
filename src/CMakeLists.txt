@@ -1,3 +1,7 @@
+CMAKE_MINIMUM_REQUIRED  ( VERSION 2.6 )
+PROJECT                 ( Barfoos C CXX )
+SET                     ( CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake" )
+
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 include_directories(${CMAKE_BINARY_DIR})
@@ -85,7 +89,9 @@ target_link_libraries( Barfoos
   ${ZLIB_LIBRARY}
   ${PROTOBUF_LIBRARY} 
   ${OPENAL_LIBRARY}
-  ${OGGVORBIS_LIBRARIES}
+  ${VORBISFILE_LIBRARY}
+  ${VORBIS_LIBRARY}
+  ${OGG_LIBRARY}
 )
 
 

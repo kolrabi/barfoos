@@ -30,6 +30,7 @@ Audio::~Audio() {
 bool
 Audio::Init() {
 #if HAVE_AUDIO
+  ogg_sync_init(nullptr);
   const ALCchar *deviceName = alcGetString(NULL, ALC_DEFAULT_DEVICE_SPECIFIER);
 
   Log("Trying to open audio device '%s'...\n", deviceName);

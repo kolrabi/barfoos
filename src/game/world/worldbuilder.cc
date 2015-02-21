@@ -122,6 +122,7 @@ WorldBuilder::Build(RunningState &state, const Theme &theme) {
   weighted_map<std::string> monsters;
   for (auto &m:GetEntitiesInGroup("monster")) {
     monsters[m] = GetEntityProbability(m, state.GetLevel());
+    Log("%s: %f\n", m.c_str(), monsters[m]);
   }
   for (size_t i=0; i<theme.monsterCount; i++) {
     std::string monster = monsters.select(random.Float01());

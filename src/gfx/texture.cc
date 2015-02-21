@@ -78,7 +78,7 @@ void Texture::SetImage(const Image &image) {
 }
 
 void Texture::UpdateTextures() {
-  time_t now = time(nullptr);
+/*  time_t now = time(nullptr);
   if (now - lastUpdate < 2) return;
 
   Log("Checking for updated textures since %u...\n", lastUpdate);
@@ -92,7 +92,7 @@ void Texture::UpdateTextures() {
     }
   }
 
-  lastUpdate = now;
+  lastUpdate = now;*/
 }
 
 void
