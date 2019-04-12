@@ -16,16 +16,8 @@
 
 class Profile {
 public:
-
-  ~Profile() {}
-
   static void Dump();
   static std::string GetDump();
-
-private:
-
-  //std::string name;
-  //unsigned long long startTick;
 };
 
 #else

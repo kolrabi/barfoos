@@ -60,7 +60,7 @@ RunningState::NewGame() {
 
   Log("allocating world...\n");
   delete this->world;
-  this->world = new World(*this, IVector3(64, 64, 64));
+  this->world = new World(*this, IVector3(128, 64, 128));
 
   Random &random = GetRandom();
 
@@ -118,35 +118,49 @@ RunningState::Render(Gfx &gfx) const {
     lightPositions.push_back(e->GetSmoothEyePosition());
   }
 
-  gfx.ClearColor(IColor(30, 30, 20));
-  gfx.ClearDepth(1.0);
-  gfx.GetScreen().Viewport(Rect());
+  {
+    PROFILE_NAMED("Draw World");
 
-  // draw world first
-  gfx.SetFog(0.05, IColor(64,64,64));
-  gfx.SetLights(lightPositions, lightColors);
+    gfx.ClearColor(IColor(30, 30, 20));
+    gfx.ClearDepth(1.0);
+    gfx.GetScreen().Viewport(Rect());
 
-  player->View(gfx);
-  world->Draw(gfx);
+    // draw world first
+    gfx.SetFog(0.05, IColor(64,64,64));
+    gfx.SetLights(lightPositions, lightColors);
 
-  // draw all entities
-  for (auto entity : this->entities) {
-    if (entity.second) entity.second->Draw(gfx);
+    player->View(gfx);
+    world->Draw(gfx);
   }
 
-  gfx.ClearDepth(1.0);
-  player->DrawWeapons(gfx);
+  // draw all entities
+  {
+    PROFILE_NAMED("Draw Entities");
+    for (auto entity : this->entities) {
+      if (entity.second) entity.second->Draw(gfx);
+    }
+  }
 
-  Point vscreen = gfx.GetScreen().GetSize();
-  gfx.GetScreen().Viewport(Rect(Point(vscreen.x-128, 0), Point(128, 128)));
-  player->MapView(gfx);
-  world->GetMap().Draw(gfx, player->GetSmoothPosition(), player->GetYaw() * Const::rad2deg);
-  gfx.GetScreen().Viewport(Rect());
+  {
+    PROFILE_NAMED("Draw Weapons");
+    gfx.ClearDepth(1.0);
+    player->DrawWeapons(gfx);
+  }
 
-  // next draw gui stuff
-  gfx.GetView().GUI();
 
-  player->DrawGUI(gfx);
+  {
+    PROFILE_NAMED("Draw GUI");
+    Point vscreen = gfx.GetScreen().GetSize();
+    gfx.GetScreen().Viewport(Rect(Point(vscreen.x-128, 0), Point(128, 128)));
+    player->MapView(gfx);
+    world->GetMap().Draw(gfx, player->GetSmoothPosition(), player->GetYaw() * Const::rad2deg);
+    gfx.GetScreen().Viewport(Rect());
+
+    // next draw gui stuff
+    gfx.GetView().GUI();
+
+    player->DrawGUI(gfx);
+  }
 }
 
 GameState *

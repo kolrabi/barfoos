@@ -95,10 +95,10 @@ World::SetCell(const IVector3 &pos, const Cell &cell, bool ignoreLock) {
   this->UpdateCell(i);
 
   // ignore changes between invisible and dynamic cells, static mesh wont change
-  /*
+  
   this->dirty = !(((info.flags & CellFlags::DoNotRender) && (cell.GetInfo().flags & CellFlags::Dynamic)) ||
                   ((info.flags & CellFlags::Dynamic) && (cell.GetInfo().flags & CellFlags::DoNotRender)) );
-                  */
+                  
 
   this->dirty = true;
   return this->cells[i];
@@ -157,32 +157,35 @@ World::Draw(Gfx &gfx) {
 
     size_t updateCount = 0;
 
-    for (size_t i=0; i<this->GetCellCount(); i++) {
-      Cell &cell = this->cells[i];
-      const CellProperties &info = cell.GetInfo();
+    {
+      PROFILE_NAMED("Gathering Cells");
+      for (size_t i=0; i<this->GetCellCount(); i++) {
+        Cell &cell = this->cells[i];
+        const CellProperties &info = cell.GetInfo();
 
-      // don't bother with invisible cells
-      if (info.flags & CellFlags::DoNotRender || !cell.GetVisibility()) continue;
+        // don't bother with invisible cells
+        if (info.flags & CellFlags::DoNotRender || !cell.GetVisibility()) continue;
 
-      // don't add dynamic cells to static vertex buffer
-      if (cell.IsDynamic()) {
-        dynamicCells.push_back(i);
-        continue;
+        // don't add dynamic cells to static vertex buffer
+        if (cell.IsDynamic()) {
+          dynamicCells.push_back(i);
+          continue;
+        }
+
+        if (cell.UpdateVertices()) {
+          updateCount ++;
+        }
+
+        // group vertex buffers by texture
+        const Texture *tex = cell.GetTexture();
+        if (tex) for (auto &v:cell.GetVertices()) verticesNormal[tex].push_back(v);
+
+        const Texture *etex = cell.GetEmissiveTexture();
+        if (etex) for (auto &v:cell.GetVertices()) verticesEmissive[etex].push_back(v);
       }
-
-      if (cell.UpdateVertices()) {
-        updateCount ++;
-      }
-
-      // group vertex buffers by texture
-      const Texture *tex = cell.GetTexture();
-      if (tex) for (auto &v:cell.GetVertices()) verticesNormal[tex].push_back(v);
-
-      const Texture *etex = cell.GetEmissiveTexture();
-      if (etex) for (auto &v:cell.GetVertices()) verticesEmissive[etex].push_back(v);
     }
 
-    //if (updateCount) Log("%u cell vertex updates\n", updateCount);
+    if (updateCount) Log("%u cell vertex updates\n", updateCount);
 
     size_t index = 0;
     this->allVerts.Clear();
@@ -287,33 +290,40 @@ World::Update(
   PROFILE();
 
   // update all dynamic cells
-  //Log("updating %u dynamic cells\n", this->dynamicCells.size());
-  for (size_t i : this->dynamicCells) {
-    this->cells[i].Update(state);
-  }
-
-  //Log("updating %u neighbours\n", this->neighbourUpdates.size());
-  size_t neighbourCount = 0;
-
-  while(this->neighbourUpdates.size()) {
-    std::unordered_set<size_t> tmp = this->neighbourUpdates;
-    this->neighbourUpdates.clear();
-
-    for (auto &i:tmp) {
-      this->cells[i].UpdateNeighbours();
-      neighbourCount++;
+  if (this->dynamicCells.size())
+  {
+    PROFILE_NAMED("Update Dynamic");
+    //Log("updating %u dynamic cells\n", this->dynamicCells.size());
+    for (size_t i : this->dynamicCells) {
+      this->cells[i].Update(state);
     }
   }
 
-  if (neighbourCount > 0) {
-    this->dirty = true;
-    Log("updated %u neighbours\n", neighbourCount);
+  if (this->neighbourUpdates.size())
+  {
+    PROFILE_NAMED("Update neighbours");
+    size_t neighbourCount = 0;
+    while(this->neighbourUpdates.size()) {
+      std::unordered_set<size_t> tmp = this->neighbourUpdates;
+      this->neighbourUpdates.clear();
+
+      for (auto &i:tmp) {
+        this->cells[i].UpdateNeighbours();
+        neighbourCount++;
+      }
+    }
+
+    if (neighbourCount > 0) {
+      this->dirty = true;
+      Log("updated %u neighbours\n", neighbourCount);
+    }
   }
 
   // tick world
+  if (this->dynamicCells.size() && tickInterval != 0.0 && state.GetGame().GetTime() > this->GetNextTickTime())
   {
-      PROFILE_NAMED("Tick");
-    while (tickInterval != 0.0 && state.GetGame().GetTime() > this->GetNextTickTime()) {
+    PROFILE_NAMED("Tick");
+    while (state.GetGame().GetTime() > this->GetNextTickTime()) {
       for (size_t i : this->dynamicCells) {
         this->cells[i].Tick(state);
       }

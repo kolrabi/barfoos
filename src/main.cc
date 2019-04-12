@@ -63,7 +63,10 @@ int main(int, char **) {
 
   glfwTerminate();
 
-  fclose(memLog); memLog = nullptr;
+  if (memLog) {
+    fclose(memLog); 
+    memLog = nullptr;
+  }
   Profile::Dump();
 
   return 0;

@@ -46,12 +46,13 @@ Profile::Profile(const char *func, const char *file, int line) :
   name(""),
   startTick(0)
 {
+  // Log("Enter %s %s %d\n", func, file, line);
   char tmp[512];
   if (funcStack.empty()) {
-    snprintf(tmp, sizeof(tmp), "%10s %4d %-42s", file, line, func);
+    snprintf(tmp, sizeof(tmp), "%4d %-82s", line, func);
     this->name = tmp;
   } else {
-    snprintf(tmp, sizeof(tmp), "%10s %4d %-40s", file, line, func);
+    snprintf(tmp, sizeof(tmp), "%4d %-80s", line, func);
     this->name = funcStack.back() + " / \n  " + tmp;
   }
   funcStack.push_back(this->name);
@@ -59,6 +60,7 @@ Profile::Profile(const char *func, const char *file, int line) :
 }
 
 Profile::~Profile() {
+  // Log("Leave\n");
   uint64_t ticks = measure();
   ProfileFunc &func = funcs[this->name];
   func.name = this->name;
@@ -67,6 +69,7 @@ Profile::~Profile() {
   func.ticksPerCall = func.totalTicks / func.calls;
   funcStack.pop_back();
 }
+
 #endif
 
 std::string 
@@ -97,54 +100,3 @@ void
 Profile::Dump() {
   Log("%s\n", GetDump().c_str());
 }
-
-
-#ifndef NO_PROFILE
-
-#include <new>
-
-extern FILE *memLog;
-static uint64_t firstLog = 0;
-static int64_t totalMem = 0;
-
-struct alloc_info {
-  int32_t size;
-};
-
-void *operator new(size_t size) {
-  alloc_info *a = (alloc_info*)malloc(size + sizeof(alloc_info));
-  if (!a) {
-    throw std::bad_alloc();
-  }
-  if (!memLog) {
-    memLog = fopen("memlog.txt", "wb");
-    firstLog = measure();
-  } 
-
-  if (memLog) {
-    a->size = size;
-    totalMem += a->size;
-    //printf(memLog, "%llu %u %lld # + %p\n", measure() - firstLog, a->size, totalMem, (char*)a+sizeof(alloc_info));
-  }
-  return (char*)a + sizeof(alloc_info);
-}
-
-void operator delete(void *p) {
-  if (!p) return;
-
-  alloc_info *a = (alloc_info*)((char*)p - sizeof(alloc_info));
-  if (memLog) {
-    totalMem -= a->size;
-    //fprintf(memLog, "%llu -%u %lld # -\n", measure() - firstLog, a->size, totalMem);
-    /*if (a->size == 8) {
-      Log("# %p: ", p);
-      for (int i=0; i<a->size; i++)
-        Log("%02x ", ((char*)p)[i]&0xFF);
-      Log("\n");
-    }*/
-  }
-
-  free(a);
-}
-
-#endif
