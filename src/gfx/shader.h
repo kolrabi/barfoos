@@ -1,8 +1,7 @@
 #ifndef BARFOOS_SHADER_H
 #define BARFOOS_SHADER_H
 
-#include "gfx/GLee.h"
-
+#include <GL/glew.h>
 #include <unordered_map>
 #include <vector>
 

@@ -1,6 +1,7 @@
 #include "common.h"
 
-#include "gfx/GLee.h"
+#include <GL/glew.h>
+
 #include "gfx/texture.h"
 #include "io/fileio.h"
 #include "math/vector2.h"
@@ -10,7 +11,7 @@
 #include <unordered_map>
 
 static std::unordered_map<std::string, std::unique_ptr<Texture>> textures;
-static time_t lastUpdate = 0;
+// static time_t lastUpdate = 0;
 
 Texture::Texture() :
   handle(0),

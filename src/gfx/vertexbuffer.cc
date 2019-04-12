@@ -1,6 +1,6 @@
 #include "common.h"
 
-#include "GLee.h"
+#include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
 #include "gfx/vertex.h"

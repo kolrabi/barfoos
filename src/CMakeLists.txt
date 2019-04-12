@@ -5,6 +5,7 @@ SET                     ( CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake" )
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 include_directories(${CMAKE_BINARY_DIR})
+include_directories(${GLEW_INCLUDE_DIR})
 
 PROTOBUF_GENERATE_CPP(PROTO_SRCS PROTO_HDRS 
   proto/entity.proto
@@ -56,7 +57,7 @@ SET ( SOURCES
       game/world/worldbuilder.cc
       game/world/worldedit.cc
 
-      gfx/GLee.c
+      # gfx/GLee.c
       gfx/gfx.cc
       gfx/gfxscreen.cc
       gfx/gfxview.cc
@@ -83,7 +84,7 @@ SET ( SOURCES
 
 add_executable( Barfoos ${SOURCES} )
 target_link_libraries( Barfoos
-  ${GLFW3_LIBRARY}
+  ${GLFW3_LIBRARIES}
   ${OPENGL_LIBRARIES} 
   ${PNG_LIBRARY} 
   ${ZLIB_LIBRARY}
@@ -92,6 +93,7 @@ target_link_libraries( Barfoos
   ${VORBISFILE_LIBRARY}
   ${VORBIS_LIBRARY}
   ${OGG_LIBRARY}
+  ${GLEW_LIBRARY_RELEASE}
 )
 
 

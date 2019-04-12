@@ -2,7 +2,7 @@ if(${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_BINARY_DIR})
   message(FATAL_ERROR "Prevented in-tree built. Please create a build directory outside of the SDL source code and call cmake from there")
 endif()
 
-cmake_minimum_required(VERSION 2.6)
+cmake_minimum_required(VERSION 3.10)
 project(BarfoosGame CXX C)
 
 SET (PACKAGE_NAME "Barfoos")
@@ -42,11 +42,11 @@ find_package( OpenAL     REQUIRED )
 find_package( OggVorbis   )
 find_package( PNG        REQUIRED )
 find_package( ZLIB       REQUIRED )
+find_package( PkgConfig  REQUIRED )
+find_package( GLEW REQUIRED )
 
-find_library( GLFW3_LIBRARY glfw3 )
-IF (NOT GLFW3_LIBRARY)
-MESSAGE(FATAL_ERROR "Could not find GLFW3_LIBRARY")
-ENDIF ()
+pkg_search_module( GLFW3 REQUIRED glfw3 )
+
 
 SET ( HAVE_LIBOPENAL ${OPENAL_FOUND} )
 SET ( HAVE_LIBOGG    ${OGG_LIBRARY} )

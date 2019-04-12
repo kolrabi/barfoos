@@ -1,6 +1,6 @@
-#include "GLee.h"
-
 #include "common.h"
+
+#include <GL/glew.h>
 
 #include "gfx/gfx.h"
 #include "gfx/gfxview.h"

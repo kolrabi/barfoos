@@ -1,5 +1,7 @@
 #include "common.h"
 
+#include <GL/glew.h>
+
 #include "game/entities/player.h"
 #include "game/game.h"
 #include "gfx/gfx.h"
@@ -13,7 +15,6 @@
 #include "math/matrix4.h"
 #include "math/vector2.h"
 
-#include "GLee.h"
 #include <GLFW/glfw3.h>
 
 Gfx::Gfx(const Point &pos, const Point &size, bool fullscreen) :
@@ -59,16 +60,16 @@ Gfx::Init(Game &game) {
   if (!this->screen.Init(game)) return false;
 
   // We'd like extensions with that
-  GLeeInit();
+  glewInit();
 
-  if (!GLEE_ARB_shader_objects) {
+  if (!glewIsSupported("GL_ARB_shader_objects")) {
     Log("\n******************************************************************\n");
     Log("  Your OpenGL does not support the ARB_shader_objects extension!\n");
     Log("  Falling back to stone age rendering path!\n");
     Log("******************************************************************\n\n");
     this->useFixedFunction = true;
   }
-  if (!GLEE_ARB_vertex_buffer_object) {
+  if (!glewIsSupported("GL_ARB_vertex_buffer_object")) {
     Log("\n************************************************************************\n");
     Log("  Your OpenGL does not support the ARB_vertex_buffer_object extension!\n");
     Log("**********************************************************************\n\n");
@@ -93,7 +94,7 @@ Gfx::Init(Game &game) {
   SetBlendNormal();
 
   // Colors look nicer unclamped
-  if (GLEE_ARB_color_buffer_float) {
+  if (glewIsSupported("GL_ARB_color_buffer_float")) {
     glClampColorARB(GL_CLAMP_VERTEX_COLOR_ARB, GL_FALSE);
     glClampColorARB(GL_CLAMP_FRAGMENT_COLOR_ARB, GL_FALSE);
   }
@@ -189,7 +190,7 @@ void Gfx::SetShader(const std::string &name) {
   if (this->useFixedFunction) return;
 
   if (name == "") {
-    glUseProgramObjectARB(0);
+    glUseProgram(0);
     this->activeShader = nullptr;
     return;
   }
@@ -197,7 +198,7 @@ void Gfx::SetShader(const std::string &name) {
   if (!shaders[name]) shaders[name] = std::shared_ptr<Shader>(new Shader(name));
   this->activeShader = shaders[name];
 
-  glUseProgramObjectARB(shaders[name]->GetProgram());
+  glUseProgram(shaders[name]->GetProgram());
   this->SetUniforms();
 }
 
@@ -302,10 +303,10 @@ Gfx::SetUniforms() const {
     std::vector<IColor>  lightCol;
 
     for (size_t i=0; i<this->lightPositions.size(); i++) {
-  //    if (this->view->IsPointVisible(this->lightPositions[i])) {
+      //if (this->view->IsPointVisible(this->lightPositions[i])) {
         lightPos.push_back(this->lightPositions[i]);
         lightCol.push_back(this->lightColors[i]);
-  //    }
+      //}
     }
     lightCol.resize(MaxLights, IColor(0,0,0));
     lightPos.resize(MaxLights);
