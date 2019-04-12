@@ -1,0 +1,29 @@
+﻿<Properties StartupConfiguration="{DEAEDA6A-6AF0-40B9-8156-0CD6EFD1A168}|Default">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Editors/gtk-gui/generated.cs">
+    <Files>
+      <File FileName="Editors/gtk-gui/generated.cs" Line="33" Column="51" />
+      <File FileName="MainWindow.cs" Line="1" Column="1" />
+    </Files>
+    <Pads>
+      <Pad Id="ProjectPad">
+        <State name="__root__">
+          <Node name="BarfEd" expanded="True">
+            <Node name="BarfEd" expanded="True">
+              <Node name="References" expanded="True" />
+              <Node name="UserInterface" expanded="True" />
+              <Node name="MainWindow.cs" selected="True" />
+            </Node>
+            <Node name="Editors" expanded="True" />
+          </Node>
+        </State>
+      </Pad>
+    </Pads>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|x86" />
+  <MonoDevelop.Ide.ItemProperties.BarfEd PreferredExecutionTarget="MonoDevelop.Default" />
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MultiItemStartupConfigurations />
+</Properties>

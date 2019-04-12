@@ -1,0 +1,9 @@
+J:/proj/barfoos/tools/editor/BarfEd/Editors/bin/Debug/Editors.dll
+J:/proj/barfoos/tools/editor/BarfEd/Editors/bin/Debug/Editors.pdb
+J:/proj/barfoos/tools/editor/BarfEd/Editors/obj/Debug/Editors.csprojResolveAssemblyReference.cache
+J:/proj/barfoos/tools/editor/BarfEd/Editors/obj/Debug/Editors.dll
+J:/proj/barfoos/tools/editor/BarfEd/Editors/obj/Debug/Editors.pdb
+/home/user/projects/barfoos/tools/editor/BarfEd/Editors/obj/Debug/Editors.csprojAssemblyReference.cache
+/home/user/projects/barfoos/tools/editor/BarfEd/Editors/obj/Debug/Editors.csproj.CoreCompileInputs.cache
+/home/user/projects/barfoos/tools/editor/BarfEd/Editors/obj/Debug/Editors.dll
+/home/user/projects/barfoos/tools/editor/BarfEd/Editors/obj/Debug/Editors.pdb

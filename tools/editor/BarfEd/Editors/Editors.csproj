@@ -28,10 +28,34 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="gtk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
+    <Reference Include="gdk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
+    <Reference Include="Mono.Posix, Version=2.0.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756" />
+    <Reference Include="atk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
+    <Reference Include="glib-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
+    <Reference Include="pango-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="MyClass.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="gtk-gui\generated.cs" />
+    <Compile Include="CellEditor.cs" />
+    <Compile Include="gtk-gui\Editors.CellEditor.cs" />
+    <Compile Include="TextureSelection.cs" />
+    <Compile Include="gtk-gui\Editors.TextureSelection.cs" />
+    <Compile Include="SideFlags.cs" />
+    <Compile Include="gtk-gui\Editors.SideFlags.cs" />
+    <Compile Include="Vector3Editor.cs" />
+    <Compile Include="gtk-gui\Editors.Vector3Editor.cs" />
+    <Compile Include="CellInfo.cs" />
+    <Compile Include="InputTextDialog.cs" />
+    <Compile Include="gtk-gui\Editors.InputTextDialog.cs" />
+    <Compile Include="CellFlags.cs" />
+    <Compile Include="TagWriter.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <EmbeddedResource Include="gtk-gui\gui.stetic">
+      <LogicalName>gui.stetic</LogicalName>
+    </EmbeddedResource>
+  </ItemGroup>
 </Project>

@@ -1,0 +1,26 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BarfEd", "BarfEd.csproj", "{DEAEDA6A-6AF0-40B9-8156-0CD6EFD1A168}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Editors", "Editors\Editors.csproj", "{0466C894-B87A-4DDE-ABB8-C0D47C85B33A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x86 = Debug|x86
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0466C894-B87A-4DDE-ABB8-C0D47C85B33A}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{0466C894-B87A-4DDE-ABB8-C0D47C85B33A}.Debug|x86.Build.0 = Debug|Any CPU
+		{0466C894-B87A-4DDE-ABB8-C0D47C85B33A}.Release|x86.ActiveCfg = Release|Any CPU
+		{0466C894-B87A-4DDE-ABB8-C0D47C85B33A}.Release|x86.Build.0 = Release|Any CPU
+		{DEAEDA6A-6AF0-40B9-8156-0CD6EFD1A168}.Debug|x86.ActiveCfg = Debug|x86
+		{DEAEDA6A-6AF0-40B9-8156-0CD6EFD1A168}.Debug|x86.Build.0 = Debug|x86
+		{DEAEDA6A-6AF0-40B9-8156-0CD6EFD1A168}.Release|x86.ActiveCfg = Release|x86
+		{DEAEDA6A-6AF0-40B9-8156-0CD6EFD1A168}.Release|x86.Build.0 = Release|x86
+	EndGlobalSection
+	GlobalSection(MonoDevelopProperties) = preSolution
+		StartupItem = BarfEd.csproj
+	EndGlobalSection
+EndGlobal
