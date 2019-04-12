@@ -17,3 +17,5 @@ Makefile
 
 
 /doc/html
+/build
+*~
