@@ -105,8 +105,8 @@ std::string ToString(const T &v) {
   return str.str();
 }
 
-extern template class std::vector<Vector3>;
-extern template class std::vector<Vertex>;
+//extern template class std::vector<Vector3>;
+//extern template class std::vector<Vertex>;
 extern template class std::vector<std::string>;
 
 #endif

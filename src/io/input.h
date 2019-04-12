@@ -3,6 +3,7 @@
 
 #include "math/2d.h"
 
+#include <functional>
 #include <unordered_map>
 #include <vector>
 

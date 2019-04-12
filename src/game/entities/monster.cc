@@ -13,6 +13,8 @@ Monster::Monster(const std::string &propertyName) :
 {
   this->proto.set_spawn_class(uint32_t(SpawnClass::MonsterClass));
   this->proto.mutable_monster();
+  this->proto.mutable_monster()->set_next_attack_time(0); 
+  this->proto.mutable_monster()->set_next_move_time(0); 
 }
 
 Monster::Monster(const Entity_Proto &proto) :

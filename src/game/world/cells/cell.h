@@ -2,7 +2,6 @@
 #define BARFOOS_CELL_H
 
 #include "game/world/cells/cellrender.h"
-
 #include "world.pb.h"
 
 /** A cell in the world. */

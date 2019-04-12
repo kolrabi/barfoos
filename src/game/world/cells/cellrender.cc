@@ -2,7 +2,6 @@
 
 #include "game/world/cells/cell.h"
 #include "game/world/world.h"
-#include "gfx/vertex.h"
 #include "util/util.h"
 
 static bool sidesDatasInited = false;

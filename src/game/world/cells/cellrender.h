@@ -2,6 +2,7 @@
 #define BARFOOS_CELLRENDER_H
 
 #include "game/world/cells/cellbase.h"
+#include "gfx/vertex.h"
 
 class CellRender : public CellBase {
 public:

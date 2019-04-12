@@ -2,8 +2,9 @@
 #define BARFOOS_IVECTOR3_H
 
 #include "space.h"
-
 #include "vector3.h"
+
+#include <functional>
 
 struct IVector3 {
   uint32_t x,y,z;

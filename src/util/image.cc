@@ -5,6 +5,7 @@
 #include "io/fileio.h"
 #include "math/simplex.h"
 
+#include <cstring>
 #include <png.h>
 
 Image::Image() :

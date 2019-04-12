@@ -319,7 +319,7 @@ inline bool CellBase::IsLiquid() const {
 }
 
 inline bool CellBase::IsDynamic() const {
-  return this->info->flags & CellFlags::Dynamic || this->GetTriggerId() || this->IsTrigger();
+  return this->info->flags & CellFlags::Dynamic || this->GetTriggerId() != InvalidID || this->IsTrigger();
 }
 
 inline Cell &CellBase::operator[](Side side) {
